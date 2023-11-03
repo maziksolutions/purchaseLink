@@ -4,12 +4,15 @@ import { SiteLayoutComponent } from '../../_layout/site-layout/site-layout.compo
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { OrdertypeComponent } from './ordertype/ordertype.component';
 import { ServicetypeComponent } from './servicetype/servicetype.component';
+import { ServiceCategoryComponent } from './service-category/service-category.component';
+
 const routes: Routes = [
   {
      path: '', component: SiteLayoutComponent,
 children:[
   {path: 'order-type',component: OrdertypeComponent,pathMatch:'full'}, 
   {path: 'service-type',component: ServicetypeComponent,pathMatch:'full'}, 
+  {path: 'service-category',component: ServiceCategoryComponent,pathMatch:'full'}, 
 ]}
 ];
 
