@@ -11,358 +11,151 @@ class="toggle-line"></span></span></button>
 
 </div><a class="navbar-brand" href="welcome">
 <div class="d-flex align-items-center py-2"><img class="me-2" src="assets/img/logo.png" alt="" width="40" />
-<!-- <span class="font-sans-serif">PMS</span> -->
+  <span class="font-sans-serif font-small-3">Purchase Link</span>
 </div>
 </a>
 </div>
 <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
-<div class="navbar-vertical-content scrollbar">
-<ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
- <li routerLinkActive="active" class="nav-item">
-<!-- parent pages--><a class="nav-link" href="javascript:void(0)" role="button" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-icon"><span
-class="fas fa-chart-pie"></span></span><span class="nav-link-text ps-1">Dashboard</span>
-</div>
-</a>
-</li>
-
-
-
- <li routerLinkActive="in" class="nav-item">
-<!-- label-->
-<div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-<div class="col-auto navbar-vertical-label">PMS
-</div>
-<div class="col ps-0">
-<hr class="mb-0 navbar-vertical-divider" />
-</div>
-</div>
-<a class="nav-link dropdown-indicator" href="#pms" role="button" data-bs-toggle="collapse"
-aria-expanded="false" aria-controls="pms">
-<div class="d-flex align-items-center"><span class="nav-link-icon"><span
-class="fas fa-cog"></span></span><span class="nav-link-text ps-1">Purchase Link</span>
-</div>
-</a>
-<ul class="nav collapse" id="pms"  routerLinkActive="in" >
- <li routerLinkActive="active" class="nav-item"><a class="nav-link" routerLink="/pmsOverview/pmsOverview" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">PMS Overview</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" class="nav-item"><a class="nav-link" routerLink="/pmsOverview/maintenanceForecast" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Maintenance Forecast</span>
-</div>
-</a>
-</li>
-<li routerLinkActive="active" class="nav-item"><a class="nav-link"  routerLink="/pmsOverview/counterUpdate/0/0" aria-expanded="false">
-  <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Counter Update</span>
+  <div class="navbar-vertical-content scrollbar">
+    <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
+      <li class="nav-item">
+        <!-- parent pages--><a class="nav-link" href="index.html" role="button" aria-expanded="false">
+          <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-home"></span></span><span class="nav-link-text ps-1">Home</span>
+          </div>
+        </a>                 
+      </li>
+      <li class="nav-item">
+        <!-- label-->
+        <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+          <div class="col-auto navbar-vertical-label">Purchase Link
+          </div>
+          <div class="col ps-0">
+            <hr class="mb-0 navbar-vertical-divider" />
+          </div>
+        </div>
+        <a class="nav-link dropdown-indicator" href="#purchase-link" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="register">
+          <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fas fa-link"></i></span><span class="nav-link-text ps-1">Purchase Link</span>
+          </div>
+        </a> 
+<ul class="nav collapse" id="purchase-link">                    
+  <li class="nav-item"><a class="nav-link" href="purchase-link-purchase-tracking.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Purchase Tracking</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-requisition.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Requisition</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-rfq.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">RFQ</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-po.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Purchase Order</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-dispatch.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Dispatch</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-new-material-receipt-items.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Material Receipt</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-po-invoice-upload.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Invoice</span>
+              </div>
+            </a>
+          </li>
+</ul>
+      </li>
+      <li class="nav-item">
+        <!-- label-->
+        <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+          <div class="col-auto navbar-vertical-label">Purchase Master
+          </div>
+          <div class="col ps-0">
+            <hr class="mb-0 navbar-vertical-divider" />
+          </div>
+        </div>
+        <a class="nav-link dropdown-indicator active" href="#master" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="register">
+          <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fas fa-cog"></i></span><span class="nav-link-text ps-1">Master</span>
+          </div>
+        </a> 
+<ul class="nav collapse show" id="master">                    
+  <!-- <li class="nav-item"><a class="nav-link active" href="purchase-link-order-type.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Order Type</span>
+              </div>
+            </a>
+          </li> -->
+          <li routerLinkActive="active"  class="nav-item">
+            <a class="nav-link" routerLink="/master/order-type" aria-expanded="false">
+            <div class="d-flex align-items-center">
+              <span class="nav-link-text ps-1">Order Type</span>
+            </div>
+            </a>
+            </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-priority.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Priority</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-project.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Project Name / Code</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-material-quality.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Material Quality</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-additional-cost.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Additional Cost</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-new-requisition-rfq-email-add-folder.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Email</span>
+              </div>
+            </a>
+          </li>
+  <li class="nav-item"><a class="nav-link" href="purchase-link-vendor-preference.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Vendor Preference</span>
+              </div>
+            </a>
+          </li>
+</ul>					
+      </li>
+      <li class="nav-item">
+        <!-- label-->
+        <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+          <div class="col-auto navbar-vertical-label">Vendor Management
+          </div>
+          <div class="col ps-0">
+            <hr class="mb-0 navbar-vertical-divider" />
+          </div>
+        </div>
+        <a class="nav-link dropdown-indicator" href="#vendor-management" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="register">
+          <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="far fa-address-card"></i></span><span class="nav-link-text ps-1"> Vendor</span>
+          </div>
+        </a> 
+<ul class="nav collapse" id="vendor-management">                    
+  <li class="nav-item"><a class="nav-link" href="purchase-link-vendor-details.html" aria-expanded="false">
+              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Vendor Details</span>
+              </div>
+            </a>
+          </li>
+</ul>					
+      </li>
+    </ul>              
   </div>
-  </a>
-  </li>
-  <li routerLinkActive="active" class="nav-item"><a class="nav-link"  routerLink="/pmsOverview/completedMaintenances" aria-expanded="false">
-    <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Maintenance History</span>
-    </div>
-    </a>
-    </li>
-</ul>
-</li>
-
-
-
-
- <li routerLinkActive="in" class="nav-item">
-<!-- label-->
-<div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-<div class="col-auto navbar-vertical-label">Master
-</div>
-<div class="col ps-0">
-<hr class="mb-0 navbar-vertical-divider" />
-</div>
-</div>
-<a class="nav-link dropdown-indicator" href="#config" role="button" data-bs-toggle="collapse"
-aria-expanded="true" aria-controls="config">
-<div class="d-flex align-items-center"><span class="nav-link-icon"><span
-class="fas fa-cog"></span></span><span class="nav-link-text ps-1">Configuration</span>
-</div>
-</a>
-<ul class="nav collapse" id="config" [ngClass]="{'show': routeUrl=='master'}">
- <li routerLinkActive="active" id="pages" class="nav-item"><a class="nav-link"  routerLink="/master/pages" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Pages</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" class="nav-item"><a class="nav-link" routerLink="/master/roleBasedAccessRights" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Role Based Access</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active"  class="nav-item"><a class="nav-link" routerLink="/master/userBasedAccessRights" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">User Based Access</span>
-</div>
-</a>
-</li>
-</ul>
-
-
-<a class="nav-link dropdown-indicator" href="#register" role="button" data-bs-toggle="collapse"
-aria-expanded="true" aria-controls="register" *ngIf="masterView">
-<div class="d-flex align-items-center"><span class="nav-link-icon"><span
-class="fas fa-user"></span></span><span class="nav-link-text ps-1">Register</span>
-</div>
-</a>
-<ul class="nav collapse" id="register" [ngClass]="{'show': routeUrl=='master'}">
- <li id="jobType" [ngClass]="{'active': (abUrl=='jobType' || abUrl=='attachmentType' || abUrl=='inventorytype'|| abUrl=='componentType' )}" *ngIf="rights[0]?.viewRight" class="nav-item"><a class="nav-link" routerLink="/master/jobType"
-aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Type Master</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" *ngIf="rights[7]?.viewRight"  class="nav-item">
-  <a class="nav-link" routerLink="/master/componentCondition" aria-expanded="false">
-  <div class="d-flex align-items-center">
-    <span class="nav-link-text ps-1">Component Condition</span>
-  </div>
-  </a>
-  </li>
-  
-  <li routerLinkActive="active" *ngIf="rights[8]?.viewRight"  class="nav-item">
-    <a class="nav-link" routerLink="/master/category" aria-expanded="false">
-    <div class="d-flex align-items-center">
-      <span class="nav-link-text ps-1">Category</span>
-    </div>
-    </a>
-    </li>
-
-  <li routerLinkActive="active" *ngIf="rights[6]?.viewRight"  class="nav-item"><a class="nav-link" routerLink="/master/jobGroup"
-    aria-expanded="false">
-    <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Maintenance Group</span>
-    </div>
-    </a>
-    </li>
-
- <li routerLinkActive="active" *ngIf="rights[1]?.viewRight"  class="nav-item"><a class="nav-link" routerLink="/master/unitmaster"
-aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Unit Master</span>
-</div>
-</a>
-</li>
-<li routerLinkActive="active" *ngIf="rights[1]?.viewRight"  class="nav-item"><a class="nav-link" routerLink="/master/reasonMaster"
-  aria-expanded="false">
-  <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Reason Master</span>
-  </div>
-  </a>
-  </li>
- <li routerLinkActive="active" *ngIf="rights[2]?.viewRight" class="nav-item"><a class="nav-link" routerLink="/master/priority"
-aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Priority Master</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" *ngIf="rights[3]?.viewRight" class="nav-item"><a class="nav-link"
-routerLink="/master/classificationsociety" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Classification
-Society</span>
-</div>
-</a>
-</li>
-<li routerLinkActive="active" class="nav-item"  > 
-  <a class="nav-link" routerLink="/master/maintenanceReference/0" aria-expanded="false">
-  <div class="d-flex align-items-center">
-    <span class="nav-link-text ps-1">Maintenance Reference</span>
-  </div>
-  </a>
-  </li>
-  <li routerLinkActive="active" class="nav-item" >
-    <a class="nav-link" routerLink="/master/maintenanceProcedure/0" aria-expanded="false">
-    <div class="d-flex align-items-center">
-      <span class="nav-link-text ps-1">Maintenance Procedure</span>
-    </div>
-    </a>
-    </li>
- <li routerLinkActive="active" *ngIf="rights[5]?.viewRight" class="nav-item"><a class="nav-link" routerLink="/master/makerMaster"
-aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Maker Master</span>
-</div>
-</a>
-</li>
-</ul>
-<a class="nav-link dropdown-indicator" href="#master" role="button" data-bs-toggle="collapse"
-aria-expanded="false" aria-controls="master">
-<div class="d-flex align-items-center"><span class="nav-link-icon"><span
-class="fas fa-cog"></span></span><span class="nav-link-text ps-1">PMS Master</span>
-</div>
-</a>
-<ul class="nav collapse" id="master" [ngClass]="{'show': routeUrl=='PMSmaster'}">
- <li routerLinkActive="active" id="spareAssembly"   class="nav-item"><a class="nav-link" routerLink="/PMSmaster/spareAssembly/0" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Spare Assembly</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active"  id="classificationSurvey" class="nav-item"><a class="nav-link" routerLink="/PMSmaster/classificationSurvey" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">CSM Maintenances</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" class="nav-item"><a class="nav-link" routerLink="/PMSmaster/groupMaster" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Group Master</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active"   id="listmaintenance" class="nav-item"><a class="nav-link" routerLink="/PMSmaster/listmaintenance/0" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Maintenance Master</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" id="component" class="nav-item"><a class="nav-link" routerLink="/PMSmaster/component/0" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Component Master</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" id="spareparts" class="nav-item"><a class="nav-link" routerLink="/PMSmaster/spareparts/0" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Spare Parts Master</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" id="stores" class="nav-item"><a class="nav-link" routerLink="/PMSmaster/stores/0" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Store & Consumable</span>
-</div>
-</a>
-</li>
-
-<li routerLinkActive="active" id="cause" class="nav-item"><a class="nav-link" routerLink="/PMSmaster/cause" aria-expanded="false">
-  <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Maintenance Cause</span>
-  </div>
-  </a>
-  </li>
-</ul>
-</li>
- <li routerLinkActive="in" class="nav-item">
-<!-- label-->
-<div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-<div class="col-auto navbar-vertical-label">Ship Master
-</div>
-<div class="col ps-0">
-<hr class="mb-0 navbar-vertical-divider" />
-</div>
-</div>
-<a class="nav-link dropdown-indicator" href="#shipmaster" role="button" data-bs-toggle="collapse"
-aria-expanded="false" aria-controls="shipmaster">
-<div class="d-flex align-items-center"><span class="nav-link-icon"><span
-class="fas fa-ship"></span></span><span class="nav-link-text ps-1">Ship Master</span>
-</div>
-</a>
-<ul class="nav collapse" id="shipmaster" [ngClass]="{'show': routeUrl=='shipmaster'}">
- <li routerLinkActive="active" class="nav-item"><a class="nav-link" routerLink="/shipmaster/position" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Position Master</span>
-</div>
-</a>
-</li>
-<li routerLinkActive="active" id="spareAssemblysList" class="nav-item"><a class="nav-link" routerLink="/shipmaster/spareAssemblysList/0/0" aria-expanded="false">
-  <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Spare Assembly</span>
-  </div>
-</a>
-</li>
- <li routerLinkActive="active" id="listShipPms" class="nav-item"><a class="nav-link" routerLink="/shipmaster/listShipPms/0/0" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Ship Components</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" id="counterMaster" class="nav-item"><a class="nav-link" routerLink="/shipmaster/counterMaster/0/0" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Counter Master</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active"  id="maintenanceMasterList" class="nav-item"><a class="nav-link" routerLink="/shipmaster/maintenanceMasterList/0/0"
-aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Maintenance Master</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active"  id="sparePartsMaster" class="nav-item"><a class="nav-link" routerLink="/shipmaster/sparePartsMaster/0/0" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Spare Parts Master
-</span>
-</div>
-</a>
-</li>
-
-</ul>
-</li>
-
-
- <li routerLinkActive="in" class="nav-item">
-<!-- label-->
-<div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-<div class="col-auto navbar-vertical-label"> Setup
-</div>
-<div class="col ps-0">
-<hr class="mb-0 navbar-vertical-divider" />
-</div>
-</div>
-<a class="nav-link dropdown-indicator" href="#pmsSetup" role="button" data-bs-toggle="collapse"
-aria-expanded="false" aria-controls="pmsSetup">
-<div class="d-flex align-items-center"><span class="nav-link-icon"><span
-class="fas fa-cog"></span></span><span class="nav-link-text ps-1">PMS Setup</span>
-</div>
-</a>
-<ul class="nav collapse" id="pmsSetup" [ngClass]="{'show': routeUrl=='pmsHierarchy'}">
- <li routerLinkActive="active"  id="pmsTemplate" class="nav-item"><a class="nav-link" routerLink="/pmsHierarchy/pmsTemplate" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">PMS Hierarchy</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" class="nav-item"><a class="nav-link" routerLink="/pmsHierarchy/pmssetup" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Set-up</span>
-</div>
-</a>
-</li>
-<li routerLinkActive="active" class="nav-item"><a class="nav-link" routerLink="/pmsHierarchy/postponeConfigComponent" aria-expanded="false">
-  <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Postpone Config</span>
-  </div>
-  </a>
-  </li>
-</ul>
-</li>
-
-
-
-
-<!--  <li routerLinkActive="active" class="nav-item">                  
-<div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-<div class="col-auto navbar-vertical-label">User
-</div>
-<div class="col ps-0">
-<hr class="mb-0 navbar-vertical-divider" />
-</div>
-</div>
-<a class="nav-link dropdown-indicator" href="#user" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="user">
-<div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-user"></span></span><span class="nav-link-text ps-1">User Management</span>
-</div>
-</a> 
-<ul class="nav collapse" id="user">
- <li routerLinkActive="active" class="nav-item"><a class="nav-link" href="pms-overview.html" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Department</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" class="nav-item"><a class="nav-link" href="job-forcast.html" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Role</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" class="nav-item"><a class="nav-link" href="job-forcast.html" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">Company</span>
-</div>
-</a>
-</li>
- <li routerLinkActive="active" class="nav-item"><a class="nav-link" href="job-forcast.html" aria-expanded="false">
-<div class="d-flex align-items-center"><span class="nav-link-text ps-1">User List</span>
-</div>
-</a>
-</li>
-</ul>
-</li> -->
-</ul>
-</div>
 </div>
 </nav>
 <div class="content">
@@ -375,11 +168,11 @@ aria-expanded="false" aria-label="Toggle Navigation"><span class="navbar-toggle-
 class="toggle-line"></span></span></button>
 <a class="navbar-brand me-1 me-sm-3" href="index.html">
 <div class="d-flex align-items-center"><img class="me-2" src="assets/img/logo.png" alt="" width="40" />
-<!-- <span class="font-sans-serif">PMS</span> -->
+  <span class="font-sans-serif font-small-3">Purchase Link</span>
 </div>
 </a>
 <div class="collapse navbar-collapse scrollbar" id="navbarStandard">
-<ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
+<!-- <ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
  <li routerLinkActive="active" class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button"
 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dashboards">Modules</a>
 <div class="dropdown-menu dropdown-menu-card border-0 mt-0" aria-labelledby="dashboards">
@@ -393,7 +186,7 @@ href="administration">Administration</a>
 </div>
 </div>
 </li>
-</ul>
+</ul> -->
 </div>
 <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
  <li routerLinkActive="active" class="nav-item">
