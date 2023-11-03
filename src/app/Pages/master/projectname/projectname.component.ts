@@ -28,7 +28,7 @@ export class ProjectnameComponent implements OnInit {
   displayedColumns: string[] = ['checkbox', 'projectname','projectcode','services','remarks'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
-  rights:RightsModel;
+  rights:RightsModel;  serviceTypes: any;
   @ViewChild('searchInput') searchInput: ElementRef;
   deletetooltip:any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -43,15 +43,21 @@ export class ProjectnameComponent implements OnInit {
       projectNameId: [0],
       projectName: ['', [Validators.required]],
       projectCode:['', [Validators.required]],
-      serviceTypeId: ['', [Validators.required]],
+      serviceTypeId: [''],
       remarks:['']
     });
     //this.projectnameForm.controls.directCompletion.setValue('');
+    this.LoadServiceType();
     this.loadRights();
     this.loadData(0);
   }
   get fm() { return this.projectnameForm.controls };
-
+  LoadServiceType() {
+    this.purchasemasterService.getServicetypes(0)
+      .subscribe(response => {
+        this.serviceTypes = response.data;
+      })
+  }
   loadRights(){
     this.userManagementService.checkAccessRight(unitMasterNavEnum.jobGroup).subscribe((response)=>{
 if(response.status){
@@ -84,7 +90,7 @@ console.log(error);
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
-    this.purchasemasterService.getServicetypes(status)
+    this.purchasemasterService.getprojectname(status)
       .subscribe(response => {
         console.log(response.data)
         this.flag = status;
@@ -96,7 +102,8 @@ console.log(error);
       });
   }
   onSubmit(form: any) {
-    this.purchasemasterService.addServiceType(form.value)
+    console.log(form.value)
+    this.purchasemasterService.addProjectname(form.value)  
       .subscribe(data => {
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
@@ -125,12 +132,10 @@ console.log(error);
     this.selectedIndex=id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
-    this.purchasemasterService.getServiceTypeById(id)
+    this.purchasemasterService.getProjectnameById(id)
       .subscribe((response) => {
         if (response.status) {
           this.projectnameForm.patchValue(response.data);
-          this.pkey = response.data.serviceTypeId;
-
         }
       },
         (error) => {
@@ -140,7 +145,6 @@ console.log(error);
   DeleteData() {
     var message = ""
     var title = "";
-
     if (this.flag == 1) {
       message = "Un-archived successfully.";
       title = "you want to un-archive data."
@@ -148,11 +152,9 @@ console.log(error);
     else {
       message = "Archived successfully.";
       title = "you want to archive data."
-
     }
     const numSelected = this.selection.selected;
     if (numSelected.length > 0) {
-
       Swal.fire({
         title: 'Are you sure?',
         text: title,
@@ -162,15 +164,13 @@ console.log(error);
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value) {
-          this.purchasemasterService.archiveServiceType(numSelected).subscribe(result => {
+          this.purchasemasterService.archiveProjectname(numSelected).subscribe(result => {
             this.selection.clear();
             this.swal.success(message);
             this.loadData(this.flag);
           })
-
         }
       })
-
     } else {
       this.swal.info('Select at least one row')
     }
@@ -203,9 +203,9 @@ console.log(error);
 
   clear() {
     this.projectnameForm.reset();
-    this.projectnameForm.controls.serviceTypeId.setValue(0);
-    this.projectnameForm.controls.serviceType.setValue('');    
-    this.projectnameForm.controls.description.setValue('');    
+    this.projectnameForm.controls.projectNameId.setValue(0);
+    this.projectnameForm.controls.projectCode.setValue('');    
+    this.projectnameForm.controls.projectName.setValue('');    
     (document.getElementById('abc') as HTMLElement).focus();
   }
   // export excel
@@ -217,7 +217,7 @@ console.log(error);
   }
   exportAsXLSX(data: any[]): void {
     data.forEach((item) => {
-      delete item.serviceTypeId,
+      delete item.projectNameId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
     })
     this.exportExcelService.exportAsExcelFile(data, 'Maintenance Group', 'Maintenance Group');
@@ -229,7 +229,7 @@ console.log(error);
     if (numSelected.length > 0) {
       data = numSelected;
       data.forEach((item) => {
-        delete item.serviceTypeId,
+        delete item.projectNameId,
           delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
       })
     }
@@ -240,7 +240,7 @@ console.log(error);
 
   close() {
     this.projectnameForm.reset();
-    this.projectnameForm.controls.serviceTypeId.setValue(0);
+    this.projectnameForm.controls.projectNameId.setValue(0);
     (document.getElementById('collapse1') as HTMLElement).classList.add("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
   }

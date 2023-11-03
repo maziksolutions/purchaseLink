@@ -64,7 +64,6 @@ getServiceTypeById(id):Observable<any>{
   return  this.httpClient.get<any>(this.linkurl + 'getServiceTypebyid/' + id,httpOptions)
   .pipe(catchError(this.handleError));
 }
-// Add New unit
 addServiceType(formData): Observable<any> {
   return this.httpClient.post<any>(this.linkurl + 'addvendorservicetype', formData)
   .pipe(catchError(this.handleError));
@@ -74,6 +73,24 @@ archiveServiceType(jobType: any[]): Observable < string > {
 }  
 //#endregion Service Type Master
 
+
+//#region Project Name / Code
+//Get Maintenance Type data
+getprojectname(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}filterprojectname/${status}`, httpOptions);
+}
+getProjectnameById(id):Observable<any>{  
+  return  this.httpClient.get<any>(this.linkurl + 'getprojectnamebyid/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
+addProjectname(formData): Observable<any> {
+  return this.httpClient.post<any>(this.linkurl + 'addprojectname', formData)
+  .pipe(catchError(this.handleError));
+}
+archiveProjectname(jobType: any[]): Observable < string > {   
+  return this.httpClient.post<string> (`${this.linkurl}archiveProjectNameCodeGroup/`, jobType, httpOptions);  
+}  
+//#endregion Project Name / Code
 
 private handleError(error: HttpErrorResponse) {
   if (error.error instanceof ErrorEvent) {
