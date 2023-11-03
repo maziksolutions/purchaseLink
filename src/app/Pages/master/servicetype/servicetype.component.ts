@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UnitmasterService } from '../../../services/unitmaster.service';
+import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -26,7 +26,7 @@ declare var $: any;
 })
 export class ServicetypeComponent implements OnInit {
   servicetypeForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox', 'jobGroup','directCompletion'];
+  displayedColumns: string[] = ['checkbox', 'servicetype','description'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   rights:RightsModel;
@@ -36,7 +36,7 @@ export class ServicetypeComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   selectedIndex: any;
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
-    private unitmasterService: UnitmasterService, private swal: SwalToastService,
+    private purchasemasterService: PurchaseMasterService, private swal: SwalToastService,
     private router:Router,private userManagementService: UserManagementService) { }
 
   ngOnInit(): void {
@@ -83,9 +83,9 @@ console.log(error);
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
-
-    this.unitmasterService.getJobGroups(status)
+    this.purchasemasterService.getServicetypes(status)
       .subscribe(response => {
+        console.log(response.data)
         this.flag = status;
         this.dataSource.data = response.data;
         this.dataSource.sort = this.sort;
@@ -95,7 +95,7 @@ console.log(error);
       });
   }
   onSubmit(form: any) {
-    this.unitmasterService.addJobGroup(form.value)
+    this.purchasemasterService.addServiceType(form.value)
       .subscribe(data => {
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
@@ -117,19 +117,18 @@ console.log(error);
         }
         else {
 
-        }
-        
+        }        
       });
   }
   Updatedata(id) {
     this.selectedIndex=id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
-    this.unitmasterService.getJobGroupById(id)
+    this.purchasemasterService.getServiceTypeById(id)
       .subscribe((response) => {
         if (response.status) {
           this.servicetypeForm.patchValue(response.data);
-          this.pkey = response.data.jobGroupId;
+          this.pkey = response.data.serviceTypeId;
 
         }
       },
@@ -162,7 +161,7 @@ console.log(error);
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value) {
-          this.unitmasterService.archiveJobGroup(numSelected).subscribe(result => {
+          this.purchasemasterService.archiveServiceType(numSelected).subscribe(result => {
             this.selection.clear();
             this.swal.success(message);
             this.loadData(this.flag);
@@ -203,9 +202,9 @@ console.log(error);
 
   clear() {
     this.servicetypeForm.reset();
-    this.servicetypeForm.controls.jobGroupId.setValue(0);
-    this.servicetypeForm.controls.directCompletion.setValue('');
-    
+    this.servicetypeForm.controls.serviceTypeId.setValue(0);
+    this.servicetypeForm.controls.serviceType.setValue('');    
+    this.servicetypeForm.controls.description.setValue('');    
     (document.getElementById('abc') as HTMLElement).focus();
   }
   // export excel
@@ -217,7 +216,7 @@ console.log(error);
   }
   exportAsXLSX(data: any[]): void {
     data.forEach((item) => {
-      delete item.jobGroupId,
+      delete item.serviceTypeId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
     })
     this.exportExcelService.exportAsExcelFile(data, 'Maintenance Group', 'Maintenance Group');
@@ -229,7 +228,7 @@ console.log(error);
     if (numSelected.length > 0) {
       data = numSelected;
       data.forEach((item) => {
-        delete item.jobGroupId,
+        delete item.serviceTypeId,
           delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
       })
     }
@@ -240,7 +239,7 @@ console.log(error);
 
   close() {
     this.servicetypeForm.reset();
-    this.servicetypeForm.controls.jobGroupId.setValue(0);
+    this.servicetypeForm.controls.serviceTypeId.setValue(0);
     (document.getElementById('collapse1') as HTMLElement).classList.add("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
   }

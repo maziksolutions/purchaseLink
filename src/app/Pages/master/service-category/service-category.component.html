@@ -56,7 +56,7 @@
     <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1"
         data-bs-parent="#accordionExample">
         <div class="accordion-body">
-            <form (ngSubmit)="onSubmit(jobGroupForm)" [formGroup]="jobGroupForm">
+            <form (ngSubmit)="onSubmit(serviceForm)" [formGroup]="serviceForm">
                 <div class="row">
                     <div class="col-4">
                         <fieldset class="form-group mb-0">                           
@@ -74,7 +74,7 @@
                         </fieldset>
                       </div>
                     <div class="col-md-2">
-                        <button *ngIf="rights?.ammendRight || this.fm.jobGroupId.value=='0'"type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="jobGroupForm.invalid  || !jobGroupForm.dirty"><i
+                        <button *ngIf="rights?.ammendRight || this.fm.jobGroupId.value=='0'"type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="serviceForm.invalid  || !serviceForm.dirty"><i
                                 class="fas fa-save"></i></button>
                         <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" (click)="close()" 
                             data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i
