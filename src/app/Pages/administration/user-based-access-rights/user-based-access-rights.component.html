@@ -1,0 +1,330 @@
+<div class="card px-3 py-2 mb-1">
+    <div class="position-relative">
+        <div class="row">
+            <div class="col-lg-6">
+                <h5 class="mb-0">User Based Access Rights</h5>
+                <span class="btn-sm ps-0 text-primary fw-bold">Administration<span
+                        class="fas fa-chevron-right ms-1 fs--2"></span></span><span
+                    class="btn-sm p-0">Configuration<span class="fas fa-chevron-right ms-1 fs--2"></span></span>
+                &nbsp;<span class="btn-sm p-0">User Based Access Rights</span>
+            </div>
+
+            <div class="col-lg-6">
+                <button  type="button" class="btn btn-primary form-small float-end" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Copy Rights" aria-label="" (click)="openModal()">Copy Rights</button>
+            </div>   
+        </div>
+    </div>
+</div>
+
+
+<div class="card mb-3">
+    <div class="card-header bg-light">
+        <div type="button" data-bs-toggle="collapse" data-bs-target="#office" aria-expanded="false"
+            aria-controls="check">
+            <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3"
+                    data-fa-transform="shrink-2"></span>Office-end access rights</h5>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div class="card-body fs--1 collapse" id="office">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group list-group-flush">
+                    <li class="list-group-item bg-light text-dark">Select User</li>
+                    <button type="button" class="list-group-item list-group-item-action" aria-current="true"
+                        *ngFor="let item of users" (click)="loadUserBasedRights(item.userId)"
+                        [ngClass]="{ 'active-node': userId === item.userId }">
+                        <span style="font-size: 13px;">{{item.firstName}} {{item.lastName}}</span>
+                    </button>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <li class="list-group-item bg-light text-dark" style="border-width: 0 0 1px;">Page Category & Pages</li>
+                <mat-accordion *ngFor="let right of rights;let i=index">
+                    <mat-expansion-panel hideToggle>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <h6>{{right.category}}</h6>
+                            </mat-panel-title>
+                            <mat-panel-description style="display: block; text-align: right !important;">
+                                <i class="fa fa-chevron-down"></i>
+                            </mat-panel-description>
+                        </mat-expansion-panel-header>
+
+                        <div class="card-body">
+                            <div class="table-responsive tableFixHead" *ngIf="right.access"
+                                style="max-height: 60vh; overflow: auto;">
+                                <table class="table table-hover table-striped">
+                                    <thead>
+                                        <tr style="background-color: #e2e2e2;">
+                                            <th class="th-sm text-center" style="width: 20px;"><input type="checkbox"
+                                                    id="selectAll" title="check all rights" [attr.id]="'check'+i"
+                                                    class="me-2" [name]="'check'+i"
+                                                    (change)="checkAllInput($event,right.pageCategoryId)"></th>
+                                            <th class="th-sm" style="width: 20%; text-align: left;">Page Name</th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="View"><i class="fa fa-eye"
+                                                        aria-hidden="true"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Add"><i class="fa fa-plus"
+                                                        aria-hidden="true"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Edit"><i
+                                                        class="fa fa-edit"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Delete"><i class="fa fa-trash"
+                                                        aria-hidden="true"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Export"><i
+                                                        class="fa fa-file-export"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Postpone Request"><i
+                                                        class="fa fa-calendar-times" aria-hidden="true"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Postpone Approval"><i
+                                                        class="fas fa-calendar-check"></i></a></th>
+                                            <th class="th-sm">&nbsp;</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of right.access">
+                                            <td class="text-center">
+                                                <input type="checkbox" class="me-2" id="Checkbyrow"
+                                                    (change)="CheckByRow($event, item.pageId)">
+
+                                            </td>
+                                            <td style="width: 20%; text-align: left;">{{item.pageName | titlecase}}</td>
+                                            <td>
+                                                <div><input type="checkbox" name="user" [value]="item.pageId"
+                                                        [checked]="item.viewRight"
+                                                        (click)="saveAccessRight($event,'View')"></div>
+                                            </td>
+                                            <td>
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.addRight"
+                                                        (click)="saveAccessRight($event,'Add')"></div>
+                                            </td>
+                                            <td>
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.ammendRight"
+                                                        (click)="saveAccessRight($event,'Ammend')"></div>
+                                            </td>
+                                            <td>
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.deleteRight"
+                                                        (click)="saveAccessRight($event,'Delete')"></div>
+                                            </td>
+                                            <td>
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.importRight"
+                                                        (click)="saveAccessRight($event,'Import')"></div>
+                                            </td>
+                                            <td *ngIf="item.specialFields==true">
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.postponeApproval"
+                                                        (click)="saveAccessRight($event,'PostponeApproval')"></div>
+                                            </td>
+                                            <td *ngIf="item.specialFields==true">
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.postponeRequest"
+                                                        (click)="saveAccessRight($event,'PostponeRequest')"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+
+
+
+
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header bg-light">
+        <div type="button" data-bs-toggle="collapse" data-bs-target="#vessel" aria-expanded="false"
+            aria-controls="check">
+            <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3"
+                    data-fa-transform="shrink-2"></span>Vessel-end access rights</h5>
+        </div>
+    </div>
+    <hr class="m-0">
+    <div class="card-body fs--1 collapse" id="vessel">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group list-group-flush">
+                    <li class="list-group-item bg-light text-dark">Select User</li>
+                    <button type="button" class="list-group-item list-group-item-action" aria-current="true"
+                        *ngFor="let item of vesselUsers" (click)="loadVesselUserBasedRights(item.userId)"
+                        [ngClass]="{ 'active-node': userId === item.userId }">
+                        <span style="font-size: 13px;">{{item.firstName}} {{item.lastName}}</span>
+                    </button>
+                    <hr>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <li class="list-group-item bg-light text-dark" style="border-width: 0 0 1px;">Page Category & Pages</li>
+                <mat-accordion *ngFor="let right of vesselRights;let i=index">
+                    <mat-expansion-panel hideToggle>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <h6>{{right.category}}</h6>
+                            </mat-panel-title>
+                            <mat-panel-description style="display: block; text-align: right !important;">
+                                <i class="fa fa-chevron-down"></i>
+                            </mat-panel-description>
+                        </mat-expansion-panel-header>
+
+                        <div class="card-body">
+                            <div class="table-responsive tableFixHead" *ngIf="right.access"
+                                style="max-height: 60vh; overflow: auto;">
+                                <table class="table table-hover table-striped">
+                                    <thead>
+                                        <tr style="background-color: #e2e2e2;">
+                                            <th class="th-sm text-center" style="width: 20px;"><input type="checkbox"
+                                                    id="selectAll" title="check all rights" [attr.id]="'check'+i"
+                                                    class="me-2" [name]="'check'+i"
+                                                    (change)="checkAllInput($event,right.pageCategoryId)"></th>
+                                            <th class="th-sm" style="width: 20%; text-align: left;">Page Name</th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="View"><i class="fa fa-eye"
+                                                        aria-hidden="true"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Add"><i class="fa fa-plus"
+                                                        aria-hidden="true"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Edit"><i
+                                                        class="fa fa-edit"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Delete"><i class="fa fa-trash"
+                                                        aria-hidden="true"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Export"><i
+                                                        class="fa fa-file-export"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Postpone Request"><i
+                                                        class="fa fa-calendar-times" aria-hidden="true"></i></a></th>
+                                            <th class="th-sm" style="width: 20px;"><a href="javascript:void(0);"
+                                                    style="color: #333;" matTooltip="Postpone Approval"><i
+                                                        class="fas fa-calendar-check"></i></a></th>
+                                            <th class="th-sm">&nbsp;</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of right.access">
+                                            <td class="text-center">
+                                                <input type="checkbox" class="me-2" id="Checkbyrow"
+                                                    (change)="CheckByRow($event, item.pageId)">
+
+                                            </td>
+                                            <td style="width: 20%; text-align: left;">{{item.pageName | titlecase}}</td>
+                                            <td>
+                                                <div><input type="checkbox" name="user" [value]="item.pageId"
+                                                        [checked]="item.viewRight"
+                                                        (click)="saveAccessRight($event,'View')"></div>
+                                            </td>
+                                            <td>
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.addRight"
+                                                        (click)="saveAccessRight($event,'Add')"></div>
+                                            </td>
+                                            <td>
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.ammendRight"
+                                                        (click)="saveAccessRight($event,'Ammend')"></div>
+                                            </td>
+                                            <td>
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.deleteRight"
+                                                        (click)="saveAccessRight($event,'Delete')"></div>
+                                            </td>
+                                            <td>
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.importRight"
+                                                        (click)="saveAccessRight($event,'Import')"></div>
+                                            </td>
+                                            <td *ngIf="item.specialFields==true">
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.postponeApproval"
+                                                        (click)="saveAccessRight($event,'PostponeApproval')"></div>
+                                            </td>
+                                            <td *ngIf="item.specialFields==true">
+                                                <div><input type="checkbox" [value]="item.pageId"
+                                                        [checked]="item.postponeRequest"
+                                                        (click)="saveAccessRight($event,'PostponeRequest')"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="openModal" tabindex="-1" role="dialog" aria-labelledby="authentication-modal-label"
+  aria-hidden="true">
+
+  <div class="modal-dialog mt-6  modal-xl" role="document">
+    <div class="modal-content border-0">
+      <form (ngSubmit)="SubmitRights()" [formGroup]="copyForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Copy Rights</h5>
+        </div>
+        <div class="modal-body" style="font-weight: 400;">
+          <div class="form">
+           <div class="row">
+            <div class="col-sm">
+                <fieldset class="form-group mb-0">
+                  <label for="" class="m-b-5">Site</label>
+                  <select class="form-control form-small form-select" #site (change)="filterUsers(site.value)" formControlName="site">
+                    <option value="" disabled>Select Site</option>
+                    <option value="Office">Office</option>
+                    <option value="Vessel">Vessel</option>
+                  </select>
+                </fieldset>
+              </div>
+
+              <div class="col-sm">
+                <fieldset class="form-group mb-0">
+                  <label for="" class="m-b-5">From User</label>
+                  <select class="form-control form-small form-select" #fromUser (change)="filterToUsers(fromUser.value)" formControlName="fromUser">
+                    <option value="0" disabled>Select user</option>
+                    <option *ngFor="let item of fromUsers" value="{{item.userId}}">
+                      {{item.firstName | titlecase}} {{item.lastName | titlecase}}
+                    </option>
+                  </select>
+                </fieldset>
+              </div>
+              <div class="col-sm">
+                <fieldset class="form-group mb-0">
+                  <label for="" class="m-b-5">To Users</label>  
+                      <ng-multiselect-dropdown placeholder="Select Users"  [data]="toUsers" class="multiselect-dropdown" [(ngModel)]="selectedVessel" formControlName="users" [settings]="dropdownToUser" (onSelect)="onUserSelect($event)" (onSelectAll)="onUserSelectAll($event)" (onDeSelect)="onUserDeSelect($event)"  (onDeSelectAll)="onUserDeSelectAll($event)" >
+                  </ng-multiselect-dropdown>
+                </fieldset>
+              </div>
+           </div>
+          </div>        
+        </div>
+        <div class="modal-footer " style="background:#F5F5F5;padding:0.5rem;">
+          <button type="button" class="btn btn-secondary" (click)="closeModal()" data-mdb-dismiss="modal">
+            Close
+          </button>
+          <button type="submit" [disabled]="copyForm.invalid" class="btn btn-primary">Copy Rights</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>

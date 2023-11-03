@@ -1,0 +1,15 @@
+.mat-column-checkbox {
+    flex: 0 0 40px;
+  }
+  .mat-column-vesselCode {
+    flex: 0 0 60px;
+  }
+  .mat-column-callSign {
+    flex: 0 0 80px;
+  }
+  .mat-column-imo {
+    flex: 0 0 90px;
+  }
+  .mat-column-isActive {
+    flex: 0 0 80px;
+  }

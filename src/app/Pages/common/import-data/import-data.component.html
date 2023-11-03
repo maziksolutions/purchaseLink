@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>{{data.modalTitle}}</h1>
+<div mat-dialog-content>
+<form [formGroup]="importfrm" (ngSubmit)="Importdata()">
+    <div class="row">
+        <div class="col">
+    <input type="file" formControlName="attachment" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"  (change)="FileSelect($event)">
+   </div> 
+</div>
+<br>
+<div class="row" *ngIf="shownote=='true'" >
+    <div class="col" style="color: red;"> Note: With all of those cells selected, we can pare down our selection to include only the blank cells. This is done by using the Go To Special window from the Find & Select menu on the Home tab of the ribbon. </div>
+</div>
+<div class="row">
+    <div class="col">  
+    <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i class="fas fa-save"></i></button>
+<button type="button" (click)="dialogRef.close()" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban"></i></button>  
+  </div>
+</div>
+</form>

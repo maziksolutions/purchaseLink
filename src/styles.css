@@ -1,0 +1,198 @@
+h5{
+  font-size: 1rem !important;
+}
+
+.mat-table
+{
+  /* max-height: 65vh !important; */
+  max-height: calc(100vh - 300px) !important;
+  overflow-x: overlay;
+  border: 1px solid var(--pms-input-border-color);
+  border-bottom: none !important;
+  border-right: none !important;
+  background: var(--pms-table-bg) !important;   
+  font-size: 12px !important;
+  color: var(--pms-headings-color)  !important;
+  font-family: inherit !important; 
+}
+.mat-paginator{
+  background: var(--pms-table-bg) !important;
+  color: var(--pms-headings-color)  !important;
+}
+.mat-paginator-icon
+{
+  color: var(--pms-headings-color)  !important; 
+}
+.mat-select-value
+{
+  color: var(--pms-headings-color)  !important; 
+}
+.mat-select-arrow
+{
+  color: var(--pms-headings-color) !important; 
+}
+.mat-form-field-appearance-legacy .mat-form-field-infix
+{
+  border-bottom:1px solid  var(--pms-headings-color)  !important; 
+}
+
+.mat-row.highlighted {
+  background: #dcdcdc;
+}
+.mat-tooltip {
+  /* your own custom styles here */ 
+  /* e.g. */
+  background:#357ED2 !important;
+  color: white;
+}
+
+.mat-icon
+{    
+  font-size: 20px;
+   cursor: pointer;
+   color:#000 !important;
+   font-weight: bold;
+}
+  /*---------Mat Table Override CSS-------------------*/
+.mat-header-cell{
+    vertical-align: top !important;    
+    border-right: 1px solid var(--pms-input-border-color) !important;     
+    font-weight: 600 !important;    
+   font-size: 12px;     
+   text-shadow: none;
+   color: var(--pms-headings-color) !important;
+   padding: 0 0 0 5px !important;
+   height: 100% !important;   
+  }
+
+ .mat-cell{          
+      border-right: 1px solid var(--pms-input-border-color) !important; 
+    position: relative; 
+    color: var(--pms-headings-color) !important;
+    padding: 0 0 0 5px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    /* flex:0 0 100% !important; */
+  }
+  .mat-cell span {
+    text-overflow: ellipsis; 
+    overflow: hidden; 
+    white-space: nowrap;
+}
+
+.mat-checkbox span {
+  text-overflow: initial; 
+  overflow: visible; 
+  white-space: inherit;
+}
+
+
+  .mat-cell a{
+  color:#4687d9 !important;
+  text-decoration:none ;
+  background-color: transparent !important;
+  text-overflow: ellipsis; 
+  overflow: hidden; 
+  white-space: nowrap;
+  }
+
+  .mat-cell, .mat-footer-cell
+  {
+    font-size: 13px !important;
+  }
+  .mat-header-row 
+  {
+    padding: 0;
+    margin: 0;
+    min-height: auto !important; 
+    top: -1px !important;   
+    color: var(--pms-headings-color) !important;
+    border-bottom-color: var(--pms-input-border-color) !important;
+    background: var(--pms-table-striped-bg) !important;
+  }
+  .mat-footer-row 
+  {
+    padding: 0;
+    margin: 0;
+    min-height: auto !important;
+  }
+  .mat-row
+  {
+    padding: 0;
+    margin: 0;
+    min-height: auto !important;    
+    border-bottom-color: var(--pms-input-border-color) !important;
+  }
+
+  .mat-row:nth-of-type(even) {
+    padding: 0;
+    margin: 0;
+      background-color: var(--pms-table-striped-bg);
+      
+  }     
+
+.mat-checkbox-checked.mat-accent .mat-checkbox-background,.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: #005691;
+}
+.mat-checkbox-frame {
+  background-color: #ebebeb !important;
+  border:1px solid #bbb !important;
+}
+.mat-checkbox-inner-container
+{
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.mat-table label{
+  margin-bottom:0 !important;
+}
+
+.mat-table  .accordion-btn
+{
+  -webkit-box-shadow:none !important;
+}
+.table-sm > :not(caption) > * > *
+{
+  padding: 0.1rem !important;
+}
+/* .card-body
+{
+  padding: 1rem 1rem !important;
+} */
+.btn-sm
+{
+  font-size: 0.7rem !important;
+}
+.nav-link {
+  /* padding: 0.25rem 0.75rem !important; */
+}
+input.ng-invalid
+{
+  border: 2px rgb(255 185 185) solid;
+}
+
+select.ng-invalid
+{
+  border: 2px rgb(255 185 185) solid;
+}
+.nav-tabs .nav-link
+{
+  font-size: 0.8rem;
+}
+textarea.ng-invalid
+{
+  border: 2px rgb(255 185 185) solid;
+}
+
+.highlight{
+  background-color: #8d7c5970 !important;
+  outline: none;
+}
+
+.mat-menu-panel
+{
+  max-width: 500px !important;
+}
+
+.btn{padding: 0.3rem 0.5rem !important;}

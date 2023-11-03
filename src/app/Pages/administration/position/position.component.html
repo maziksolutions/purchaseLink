@@ -1,0 +1,159 @@
+<div class="card px-3 py-2 mb-1">
+    <div class="position-relative">
+        <div class="row">
+            <div class="col-lg-4">
+                <h5 class="mb-0">Position Master</h5>
+                <span class="btn-sm ps-0 text-primary fw-bold">Administration
+                    <span
+                        class="fas fa-chevron-right ms-1 fs--2"></span></span>
+                        <!-- <span class="btn-sm p-0">Register
+                            <span
+                        class="fas fa-chevron-right ms-1 fs--2"></span></span> -->
+                        <span class="btn-sm p-0">Position Master</span>
+            </div>
+            <div class="col-lg-8">
+                <div class="form-inline float-end mt-2">
+                    <select class="form-control form-small form-select" #docStatus (change)="loadData($any($event.target).value)">
+                        <option selected="" value="0">Active Data</option>
+                        <option value="1">Archive Data</option>
+                    </select>
+                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
+                    <input type="text" class="form-control form-small" (keyup)="applyFilter($any($event.target).value)"
+                        placeholder="Search" style="border-top-right-radius: 0; border-bottom-right-radius: 0px" #searchInput>
+                    <button class="btn btn-primary form-small m-r-5"
+                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Search"
+                        aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
+                        <button class="btn btn-primary form-small m-r-5"
+                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button" data-bs-toggle="tooltip"
+                        data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()" data-bs-original-title="Search" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
+                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
+
+                    <a *ngIf="rights?.addRight" class="accordion-btn collapsed px-2 m-r-1" type="button" data-bs-toggle="collapse" (click)="clear()"
+                        data-bs-target="#collapse1" aria-expanded="true" matTooltip="Add" aria-controls="collapse1"><i
+                            class="fas fa-plus text-primary"></i></a>
+
+                    <a *ngIf="rights?.deleteRight" class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
+                        data-bs-placement="top" matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""><i
+                            class="fas fa-trash text-danger"></i></a>
+
+                            <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Excel"  (click)="generateExcel()" 
+                            data-bs-original-title="List" aria-label=""><i
+                                class="fas fa-file-excel"></i></a>
+
+                   
+                                <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Export load data sheet" (click)="exportLoadSheet()"  
+                                data-bs-original-title="Export" aria-label=""><i
+                                    class="fas fa-file-export text-primary"></i></a>
+
+                                    <a *ngIf="rights?.importRight" class="" (click)="openModal()" type="button"  data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Import data" data-bs-original-title="Import" aria-label=""><i class="fas fa-file-download text-primary"></i></a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="card mb-2 bg-light">
+    <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1"
+        data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <form (ngSubmit)="onSubmit(positionForm)" [formGroup]="positionForm">
+                <div class="row">
+                    <div class="col-3">
+                        <fieldset class="form-group mb-0">
+                            <input type="text" formControlName="positionName" class="form-control form-small" placeholder="Position Name" appUppercase maxlength="100" required noWhiteSpace>
+                        </fieldset>
+                    </div>
+
+                    <div class="col-3">
+                        <fieldset class="form-group mb-0">
+                            <select class="form-control form-small form-select" id="basicSelect" formControlName="managementLevel" required>
+                                <option value="0" disabled>Select Management Level</option>
+                                <option value="TopManagement">Top Management</option>
+                                <option value="MiddelManagement">Middel Management</option>
+                                <option value="LowManagement">Low Management</option>
+                              </select>
+                        </fieldset>
+                    </div>
+
+                    <div class="col-3">
+                        <fieldset class="form-group mb-0">
+                            <select class="form-control form-small form-select" id="basicSelect" formControlName="siteRole" required>
+                                <option value="" disabled>Select Site</option>
+                                <option value="Vessel">Vessel</option>
+                                <option value="Shore">Shore</option>
+                              </select>
+                        </fieldset>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <button *ngIf="rights?.ammendRight || this.fm.userPositionId.value=='0'" type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top"  title="" data-bs-original-title="Save" aria-label=""  [disabled]="positionForm.invalid"><i
+                                class="fas fa-save"></i></button>
+                        <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" (click)="close()" 
+                            data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i
+                                class="fas fa-ban"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="card mb-3">
+
+    <div class="card-body">
+        <div class="table-responsive scrollbar">
+            <mat-table #table [dataSource]="dataSource" matSort
+                class="table table-hover table-striped table-sm small table-bordered">
+                <ng-container matColumnDef="checkbox">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                        <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()">
+                    </mat-checkbox>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
+                            [aria-label]="checkboxLabel(row)"></mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="positionName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Position Name</mat-header-cell>
+                    <mat-cell *matCellDef="let row">                       
+                        <a (click)="Updatedata(row.userPositionId)"   class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse1" type="button"  aria-expanded="true" aria-controls="collapse1"> {{row.positionName}}</a>
+                    
+                    </mat-cell>
+                </ng-container>     
+                <ng-container matColumnDef="managementLevel">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Management Level</mat-header-cell>
+                    <mat-cell *matCellDef="let row">                       
+                       {{row.managementLevel}}
+                    
+                    </mat-cell>
+                </ng-container>  
+                <ng-container matColumnDef="siteRole">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Site</mat-header-cell>
+                    <mat-cell *matCellDef="let row">                       
+                         {{row.siteRole}}
+                    
+                    </mat-cell>
+                </ng-container>          
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
+            [pageSizeOptions]="[20, 40, 60, 100]">
+          </mat-paginator>
+        </div>
+    </div>
+</div>

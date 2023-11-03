@@ -1,0 +1,79 @@
+/* .hide
+{
+    display: none;
+} */
+
+.user-profile {
+    font-size: 0.85rem !important;
+}
+
+.profile-card h3 {
+    font-size: 1.51rem;
+}
+
+.profile-card .profile-avatar {
+    max-width: 150px;
+    max-height: 150px;
+    margin-top: -70px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-card .profile-avatar img.rounded-circle {
+    max-width: 150px;
+	height: auto;
+}
+
+.z-depth-1-half {
+    box-shadow: 0 5px 11px 0 rgba(0,0,0,.18),0 4px 15px 0 rgba(0,0,0,.15)!important;
+}
+
+td{
+    padding: 2px 5px !important;
+}
+
+::ng-deep .dropdown-multiselect__caret
+  {
+    line-height: 13px !important;
+  }
+
+  .mat-column-fleetName {
+    flex: 0 0 200px;
+  }
+
+
+  ::ng-deep .ng-multiselect-dropdown span{
+    font-size: 12px !important;
+  }
+  ::ng-deep .dropdown-btn
+  {
+    padding: 3px 15px !important;
+    border: 1px solid var(--pms-input-border-color)  !important;
+  }
+  
+  ::ng-deep span{
+    font-size: 12px !important;
+  }
+  ::ng-deep multiselect-item-checkbox
+  {
+  width: 11px !important;
+  height: 11px !important;
+  }
+  ::ng-deep li{
+    font-size: 12px !important;
+  }
+  ::ng-deep li h5{
+    font-size: 12px !important;
+  }
+  
+  ::ng-deep .selected-item
+  {
+  max-width: 100% !important;
+  }
+  
+  ::ng-deep .dropdown-multiselect__caret
+  {
+    line-height: 12px !important;
+  }

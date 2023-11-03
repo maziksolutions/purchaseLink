@@ -1,0 +1,8 @@
+.mat-column-checkbox {
+    flex: 0 0 40px;
+  }
+
+  .highlight{
+    background-color: #8d7c5970 !important;
+    outline: none;
+  }

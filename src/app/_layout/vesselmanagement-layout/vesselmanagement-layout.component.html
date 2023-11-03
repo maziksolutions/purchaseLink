@@ -1,0 +1,136 @@
+<main class="main" id="top">
+    <div class="container-fluid" data-layout="container">
+      <nav class="navbar navbar-light navbar-vertical navbar-expand-xl navbar-inverted">
+        <div class="d-flex align-items-center">
+          <div class="toggle-icon-wrapper">
+
+            <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
+
+          </div><a class="navbar-brand" href="welcome">
+            <div class="d-flex align-items-center py-2"><img class="me-2" src="assets/img/logo.png" alt="" width="40" />
+              <!-- <span class="font-sans-serif">PMS</span> -->
+            </div>
+          </a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
+          <div class="navbar-vertical-content scrollbar">
+            <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
+              <li class="nav-item">
+                <!-- parent pages--><a class="nav-link" href="index.html" role="button" aria-expanded="false">
+                  <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-home"></span></span><span class="nav-link-text ps-1">Home</span>
+                  </div>
+                </a>                 
+              </li>
+              <li class="nav-item">
+                <!-- label-->
+                <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+                  <div class="col-auto navbar-vertical-label">Vessel Management
+                  </div>
+                  <div class="col ps-0">
+                    <hr class="mb-0 navbar-vertical-divider" />
+                  </div>
+                </div>
+                <a class="nav-link dropdown-indicator active" href="#register" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="register">
+                  <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="fas fa-user"></span></span><span class="nav-link-text ps-1">Vessel Management</span>
+                  </div>
+                </a> 
+                  <ul class="nav collapse show" id="register">  
+                    <li class="nav-item"><a class="nav-link" href="/vesselManagement/vesselRegister" aria-expanded="false">
+                      <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Vessel Register</span>
+                      </div>
+                    </a>
+                  </li> 
+                    <li class="nav-item"><a class="nav-link" href="/vesselManagement/engineType" aria-expanded="false">
+                        <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Engine Type</span>
+                        </div>
+                      </a>
+                    </li>		  
+                    <li class="nav-item"><a class="nav-link" href="/vesselManagement/engineSubType" aria-expanded="false">
+                      <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Engine Sub Type</span>
+                      </div>
+                    </a>
+                  </li>   
+                  <li class="nav-item"><a class="nav-link" href="/vesselManagement/engineModel" aria-expanded="false">
+                    <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Engine Model</span>
+                    </div>
+                  </a>
+                </li>    
+                <li class="nav-item"><a class="nav-link" href="/vesselManagement/shipType" aria-expanded="false">
+                  <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Ship Type</span>
+                  </div>
+                </a>
+              </li>   
+              <li class="nav-item"><a class="nav-link" href="/vesselManagement/eCDIS" aria-expanded="false">
+                <div class="d-flex align-items-center"><span class="nav-link-text ps-1">ECDIS</span>
+                </div>
+              </a>
+            </li>        
+           
+            </ul> 
+            </li>
+            </ul>             
+          </div>
+        </div>
+      </nav>
+      <div class="content">
+        <nav class="navbar navbar-light navbar-glass navbar-top navbar-expand-lg" data-move-target="#navbarVerticalNav" data-navbar-top="combo">
+
+          <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalCollapse" aria-controls="navbarVerticalCollapse" aria-expanded="false" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
+          <a class="navbar-brand me-1 me-sm-3" href="index.html">
+            <div class="d-flex align-items-center"><img class="me-2" src="assets/img/logo.png" alt="" width="40" /><span class="font-sans-serif">PMS</span>
+            </div>
+          </a>
+          <div class="collapse navbar-collapse scrollbar" id="navbarStandard">
+            <ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
+              <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dashboards">Dashboard</a>
+                <div class="dropdown-menu dropdown-menu-card border-0 mt-0" aria-labelledby="dashboards">
+                  <div class="bg-white dark__bg-1000 rounded-3 py-2">
+                    <a class="dropdown-item link-600 fw-medium" href="master/category">PMS Link</a>
+                    <a class="dropdown-item link-600 fw-medium" href="#">QHSE Link</a>
+                    <a class="dropdown-item link-600 fw-medium" href="#">Purchase Link</a>
+                    <a class="dropdown-item link-600 fw-medium" href="#">Crewlink</a>
+                    <a class="dropdown-item link-600 fw-medium" href="administration">Administration</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
+              <li class="nav-item">
+                  Switch Theme
+                  </li>
+            <li class="nav-item">
+              <div class="theme-control-toggle fa-icon-wait px-2">
+                <input class="form-check-input ms-0 theme-control-toggle-input" id="themeControlToggle" type="checkbox" data-theme-control="theme" value="dark" />
+                <label class="mb-0 theme-control-toggle-label theme-control-toggle-light" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Switch to light theme"><span class="fas fa-sun fs-0"></span></label>
+                <label class="mb-0 theme-control-toggle-label theme-control-toggle-dark" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Switch to dark theme"><span class="fas fa-moon fs-0"></span></label>
+              </div>
+            </li>
+            <li class="nav-item dropdown"><a class="nav-link pe-0" id="navbarDropdownUser" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="avatar avatar-xl">
+                  <img class="rounded-circle" src="assets/img/avatar.png" alt="" />
+
+                </div>
+              </a>
+              <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="navbarDropdownUser">
+                <div class="bg-white dark__bg-1000 rounded-2 py-2">
+                  <a class="dropdown-item" href="pages/user/profile.html">Profile &amp; account</a>
+
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/login">Logout</a>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </nav>       
+        <!-- <router-outlet></router-outlet>  -->
+        <footer class="footer">
+          <div class="row g-0 justify-content-between fs--1 mt-4 mb-3">
+            <div class="col-12 col-sm-auto text-center">
+              <p class="mb-0 text-600">Copyright © 2023, All rights reserved.</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </main>

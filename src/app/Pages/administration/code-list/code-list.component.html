@@ -1,0 +1,214 @@
+<div class="card px-3 py-2 mb-1">
+  <!--/.bg-holder-->
+  <div class="position-relative">
+    <div class="row">
+      <div class="col-lg-4">
+        <!-- <h5 class="mb-0">
+            <select class="form-control form-small mb-d3 form-select bg-primary text-white" aria-readonly="true" onchange="location = this.value;">
+                <option value="/administration/codeList"  selected="">Location Master</option>
+                <option value="/administration/countryMaster">Country Master</option>
+                <option value="/administration/functionClassifier">Function Classifier</option>          
+  </select>
+</h5> -->
+
+        <ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
+          <li class="nav-item dropdown"><a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false" id="typeMaster">Location Master</a>
+            <div class="dropdown-menu dropdown-menu-card border-0 mt-0" aria-labelledby="typeMaster">
+              <div class="bg-white dark__bg-1000 rounded-3 py-2">
+                <a class="dropdown-item link-600 fw-medium" href="/administration/codeList">Location Master</a>
+                <a class="dropdown-item link-600 fw-medium" href="/administration/countryMaster">Country Master</a>
+                <a class="dropdown-item link-600 fw-medium" href="/administration/functionClassifier">Function
+                  Classifier</a>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+
+        <span class="btn-sm ps-0 text-primary fw-bold">Administration<span
+            class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Location Master<span
+            class="fas fa-chevron-right ms-1 fs--2"></span></span> &nbsp;<span class="btn-sm p-0">Location Master</span>
+
+      </div>
+      <div class="col-lg-8">
+        <form [formGroup]="searchForm">
+          <div class="form-inline float-end mt-2">
+            <select class="form-control form-small form-select" formControlName="status" (change)="filteredData()">
+              <option selected="" value="0">Active Data</option>
+              <option value="1">Archive Data</option>
+            </select>
+            <span class="p-l-10 p-r-10 mm-t-3">|</span>
+            <input type="text" formControlName="keyword" (keyup)="filteredData()" class="form-control form-small"
+              placeholder="Search" style="border-top-right-radius: 0; border-bottom-right-radius: 0px">
+            <button class="btn btn-primary form-small m-r-5"
+              style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button" data-bs-toggle="tooltip"
+              data-bs-placement="top" title="" data-bs-original-title="Search" aria-label=""><i class="fa fa-search"
+                aria-hidden="true"></i></button>
+                <button class="btn btn-primary form-small m-r-5"
+                style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button" data-bs-toggle="tooltip"
+                data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()" data-bs-original-title="Search" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
+            <span class="p-l-10 p-r-10 mm-t-3">|</span>
+            <a class="accordion-btn collapsed px-2 m-r-1" type="button" data-bs-toggle="collapse"
+            matTooltip="Add" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1" (click)="clear()"><i
+                class="fas fa-plus text-primary"></i></a>
+            <a class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="{{deletetooltip}}"
+              data-bs-original-title="Delete" aria-label="" ><i
+                class="fas fa-trash text-danger"></i></a>
+            <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+            matTooltip="Excel" (click)="generateExcel()" data-bs-original-title="List" aria-label=""><i
+                class="fas fa-file-excel"></i></a>
+
+            <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Export"
+              (click)="exportLoadSheet()" data-bs-original-title="Export" aria-label=""><i
+                class="fas fa-file-export text-primary"></i></a>
+
+            <a class="" type="button" (click)="openModal()" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Import"
+              data-bs-original-title="Import" aria-label=""><i class="fas fa-file-download text-primary"></i></a>
+          </div>
+        </form>
+      </div>
+    </div>        
+  </div>
+</div>
+
+
+<div class="card mb-2 bg-light">
+  <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1" data-bs-parent="#accordionExample">
+    <div class="accordion-body">
+      <form (ngSubmit)="onSubmit(codeListfrm)" [formGroup]="codeListfrm">
+        <div class="row">
+          <div class="col-sm">
+              <fieldset class="form-group mb-0">
+                <select class="form-control form-small form-select" id="basicSelect" formControlName="countryId" required>
+                  <option value="0" disabled>Select Country</option>
+                  <option *ngFor="let item of countries" value="{{item.countryId}}">
+                    {{item.countryName | titlecase}}
+                  </option>
+                </select>
+              </fieldset>
+          </div>
+          <div class="col-md-2">
+            <fieldset class="form-group mb-0">
+               
+              <input type="hidden" formControlName="locationId" value="0">
+              <input type="text" class="form-control form-small" formControlName="location" id="abc"
+                placeholder="Location" appUppercase noWhiteSpace required>
+            </fieldset>
+          </div>
+          <div class="col-md-3">
+            <fieldset class="form-group mb-0">
+              <input type="text" class="form-control form-small" required formControlName="locationName"
+                placeholder="Location Name" appUppercase noWhiteSpace>
+            </fieldset>
+          </div>
+
+          <div class="col-md-2">
+            <fieldset class="form-group mb-0">
+              <input type="text" class="form-control form-small" maxlength="2" required formControlName="state"
+                placeholder="State/County" appUppercase noWhiteSpace>
+            </fieldset>
+          </div>
+          <div class="col-md-2">
+            <fieldset class="form-group mb-0">
+              <input type="text" class="form-control form-small" required formControlName="coordinates"
+                placeholder="Coordinates" appUppercase noWhiteSpace>
+            </fieldset>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col">
+            <label>Functions</label><br>
+            <!-- <mat-checkbox (change)="$event ? masterToggle() : null"
+        [checked]="selection.hasValue() && isAllSelected()"
+        [indeterminate]="selection.hasValue() && !isAllSelected()">
+    </mat-checkbox> -->
+            <span *ngFor="let item of  functions">
+              <!-- <mat-checkbox formControlName="function" class="custom-control-input" [id]="item.functionClassifierId"  (change)="updateCheckbox($event)"  [value]="item.functionClassifierId"  [checked]="selection.hasValue()" ></mat-checkbox> -->
+              <input type="checkbox" class="custom-control-input m-r-5" [id]="item.functionCode"
+                (change)="updateCheckbox($event)" [value]="item.functionCode" [checked]="getChecked(item.functionCode)">
+              <label style="font-size: 12px; font-weight: 400 !important;"
+                [for]="item.functionCode">{{item.functionDescription}}</label>
+              &nbsp;&nbsp; </span>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
+            data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""
+            [disabled]="codeListfrm.invalid  || !codeListfrm.dirty"><i class="fas fa-save"></i></button>
+          <button type="button" (click)="close()" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip"
+            data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i
+              class="fas fa-ban"></i></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="table-responsive scrollbar">
+      <mat-table #table [dataSource]="dataSource" matSort
+        class="table table-hover table-striped table-sm small table-bordered">
+        <ng-container matColumnDef="checkbox">
+          <mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+              [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="countryId">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Country<br>
+            <input matInput [(ngModel)]="countryname" (ngModelChange)="filterdataoncolumnbased()">
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.countryMaster?.countryName}}
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="location">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Location<br>
+            <input matInput [(ngModel)]="location" (ngModelChange)="filterdataoncolumnbased()">
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <a (click)="Updatedata(row.locationId)" class="accordion-btn show px-2 m-r-5" type="button"
+              data-bs-toggle="collapse" data-bs-target="#collapse1" type="button" aria-expanded="true"
+              aria-controls="collapse1"> {{row.location}}</a>
+
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="locationName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Location Name<br>
+            <input matInput [(ngModel)]="locationname" (ngModelChange)="filterdataoncolumnbased()"></mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.locationName}}
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="state">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>State/County<br>
+            <input matInput [(ngModel)]="state" (ngModelChange)="filterdataoncolumnbased()">
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.state}}
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="coordinates">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Coordinates
+            <input matInput [(ngModel)]="coordinates" (ngModelChange)="filterdataoncolumnbased()">
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{row.coordinates}}
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator [length]="pageTotal" [pageIndex]="currentPage" [pageSizeOptions]="pageSizeOptions"
+        (page)="pageChanged($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

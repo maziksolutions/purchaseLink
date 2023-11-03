@@ -1,0 +1,35 @@
+.mat-column-checkbox {
+    flex: 0 0 40px;
+  }
+  .red{
+    border-color: red !important;
+  }  
+  .mat-form-field {
+    margin-right: 12px;
+  }
+  /* .input.ng-invalid.ng-touched {
+    border: 1px solid red;
+    
+  } */
+  .mat-tree-node {    
+    width: 24%;
+    min-height: 30px;
+}
+
+
+/*SWAL style*/
+.swal2-icon .swal2-icon-content {
+  font-size: 2.4rem !important;
+}
+.swal2-title
+{
+  font-size: 1.1rem;
+}
+.swal2-icon{
+  height: 3rem !important;
+  width: 3rem !important;
+}
+
+.astrik {
+  color: rgb(201, 31, 31) !important;
+  }

@@ -1,0 +1,831 @@
+
+<div class="card mb-3">
+    <div class="card-body">
+
+                <form (ngSubmit)="onSubmit(addVesselForm)" [formGroup]="addVesselForm">
+
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">General Information</h5>
+        
+                                </th>
+                            </tr>
+                            <tr>
+                                <td width="25%">Vessel Name</td>
+                                <td width="25%"><input type="text" class="form-control"
+                                        formControlName="vesselName" placeholder="" noWhiteSpace required maxlength="100" id="abc" [ngClass]="{ 'is-invalid': submitted && fm.vesselName.errors }"></td>
+                                <td width="25%">Hull No.</td>
+                                <td width="25%"><input type="text" class="form-control"
+                                        formControlName="hullNo" placeholder="" maxlength="10" required noWhiteSpace></td>
+                            </tr>
+                            <tr>
+                                <td>Ex - Names</td>
+                                <td> <input type="text" class="form-control"
+                                        formControlName="previousName" placeholder="" maxlength="100"></td>
+                                <td>Keel Laid Date</td>
+                                <td><input class="form-control" formControlName="keelLaid"
+                                        (click)="picker.open()" [matDatepicker]="picker" placeholder="" >
+                                    <mat-datepicker touchUi #picker></mat-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>IMO No.</td>
+                                <td><input class="form-control" type="number"
+                                        formControlName="imo" placeholder="" required noWhiteSpace maxlength="10" [ngClass]="{ 'is-invalid': submitted && fm.imo.errors }"></td>
+                                <td>Launch Date</td>
+                                <td><input class="form-control" formControlName="launched"
+                                        [matDatepicker]="picker1" (click)="picker1.open()"
+                                        placeholder="" >
+                                    <mat-datepicker touchUi #picker1></mat-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Flag</td>
+                                <td>
+                                    <select formControlName="flagId" class="form-control form-select" required noWhiteSpace [ngClass]="{ 'is-invalid': submitted && fm.flagId.errors }">
+                                        <option value="" disabled >Select Flag</option>
+                                        <option *ngFor="let country of countries"
+                                            [value]="country.countryId">
+                                            {{country.countryName}}</option>
+                                            
+                                    </select>
+                                </td>
+                                <td>Delivery Date</td>
+                                <td><input class="form-control" formControlName="delivery"
+                                    (click)="delivery.open()" [matDatepicker]="delivery"
+                                    placeholder="" >
+                                <mat-datepicker touchUi #delivery></mat-datepicker>
+                            </td>
+            
+                            </tr>
+                            <tr>
+                                <td>Port of Registry</td>
+                                <td>
+                                    <select formControlName="portOfRegistry" class="form-control form-select">
+                                        <option value="" disabled>Port Of Registry</option>
+                                        <option *ngFor="let port of seaports" [value]="port.locationId">
+                                            {{port.locationName}}</option>
+                                    </select>
+                                </td>
+                                <td>Builder Name</td>
+                                <td><select formControlName="builderId" class="form-control form-select">
+                                    <option value="0" disabled>Select Builder Name</option>
+                                        <option *ngFor="let builder of builders"
+                                            [value]="builder.companyId">
+                                            {{builder.companyName}}</option>
+                                    </select></td>
+                            </tr>         
+                            
+                            <tr>
+                                <td>Call Sign</td>
+                                <td><input type="text" class="form-control" formControlName="callSign"
+                                        placeholder=""></td>
+                                <td>Takeover Date </td>
+                                <td><input class="form-control" formControlName="takeoverDate"
+                                        (click)="takeoverDate.open()" [matDatepicker]="takeoverDate"
+                                        placeholder="" >
+                                    <mat-datepicker touchUi #takeoverDate></mat-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Official No.</td>
+                                <td> <input type="text" class="form-control" formControlName="official"
+                                        placeholder=""></td>
+                                <td>Takeover Port </td>
+                                <td>
+                                    <select formControlName="portOfTakeover" class="form-control form-select">
+                                        <!-- <option *ngFor="let port of seaports" [value]="port.seaportId">
+                                            {{port.seaportName}}</option> -->
+                                            <option value="0" disabled>Port Of Takeover</option>
+                                            <option *ngFor="let port of seaports" [value]="port.locationId">
+                                                {{port.locationName}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                
+                            <tr>
+                                <td>MMSI No.</td>
+                                <td><input type="text" class="form-control" formControlName="mmsi"
+                                        placeholder="" ></td>
+                                <td>Handover Date </td>
+                                <td><input class="form-control" formControlName="handoverDate"
+                                        (click)="handoverDate.open()" [matDatepicker]="handoverDate"
+                                        placeholder="" >
+                                    <mat-datepicker touchUi #handoverDate></mat-datepicker>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Vessel Short Code</td>
+                                <td><input type="text" class="form-control" formControlName="vesselCode"
+                                        placeholder="" required [ngClass]="{ 'is-invalid': submitted && fm.vesselCode.errors }" noWhiteSpace></td>
+                                <td>Handover Port </td>
+                                <td><select formControlName="portOfHandover" class="form-control form-select">
+                                        <!-- <option *ngFor="let port of seaports" [value]="port.seaportId">
+                                            {{port.seaportName}}</option> -->
+                                            <option value="0" disabled>Handover Port</option>
+                                            <option *ngFor="let port of seaports" [value]="port.locationId">
+                                                {{port.locationName}}</option>
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Ship Type</td>
+                                <td>
+                                    <select formControlName="shipId" class="form-control form-select" required [ngClass]="{ 'is-invalid': submitted && fm.shipId.errors }">
+                                        <option value="" disabled>Ship Type</option>
+                                        <option *ngFor="let shiptype of shipTypes"
+                                            [value]="shiptype.shipId">
+                                            {{shiptype.type}}</option>
+                                    </select>
+                                </td>
+                                <td>Operating Area</td>
+                                <td><input type="text" class="form-control"
+                                        formControlName="operatingArea" placeholder=""></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">Principal Dimensions</h5>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td width="25%">LOA</td>
+                                <td ><input type="text" class="form-control"
+                                        formControlName="loa" placeholder="" noWhiteSpace required [ngClass]="{ 'is-invalid': submitted && fm.loa.errors }"></td>
+                           
+                                <td width="25%">LBP</td>
+                                <td> <input type="text" class="form-control" formControlName="lbp"
+                                        placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td>Breadth (Extreme)</td>
+                                <td><input type="text" class="form-control" formControlName="breadth"
+                                        placeholder="" required noWhiteSpace [ngClass]="{ 'is-invalid': submitted && fm.breadth.errors }"></td>
+                           
+                                <td>Depth (Molded)</td>
+                                <td><input type="text" class="form-control" formControlName="depth"
+                                        placeholder="" ></td>
+                            </tr>
+                            <tr>
+                                <td>Height (Maximum)</td>
+                                <td> <input type="text" class="form-control" formControlName="height"
+                                        placeholder=""></td>
+                           
+                                <td>Bridge Front - BOW</td>
+                                <td> <input type="text" class="form-control" formControlName="bow"
+                                        placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td>Bridge Front - Stern</td>
+                                <td> <input type="text" class="form-control" formControlName="stern"
+                                        placeholder=""></td>
+                            </tr>
+                                
+                        </tbody>
+                    </table>
+
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">Communication</h5>
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <td width="25%">Vessel E-mail*</td>
+                                <td >
+                                        <input class="form-control" matInput type="email" placeholder=""
+                                            formControlName="email" >
+                                </td>
+                           
+                                <td width="25%">Phone No. 1</td>
+                                <td><input type="text" class="form-control" placeholder=" "
+                                        type="number" formControlName="satBPhone"></td>
+                            </tr>
+                            <tr>
+                                <td>Phone No. 2</td>
+                                <td> <input type="text" class="form-control" placeholder=" "
+                                        type="number" formControlName="fleet77Phone"></td>
+                           
+                                <td>Phone No. 3</td>
+                                <td> <input type="text" class="form-control" placeholder=" "
+                                        type="number" formControlName="vsatPhone"></td>
+                            </tr>
+                            <tr>
+                                <td>Mobile No.</td>
+                                <td>
+                                    <input type="text" class="form-control" placeholder=" Mobile No 1"
+                                        type="number" formControlName="mobileNo1">
+                                </td>
+                            </tr>                
+
+                        </tbody>
+                    </table>
+
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">Owners</h5>
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <td width="25%">Registered Owner</td>
+                                <td> <select formControlName="ownerId" class="form-control form-select"
+                                        required [ngClass]="{ 'is-invalid': submitted && fm.ownerId.errors }">
+                                        <option value="">Registered Owner</option>
+                                        <option *ngFor="let builder of owners"
+                                        [value]="builder.companyId">
+                                        {{builder.companyName}}</option>
+                                        <!-- <option *ngFor="let owner of owners" [value]="owner.ownerId">
+                                            {{owner.ownerName}}</option> -->
+                                    </select></td>
+                            
+                                <td width="25%">Disponent Owner</td>
+                                <td>
+                                    <select formControlName="disponentOwnerId" class="form-control form-select">
+                                        <option value="0">Disponent Owner</option>
+                                        <option *ngFor="let builder of disponentOwners"
+                                        [value]="builder.companyId">
+                                        {{builder.companyName}}</option>
+                                        <!-- <option *ngFor="let disponentowner of disponentowner"
+                                            [value]="disponentowner.disponentOwnerId">
+                                            {{disponentowner.disponentOwners}}</option> -->
+                                    </select>
+                                </td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">Managers</h5>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td width="25%">Technical Manager</td>
+                                <td><select formControlName="techManager1"
+                                        class="form-control form-select">
+                                        <option value="0">Technical Manager</option>
+                                        <option *ngFor="let builder of managers"
+                                        [value]="builder.companyId">
+                                        {{builder.companyName}}</option>
+                                        <!-- <option *ngFor="let manager of managers"
+                                            [value]="manager.managerId">
+                                            {{manager.managers}}</option> -->
+                                    </select></td>
+                          
+                                <td width="25%">Crewing Manager</td> 
+                                <td><select formControlName="crewmanager1" class="form-control form-select">
+                                    <option value="0">Crewing Manager</option>
+                                    <option *ngFor="let builder of managers"
+                                    [value]="builder.companyId">
+                                    {{builder.companyName}}</option>
+                                        <!-- <option *ngFor="let manager of managers"
+                                            [value]="manager.managerId">
+                                            {{manager.managers}}</option> -->
+                                    </select></td>
+                            </tr>
+                
+                        </tbody>
+                    </table>
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">Classification</h5>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td width="25%">Classification Society
+                                </td>
+                                <td width="25%"><select formControlName="classificationId"
+                                        class="form-control form-select" required [ngClass]="{ 'is-invalid': submitted && fm.classificationId.errors }">
+                                        <option value="" disabled>Classification Society</option>
+                                        <option *ngFor="let classficat of classifications"
+                                            [value]="classficat.classificationId">
+                                            {{classficat.classificationName}}</option>
+                                    </select></td>
+                           
+                                <td width="25%">Class No.</td>
+                                <td width="25%"> <input type="text" class="form-control" formControlName="classNo"
+                                        placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td>Class Notation</td>
+                                <td> <input type="text" class="form-control"
+                                        formControlName="classNotation" placeholder=""></td>
+                           
+                                <td>Ice Class</td>
+                                <td>
+                                    <select formControlName="iceClass" class="form-control form-select">
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                        <option value="NA">NA</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">Insurance</h5>
+                                </th>
+                            </tr> -->
+                            <!-- <tr>
+                                <td width="50%">P &amp; I Club</td>
+                                <td width="50%">
+                                    <select class="form-control" formControlName="pi">
+                                        <option *ngFor="let pi of pni" [value]="pi.vendorRegisterId">
+                                            {{pi.vendorName}}
+                                        </option> 
+                                    </select>
+                                </td>
+                            </tr> -->
+                            <!-- <tr>
+                                <td>H&amp;M</td>
+                                <td>
+                                    <select formControlName="hm" class="form-control">
+                                         <option *ngFor="let hm of hnm" [value]="hm.vendorRegisterId">
+                                            {{hm.vendorName}}
+                                        </option> 
+                                    </select>
+                                </td>
+                            </tr> -->
+                            <!-- <tr>
+                                <td>Qualified Individual</td>
+                                <td><input type="text" class="form-control"
+                                        formControlName="qualifiedIndividual" placeholder=""></td>
+                            </tr>
+                
+                        </tbody>
+                    </table> -->
+
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">Tonnage</h5>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td width="25%">NRT</td>
+                                <td>
+                                    <input type="text" class="form-control" formControlName="net"
+                                        placeholder="">
+                                </td>
+                           
+                                <td width="25%">GRT</td>
+                                <td>
+                                    <input type="text" class="form-control" formControlName="gross"
+                                        placeholder="" noWhiteSpace required [ngClass]="{ 'is-invalid': submitted && fm.gross.errors }">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>DWT</td>
+                                <td>
+                                    <input type="text" class="form-control"
+                                        formControlName="summerDeadWeight" placeholder="" noWhiteSpace required [ngClass]="{ 'is-invalid': submitted && fm.summerDeadWeight.errors }">
+                                </td>
+                            </tr>
+                
+                        </tbody>
+                    </table>
+
+                    <!-- <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                <h5 class="mb-3 mt-3">Documentation</h5>
+                                </th>
+                                </tr>
+                                <tr>
+                                    <td width="50%" >ITF Special Agreement (if
+                                    applicable)</td>
+                                    <td width="50%" ><span
+                                    style="color: #ff0000"><strong>From Certificate?
+                                    </strong></span></td>
+                                    </tr>
+                                    <tr>
+                                    <td>ITF Blue/ Green Card expiry date (if applicable)</td>
+                                    <td><span style="color: #ff0000"><strong>From Certificate?
+                                    </strong></span></td>
+                                    </tr>
+                        </tbody>
+                    </table> -->
+
+
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                           
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">Main Engine</h5>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td width="25%">Model,Maker</td>
+                                <td  width="25%">
+                                    <select class="form-control form-select" formControlName="engineModelId">
+                                        <option *ngFor="let engine of engineModels"
+                                            [value]="engine.engineModelId">
+                                            {{engine.model}}, {{engine.maker}}</option>
+                                    </select>
+                                </td>
+                            
+                                <td width="25%">Type</td>
+                                <td >
+                                    <select class="form-control form-select" formControlName="engineTypeId">
+                                        <option *ngFor="let enginetype of engineTypes"
+                                            [value]="enginetype.engineTypeId">
+                                            {{enginetype.engineTypeName}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%">M.C.R. KW</td>
+                                <td width="25%"> <input type="text" class="form-control"
+                                        formControlName="kw" placeholder=""></td>
+                           
+                                <td width="25%">No. of Main Engines</td>
+                                <td width="25%"><input type="number" class="form-control"
+                                        formControlName="mainEngineCount" placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td><strong>CPP</strong></td>
+                                <td>
+                                    <select formControlName="cpp" class="form-control form-select">
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                        <option value="NA">NA</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">Auxiliary Engine</h5>
+                                </th>
+                            </tr>       
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>No. 1</th>
+                                <th>No. 2</th>
+                                <th>No. 3</th>
+                            </tr>
+                            <tr>
+                                <td>Make</td>
+                                <td><input type="text" class="form-control" formControlName="auxMake1"
+                                        placeholder=""></td>
+                                <td> <input type="text" class="form-control" formControlName="auxMake2"
+                                        placeholder=""></td>
+                                <td> <input type="text" class="form-control" formControlName="auxMake3"
+                                        placeholder=""></td>
+                            </tr>            
+                            
+                            <tr>
+                                <td>Model</td>
+                                <td> <input type="text" class="form-control" formControlName="auxModel1"
+                                        placeholder=""></td>
+                                <td> <input type="text" class="form-control" formControlName="auxModel2"
+                                        placeholder=""></td>
+                                <td> <input type="text" class="form-control" formControlName="auxModel3"
+                                        placeholder=""></td>
+                            </tr>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">Boilers</th>
+                            </tr>
+                            <tr>
+                                <td width="25%">Make</td>
+                                <td width="25%"> <input type="text" class="form-control"
+                                        formControlName="auxMake4" placeholder=""></td>
+                           
+                                <td width="25%">Model</td>
+                                <td width="25%"> <input type="text" class="form-control"
+                                        formControlName="auxModel4" placeholder=""></td>
+                                    </tr>
+                                    <tr>
+                                <td>No of Boilers</td>
+                                <td width="25%"> <input type="number" class="form-control"
+                                        formControlName="auxBoiler" placeholder="" ></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="2">
+                                    <h5 class="mb-3 mt-3">Other Equipments (Tankers)</h5>
+                                </th>
+                                <th colspan="2">
+                                    <h5 class="mb-3 mt-3">Other Equipments (Bulk Carrier)</h5>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td width="25%">&nbsp;</td>
+                                <td width="25%">&nbsp;</td>
+                                <td width="25%">&nbsp;</td>
+                                <td width="25%">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cargo Tanks</strong></td>
+                                <td>&nbsp;</td>
+                                <td><strong>Cargo Holds</strong></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>No. of Tanks</td>
+                                <td><input type="number" class="form-control"
+                                        formControlName="cargoTanks" placeholder="" ></td>
+                                <td>No. of Holds</td>
+                                <td><input type="number" class="form-control"
+                                        formControlName="cargoHolds" placeholder="" ></td>
+                            </tr>
+                            <tr>
+                                <td>Coating</td>
+                                <td><input type="text" class="form-control"
+                                        formControlName="cargoCoating" placeholder=""></td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cargo Pumps</strong></td>
+                                <td></td>
+                                <td><strong>Cargo Cranes</strong></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>No of Pumps</td>
+                                <td><input type="number" class="form-control"
+                                        formControlName="cargoPump" placeholder="" ></td>
+                                <td>Make</td>
+                                <td><input type="text" class="form-control"
+                                        formControlName="cargoCranesMaker" placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td>Type of Pumps</td>
+                                <td><input type="text" class="form-control"
+                                        formControlName="cargoPumpType" placeholder=""></td>
+                                <td>Model</td>
+                                <td><input type="text" class="form-control"
+                                        formControlName="cranesModel" placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td>Capacity of Pumps</td>
+                                <td><input type="text" class="form-control"
+                                        formControlName="pumpCapacity" placeholder=""></td>
+                                <td>Capacity </td>
+                                <td><input type="text" class="form-control"
+                                        formControlName="cranesCapacity" placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>No. of Cranes</td>
+                                <td><input type="number" class="form-control"
+                                        formControlName="cranesNumber" placeholder="" ></td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ballast Pumps</strong></td>
+                                <td></td>
+                                <td><strong>Grabs</strong></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>No. of Pumps</td>
+                                <td><input type="number" class="form-control"
+                                        formControlName="ballastPump" placeholder=""></td>
+                                <td>Make</td>
+                                <td><input type="text" class="form-control" formControlName="grabMaker"
+                                        placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td>Type of Pumps</td>
+                                <td><input type="text" class="form-control"
+                                        formControlName="ballastPumpType" placeholder=""></td>
+                                <td>Capacity</td>
+                                <td><input type="text" class="form-control"
+                                        formControlName="grabCapacity" placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td>Ballast Eductor</td>
+                                <td><select formControlName="ballastEductor" class="form-control form-select">
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                        <option value="NA">NA</option>
+                                    </select> </td>
+                                <td>No. of Grabs</td>
+                                <td><input type="number" class="form-control"
+                                        formControlName="grabsNumber" placeholder=""></td>
+                            </tr>
+                                                                                                                
+                        </tbody>
+                    </table>
+
+
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">ECDIS</h5>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th width="25%">&nbsp;</th>
+                                <th width="25%">ECDIS 1</th>
+                                <th width="25%">ECDIS 2</th>
+                                <th width="25%">ECDIS 3</th>
+                            </tr>
+                            <tr>
+                                <td>Model,Maker</td>
+                                <td>
+                                    <select formControlName="ecdisId1" class="form-control form-select">
+                                        <option *ngFor="let ec of ecdis" [value]="ec.ecdisId">
+                                            {{ec.model}}, {{ec.maker}}</option>
+                                    </select>
+                                </td>
+                                <td> <select formControlName="ecdisId2" class="form-control form-select">
+                                        <option *ngFor="let ec of ecdis" [value]="ec.ecdisId">
+                                            {{ec.model}}, {{ec.maker}}</option>
+                                    </select></td>
+                                <td>
+                                    <select formControlName="ecdisId3" class="form-control form-select">
+                                        <option *ngFor="let ec of ecdis" [value]="ec.ecdisId">
+                                            {{ec.model}}, {{ec.maker}}</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Type</td>
+                                <td><input type="text" class="form-control" formControlName="ecdisType1"
+                                        placeholder="ECDIS Type"></td>
+                                <td><input type="text" class="form-control" formControlName="ecdisType2"
+                                        placeholder="ECDIS Type"></td>
+                                <td><input type="text" class="form-control" formControlName="ecdisType3"
+                                        placeholder="ECDIS Type"></td>
+                            </tr>
+                                
+                        </tbody>
+                    </table>
+                    <table width="100%" class="table table-bordered mb-0 crew-table table-striped">
+                        <tbody>
+                            <tr style="color: #ffffff; background: var(--pms-body-bg)">
+                                <th colspan="4">
+                                    <h5 class="mb-3 mt-3">Other Details</h5>
+                                </th>
+                            </tr>
+                            <tr>
+                                <td width="25%">Principal</td>
+                                <td>
+                                    <select formControlName="principalId" class="form-control form-select" required [ngClass]="{ 'is-invalid': submitted && fm.principalId.errors }">
+                                        <option value="" disabled>Select Principal</option>
+                                        <option *ngFor="let builder of principals"
+                                        [value]="builder.companyId">
+                                        {{builder.companyName}}</option>
+                                        <!-- <option *ngFor="let principals of principal"
+                                            [value]="principals.principalId">
+                                            {{principals.principal}}</option> -->
+                                    </select>
+                                </td>
+                               
+                                    <!-- <input type="file" accept="image/jpeg, image/jpg, image/png"
+                                        (change)="fileChange($event.target.files)"
+                                        formControlName="vesselImage" /> -->
+                                    
+                
+                            </tr>
+                            <tr>
+                                <td width="25%">P&I Deductible Amount</td>
+                                <td> <input type="number" class="form-control"
+                                        formControlName="deductible1" placeholder="" ></td>
+                                <td width="25%">Propulsion</td>
+                                <td> <input type="text" class="form-control"
+                                        formControlName="propulsion" placeholder=""></td>
+                            </tr>
+                            <tr>
+                                <td>No. of Life Boats</td>
+                                <td>
+                                    <input type="number" class="form-control" formControlName="lifeBoat"
+                                        placeholder="" >
+                                </td>
+                                <td>Life Boat Capacity</td>
+                                <td>
+                                    <input type="number" class="form-control" formControlName="capacity"
+                                        placeholder="" >
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Safety equipment capacity</td>
+                                <td>
+                                    <input type="number" class="form-control"
+                                        formControlName="seqCapacity" placeholder="" >
+                                </td>
+                                <td>Life Raft1 (Capacity)</td>
+                                <td>
+                                    <input type="number" class="form-control"
+                                        formControlName="lifeRaft1" placeholder="" >
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Life Raft2 (Capacity)</td>
+                                <td>
+                                    <input type="number" class="form-control"
+                                        formControlName="lifeRaft2" placeholder="" >
+                                </td>
+                                <td>Life Raft3 (Capacity)</td>
+                                <td>
+                                    <input type="number" class="form-control"
+                                        formControlName="lifeRaft3" placeholder="" >
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Accomodation Berth</td>
+                                <td>
+                                    <input type="number" class="form-control"
+                                        formControlName="accommodationBerth" placeholder="" >
+                                </td>
+                                <td>Hospital Berth</td>
+                                <td>
+                                    <input type="number" class="form-control"
+                                        formControlName="hospitalBerth" placeholder="" >
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Suez Cabin Berths</td>
+                                <td>
+                                    <input type="number" class="form-control"
+                                        formControlName="suezCabinBerth" placeholder="" >
+                                </td>
+                                <!-- <td>Pool</td>
+                                <td>
+                                    <select formControlName="poolId" class="form-control">
+                                        <option *ngFor="let pool of poolList" [value]="pool.poolId">
+                                            {{pool.poolName}}</option>
+                                    </select>
+                                </td> -->
+                            </tr>
+                            <tr>
+                                <td>GT Hour</td>
+                                <td>
+                                    <input type="number" class="form-control" formControlName="gtHour"
+                                        placeholder="">
+                                </td>
+                                <td>Transit Wages</td>
+                                <td>
+                                    <mat-checkbox formControlName="transitWageApplicable">Is Transit
+                                        Wage Applicable On Signon</mat-checkbox>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Is Active?</td>
+                                <td>
+                                    <mat-checkbox formControlName="isActive">&nbsp;</mat-checkbox>
+                                </td>
+                                <td>Is Operational for documentation?</td>
+                                <td>
+                                    <mat-checkbox formControlName="isOperational">&nbsp;</mat-checkbox>
+                                </td>
+                            </tr>
+                
+                        </tbody>
+                    </table>
+                    <div class="row mb-4 mt-2">
+                       
+                        <div class="col-xl-12 col-lg-12">
+                          <div class="float-end">
+                            <button *ngIf="rights?.addRight" class="btn btn-primary form-small  m-r-5" data-bs-toggle="tooltip" data-bs-placement="top"
+                              title="" data-bs-original-title="Save" aria-label="" [disabled]="addVesselForm.invalid || !addVesselForm.dirty"><i
+                                class="fas fa-save"></i></button>
+                            <button class="btn btn-danger form-small" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                              data-bs-original-title="Cancel" (click)="close()" aria-label=""><i
+                                class="fas fa-ban"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                </form>
+    </div>
+</div>

@@ -1,0 +1,309 @@
+<div class="card mb-3">
+<div class="card-body">
+<div class="tab-content">
+<div class="tab-pane preview-tab-pane active" role="tabpanel"
+aria-labelledby="tab-dom-80eaf95d-9d0c-409c-afdc-ee331ded94ab"
+id="dom-80eaf95d-9d0c-409c-afdc-ee331ded94ab">
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+<li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab1" role="tab"
+aria-selected="true">Company</a></li>
+<li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab2" role="tab"
+aria-selected="false">Department HOD</a></li>
+</ul>
+<div class="tab-content border-top py-3" id="myTabContent">
+<div class="tab-pane fade active show" id="tab1" role="tabpanel">
+<form (ngSubmit)="onCompanySubmit()" [formGroup]="companyForm">
+
+<div class="row">
+    <div class="col-xl-6 col-lg-12">
+        <h4 class="card-title proper-case">Details</h4>
+    </div>
+    <div class="col-xl-6 col-lg-12">
+        <div class="float-end">
+            <button *ngIf="rights?.addRight" type="submit" class="btn btn-primary form-small m-r-5"
+                data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                data-bs-original-title="Save" aria-label=""
+                [disabled]="companyForm.invalid || !companyForm.dirty"><i class="fas fa-save"></i></button> 
+            <button type="button" class="btn btn-danger form-small m-r-5"
+                data-bs-toggle="tooltip" (click)="close()" data-bs-placement="top" title=""
+                data-bs-original-title="Cancel" aria-label=""><i
+                    class="fas fa-ban"></i></button>
+        </div>
+    </div>
+</div>
+
+<hr class="mb-3">
+<div class="row">
+    <div class="col-sm">
+        <fieldset class="form-group mb-0">
+            <label for="" class="m-b-5">Company Name</label>
+            <input type="text" formControlName="companyName" class="form-control form-small" id="abc"
+                placeholder="Company Name" appUppercase maxlength="100" required noWhiteSpace>
+        </fieldset>
+    </div>
+    <div class="col-sm">
+        <fieldset class="form-group mb-0">
+            <label for="" class="m-b-5">Company Type</label>
+            <select class="form-control form-small form-select"
+                formControlName="companyTypeId" required>
+                <option value="" disabled>Select Company Type</option>
+                <option *ngFor="let item of companyType" value="{{item.companyTypeId}}">
+                    {{item.companyTypeName | titlecase}}
+                </option>
+            </select>
+        </fieldset>
+    </div>   
+    <div class="col-sm">
+        <fieldset class="form-group mb-0">
+            <label for="" class="m-b-5" for="imageFile">Company Logo</label>
+            <input type="file" class="custom-file-input form-control-sm" accept="image/*"
+                (change)="onLogoFileSelect($event)" [innerHtml]="uploadlogo">
+        </fieldset>
+    </div>    
+</div>
+<div class="row">
+    <div class="col-sm">
+        <fieldset class="form-group mb-0">
+            <label for="" class="m-b-5">Company HOD </label>
+            <select class="form-control form-small form-select"
+                formControlName="companyHODID" required>
+                <option value="" disabled>Select Company HOD</option>
+                <option *ngFor="let item of designationRoles" value="{{item.roleId}}">
+                    {{item.roleName | titlecase}}
+                </option>
+            </select>
+        </fieldset>
+    </div>
+    <div class="col-sm">
+        <fieldset class="form-group mb-0">
+            <label for="" class="m-b-5">Email</label>
+            <input type="email" formControlName="email" class="form-control form-small"
+                placeholder="Email" required noWhiteSpace>
+        </fieldset>
+    </div>
+    <div class="col-sm">
+        <fieldset class="form-group mb-0">
+            <label for="" class="m-b-5">Postcode</label>
+            <input type="text" formControlName="postcode" class="form-control form-small"
+                placeholder="Postcode" maxlength="10" required noWhiteSpace>
+        </fieldset>
+    </div>
+</div>
+ <div class="row  g-3 mb-5">
+    <div class="col">
+        <fieldset class="form-group mb-0">
+            <label for="" class="m-b-5">Address</label>
+            <textarea type="text" formControlName="address" class="form-control form-small" placeholder="Address" maxlength="500"></textarea>
+        </fieldset>
+    </div>
+</div>
+
+<div class="row g-3 mb-1">
+    <div class="col-xl-6 col-lg-12">
+        <h6 class="card-title proper-case">Module Access</h6>
+    </div>
+    <div class="col-xl-6 col-lg-12">
+
+    </div>
+</div>
+<hr class="mb-3">
+<div class="row mb-4">
+    <div class="col">
+      <span *ngFor="let item of selectedAccess">
+        <input type="checkbox" (change)="updateModuleAccessCheckbox($event)"  [value]="item" [checked]="getModuleAccessChecked(item)" class="custom-control-input m-r-5">&nbsp;
+        <label>{{item}}</label>
+        &nbsp;&nbsp; </span>
+    </div>
+  </div>
+
+
+<div class="row">
+    <div class="col-xl-6 col-lg-12">
+        <h6 class="card-title proper-case">Departments</h6>
+    </div>
+    <div class="col-xl-6 col-lg-12">
+
+    </div>
+</div>
+<hr>
+
+<span *ngFor="let item of  departments">
+    <input type="checkbox" class="custom-control-input m-r-5" [id]="item.departmentId"
+        (change)="updateCheckbox($event)" [value]="item.departmentId"
+        [checked]="getChecked(item.departmentId)">
+    <label class="custom-control-label"
+        [for]="item.departmentId">{{item.departmentName}}</label>
+    &nbsp;&nbsp; </span>
+</form>
+</div>
+<div class="tab-pane fade" id="tab2" role="tabpanel">
+<div class="row">
+<div class="col-xl-4 col-lg-12">
+    <h4 class="card-title proper-case">{{companyName}}: Department HOD Details</h4>
+</div>
+<div class="col-xl-8 col-lg-12">
+    <div class="form-inline float-end mt-2">
+        <select class="form-control form-small form-select" #docStatus
+            (change)="loadData($any($event.target).value)">
+            <option selected="" value="0">Active Data</option>
+            <option value="1">Archive Data</option>
+        </select>
+        <span class="p-l-10 p-r-10 mm-t-3">|</span>
+        <input type="text" class="form-control form-small"
+            (keyup)="applyFilter($any($event.target).value)" placeholder="Search"
+            style="border-top-right-radius: 0; border-bottom-right-radius: 0px">
+        <button class="btn btn-primary form-small m-r-5"
+            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+            data-bs-toggle="tooltip" data-bs-placement="top" title=""
+            data-bs-original-title="Search" aria-label=""><i class="fa fa-search"
+                aria-hidden="true"></i></button>
+
+        <span class="p-l-10 p-r-10 mm-t-3">|</span>
+
+        <a class="accordion-btn collapsed px-2 m-r-1" type="button"
+            data-bs-toggle="collapse" (click)="clear()" data-bs-target="#collapse1"
+            aria-expanded="true" aria-controls="collapse1" matTooltip="Add"><i
+                class="fas fa-plus text-primary"></i></a>
+
+        <a class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
+            data-bs-placement="top" matTooltip="{{deletetooltip}}" data-bs-original-title="Delete"
+            aria-label=""><i class="fas fa-trash text-danger"></i></a>
+
+        <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip"
+            data-bs-placement="top" matTooltip="Excel" (click)="generateExcel()"
+            data-bs-original-title="List" aria-label=""><i
+                class="fas fa-file-excel"></i></a>
+
+
+        <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+        matTooltip="Export load data sheet" (click)="exportLoadSheet()" data-bs-original-title="Export"
+            aria-label=""><i class="fas fa-file-export text-primary"></i></a>
+
+        <a class="" (click)="openModal()" type="button" data-bs-toggle="tooltip"
+            data-bs-placement="top" matTooltip="Import data" data-bs-original-title="Import"
+            aria-label=""><i class="fas fa-file-download text-primary"></i></a>
+
+    </div>
+</div>
+</div>
+<hr>
+<div class="card mb-2 bg-light">
+<div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1"
+    data-bs-parent="#accordionExample">
+    <div class="accordion-body">
+        <form (ngSubmit)="onSubmit()" [formGroup]="companyDepartmentMapForm">
+            <div class="row  mb-3">
+                <!-- <div class="col">
+<fieldset class="form-group mb-0">
+<select class="form-control form-small form-select" id="basicSelect"
+formControlName="companyId">
+<option value="0" disabled>Select Company</option>
+<option *ngFor="let item of companies"
+value="{{item.companyId}}">{{item.companyName | titlecase}}
+</option>
+</select>
+</fieldset>
+</div> -->
+                <div class="col">
+                    <fieldset class="form-group mb-0">
+                        <select class="form-control form-small form-select" id="basicSelect"
+                            formControlName="departmentId">
+                            <option value="0" disabled>Select Department</option>
+                            <option *ngFor="let item of departments"
+                                value="{{item.departmentId}}">{{item.departmentName |
+                                titlecase}}</option>
+                        </select>
+                    </fieldset>
+                </div>
+
+                <div class="col">
+                    <fieldset class="form-group mb-0">
+                        <select class="form-control form-small form-select" id="basicSelect"
+                            formControlName="hodRoleId" required>
+                            <option value="" disabled>Select Designation Role</option>
+                            <option *ngFor="let item of designationRoles"
+                                value="{{item.roleId}}">{{item.roleName | titlecase}}
+                            </option>
+                        </select>
+                    </fieldset>
+                </div>
+            </div>
+
+
+            <div class="col-md-2">
+                <button *ngIf="rights?.addRight" type="submit" class="btn btn-primary form-small m-r-5"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Save" aria-label=""
+                    [disabled]="companyDepartmentMapForm.invalid"><i
+                        class="fas fa-save"></i></button>
+                <button type="button" class="btn btn-danger form-small m-r-5"
+                    data-bs-toggle="tooltip" (click)="close()" data-bs-placement="top"
+                    title="" data-bs-original-title="Cancel" aria-label=""><i
+                        class="fas fa-ban"></i></button>
+            </div>
+
+        </form>
+    </div>
+</div>
+</div>
+
+<div class="card mb-3">
+<div class="table-responsive scrollbar">
+    <mat-table #table [dataSource]="dataSource" matSort
+        class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+        <ng-container matColumnDef="checkbox">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <mat-checkbox (change)="$event ? masterToggle() : null"
+                    [checked]="selection.hasValue() && isAllSelected()"
+                    [indeterminate]="selection.hasValue() && !isAllSelected()">
+                </mat-checkbox>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()"
+                    (change)="$event ? selection.toggle(row) : null"
+                    [checked]="selection.isSelected(row)"
+                    [aria-label]="checkboxLabel(row)"></mat-checkbox>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="departmentName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Department</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                <a (click)="Updatedata(row.companyDepartmentId)"
+                    class="accordion-btn show px-2 m-r-5" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#collapse1" type="button"
+                    aria-expanded="true" aria-controls="collapse1">
+                    {{row.departmentName}}</a>
+
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="hod">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>HOD</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                {{row.hod}}
+
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="site">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Site</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                {{row.site}}
+
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0"
+        [pageSize]="20" [pageSizeOptions]="[20, 40, 60, 100]">
+    </mat-paginator>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>

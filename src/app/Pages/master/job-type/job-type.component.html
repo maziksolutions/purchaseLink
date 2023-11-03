@@ -1,0 +1,156 @@
+<app-type-master-menu></app-type-master-menu>
+<div class="card px-3 py-2 mb-1">
+    <div class="position-relative">
+        <div class="row">
+            <div class="col-lg-3">              
+       
+                <span class="btn-sm ps-0 text-primary fw-bold">Master<span
+                        class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Register<span
+                            class="fas fa-chevron-right ms-1 fs--2"></span></span> &nbsp;<span class="btn-sm p-0">Type Master<span
+                            class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0"><b>Maintenance Type</b></span>
+            </div>
+            <div class="col-lg-9">
+                <div class="form-inline float-end mt-2">
+
+                    <!-- <select class="form-control form-small mb-d3 form-select-dark bg-primary text-white"
+                    onchange="location = this.value;" style="width:175px;">
+                    <option value="" selected="">Type Master Menu</option>
+                    <option value="/master/category">Category Master</option>
+                    <option value="/master/jobType">Maintenance Type</option>
+                    <option value="/master/jobGroup" >Maintenance Group</option>
+                    <option value="/master/attachmentType">Attachment Type</option>
+                    <option value="/master/inventorytype">Inventory Type</option>
+                    <option value="/master/componentType">Component Type</option>
+                    <option value="/master/componentCondition">Component Condition</option>
+                  </select> -->
+                  <!-- <span class="p-l-10 p-r-10 mm-t-3">|</span> -->
+                    <select class="form-control form-small form-select" #docStatus (change)="loadData($any($event.target).value)">
+                        <option selected="" value="0">Active Data</option>
+                        <option value="1">Archive Data</option>
+                    </select>
+                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
+                    <input type="text" class="form-control form-small" (keyup)="applyFilter($any($event.target).value)"
+                        placeholder="Search" style="border-top-right-radius: 0; border-bottom-right-radius: 0px" #searchInput>
+                        
+                    <button class="btn btn-primary form-small m-r-5"
+                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Search"
+                        aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
+                        <button class="btn btn-primary form-small m-r-5"
+                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button" data-bs-toggle="tooltip"
+                        data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()" data-bs-original-title="Search" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
+                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
+
+                    <a *ngIf="rights?.addRight" class="accordion-btn collapsed px-2 m-r-1" type="button" data-bs-toggle="collapse" (click)="clear()"
+                        data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1" matTooltip="Add"><i
+                            class="fas fa-plus text-primary"></i></a>
+
+                    <a *ngIf="rights?.deleteRight" class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
+                        data-bs-placement="top" matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""><i
+                            class="fas fa-trash text-danger"></i></a>
+
+                            <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Excel"  (click)="generateExcel()" 
+                            data-bs-original-title="List" aria-label=""><i
+                                class="fas fa-file-excel"></i></a>
+
+                   
+                                <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Export load data sheet" (click)="exportLoadSheet()"  
+                                data-bs-original-title="Export" aria-label=""><i
+                                    class="fas fa-file-export text-primary"></i></a>
+
+                                    <a *ngIf="rights?.importRight" class="" (click)="openModal()" type="button"  data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Import data" data-bs-original-title="Import" aria-label=""><i class="fas fa-file-download text-primary"></i></a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="card mb-2 bg-light">
+    <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1"
+        data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <form (ngSubmit)="onSubmit()" [formGroup]="jobtypeForm">
+                <div class="row">
+                    <div class="col-4">
+                        <fieldset class="form-group mb-0">
+                            <input type="text" formControlName="jobType" class="form-control form-small" placeholder="Maintenance Type" id="txt" noWhiteSpace appUppercase maxlength="100" required id="abc">
+                        </fieldset>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-check form-switch p-l-0">
+                            <label class="form-check-label text-bold-600" for="">JSA</label> &nbsp; &nbsp;
+                            <input class="form-check-input float-none m-l-0" id="" type="checkbox"
+                            [(ngModel)]="JSAToggle"  formControlName="jsa">
+                          </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-check form-switch p-l-0">
+                            <label class="form-check-label text-bold-600" for="">Postpone Allowed?</label> &nbsp; &nbsp;
+                            <input class="form-check-input float-none m-l-0" id="" type="checkbox"
+                            [(ngModel)]="postPoneToggle"  formControlName="isPostpone">
+                          </div>
+                    </div>
+                    <div class="col-md-2">
+                        <button *ngIf="rights?.ammendRight || this.fm.jobTypeId.value=='0'" type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top"  title="" data-bs-original-title="Save" aria-label=""  [disabled]="jobtypeForm.invalid || !jobtypeForm.dirty"><i
+                                class="fas fa-save"></i></button>
+                        <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" (click)="close()" 
+                            data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i
+                                class="fas fa-ban"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card mb-3">
+
+    <div class="card-body">
+        <div class="table-responsive scrollbar">
+            <mat-table #table [dataSource]="dataSource" matSort
+                class="table table-hover table-striped table-sm small table-bordered">
+                <ng-container matColumnDef="checkbox">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                        <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()">
+                    </mat-checkbox>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
+                            [aria-label]="checkboxLabel(row)"></mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="jobType">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Maintenance Type</mat-header-cell>
+                    <mat-cell *matCellDef="let row">                   
+                        <a (click)="Updatedata(row.jobTypeId)"   class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse1" type="button"  aria-expanded="true" aria-controls="collapse1"  title={{row.jobType}}> 
+                        {{row.jobType}}</a>
+                        
+                    </mat-cell>
+                </ng-container>             
+                <ng-container matColumnDef="jsa">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Job Safety Analysis (JSA)</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                       {{row.jsa==true?'Yes':'No'}}
+                    </mat-cell>
+                </ng-container> 
+                <ng-container matColumnDef="isPostpone">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Postpone Allowed?</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                       {{row.isPostpone==true?'Yes':'No'}}
+                    </mat-cell>
+                </ng-container> 
+
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.jobTypeId==selectedIndex))}" ></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
+            [pageSizeOptions]="[20, 40, 60, 100]">
+          </mat-paginator>
+        </div>
+    </div>
+</div>
