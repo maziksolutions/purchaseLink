@@ -7,7 +7,7 @@ const routes: Routes = [
   {
      path: '', component: SiteLayoutComponent,
 children:[
-  {path: 'order-type',component: OrdertypeComponent,pathMatch:'full'},
+  {path: 'order-type',component: OrdertypeComponent,pathMatch:'full'}, 
  
 ]}
 ];
