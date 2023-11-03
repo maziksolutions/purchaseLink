@@ -19,7 +19,6 @@ export class PurchaseMasterService {
   constructor(private httpClient: HttpClient) { }
 
   //#region Maintenance Type Master
-
 //Get Maintenance Type data
 getServiceCategories(status): Observable<any> {  
   return this.httpClient.get<any[]>(`${this.linkurl}filterServiceCategory/${status}`, httpOptions);
@@ -55,6 +54,26 @@ archiveOrderType(jobType: any[]): Observable < string > {
   return this.httpClient.post<string> (`${this.linkurl}archiveOrderType/`, jobType, httpOptions);  
 }  
 //#endregion
+
+  //#region Service Type Master
+//Get Maintenance Type data
+getServicetypes(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}filtervendorServiceType/${status}`, httpOptions);
+}
+getServiceTypeById(id):Observable<any>{  
+  return  this.httpClient.get<any>(this.linkurl + 'getServiceTypebyid/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
+// Add New unit
+addServiceType(formData): Observable<any> {
+  return this.httpClient.post<any>(this.linkurl + 'addvendorservicetype', formData)
+  .pipe(catchError(this.handleError));
+}
+archiveServiceType(jobType: any[]): Observable < string > {   
+  return this.httpClient.post<string> (`${this.linkurl}deleteServiceType/`, jobType, httpOptions);  
+}  
+//#endregion Service Type Master
+
 
 private handleError(error: HttpErrorResponse) {
   if (error.error instanceof ErrorEvent) {
