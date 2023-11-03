@@ -9,6 +9,7 @@ import { OrdertypeComponent } from './ordertype/ordertype.component';
 import { MaterialQualityComponent } from './material-quality/material-quality.component';
 import { ServicetypeComponent } from './servicetype/servicetype.component';
 import { ServiceCategoryComponent } from './service-category/service-category.component';
+import { ProjectnameComponent } from './projectname/projectname.component';
 
 
 
@@ -17,7 +18,8 @@ import { ServiceCategoryComponent } from './service-category/service-category.co
   declarations: [       
   
     OrdertypeComponent, ServicetypeComponent,
-     ServiceCategoryComponent,MaterialQualityComponent
+     ServiceCategoryComponent,MaterialQualityComponent,
+     ProjectnameComponent
   ],
   imports: [
     CommonModule,  FormsModule,HttpClientModule,AppMaterialModule,
