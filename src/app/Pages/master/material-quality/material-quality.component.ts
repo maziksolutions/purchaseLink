@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
 import { RightsModel } from '../../Models/page-rights';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
+import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
 declare let Swal,$, PerfectScrollbar: any;
 @Component({
   selector: 'app-material-quality',
@@ -24,58 +25,48 @@ declare let Swal,$, PerfectScrollbar: any;
 })
 export class MaterialQualityComponent implements OnInit {
 
-  @ViewChild('searchInput') searchInput: ElementRef;
-  materialqualityForm: FormGroup; flag; pkey: number = 0;
-   displayedColumns: string[] = ['materialquality'];
+  materialqualitiesForm: FormGroup; flag; pkey: number = 0;
+  displayedColumns: string[] = ['checkbox','materialqualities'];
   dataSource = new MatTableDataSource<any>();
-  rights: RightsModel;
-  deletetooltip:any;
-  JSAToggle: boolean = false;
-  postPoneToggle: boolean = true;
   selection = new SelectionModel<any>(true, []);
+  rights:RightsModel;
+  @ViewChild('searchInput') searchInput: ElementRef;
+  deletetooltip:any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  selectedIndex: number;
-  constructor(private fb: FormBuilder, public dialog: MatDialog,
-    private exportExcelService: ExportExcelService,
-    private unitmasterService: UnitmasterService, private swal: SwalToastService,
-    private router: Router, private userManagementService: UserManagementService) { }
+  selectedIndex: any;
+  constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
+    private purchasemasterService: PurchaseMasterService, private swal: SwalToastService,
+    private router:Router,private userManagementService: UserManagementService) { }
 
-    ngOnDestroy()
-    {
-      $('#jobType').removeClass('active');  
-    }
   ngOnInit(): void {
-    this.selectedIndex=0;
-    this.postPoneToggle=true;
-    $('#jobType').addClass('active');  
-    this.materialqualityForm = this.fb.group({
+    this.materialqualitiesForm = this.fb.group({
       materialQualityId: [0],
       materialQualities: ['', [Validators.required]],
-
     });
+    //this.servicetypeForm.controls.directCompletion.setValue('');
     // this.loadRights();
     this.loadData(0);
   }
-  get fm() { return this.materialqualityForm.controls };
+  get fm() { return this.materialqualitiesForm.controls };
 
-  loadRights() {
-    this.userManagementService.checkAccessRight(unitMasterNavEnum.jobType).subscribe((response) => {
-      if (response.status) {
-        this.rights = response.data;
-      } else {
-        this.rights = new RightsModel();
-        this.rights.addRight = this.rights.ammendRight = this.rights.deleteRight = this.rights.importRight = this.rights.viewRight = false;
-      }
-      if (!this.rights.viewRight) {
-        alert('you have no view right')
-        this.router.navigate(['welcome']);
-      }
-    }, (error) => {
-      console.log(error);
+  loadRights(){
+    this.userManagementService.checkAccessRight(unitMasterNavEnum.jobGroup).subscribe((response)=>{
+if(response.status){
+this.rights=response.data;
+}else{
+  this.rights=new RightsModel(); 
+  this.rights.addRight=this.rights.ammendRight=this.rights.deleteRight=this.rights.importRight=this.rights.viewRight=false;
+}
+if(!this.rights.viewRight){
+  alert('you have no view right')
+  this.router.navigate(['welcome']);
+}
+    },(error)=>{
+console.log(error);
     })
-  }
-  
+  } 
+
   loadData(status: number) {
     if (status == 1) {
       this.deletetooltip ='UnArchive';
@@ -91,28 +82,23 @@ export class MaterialQualityComponent implements OnInit {
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
-
-    this.unitmasterService.getJobTypes(status)
+    this.purchasemasterService.getmaterialquality(status)
       .subscribe(response => {
         this.flag = status;
         this.dataSource.data = response.data;
-        setTimeout(() => this.dataSource.sort = this.sort);       
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.clear();
           (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
   }
-  onSubmit() {
-    const formData = new FormData();
-    formData.append('data', JSON.stringify(this.materialqualityForm.value));
-    this.unitmasterService.addJobType(formData)
+  onSubmit(form: any) {
+    this.purchasemasterService.addmaterialquality(form.value)
       .subscribe(data => {
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
           this.clear();
           this.loadData(0);
-
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
@@ -129,26 +115,25 @@ export class MaterialQualityComponent implements OnInit {
         }
         else {
 
-        }
-
+        }        
       });
   }
-  // Updatedata(id) {
-  //   this.selectedIndex=id;
-  //   (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
-  //   (document.getElementById('collapse1') as HTMLElement).classList.add("show");
-  //   this.unitmasterService.getJobTypeById(id)
-  //     .subscribe((response) => {
-  //       if (response.status) {
-  //         this.jobtypeForm.patchValue(response.data);
-  //         this.pkey = response.data.jobTypeId;
+  Updatedata(id) {
+    this.selectedIndex=id;
+    (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
+    (document.getElementById('collapse1') as HTMLElement).classList.add("show");
+    this.purchasemasterService.getmaterialqualityId(id)
+      .subscribe((response) => {
+        if (response.status) {
+          this.materialqualitiesForm.patchValue(response.data);
+          this.pkey = response.data.materialQualityId;
 
-  //       }
-  //     },
-  //       (error) => {
+        }
+      },
+        (error) => {
 
-  //       });
-  // }
+        });
+  }
   DeleteData() {
     var message = ""
     var title = "";
@@ -164,6 +149,7 @@ export class MaterialQualityComponent implements OnInit {
     }
     const numSelected = this.selection.selected;
     if (numSelected.length > 0) {
+
       Swal.fire({
         title: 'Are you sure?',
         text: title,
@@ -173,17 +159,17 @@ export class MaterialQualityComponent implements OnInit {
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value) {
-          this.unitmasterService.archiveJobType(numSelected).subscribe(result => {
+          this.purchasemasterService.archivematerialquality(numSelected).subscribe(result => {
             this.selection.clear();
             this.swal.success(message);
             this.loadData(this.flag);
           })
 
-
         }
       })
+
     } else {
-      this.swal.info('Select at least one row');
+      this.swal.info('Select at least one row')
     }
   }
   applyFilter(filterValue: string) {
@@ -196,16 +182,17 @@ export class MaterialQualityComponent implements OnInit {
     this.applyFilter(this.searchInput.nativeElement.value)
  }
   isAllSelected() {
+    console.log(this.dataSource)
     const numSelected = this.selection.selected.length;
     const numRows = !!this.dataSource && this.dataSource.data.length;
     return numSelected === numRows;
   }
   masterToggle() {
+
     this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
   }
   /** The label for the checkbox on the passed row */
   checkboxLabel(row: any): string {
-    //console.log(row);
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
@@ -213,10 +200,10 @@ export class MaterialQualityComponent implements OnInit {
   }
 
   clear() {
-    this.materialqualityForm.reset();
-    this.postPoneToggle=true;
-    // this.jobtypeForm.controls.isPostpone.setValue(true);
-    this.materialqualityForm.controls.jobTypeId.setValue(0);
+    this.materialqualitiesForm.reset();
+    this.materialqualitiesForm.controls.materialQualityId.setValue(0);
+    this.materialqualitiesForm.controls.materialQualities.setValue('');    
+
     (document.getElementById('abc') as HTMLElement).focus();
   }
   // export excel
@@ -228,10 +215,10 @@ export class MaterialQualityComponent implements OnInit {
   }
   exportAsXLSX(data: any[]): void {
     data.forEach((item) => {
-      delete item.jobTypeId,
+      delete item.materialQualityId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
     })
-    this.exportExcelService.exportAsExcelFile(data, 'Maintenance Type', 'Maintenance Type');
+    this.exportExcelService.exportAsExcelFile(data, 'Material Quality', 'Material Quality');
   }
 
   exportLoadSheet() {
@@ -240,36 +227,33 @@ export class MaterialQualityComponent implements OnInit {
     if (numSelected.length > 0) {
       data = numSelected;
       data.forEach((item) => {
-        delete item.jobTypeId,
+        delete item.materialQualityId,
           delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
       })
     }
-    else {
-      data = [{ jobType: '',jsa: ''}];
-    }
-    this.exportExcelService.LoadSheet(data, 'JobTypeLoadSheet', 'Maintenance Type Load Sheet',1);
+    else
+      data = [{ jobGroup: '', directCompletion : '' }];
+    this.exportExcelService.LoadSheet(data, 'MaterialQualitySheet', 'Material Quality Load Sheet',2);
   }
 
   close() {
-    this.materialqualityForm.reset();
-    this.materialqualityForm.controls.jobTypeId.setValue(0);
-    this.postPoneToggle=true;
+    this.materialqualitiesForm.reset();
+    this.materialqualitiesForm.controls.materialQualityId.setValue(0);
     (document.getElementById('collapse1') as HTMLElement).classList.add("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
   }
 
-
-  //Open Modal Pop-up to Importdata
-  openModal() {
-    const dialogRef = this.dialog.open(ImportDataComponent, {
-      width: '500px',
-      data: { modalTitle: "Import Maintenance Type Master", tablename: "tblJobType", columname: "JobType" },
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === 'success') {
-        this.loadData(this.flag);
-      }
-    });
-  } 
+    //Open Modal Pop-up to Importdata
+    openModal() {   
+      const dialogRef = this.dialog.open(ImportDataComponent, {
+        width: '500px',
+        data:{modalTitle: "Import Maintenance Group Master",tablename:"tblJobGroup",columname:"JobGroup"},
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result === 'success') {
+          this.loadData(this.flag);
+        }
+      });
+    }    
 
 }

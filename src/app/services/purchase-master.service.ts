@@ -58,6 +58,27 @@ archiveServiceType(jobType: any[]): Observable < string > {
 //#endregion Service Type Master
 
 
+
+//#region  materialquality
+
+getmaterialquality(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}filterMaterialQuality/${status}`, httpOptions);
+}
+getmaterialqualityId(id):Observable<any>{  
+  return  this.httpClient.get<any>(this.linkurl + 'getMaterialQualitybyid/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
+// Add New unit
+addmaterialquality(formData): Observable<any> {
+  return this.httpClient.post<any>(this.linkurl + 'addMaterialQuality', formData)
+  .pipe(catchError(this.handleError));
+}
+archivematerialquality(jobType: any[]): Observable < string > {   
+  return this.httpClient.post<string> (`${this.linkurl}deleteMaterialType/`, jobType, httpOptions);  
+}  
+
+
+//#endregion
 private handleError(error: HttpErrorResponse) {
   if (error.error instanceof ErrorEvent) {
     console.error('An error occurred:', error.error.message);
