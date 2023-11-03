@@ -7,11 +7,17 @@ import { AppMaterialModule } from '../../app.material.module';
 import { DirectivesModule } from 'src/app/directives.module';
 import { OrdertypeComponent } from './ordertype/ordertype.component';
 import { MaterialQualityComponent } from './material-quality/material-quality.component';
+import { ServicetypeComponent } from './servicetype/servicetype.component';
+import { ServiceCategoryComponent } from './service-category/service-category.component';
+
+
+
 
 @NgModule({
-  declarations: [    
-
-    OrdertypeComponent , MaterialQualityComponent
+  declarations: [       
+  
+    OrdertypeComponent, ServicetypeComponent,
+     ServiceCategoryComponent,MaterialQualityComponent
   ],
   imports: [
     CommonModule,  FormsModule,HttpClientModule,AppMaterialModule,
