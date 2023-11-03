@@ -54,7 +54,7 @@
     <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1"
         data-bs-parent="#accordionExample">
         <div class="accordion-body">
-            <form (ngSubmit)="onSubmit(servicetypeForm)" [formGroup]="servicetypeForm">
+            <form (ngSubmit)="onSubmit(projectnameForm)" [formGroup]="projectnameForm">
                 <div class="row">
                     <div class="col-4">
                         <fieldset class="form-group mb-0">                           
@@ -69,7 +69,7 @@
                         </fieldset>
                       </div>
                     <div class="col-md-2">
-                        <button *ngIf="rights?.ammendRight || this.fm.serviceTypeId.value=='0'"type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="servicetypeForm.invalid  || !servicetypeForm.dirty"><i
+                        <button *ngIf="rights?.ammendRight || this.fm.serviceTypeId.value=='0'"type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="projectnameForm.invalid  || !projectnameForm.dirty"><i
                                 class="fas fa-save"></i></button>
                         <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" (click)="close()" 
                             data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i
@@ -101,7 +101,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="servicetype">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Service Type</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Maintenance Group</mat-header-cell>
                     <mat-cell *matCellDef="let row">                       
                         <a (click)="Updatedata(row.serviceTypeId)"  class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1" title={{row.serviceType}}> {{row.serviceType}}</a>
@@ -109,7 +109,7 @@
                     </mat-cell>
                 </ng-container>  
                 <ng-container matColumnDef="description">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Direct Maintenance Completion</mat-header-cell>
                 <mat-cell *matCellDef="let row" title={{row.description}}>
                    <span> {{row.description}}   </span> 
                 </mat-cell>   
