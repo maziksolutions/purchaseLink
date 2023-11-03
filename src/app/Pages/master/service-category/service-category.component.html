@@ -28,11 +28,11 @@
                         data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()" data-bs-original-title="Search" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
                     <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
-                    <a *ngIf="rights?.addRight" class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse" (click)="clear()"
+                    <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse" (click)="clear()"
                         data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1"><i
                             class="fas fa-plus text-primary"></i></a>
 
-                    <a *ngIf="rights?.deleteRight" class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
+                    <a  class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
                         data-bs-placement="top" matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""><i
                             class="fas fa-trash text-danger"></i></a>
 
@@ -44,7 +44,7 @@
                         data-bs-original-title="Export" aria-label=""><i
                             class="fas fa-file-export text-primary"></i></a>
 
-                            <a *ngIf="rights?.importRight" class="" (click)="openModal()" type="button"  data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Import data" data-bs-original-title="Import" aria-label=""><i class="fas fa-file-download text-primary"></i></a>
+                            <a class="" (click)="openModal()" type="button"  data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Import data" data-bs-original-title="Import" aria-label=""><i class="fas fa-file-download text-primary"></i></a>
 
                 </div>
             </div>
@@ -56,25 +56,21 @@
     <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1"
         data-bs-parent="#accordionExample">
         <div class="accordion-body">
-            <form (ngSubmit)="onSubmit(jobGroupForm)" [formGroup]="jobGroupForm">
+            <form (ngSubmit)="onSubmit(serviceForm)" [formGroup]="serviceForm">
                 <div class="row">
                     <div class="col-4">
                         <fieldset class="form-group mb-0">                           
-                            <input type="text" formControlName="jobGroup" class="form-control form-small" id="abc"
-                                placeholder="Maintenance Group" appUppercase maxlength="100" required noWhiteSpace>
+                            <input type="text" formControlName="serviceCategory" class="form-control form-small" id="abc"
+                                placeholder="Service Category" maxlength="100" required noWhiteSpace>
                         </fieldset>
                     </div>
-                    <div class="col-sm">
-                        <fieldset class="form-group mb-0">
-                          <select class="form-control form-small form-select" id="basicSelect" formControlName="directCompletion" required>
-                            <option value="" disabled>Direct Maintenance Completion</option>
-                            <option value="YES">YES</option>
-                            <option value="NO" selected>NO</option>
-                          </select>
+                    <div class="col-4">
+                        <fieldset class="form-group mb-0">                           
+                            <input type="text" formControlName="description" class="form-control form-small" id="abc" placeholder="Description" maxlength="500" required noWhiteSpace>
                         </fieldset>
-                      </div>
+                    </div>
                     <div class="col-md-2">
-                        <button *ngIf="rights?.ammendRight || this.fm.jobGroupId.value=='0'"type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="jobGroupForm.invalid  || !jobGroupForm.dirty"><i
+                        <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="serviceForm.invalid  || !serviceForm.dirty"><i
                                 class="fas fa-save"></i></button>
                         <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" (click)="close()" 
                             data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i
@@ -105,22 +101,22 @@
                             [aria-label]="checkboxLabel(row)"></mat-checkbox>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="jobGroup">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Maintenance Group</mat-header-cell>
+                <ng-container matColumnDef="serviceCategory">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Service Category</mat-header-cell>
                     <mat-cell *matCellDef="let row">                       
-                        <a (click)="Updatedata(row.jobGroupId)"  class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1" title={{row.jobGroup}}> {{row.jobGroup}}</a>
+                        <a (click)="Updatedata(row.serviceCategoryId)"  class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1" title={{row.serviceCategory}}> <span>{{row.serviceCategory}}</span>  </a>
                     
                     </mat-cell>
                 </ng-container>  
-                <ng-container matColumnDef="directCompletion">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Direct Maintenance Completion</mat-header-cell>
-                <mat-cell *matCellDef="let row" title={{row.directCompletion}}>
-                   <span> {{row.directCompletion}}   </span> 
+                <ng-container matColumnDef="description">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+                <mat-cell *matCellDef="let row" title={{row.description}}>
+                   <span> {{row.description}}   </span> 
                 </mat-cell>   
             </ng-container>     
                 <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.jobGroupId==selectedIndex))}" ></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.serviceCategoryId==selectedIndex))}" ></mat-row>
               </mat-table>
               <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
                 [pageSizeOptions]="[20, 40, 60, 100]">

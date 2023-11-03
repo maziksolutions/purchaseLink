@@ -2,7 +2,7 @@
 
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UnitmasterService } from '../../../services/unitmaster.service';
+import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -30,7 +30,7 @@ declare var $: any;
 })
 export class ServiceCategoryComponent implements OnInit {
   serviceForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox', 'jobGroup','directCompletion'];
+  displayedColumns: string[] = ['checkbox', 'serviceCategory','description'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   rights:RightsModel;
@@ -40,7 +40,7 @@ export class ServiceCategoryComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   selectedIndex: any;
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
-    private unitmasterService: UnitmasterService, private swal: SwalToastService,
+    private purchaseService: PurchaseMasterService, private swal: SwalToastService,
     private router:Router,private userManagementService: UserManagementService) { }
 
   ngOnInit(): void {
@@ -88,7 +88,7 @@ export class ServiceCategoryComponent implements OnInit {
       }
     }
 
-    this.unitmasterService.getJobGroups(status)
+    this.purchaseService.getServiceCategories(status)
       .subscribe(response => {
         this.flag = status;
         this.dataSource.data = response.data;
@@ -99,7 +99,7 @@ export class ServiceCategoryComponent implements OnInit {
       });
   }
   onSubmit(form: any) {
-    this.unitmasterService.addJobGroup(form.value)
+    this.purchaseService.addServieCategory(form.value)
       .subscribe(data => {
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
@@ -129,12 +129,10 @@ export class ServiceCategoryComponent implements OnInit {
     this.selectedIndex=id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
-    this.unitmasterService.getJobGroupById(id)
+    this.purchaseService.getSCategoryById(id)
       .subscribe((response) => {
         if (response.status) {
-          this.serviceForm.patchValue(response.data);
-          this.pkey = response.data.jobGroupId;
-
+          this.serviceForm.patchValue(response.data);        
         }
       },
         (error) => {
@@ -166,7 +164,7 @@ export class ServiceCategoryComponent implements OnInit {
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value) {
-          this.unitmasterService.archiveJobGroup(numSelected).subscribe(result => {
+          this.purchaseService.archiveServiceCategory(numSelected).subscribe(result => {
             this.selection.clear();
             this.swal.success(message);
             this.loadData(this.flag);
@@ -207,8 +205,8 @@ export class ServiceCategoryComponent implements OnInit {
 
   clear() {
     this.serviceForm.reset();
-    this.serviceForm.controls.jobGroupId.setValue(0);
-    this.serviceForm.controls.directCompletion.setValue('');
+    this.serviceForm.controls.serviceCategoryId.setValue(0);
+    this.serviceForm.controls.description.setValue('');
     
     (document.getElementById('abc') as HTMLElement).focus();
   }
@@ -221,10 +219,10 @@ export class ServiceCategoryComponent implements OnInit {
   }
   exportAsXLSX(data: any[]): void {
     data.forEach((item) => {
-      delete item.jobGroupId,
+      delete item.serviceCategoryId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
     })
-    this.exportExcelService.exportAsExcelFile(data, 'Maintenance Group', 'Maintenance Group');
+    this.exportExcelService.exportAsExcelFile(data, 'Service Category', 'Service Category');
   }
 
   exportLoadSheet() {
@@ -233,18 +231,18 @@ export class ServiceCategoryComponent implements OnInit {
     if (numSelected.length > 0) {
       data = numSelected;
       data.forEach((item) => {
-        delete item.jobGroupId,
+        delete item.serviceCategoryId,
           delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
       })
     }
     else
-      data = [{ jobGroup: '', directCompletion : '' }];
-    this.exportExcelService.LoadSheet(data, 'JobGroupLoadSheet', 'Maintenance Group Load Sheet',2);
+      data = [{ serviceCategory: '', description : '' }];
+    this.exportExcelService.LoadSheet(data, 'ServiceCategoryLoadSheet', 'Service category Load Sheet',2);
   }
 
   close() {
     this.serviceForm.reset();
-    this.serviceForm.controls.jobGroupId.setValue(0);
+    this.serviceForm.controls.serviceCategoryId.setValue(0);
     (document.getElementById('collapse1') as HTMLElement).classList.add("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
   }
@@ -253,7 +251,7 @@ export class ServiceCategoryComponent implements OnInit {
     openModal() {   
       const dialogRef = this.dialog.open(ImportDataComponent, {
         width: '500px',
-        data:{modalTitle: "Import Maintenance Group Master",tablename:"tblJobGroup",columname:"JobGroup"},
+        data:{modalTitle: "Import Service Categories",tablename:"tblPMVendorServiceCategories",columname:"serviceCategory"},
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result === 'success') {
