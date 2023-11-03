@@ -29,60 +29,68 @@ declare var $: any;
 export class OrdertypeComponent implements OnInit {
 
   orderForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox', 'orderTypes','description'];
+  displayedColumns: string[] = ['checkbox', 'orderTypes', 'defaultOrderType','serviceType','abbreviation'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
-  rights:RightsModel;
+  rights: RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
-  deletetooltip:any;
+  deletetooltip: any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   selectedIndex: any;
+  serviceTypes: any;
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
     private purchaseService: PurchaseMasterService, private swal: SwalToastService,
-    private router:Router,private userManagementService: UserManagementService) { }
+    private router: Router, private userManagementService: UserManagementService) { }
 
   ngOnInit(): void {
     this.orderForm = this.fb.group({
       orderTypeId: [0],
       orderTypes: ['', [Validators.required]],
-      defaultOrderType:['', [Validators.required]],
-      serviceTypeId:['', [Validators.required]],
-      abbreviation:['', [Validators.required]]
+      defaultOrderType: ['', [Validators.required]],
+      serviceTypeId: [''],
+      abbreviation: ['', [Validators.required]]
     });
     //this.orderForm.controls.directCompletion.setValue('');
     //this.loadRights();
+    this.LoadServiceType();
     this.loadData(0);
   }
   get fm() { return this.orderForm.controls };
 
-//   loadRights(){
-//     this.userManagementService.checkAccessRight(unitMasterNavEnum.jobGroup).subscribe((response)=>{
-// if(response.status){
-// this.rights=response.data;
-// }else{
-//   this.rights=new RightsModel(); 
-//   this.rights.addRight=this.rights.ammendRight=this.rights.deleteRight=this.rights.importRight=this.rights.viewRight=false;
-// }
-// if(!this.rights.viewRight){
-//   alert('you have no view right')
-//   this.router.navigate(['welcome']);
-// }
-//     },(error)=>{
-// console.log(error);
-//     })
-//   } 
+  //   loadRights(){
+  //     this.userManagementService.checkAccessRight(unitMasterNavEnum.jobGroup).subscribe((response)=>{
+  // if(response.status){
+  // this.rights=response.data;
+  // }else{
+  //   this.rights=new RightsModel(); 
+  //   this.rights.addRight=this.rights.ammendRight=this.rights.deleteRight=this.rights.importRight=this.rights.viewRight=false;
+  // }
+  // if(!this.rights.viewRight){
+  //   alert('you have no view right')
+  //   this.router.navigate(['welcome']);
+  // }
+  //     },(error)=>{
+  // console.log(error);
+  //     })
+  //   } 
 
+  LoadServiceType() {
+    this.purchaseService.getServicetypes(0)
+      .subscribe(response => {
+        this.serviceTypes = response.data;
+      })
+  }
   loadData(status: number) {
     if (status == 1) {
-      this.deletetooltip ='UnArchive';
+      this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
         (document.querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
         (document.querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
       }
     }
     else {
-      this.deletetooltip='Archive';
+      this.deletetooltip = 'Archive';
       if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
@@ -96,7 +104,7 @@ export class OrdertypeComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.clear();
-          (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+        (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
   }
   onSubmit(form: any) {
@@ -123,17 +131,17 @@ export class OrdertypeComponent implements OnInit {
         else {
 
         }
-        
+
       });
   }
   Updatedata(id) {
-    this.selectedIndex=id;
+    this.selectedIndex = id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
     this.purchaseService.getOrderTypeById(id)
       .subscribe((response) => {
         if (response.status) {
-          this.orderForm.patchValue(response.data);        
+          this.orderForm.patchValue(response.data);
         }
       },
         (error) => {
@@ -183,10 +191,10 @@ export class OrdertypeComponent implements OnInit {
     filterValue = filterValue.toLowerCase();
     this.dataSource.filter = filterValue;
   }
-  clearSearchInput(){
-    this.searchInput.nativeElement.value ='';
+  clearSearchInput() {
+    this.searchInput.nativeElement.value = '';
     this.applyFilter(this.searchInput.nativeElement.value)
- }
+  }
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = !!this.dataSource && this.dataSource.data.length;
@@ -207,8 +215,8 @@ export class OrdertypeComponent implements OnInit {
   clear() {
     this.orderForm.reset();
     this.orderForm.controls.orderTypeId.setValue(0);
-    this.orderForm.controls.description.setValue('');
-    
+    this.orderForm.controls.serviceTypeId.setValue('');
+
     (document.getElementById('abc') as HTMLElement).focus();
   }
   // export excel
@@ -223,7 +231,7 @@ export class OrdertypeComponent implements OnInit {
       delete item.orderTypeId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
     })
-    this.exportExcelService.exportAsExcelFile(data, 'Service Category', 'Service Category');
+    this.exportExcelService.exportAsExcelFile(data, 'Order Type', 'Order Type');
   }
 
   exportLoadSheet() {
@@ -237,8 +245,8 @@ export class OrdertypeComponent implements OnInit {
       })
     }
     else
-      data = [{ orderTypes: '', description : '' }];
-    this.exportExcelService.LoadSheet(data, 'OrderTypeLoadSheet', 'Service category Load Sheet',2);
+      data = [{ orderTypes: '', description: '' }];
+    this.exportExcelService.LoadSheet(data, 'OrderTypeLoadSheet', 'Order Type Load Sheet', 2);
   }
 
   close() {
@@ -248,17 +256,17 @@ export class OrdertypeComponent implements OnInit {
     (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
   }
 
-    //Open Modal Pop-up to Importdata
-    openModal() {   
-      const dialogRef = this.dialog.open(ImportDataComponent, {
-        width: '500px',
-        data:{modalTitle: "Import Order Types",tablename:"tblPMOrderTypes",columname:"orderTypes"},
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result === 'success') {
-          this.loadData(this.flag);
-        }
-      });
-    }    
+  //Open Modal Pop-up to Importdata
+  openModal() {
+    const dialogRef = this.dialog.open(ImportDataComponent, {
+      width: '500px',
+      data: { modalTitle: "Import Order Types", tablename: "tblPMOrderTypes", columname: "orderTypes" },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'success') {
+        this.loadData(this.flag);
+      }
+    });
+  }
 }
 

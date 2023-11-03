@@ -5,8 +5,7 @@
             <div class="col-lg-3">            
                 <h5 class="mb-0">Order Type</h5>
                 <span class="btn-sm ps-0 text-primary fw-bold">Master<span
-                        class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Register<span
-                            class="fas fa-chevron-right ms-1 fs--2"></span></span> &nbsp;<span class="btn-sm p-0"><b>Order Type</b></span>
+                        class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0"><b>Order Type</b></span>
             </div>
             <div class="col-lg-9">
                 <div class="form-inline float-end mt-2">                 
@@ -63,7 +62,7 @@
                 <div class="row">
                     <div class="col-sm">
                         <fieldset class="form-group mb-0">                           
-                            <input type="text" formControlName="orderForm" class="form-control form-small" id="abc"
+                            <input type="text" formControlName="orderTypes" class="form-control form-small" id="abc"
                                 placeholder="Order Type" maxlength="100" required noWhiteSpace>
                         </fieldset>
                     </div>                   
@@ -79,12 +78,11 @@
                       </div>
 
                       <div class="col">
-                        <fieldset class="form-group mb-0">
-                          <label for="" class="m-b-5">Service Type</label>
-                          <select class="form-control form-small form-select" formControlName="componentTypeId">
+                        <fieldset class="form-group mb-0">                     
+                          <select class="form-control form-small form-select" formControlName="serviceTypeId">
                             <option value="" disabled>Select Service</option>
-                            <option *ngFor="let item of componentTypes" value="{{item.componentTypeId}}">
-                              {{item.componentType | titlecase}}
+                            <option *ngFor="let item of serviceTypes" value="{{item.serviceTypeId}}">
+                              {{item.serviceType | titlecase}}
                             </option>
                           </select>
                         </fieldset>
@@ -138,12 +136,31 @@
                     
                     </mat-cell>
                 </ng-container>  
-                <ng-container matColumnDef="description">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
-                <mat-cell *matCellDef="let row" title={{row.description}}>
-                   <span> {{row.description}}   </span> 
+                <ng-container matColumnDef="defaultOrderType">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Default Order Type</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                   <span> {{row.defaultOrderType}}   </span> 
                 </mat-cell>   
-            </ng-container>     
+            </ng-container>   
+            
+            
+            <ng-container matColumnDef="serviceType">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Service Type</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                   <span> {{row.pmVendorServiceType?.serviceType}}   </span> 
+                </mat-cell>   
+            </ng-container>  
+
+            <ng-container matColumnDef="abbreviation">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Abbreviation</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.abbreviation}}
+                </mat-cell>   
+            </ng-container>  
+
+
+
+
+
                 <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.orderTypeId==selectedIndex))}" ></mat-row>
               </mat-table>
