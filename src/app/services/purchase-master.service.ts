@@ -37,6 +37,23 @@ archiveServiceCategory(jobType: any[]): Observable < string > {
 }  
 //#endregion
 
+//Get Maintenance Type data
+getOrderTypes(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}filterOrderType/${status}`, httpOptions);
+}
+getOrderTypeById(id):Observable<any>{  
+  return  this.httpClient.get<any>(this.linkurl + 'getOrderTypeById/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
+// Add New unit
+addOrderType(formData): Observable<any> {
+  return this.httpClient.post<any>(this.linkurl + 'addOrderType', formData)
+  .pipe(catchError(this.handleError));
+}
+archiveOrderType(jobType: any[]): Observable < string > {   
+  return this.httpClient.post<string> (`${this.linkurl}archiveOrderType/`, jobType, httpOptions);  
+}  
+//#endregion
 
   //#region Service Type Master
 //Get Maintenance Type data
