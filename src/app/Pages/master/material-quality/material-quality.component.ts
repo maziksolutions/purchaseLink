@@ -45,7 +45,7 @@ export class MaterialQualityComponent implements OnInit {
       materialQualities: ['', [Validators.required]],
     });
     //this.servicetypeForm.controls.directCompletion.setValue('');
-    // this.loadRights();
+  //  this.loadRights();
     this.loadData(0);
   }
   get fm() { return this.materialqualitiesForm.controls };
@@ -119,6 +119,7 @@ console.log(error);
       });
   }
   Updatedata(id) {
+
     this.selectedIndex=id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
@@ -232,7 +233,7 @@ console.log(error);
       })
     }
     else
-      data = [{ jobGroup: '', directCompletion : '' }];
+      data = { materialQuality: '' };
     this.exportExcelService.LoadSheet(data, 'MaterialQualitySheet', 'Material Quality Load Sheet',2);
   }
 
