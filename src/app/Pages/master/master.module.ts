@@ -9,18 +9,23 @@ import { OrdertypeComponent } from './ordertype/ordertype.component';
 import { ServicetypeComponent } from './servicetype/servicetype.component';
 import { ServiceCategoryComponent } from './service-category/service-category.component';
 import { ProjectnameComponent } from './projectname/projectname.component';
+import { PriorityComponent } from './priority/priority.component';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+
 
 @NgModule({
   declarations: [       
   
     OrdertypeComponent, ServicetypeComponent,
      ServiceCategoryComponent,
-     ProjectnameComponent
+     ProjectnameComponent,
+     PriorityComponent,
   ],
   imports: [
     CommonModule,  FormsModule,HttpClientModule,AppMaterialModule,
     ReactiveFormsModule,
-    MasterRoutingModule,DirectivesModule,CommonModule
+    MasterRoutingModule,DirectivesModule,CommonModule,
+    NgMultiSelectDropDownModule.forRoot() 
   ]
 })
 export class MasterModule { }
