@@ -6,11 +6,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppMaterialModule } from '../../app.material.module';
 import { DirectivesModule } from 'src/app/directives.module';
 import { OrdertypeComponent } from './ordertype/ordertype.component';
+import { MaterialQualityComponent } from './material-quality/material-quality.component';
 import { ServicetypeComponent } from './servicetype/servicetype.component';
 import { ServiceCategoryComponent } from './service-category/service-category.component';
 import { ProjectnameComponent } from './projectname/projectname.component';
 import { PriorityComponent } from './priority/priority.component';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+
+
+
 
 
 @NgModule({
@@ -20,6 +24,8 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
      ServiceCategoryComponent,
      ProjectnameComponent,
      PriorityComponent,
+     ServiceCategoryComponent,MaterialQualityComponent,
+     ProjectnameComponent
   ],
   imports: [
     CommonModule,  FormsModule,HttpClientModule,AppMaterialModule,

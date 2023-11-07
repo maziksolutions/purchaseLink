@@ -64,7 +64,6 @@ getServiceTypeById(id):Observable<any>{
   return  this.httpClient.get<any>(this.linkurl + 'getServiceTypebyid/' + id,httpOptions)
   .pipe(catchError(this.handleError));
 }
-// Add New unit
 addServiceType(formData): Observable<any> {
   return this.httpClient.post<any>(this.linkurl + 'addvendorservicetype', formData)
   .pipe(catchError(this.handleError));
@@ -99,6 +98,45 @@ archiveServiceType(jobType: any[]): Observable < string > {
   }  
   //#endregion Priority Master
 
+
+
+//#region  materialquality
+
+getmaterialquality(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}filterMaterialQuality/${status}`, httpOptions);
+}
+getmaterialqualityId(id):Observable<any>{  
+  return  this.httpClient.get<any>(this.linkurl + 'getMaterialQualitybyid/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
+// Add New unit
+addmaterialquality(formData): Observable<any> {
+  return this.httpClient.post<any>(this.linkurl + 'addMaterialQuality', formData)
+  .pipe(catchError(this.handleError));
+}
+archivematerialquality(jobType: any[]): Observable < string > {   
+  return this.httpClient.post<string> (`${this.linkurl}deleteMaterialType/`, jobType, httpOptions);  
+}  
+
+
+//#endregion
+//#region Project Name / Code
+//Get Maintenance Type data
+getprojectname(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}filterprojectname/${status}`, httpOptions);
+}
+getProjectnameById(id):Observable<any>{  
+  return  this.httpClient.get<any>(this.linkurl + 'getprojectnamebyid/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
+addProjectname(formData): Observable<any> {
+  return this.httpClient.post<any>(this.linkurl + 'addprojectname', formData)
+  .pipe(catchError(this.handleError));
+}
+archiveProjectname(jobType: any[]): Observable < string > {   
+  return this.httpClient.post<string> (`${this.linkurl}archiveProjectNameCodeGroup/`, jobType, httpOptions);  
+}  
+//#endregion Project Name / Code
 
 private handleError(error: HttpErrorResponse) {
   if (error.error instanceof ErrorEvent) {

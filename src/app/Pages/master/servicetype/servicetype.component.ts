@@ -46,7 +46,7 @@ export class ServicetypeComponent implements OnInit {
       description:['', [Validators.required]]
     });
     //this.servicetypeForm.controls.directCompletion.setValue('');
-    this.loadRights();
+    // this.loadRights();
     this.loadData(0);
   }
   get fm() { return this.servicetypeForm.controls };

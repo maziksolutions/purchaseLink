@@ -1,34 +1,35 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { PurchaseMasterService } from '../../../services/purchase-master.service';
+import { UnitmasterService } from '../../../services/unitmaster.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { ImportDataComponent } from '../../common/import-data/import-data.component';
-declare let Swal, PerfectScrollbar: any;
-import {  SelectionModel} from '@angular/cdk/collections';
+import {SelectionModel} from '@angular/cdk/collections';
 import { ViewChild } from '@angular/core';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
-import { SwalToastService } from 'src/app/services/swal-toast.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ImportDataComponent } from '../../common/import-data/import-data.component';
 import { UserManagementService } from 'src/app/services/user-management.service';
 import { Router } from '@angular/router';
-import { RightsModel } from '../../Models/page-rights';
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
-declare var $: any;
-
+import { RightsModel } from '../../Models/page-rights';
+import { SwalToastService } from 'src/app/services/swal-toast.service';
+import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
+declare let Swal,$, PerfectScrollbar: any;
 @Component({
-  selector: 'app-projectname',
-  templateUrl: './projectname.component.html',
-  styleUrls: ['./projectname.component.css']
+  selector: 'app-material-quality',
+  templateUrl: './material-quality.component.html',
+  styleUrls: ['./material-quality.component.css']
 })
-export class ProjectnameComponent implements OnInit {
-  projectnameForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox', 'projectname','projectcode','services','remarks'];
+export class MaterialQualityComponent implements OnInit {
+
+  materialqualitiesForm: FormGroup; flag; pkey: number = 0;
+  displayedColumns: string[] = ['checkbox','materialqualities'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
-  rights:RightsModel;  serviceTypes: any;
+  rights:RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
   deletetooltip:any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -39,25 +40,16 @@ export class ProjectnameComponent implements OnInit {
     private router:Router,private userManagementService: UserManagementService) { }
 
   ngOnInit(): void {
-    this.projectnameForm = this.fb.group({
-      projectNameId: [0],
-      projectName: ['', [Validators.required]],
-      projectCode:['', [Validators.required]],
-      serviceTypeId: [''],
-      remarks:['']
+    this.materialqualitiesForm = this.fb.group({
+      materialQualityId: [0],
+      materialQualities: ['', [Validators.required]],
     });
-    //this.projectnameForm.controls.directCompletion.setValue('');
-    this.LoadServiceType();
-    this.loadRights();
+    //this.servicetypeForm.controls.directCompletion.setValue('');
+  //  this.loadRights();
     this.loadData(0);
   }
-  get fm() { return this.projectnameForm.controls };
-  LoadServiceType() {
-    this.purchasemasterService.getServicetypes(0)
-      .subscribe(response => {
-        this.serviceTypes = response.data;
-      })
-  }
+  get fm() { return this.materialqualitiesForm.controls };
+
   loadRights(){
     this.userManagementService.checkAccessRight(unitMasterNavEnum.jobGroup).subscribe((response)=>{
 if(response.status){
@@ -90,9 +82,8 @@ console.log(error);
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
-    this.purchasemasterService.getprojectname(status)
+    this.purchasemasterService.getmaterialquality(status)
       .subscribe(response => {
-        console.log(response.data)
         this.flag = status;
         this.dataSource.data = response.data;
         this.dataSource.sort = this.sort;
@@ -102,8 +93,7 @@ console.log(error);
       });
   }
   onSubmit(form: any) {
-    console.log(form.value)
-    this.purchasemasterService.addProjectname(form.value)  
+    this.purchasemasterService.addmaterialquality(form.value)
       .subscribe(data => {
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
@@ -129,13 +119,16 @@ console.log(error);
       });
   }
   Updatedata(id) {
+
     this.selectedIndex=id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
-    this.purchasemasterService.getProjectnameById(id)
+    this.purchasemasterService.getmaterialqualityId(id)
       .subscribe((response) => {
         if (response.status) {
-          this.projectnameForm.patchValue(response.data);
+          this.materialqualitiesForm.patchValue(response.data);
+          this.pkey = response.data.materialQualityId;
+
         }
       },
         (error) => {
@@ -145,6 +138,7 @@ console.log(error);
   DeleteData() {
     var message = ""
     var title = "";
+
     if (this.flag == 1) {
       message = "Un-archived successfully.";
       title = "you want to un-archive data."
@@ -152,9 +146,11 @@ console.log(error);
     else {
       message = "Archived successfully.";
       title = "you want to archive data."
+
     }
     const numSelected = this.selection.selected;
     if (numSelected.length > 0) {
+
       Swal.fire({
         title: 'Are you sure?',
         text: title,
@@ -164,13 +160,15 @@ console.log(error);
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value) {
-          this.purchasemasterService.archiveProjectname(numSelected).subscribe(result => {
+          this.purchasemasterService.archivematerialquality(numSelected).subscribe(result => {
             this.selection.clear();
             this.swal.success(message);
             this.loadData(this.flag);
           })
+
         }
       })
+
     } else {
       this.swal.info('Select at least one row')
     }
@@ -185,16 +183,17 @@ console.log(error);
     this.applyFilter(this.searchInput.nativeElement.value)
  }
   isAllSelected() {
+    console.log(this.dataSource)
     const numSelected = this.selection.selected.length;
     const numRows = !!this.dataSource && this.dataSource.data.length;
     return numSelected === numRows;
   }
   masterToggle() {
+
     this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
   }
   /** The label for the checkbox on the passed row */
   checkboxLabel(row: any): string {
-    //console.log(row);
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
@@ -202,10 +201,10 @@ console.log(error);
   }
 
   clear() {
-    this.projectnameForm.reset();
-    this.projectnameForm.controls.projectNameId.setValue(0);
-    this.projectnameForm.controls.projectCode.setValue('');    
-    this.projectnameForm.controls.projectName.setValue('');    
+    this.materialqualitiesForm.reset();
+    this.materialqualitiesForm.controls.materialQualityId.setValue(0);
+    this.materialqualitiesForm.controls.materialQualities.setValue('');    
+
     (document.getElementById('abc') as HTMLElement).focus();
   }
   // export excel
@@ -217,10 +216,10 @@ console.log(error);
   }
   exportAsXLSX(data: any[]): void {
     data.forEach((item) => {
-      delete item.projectNameId,
+      delete item.materialQualityId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
     })
-    this.exportExcelService.exportAsExcelFile(data, 'Maintenance Group', 'Maintenance Group');
+    this.exportExcelService.exportAsExcelFile(data, 'Material Quality', 'Material Quality');
   }
 
   exportLoadSheet() {
@@ -229,18 +228,18 @@ console.log(error);
     if (numSelected.length > 0) {
       data = numSelected;
       data.forEach((item) => {
-        delete item.projectNameId,
+        delete item.materialQualityId,
           delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
       })
     }
     else
-      data = [{ jobGroup: '', directCompletion : '' }];
-    this.exportExcelService.LoadSheet(data, 'JobGroupLoadSheet', 'Maintenance Group Load Sheet',2);
+      data = { materialQuality: '' };
+    this.exportExcelService.LoadSheet(data, 'MaterialQualitySheet', 'Material Quality Load Sheet',2);
   }
 
   close() {
-    this.projectnameForm.reset();
-    this.projectnameForm.controls.projectNameId.setValue(0);
+    this.materialqualitiesForm.reset();
+    this.materialqualitiesForm.controls.materialQualityId.setValue(0);
     (document.getElementById('collapse1') as HTMLElement).classList.add("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
   }
@@ -257,4 +256,5 @@ console.log(error);
         }
       });
     }    
+
 }

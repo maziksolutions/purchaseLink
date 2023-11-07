@@ -3,10 +3,10 @@
     <div class="position-relative">
         <div class="row">
             <div class="col-lg-3">            
-                <h5 class="mb-0">Service Type</h5>
+                <h5 class="mb-0">MaterialQuality</h5>
                 <span class="btn-sm ps-0 text-primary fw-bold">Master<span
                         class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Register<span
-                            class="fas fa-chevron-right ms-1 fs--2"></span></span> &nbsp;<span class="btn-sm p-0"><b>Service Type</b></span>
+                            class="fas fa-chevron-right ms-1 fs--2"></span></span> &nbsp;<span class="btn-sm p-0"><b>Material Quality</b></span>
             </div>
             <div class="col-lg-9">
                 <div class="form-inline float-end mt-2">                   
@@ -26,11 +26,11 @@
                         data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()" data-bs-original-title="Search" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
                     <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
-                    <a *ngIf="rights?.addRight" class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse" (click)="clear()"
+                    <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse" (click)="clear()"
                         data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1"><i
                             class="fas fa-plus text-primary"></i></a>
 
-                    <a *ngIf="rights?.deleteRight" class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
+                    <a  class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
                         data-bs-placement="top" matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""><i
                             class="fas fa-trash text-danger"></i></a>
 
@@ -54,42 +54,24 @@
     <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1"
         data-bs-parent="#accordionExample">
         <div class="accordion-body">
-            <form (ngSubmit)="onSubmit(projectnameForm)" [formGroup]="projectnameForm">
+            <form (ngSubmit)="onSubmit(materialqualitiesForm)" [formGroup]="materialqualitiesForm">
                 <div class="row">
                     <div class="col-4">
                         <fieldset class="form-group mb-0">                           
-                            <input type="text" formControlName="projectName" class="form-control form-small" id="abc"
-                                placeholder="Project Name" appUppercase maxlength="100" required>
+                            <input type="text" formControlName="materialQualities" class="form-control form-small" id="abc"
+                                placeholder="Material Qualities" appUppercase maxlength="100" required noWhiteSpace>
                         </fieldset>
                     </div>
-                    <div class="col-sm">
-                        <fieldset class="form-group mb-0">
-                            <input type="text" formControlName="projectCode" class="form-control form-small" id="abc"
-                                placeholder="Project Code" appUppercase maxlength="100" required>
-                        </fieldset>
-                      </div>
-                      <div class="col-sm">
-                        <fieldset class="form-group mb-0">
-                                <select class="form-control form-small form-select" formControlName="serviceTypeId">
-                                    <option value="" disabled>Select Service</option>
-                                    <option *ngFor="let item of serviceTypes" value="{{item.serviceTypeId}}">
-                                      {{item.serviceType | titlecase}}
-                                    </option>
-                                  </select>
-                        </fieldset>
-                      </div>
-                      <div class="col-sm">
-                        <fieldset class="form-group mb-0">
-                            <input type="text" formControlName="remarks" class="form-control form-small" id="abc"
-                                placeholder="Service Type" appUppercase maxlength="100" required>
-                        </fieldset>
-                      </div>
+                
                     <div class="col-md-2">
-                        <button *ngIf="rights?.ammendRight || this.fm.projectNameId.value=='0'"type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="projectnameForm.invalid  || !projectnameForm.dirty"><i
-                                class="fas fa-save"></i></button>
-                        <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" (click)="close()" 
-                            data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i
-                                class="fas fa-ban"></i></button>
+                     
+                                <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="materialqualitiesForm.invalid  || !materialqualitiesForm.dirty"><i
+                                    class="fas fa-save"></i></button>
+                            <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" (click)="close()" 
+                                data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i
+                                    class="fas fa-ban"></i></button>
+
+
                     </div>
                 </div>
             </form>
@@ -97,6 +79,7 @@
     </div>
 </div>
 <div class="card mb-3">
+
     <div class="card-body">
         <div class="table-responsive scrollbar">
             <mat-table #table [dataSource]="dataSource" matSort
@@ -107,6 +90,7 @@
                         [checked]="selection.hasValue() && isAllSelected()"
                         [indeterminate]="selection.hasValue() && !isAllSelected()">
                     </mat-checkbox>
+
                     </mat-header-cell>
                     <mat-cell *matCellDef="let row">
                         <mat-checkbox (click)="$event.stopPropagation()"
@@ -114,38 +98,40 @@
                             [aria-label]="checkboxLabel(row)"></mat-checkbox>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="projectname">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>
-                        Project Name</mat-header-cell>
-                    <mat-cell *matCellDef="let row">                       
-                        <a (click)="Updatedata(row.projectNameId)"  class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1" title={{row.projectName}}> {{row.projectName}}</a>                    
-                    </mat-cell>
-                </ng-container>  
-                <ng-container matColumnDef="projectcode">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Project Code</mat-header-cell>
-                <mat-cell *matCellDef="let row" title={{row.projectCode}}>
-                   <span> {{row.projectCode}}   </span> 
-                </mat-cell>   
+            
+                <ng-container matColumnDef="materialqualities">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Material Quality</mat-header-cell>
+                <!-- <mat-cell *matCellDef="let row" title={{row.materialqualities}}>
+                   <span> {{row.materialQualities}}   </span> 
+                </mat-cell>    -->
+
+                <mat-cell *matCellDef="let row">                       
+                    <a (click)="Updatedata(row.materialQualityId)"  class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1" title={{row.materialQualities}}> <span>{{row.materialQualities}}</span>  </a>
+                
+                </mat-cell>
+
             </ng-container>     
-            <ng-container matColumnDef="services">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Services</mat-header-cell>
-                <mat-cell *matCellDef="let row" title={{row.pmVendorServiceType.serviceType}}>
-                   <span> {{row.pmVendorServiceType.serviceType}}   </span> 
-                </mat-cell>   
-            </ng-container>  
-            <ng-container matColumnDef="remarks">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Project Code</mat-header-cell>
-                <mat-cell *matCellDef="let row" title={{row.remarks}}>
-                   <span> {{row.remarks}}   </span> 
-                </mat-cell>   
-            </ng-container> 
                 <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.projectNameId==selectedIndex))}" ></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.materialQualityId==selectedIndex))}" ></mat-row>
               </mat-table>
               <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
                 [pageSizeOptions]="[20, 40, 60, 100]">
               </mat-paginator>
         </div>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </div>
