@@ -48,7 +48,7 @@ export class ProjectnameComponent implements OnInit {
     });
     //this.projectnameForm.controls.directCompletion.setValue('');
     this.LoadServiceType();
-    this.loadRights();
+    // this.loadRights();
     this.loadData(0);
   }
   get fm() { return this.projectnameForm.controls };
@@ -204,7 +204,8 @@ console.log(error);
   clear() {
     this.projectnameForm.reset();
     this.projectnameForm.controls.projectNameId.setValue(0);
-    this.projectnameForm.controls.projectCode.setValue('');    
+    this.projectnameForm.controls.projectCode.setValue(''); 
+    this.projectnameForm.controls.serviceTypeId.setValue('');     
     this.projectnameForm.controls.projectName.setValue('');    
     (document.getElementById('abc') as HTMLElement).focus();
   }
