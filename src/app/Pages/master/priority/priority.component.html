@@ -54,29 +54,16 @@
         data-bs-parent="#accordionExample">
         <div class="accordion-body">
             <form (ngSubmit)="onSubmit(PriorityForm)" [formGroup]="PriorityForm">
-                <div class="row">
-                    <div class="col-3">
+                <div class="row g-3 mb-2">
+                    <div class="col-sm-6">
                         <fieldset class="form-group mb-0">                           
                             <input type="text" formControlName="preferenceNumber" class="form-control form-small" id="abc"
-                                placeholder="Preference Number" appUppercase maxlength="100" required>
+                                placeholder="Preference Number *" appUppercase maxlength="100" required>
                         </fieldset>
-                    </div>
-                    <div class="col-sm">
-                        <fieldset class="form-group mb-0">
-                            <textarea rows="3" class="form-control" spellcheck="true" placeholder="Description" formControlName="description"
-                            maxlength="500"></textarea>
-                        </fieldset>
-                      </div>
-                      <div class="col">
+                    </div>                    
+                      <div class="col-sm-6">
                         <fieldset class="form-group mb-0">                     
-                          <!-- <select class="form-control form-small form-select" formControlName="orderTypeId">
-                            <option value="" disabled>Select OrderType</option>
-                            <option *ngFor="let item of orderTypes" value="{{item.orderTypeId}}">
-                              {{item.orderTypes | titlecase}}
-                            </option>
-                          </select> -->
-
-
+   
                           <ng-multiselect-dropdown placeholder="Select OrderType"
                           [data]="orderTypes" class="multiselect-dropdown"
                           [(ngModel)]="selectorderType" [settings]="dropdownOrderTypeSetting" (onSelect)="onOrderTypeSelect($event)" formControlName="orderTypeId"
@@ -91,19 +78,32 @@
 
                       </div>
 
-                      <div class="col-sm">
+                      
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-12">
+                        <fieldset class="form-group mb-0">
+                            <textarea rows="3" class="form-control" spellcheck="true" placeholder="Description *" formControlName="description"
+                            maxlength="500"></textarea>
+                        </fieldset>
+                      </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
                         <fieldset class="form-group mb-0">
                            
                             <mat-checkbox class="example-margin" [checked]="defchecked ? true : false" formControlName="defaultPriority">DefaultPriority</mat-checkbox>
                         </fieldset>
                       </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-6">
+                        <div class="float-end">
                         <button *ngIf="rights?.ammendRight || this.fm.serviceTypeId.value=='0'"type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="PriorityForm.invalid  || !PriorityForm.dirty"><i
                                 class="fas fa-save"></i></button>
-                        <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" (click)="close()" 
+                        <button type="button" class="btn btn-danger form-small" data-bs-toggle="tooltip" (click)="close()" 
                             data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i
                                 class="fas fa-ban"></i></button>
+                            </div>
                     </div>
                 </div>
             </form>
@@ -157,7 +157,7 @@
                 </mat-cell>   
             </ng-container> 
                 <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.serviceTypeId==selectedIndex))}" ></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.prefenceId==selectedIndex))}" ></mat-row>
               </mat-table>
               <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
                 [pageSizeOptions]="[20, 40, 60, 100]">
