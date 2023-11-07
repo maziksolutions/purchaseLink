@@ -27,7 +27,7 @@ declare var $: any;
 })
 export class PriorityComponent implements OnInit {
   PriorityForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox', 'servicetype','description','defaultPriority'];
+  displayedColumns: string[] = ['checkbox', 'servicetype','description','orderTypeId','defaultPriority'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   rights:RightsModel;
@@ -38,10 +38,10 @@ export class PriorityComponent implements OnInit {
   selectedIndex: any;
   orderTypes: any;
 
-  procedureReferenceData: any;
-  selectProcedureReference: string[] = [];
-  selectedProcedureReference: string[] = [];
-  dropdownProcedureReferenceSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean;  tooltipField:string;};
+
+  selectorderType: string[] = [];
+  selectedorderType: string[] = [];
+  dropdownOrderTypeSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean;  tooltipField:string;};
 
   selectedDocumentReference: string[] = [];
   defchecked: any;
@@ -65,7 +65,7 @@ export class PriorityComponent implements OnInit {
       defaultPriority:[false],
     });
 
-    this.dropdownProcedureReferenceSetting = {
+    this.dropdownOrderTypeSetting = {
       singleSelection: false,
       idField: 'orderTypeId',
       textField: 'orderTypes',
@@ -108,28 +108,27 @@ console.log(error);
       })
   }
 
-  onProcedureReferenceSelect(event: any) {
+  onOrderTypeSelect(event: any) {
     let isSelect = event.orderTypeId;
     if (isSelect) {
-      this.selectedProcedureReference.push(event.orderTypeId);
+      this.selectedorderType.push(event.orderTypeId);
        
-      console.log( this.selectedProcedureReference)
     }
   }
 
-  onProcedureReferenceSelectAll(event: any) {
+  onOrderTypeSelectAll(event: any) {
     if (event)
-      this.selectedProcedureReference = event.map((x: { orderTypeId: any; }) => x.orderTypeId);
+      this.selectedorderType = event.map((x: { orderTypeId: any; }) => x.orderTypeId);
   }
 
-  onProcedureReferenceDeSelect(event: any) {
-    let rindex = this.selectedProcedureReference.findIndex(orderTypeId => orderTypeId == event.orderTypeId);
+  onOrderTypeDeSelect(event: any) {
+    let rindex = this.selectedorderType.findIndex(orderTypeId => orderTypeId == event.orderTypeId);
     if (rindex != -1) {
-      this.selectedProcedureReference.splice(rindex, 1)
+      this.selectedorderType.splice(rindex, 1)
     }
   }
 
-  onDocumentReferenceDeSelectAll(event: any) {
+  onOrderTypeDeSelectAll(event: any) {
     this.selectedDocumentReference.length = 0;
     // this.selectedCountries.splice(0, this.selectedCountries.length);
   }
@@ -152,10 +151,7 @@ console.log(error);
     this.purchaseService.GetPreferenceType(status)
       .subscribe(response => {
         this.flag = status;
-        this.dataSource.data = response.data;
-         let  ss = response.data.map(x=>x.orderTypeId);
-         let dd = this.orderTypes.map(x=>x.orderTypeId == 1)
-        console.log(dd)
+        this.dataSource.data = response.data; 
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.clear();
@@ -164,7 +160,7 @@ console.log(error);
   }
   onSubmit(form: any) {
 
-    form.value.orderTypeId = this.selectedProcedureReference.join(',');
+    form.value.orderTypeId = this.selectedorderType.join(',');
 
 const fmdata = new FormData();
 fmdata.append('data', JSON.stringify(form.value));
@@ -204,19 +200,18 @@ fmdata.append('data', JSON.stringify(form.value));
         
 
           var objProcR = [];
-          this.selectProcedureReference = [];
+          this.selectorderType = [];
           if (response.data.orderTypeId != '' && response.data.orderTypeId != null) {
             objProcR = response.data.orderTypeId.split(',')
-            this.selectedProcedureReference = response.data.orderTypeId.split(',');
+            this.selectedorderType = response.data.orderTypeId.split(',');
 
             objProcR.forEach((item) => {
-              this.selectProcedureReference.push(this.orderTypes.filter(x => x.orderTypeId == item));
+              this.selectorderType.push(this.orderTypes.filter(x => x.orderTypeId == item));
             })
-            const merge4 = this.selectProcedureReference.flat(1);
-            this.selectProcedureReference = merge4;
+            const merge4 = this.selectorderType.flat(1);
+            this.selectorderType = merge4;
           }
 
-          console.log(response.data)
           this.defchecked =response.data.defaultPriority;
           this.PriorityForm.patchValue(response.data);   
           this.pkey = response.data.prefenceId;

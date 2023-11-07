@@ -79,10 +79,10 @@
 
                           <ng-multiselect-dropdown placeholder="Select OrderType"
                           [data]="orderTypes" class="multiselect-dropdown"
-                          [(ngModel)]="selectProcedureReference" [settings]="dropdownProcedureReferenceSetting" (onSelect)="onProcedureReferenceSelect($event)" formControlName="orderTypeId"
-                          (onSelectAll)="onProcedureReferenceSelectAll($event)"
-                          (onDeSelect)="onProcedureReferenceDeSelect($event)"
-                          (onDeSelectAll)="onDocumentReferenceDeSelectAll($event)"
+                          [(ngModel)]="selectorderType" [settings]="dropdownOrderTypeSetting" (onSelect)="onOrderTypeSelect($event)" formControlName="orderTypeId"
+                          (onSelectAll)="onOrderTypeSelectAll($event)"
+                          (onDeSelect)="onOrderTypeDeSelect($event)"
+                          (onDeSelectAll)="onOrderTypeDeSelectAll($event)"
                           >
                       </ng-multiselect-dropdown>
 
@@ -144,12 +144,12 @@
                    <span> {{row.description}}   </span> 
                 </mat-cell>   
             </ng-container>     
-            <!-- <ng-container matColumnDef="orderTypeId">
+            <ng-container matColumnDef="orderTypeId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>OrderType</mat-header-cell>
-                <mat-cell *matCellDef="let row" title={{row.orderTypeId}}>
-                   <span> {{row.orderTypeId}}   </span> 
+                <mat-cell *matCellDef="let row" title={{row.orderTypeNames}}>
+                   <span> {{row.orderTypeNames}}   </span> 
                 </mat-cell>   
-            </ng-container>   -->
+            </ng-container>  
             <ng-container matColumnDef="defaultPriority">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Default Priority</mat-header-cell>
                 <mat-cell *matCellDef="let row">
