@@ -7,6 +7,7 @@ import { MaterialQualityComponent } from './material-quality/material-quality.co
 import { ServicetypeComponent } from './servicetype/servicetype.component';
 import { ServiceCategoryComponent } from './service-category/service-category.component';
 import { ProjectnameComponent } from './projectname/projectname.component';
+import { PriorityComponent } from './priority/priority.component';
 const routes: Routes = [
   {
      path: '', component: SiteLayoutComponent,
@@ -17,6 +18,7 @@ const routes: Routes = [
   {path: 'service-type',component: ServicetypeComponent,pathMatch:'full'}, 
   {path: 'service-category',component: ServiceCategoryComponent,pathMatch:'full'}, 
   {path: 'project-name',component: ProjectnameComponent,pathMatch:'full'}, 
+  {path: 'priority',component: PriorityComponent,pathMatch:'full'},
 ]}
 ];
 
