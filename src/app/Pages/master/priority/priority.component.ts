@@ -78,7 +78,7 @@ export class PriorityComponent implements OnInit {
 
     //this.PriorityForm.controls.directCompletion.setValue('');
     this.loadRights();
-    this.loadData(0);
+     this.loadData(0);
     this.LoadOrderType();
   }
   get fm() { return this.PriorityForm.controls };

@@ -25,7 +25,7 @@
                         data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()" data-bs-original-title="Search" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
                     <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
-                    <a *ngIf="rights?.addRight" class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse" (click)="clear()"
+                    <a  class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse" (click)="clear()"
                         data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1"><i
                             class="fas fa-plus text-primary"></i></a>
 
@@ -98,7 +98,7 @@
 
                     <div class="col-md-6">
                         <div class="float-end">
-                        <button *ngIf="rights?.ammendRight || this.fm.serviceTypeId.value=='0'"type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="PriorityForm.invalid  || !PriorityForm.dirty"><i
+                        <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="PriorityForm.invalid  || !PriorityForm.dirty"><i
                                 class="fas fa-save"></i></button>
                         <button type="button" class="btn btn-danger form-small" data-bs-toggle="tooltip" (click)="close()" 
                             data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i

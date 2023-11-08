@@ -210,9 +210,9 @@ class="toggle-line"></span></span></button>
   <span class="font-sans-serif font-small-3">Purchase Link</span>
 </div>
 </a>
-<div *ngIf="purchaseroutee" class="collapse navbar-collapse scrollbar" id="navbarStandard">
+<div  class="collapse navbar-collapse scrollbar" id="navbarStandard">
 <ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
- <li routerLinkActive="active" class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button"
+ <li *ngIf="purchaseroutee" routerLinkActive="active" class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button"
 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dashboards">Purchase Views</a>
 <div class="dropdown-menu dropdown-menu-card border-0 mt-0" aria-labelledby="dashboards">
 <div class="bg-white dark__bg-1000 rounded-3 py-2">
