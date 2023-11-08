@@ -215,6 +215,7 @@ export class OrdertypeComponent implements OnInit {
   clear() {
     this.orderForm.reset();
     this.orderForm.controls.orderTypeId.setValue(0);
+    this.orderForm.controls.defaultOrderType.setValue('');
     this.orderForm.controls.serviceTypeId.setValue('');
 
     (document.getElementById('abc') as HTMLElement).focus();
