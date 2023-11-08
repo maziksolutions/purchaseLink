@@ -8,6 +8,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportDataComponent } from '../../common/import-data/import-data.component';
 
+import { MultiSelectComponent } from 'ng-multiselect-dropdown';
+
 declare let Swal, PerfectScrollbar: any;
 
 import {
@@ -29,7 +31,7 @@ declare var $: any;
 export class OrdertypeComponent implements OnInit {
 
   orderForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox', 'orderTypes', 'defaultOrderType','serviceType','abbreviation'];
+  displayedColumns: string[] = ['checkbox', 'orderTypes', 'defaultOrderType', 'serviceType', 'abbreviation'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   rights: RightsModel;
@@ -39,6 +41,11 @@ export class OrdertypeComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   selectedIndex: any;
   serviceTypes: any;
+
+  dropdownList: { serviceTypeId: number, serviceType: string }[] = [];
+  selectedItems: string[] = [];
+  dropdownServiceSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
+
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
     private purchaseService: PurchaseMasterService, private swal: SwalToastService,
     private router: Router, private userManagementService: UserManagementService) { }
@@ -55,6 +62,16 @@ export class OrdertypeComponent implements OnInit {
     //this.loadRights();
     this.LoadServiceType();
     this.loadData(0);
+
+    this.dropdownServiceSetting = {
+      singleSelection: false,
+      idField: 'serviceTypeId',
+      textField: 'serviceType',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true
+    };
   }
   get fm() { return this.orderForm.controls };
 
@@ -74,11 +91,29 @@ export class OrdertypeComponent implements OnInit {
   // console.log(error);
   //     })
   //   } 
+  onSelectAll(event: any) {
+    debugger;
+    if (event)
+      this.selectedItems = event.map((x: { serviceTypeId: any; }) => x.serviceTypeId);
+  }
+
+  onItemSelect(event: any) {
+    debugger;
+    let isSelect = event.serviceTypeId;
+    if (isSelect) {
+      this.selectedItems.push(event.serviceTypeId);
+    }
+  }
+
+
 
   LoadServiceType() {
     this.purchaseService.getServicetypes(0)
       .subscribe(response => {
-        this.serviceTypes = response.data;
+        this.serviceTypes = response.data.map(item => ({
+          serviceTypeId: item.serviceTypeId,
+          serviceType: item.serviceType
+        }))
       })
   }
   loadData(status: number) {
@@ -99,8 +134,11 @@ export class OrdertypeComponent implements OnInit {
 
     this.purchaseService.getOrderTypes(status)
       .subscribe(response => {
+        debugger;
         this.flag = status;
-        this.dataSource.data = response.data;
+        var serviceType = response.data;
+
+        this.dataSource.data = serviceType;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.clear();
@@ -108,8 +146,15 @@ export class OrdertypeComponent implements OnInit {
       });
   }
   onSubmit(form: any) {
-    this.purchaseService.addOrderType(form.value)
+    debugger;
+    form.value.serviceTypeId = this.selectedItems.join(',');
+    console.log(form.value.serviceTypeId)
+    const fmdata = new FormData();
+    fmdata.append('data', JSON.stringify(form.value));
+
+    this.purchaseService.addOrderType(fmdata)
       .subscribe(data => {
+
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
           this.clear();
@@ -135,13 +180,35 @@ export class OrdertypeComponent implements OnInit {
       });
   }
   Updatedata(id) {
+    debugger;
     this.selectedIndex = id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
     this.purchaseService.getOrderTypeById(id)
       .subscribe((response) => {
+
         if (response.status) {
+          debugger;
+          var objProcR = [];
+          this.dropdownList = [];
+          if (response.data.serviceTypeId != '' && response.data.serviceTypeId != null) {
+            debugger;
+            const objProcR = response.data.serviceTypeId.split(',');
+
+            this.dropdownList = objProcR.map(item => {
+              return this.serviceTypes.find(x => x.serviceTypeId == item);
+            });
+            const merge4 = this.dropdownList.flat(1);
+            this.dropdownList = merge4;
+          }
+          
+          // var serviceTypeIds = response.data.serviceTypeId.split(',');
+          // const selectedServices = this.dropdownList.filter(item => serviceTypeIds.includes((item.serviceTypeId).toString()));
+
+          response.data.serviceTypeId = this.dropdownList;
+
           this.orderForm.patchValue(response.data);
+
         }
       },
         (error) => {
@@ -236,6 +303,7 @@ export class OrdertypeComponent implements OnInit {
   }
 
   exportLoadSheet() {
+    debugger;
     var data;
     const numSelected = this.selection.selected;
     if (numSelected.length > 0) {

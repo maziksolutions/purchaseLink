@@ -7,6 +7,8 @@ import { MaterialQualityComponent } from './material-quality/material-quality.co
 import { ServicetypeComponent } from './servicetype/servicetype.component';
 import { ServiceCategoryComponent } from './service-category/service-category.component';
 import { ProjectnameComponent } from './projectname/projectname.component';
+import { EmailComponent } from './email/email.component';
+
 import { PriorityComponent } from './priority/priority.component';
 const routes: Routes = [
   {
@@ -19,11 +21,12 @@ const routes: Routes = [
   {path: 'service-category',component: ServiceCategoryComponent,pathMatch:'full'}, 
   {path: 'project-name',component: ProjectnameComponent,pathMatch:'full'}, 
   {path: 'priority',component: PriorityComponent,pathMatch:'full'},
+  { path: 'email', component: EmailComponent, pathMatch: 'full' },
 ]}
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes),NgMultiSelectDropDownModule.forRoot()],
+  imports: [RouterModule.forChild(routes), NgMultiSelectDropDownModule.forRoot()],
   exports: [RouterModule]
 })
 export class MasterRoutingModule { }
