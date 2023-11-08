@@ -26,11 +26,11 @@
                         data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()" data-bs-original-title="Search" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
                     <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
-                    <a *ngIf="rights?.addRight" class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse" (click)="clear()"
+                    <a  class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse" (click)="clear()"
                         data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1"><i
                             class="fas fa-plus text-primary"></i></a>
 
-                    <a *ngIf="rights?.deleteRight" class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
+                    <a  class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
                         data-bs-placement="top" matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""><i
                             class="fas fa-trash text-danger"></i></a>
 

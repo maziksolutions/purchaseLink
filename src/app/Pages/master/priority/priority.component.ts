@@ -103,12 +103,14 @@ console.log(error);
   LoadOrderType() {
     this.purchaseService.getOrderTypes(0)
       .subscribe(response => {
+        
         this.orderTypes = response.data;
        
       })
   }
 
   onOrderTypeSelect(event: any) {
+    
     let isSelect = event.orderTypeId;
     if (isSelect) {
       this.selectedorderType.push(event.orderTypeId);
@@ -161,7 +163,7 @@ console.log(error);
   onSubmit(form: any) {
 
     form.value.orderTypeId = this.selectedorderType.join(',');
-
+    
 const fmdata = new FormData();
 fmdata.append('data', JSON.stringify(form.value));
 
@@ -213,6 +215,7 @@ fmdata.append('data', JSON.stringify(form.value));
           }
 
           this.defchecked =response.data.defaultPriority;
+          response.data.orderTypeId = this.selectorderType;
           this.PriorityForm.patchValue(response.data);   
           this.pkey = response.data.prefenceId;
 
