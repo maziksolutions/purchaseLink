@@ -92,13 +92,11 @@ export class OrdertypeComponent implements OnInit {
   //     })
   //   } 
   onSelectAll(event: any) {
-    debugger;
     if (event)
       this.selectedItems = event.map((x: { serviceTypeId: any; }) => x.serviceTypeId);
   }
 
   onItemSelect(event: any) {
-    debugger;
     let isSelect = event.serviceTypeId;
     if (isSelect) {
       this.selectedItems.push(event.serviceTypeId);
