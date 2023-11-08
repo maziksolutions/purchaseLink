@@ -309,9 +309,11 @@
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-1">Request Order Type</h6>
                                <fieldset class="form-group mb-0">
-                        <select class="form-control form-small form-select" id="" onchange="location = this.value;">
-                          <option>Select</option>
-                            <option value="purchase-link-order-type.html">Order Type</option>
+                        <select class="form-control form-small form-select"  required>
+                          <option value="" selected disabled>Select OrderTypes</option>
+                          <option *ngFor="let item of orderTypes" value="{{item.orderTypeId}}">
+                            {{item.orderTypes | titlecase}}
+                          </option>
                         </select>
                       </fieldset>
                                </div>
@@ -332,20 +334,24 @@
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-1">Priority</h6>
                                <fieldset class="form-group mb-0">
-                        <select class="form-control form-small form-select" id="" onchange="location = this.value;">
-                          <option>Select</option>
-                            <option value="purchase-link-priority.html">Priority</option>
-                        </select>
+                                <select class="form-control form-small form-select"  required>
+                                  <option value="" selected disabled>Select Priority </option>
+                                  <option *ngFor="let item of Priority" value="{{item.prefenceId}}">
+                                    {{item.description |titlecase }}
+                                  </option>
+                                </select>
                       </fieldset>
                                </div>
                            
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-1">Project Name / Code</h6>
                                <fieldset class="form-group mb-0">
-                        <select class="form-control form-small form-select" id="" onchange="location = this.value;">
-                          <option>Select</option>
-                            <option value="purchase-link-project.html">Project Name / Code</option>
-                        </select>
+                                <select class="form-control form-small form-select"  required>
+                                  <option value="" selected disabled>Select </option>
+                                  <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
+                                    {{item.projectName|titlecase }}-{{item.projectCode}} 
+                                  </option>
+                                </select>
                       </fieldset>
                                </div>							 
                            <div class="col-lg mb-3">

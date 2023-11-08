@@ -138,6 +138,19 @@ archiveProjectname(jobType: any[]): Observable < string > {
 }  
 //#endregion Project Name / Code
 
+//#region  Email Master
+
+addEmailContent(formData):Observable<any>{
+  return this.httpClient.post<any>(this.linkurl + 'addEmail', formData)
+  .pipe(catchError(this.handleError));
+}
+
+//#endregion Email Master
+//Get Maintenance Type data
+getEmails(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}filterEmail/${status}`, httpOptions);
+}
+
 private handleError(error: HttpErrorResponse) {
   if (error.error instanceof ErrorEvent) {
     console.error('An error occurred:', error.error.message);

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router,ActivatedRoute,NavigationEnd   } from '@angular/router';
+import { Router,ActivatedRoute,NavigationEnd, NavigationStart,RouteConfigLoadStart  } from '@angular/router';
 import { RightsModel } from 'src/app/Pages/Models/page-rights';
 import { Keys } from 'src/app/Pages/Shared/localKeys';
 import { registerNavEnum } from 'src/app/Pages/Shared/rights-enum';
@@ -45,6 +45,7 @@ export class SiteLayoutComponent implements OnInit {
   //test
   purchaseroute:string;
   purchaseroutee:boolean=false;
+  
   currentPath: string = '';
 
   constructor(private authStatusService: AuthStatusService,private userManagementService: UserManagementService
@@ -222,27 +223,102 @@ export class SiteLayoutComponent implements OnInit {
   this.notMatched=false;
 }
 
-loadNotificationMenuRights()
-   {
+// loadNotificationMenuRights()
+//    {
 
 
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
+//     this.router.events.subscribe((event) => {
+//       if (event instanceof NavigationEnd) {
         
-        this.currentPath = event.url;
-        if(this.currentPath=="/Requisition/Requisitionslist")
-        this.purchaseroutee = true;
-      alert( this.purchaseroutee)
-      }
-      else
-      {
-        this.purchaseroutee = false;
-
-      }
-    });
-
-      }
+//         this.currentPath = event.url;
+//         if(this.currentPath=="/Requisition/Requisitionslist")
+//         this.purchaseroutee = true;
+//       alert("if")
    
+//       }
+//       else
+//       {
+//         alert("else")
+//         this.purchaseroutee = false;
+
+//       }
+//     });
+
+//       }
+   
+// loadtest()
+// {
+//   this.router.events.subscribe((event) => {
+//     if (event instanceof NavigationEnd) {
+      
+//       this.currentPath = event.url;
+//   }};
+
+//   if(this.currentPath=="/Requisition/Requisitionslist")
+//   this.purchaseroutee = true;
+
+//   else
+//   {
+//     this.purchaseroutee = false;
+
+//   }
+// }
+
+
+// loadNotificationMenuRights() {
+//   this.router.events.subscribe((event) => {
+//     if (event instanceof  RouteConfigLoadStart) {
+//       this.currentPath = event.url;
+      
+//       if (this.currentPath === "/Requisition/Requisitionslist") {
+//         this.purchaseroutee = true;
+      
+        
+//       } else {
+//         this.purchaseroutee = false;
+        
+//       }
+//     }
+//   });
+// }
+
+loadNotificationMenuRights() {
+   this.router.events.subscribe((event) => {
+    if (event instanceof NavigationStart   ) {
+ 
+      // Get the current URL from the router service
+      const currentPath = this.router.url;
+      
+      if (currentPath === "/Requisition/Requisitionslist") {
+   
+        this.purchaseroutee = true;
+      } else {
+        this.purchaseroutee = false;
+      }
+    }
+
+
+    if (event instanceof NavigationEnd   ) {
+
+      // Get the current URL from the router service
+      const currentPath = this.router.url;
+      
+      if (currentPath === "/Requisition/Requisitionslist") {
+    
+        this.purchaseroutee = true;
+      } else {
+        this.purchaseroutee = false;
+      }
+    }
+
+
+
+  });
+}
+
+
+
+
 
 
 

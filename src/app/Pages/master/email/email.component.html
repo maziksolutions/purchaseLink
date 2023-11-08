@@ -1,0 +1,177 @@
+<div class="card px-3 py-2 mb-1">
+    <div class="position-relative">
+        <div class="row">
+            <div class="col-lg-3">
+                <h5 class="mb-0">Email</h5>
+                <span class="btn-sm ps-0 text-primary fw-bold">Master<span
+                        class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Register<span
+                        class="fas fa-chevron-right ms-1 fs--2"></span></span> &nbsp;<span
+                    class="btn-sm p-0"><b>Email</b></span>
+            </div>
+            <div class="col-lg-9">
+                <div class="form-inline float-end mt-2">
+                    <select class="form-control form-small form-select" #docStatus>
+                        <option selected="" value="0">Active Data</option>
+                        <option value="1">Archive Data</option>
+                    </select>
+                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
+                    <input type="text" class="form-control form-small" placeholder="Search"
+                        style="border-top-right-radius: 0; border-bottom-right-radius: 0px" #searchInput>
+                    <button class="btn btn-primary form-small m-r-5"
+                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Search"
+                        aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
+                    <button class="btn btn-primary form-small m-r-5"
+                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                        data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Clear Search Input"
+                        data-bs-original-title="Search" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
+                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
+
+                    <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                        data-bs-original-title="Delete" aria-label=""><i class="fas fa-trash text-danger"></i></a>
+
+                    <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip"
+                        data-bs-placement="top" matTooltip="Excel" data-bs-original-title="List" aria-label=""><i
+                            class="fas fa-file-excel"></i></a>
+
+                    <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                        matTooltip="Export load data sheet" data-bs-original-title="Export" aria-label=""><i
+                            class="fas fa-file-export text-primary"></i></a>
+
+                    <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Import data"
+                        data-bs-original-title="Import" aria-label=""><i
+                            class="fas fa-file-download text-primary"></i></a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body fs--1">
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="bg-light border border-1">
+                    <div class="row flex-between-center p-2">
+
+                        <div class="col-auto ">
+                            <a href="purchase-link-new-requisition-rfq-email-add-folder.html"
+                                class="text-primary px-1 m-r-5 font-medium-3" type="button" data-bs-toggle="tooltip"
+                                data-bs-placement="top" title="" data-bs-original-title="Add Folder" aria-label=""><i
+                                    class="fas fa-folder"></i></a> <a
+                                href="purchase-link-new-requisition-rfq-email-add-doc.html"
+                                class="text-primary px-1 m-r-5 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                data-bs-placement="top" title="" data-bs-original-title="Add Document" aria-label=""><i
+                                    class="fas fa-file-alt"></i></a>
+                        </div>
+
+                        <div class="col-md-8 ms-auto">
+                            <div class="input-group">
+                                <input type="text" class="form-control form-small" placeholder="Search">
+                                <button class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="" data-bs-original-title="Add Folder"
+                                    aria-label=""><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane preview-tab-pane active" role="tabpanel">
+                            <ul class="treeview treeview-stripe" id="treeviewStriped" data-options='{"striped":true}'>
+                                <li class="treeview-list-item">
+
+                                    <a data-bs-toggle="collapse" href="#treeviewStriped-1-1" role="button"
+                                        aria-expanded="false">
+                                        <p class="treeview-text">
+                                            01 IDOCS
+                                        </p>
+                                    </a>
+                                    <ul class="collapse treeview-list" id="treeviewStriped-1-1" data-show="true">
+                                        <li class="treeview-list-item">
+
+                                             <ng-container matColumnDef="checkbox">
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                                                    <mat-checkbox (change)="$event ? masterToggle() : null"
+                                                        [checked]="selection.hasValue() && isAllSelected()"
+                                                        [indeterminate]="selection.hasValue() && !isAllSelected()">
+                                                    </mat-checkbox>
+
+                                                </mat-header-cell>
+                                                <mat-cell *matCellDef="let row">
+                                                    <mat-checkbox (click)="$event.stopPropagation()"
+                                                        (change)="$event ? selection.toggle(row) : null"
+                                                        [checked]="selection.isSelected(row)"
+                                                        [aria-label]="checkboxLabel(row)"></mat-checkbox>
+                                                </mat-cell>
+                                            </ng-container> 
+                                            <ng-container matColumnDef="item">
+                                                <mat-cell *matCellDef="let item of folderTitle">
+                                                    <a (click)="Updatedata(item)"
+                                                        class="accordion-btn show px-2 m-r-5" type="button"
+                                                        data-bs-toggle="collapse" data-bs-target="#collapse1"
+                                                        aria-expanded="true" aria-controls="collapse1"
+                                                        title={{item}}>
+                                                        <span>{{item}}</span> </a>
+
+                                                </mat-cell>
+                                            </ng-container>
+
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <form (ngSubmit)="onSubmit(emailForm)" [formGroup]="emailForm">
+                    <div class="mb-3 row">
+                        <label class="col-sm-3 col-form-label">Folder Title</label>
+                        <div class="col-sm-9">
+                            <input formControlName="folderTitle" class="form-control" type="text" id="emailTitle"
+                                placeholder="Email Title" appUppercase maxlength="100" required />
+                            <div class="mb-3 row"></div>
+                        </div>
+                        <label class="col-sm-3 col-form-label">Folder Purpose</label>
+                        <div class="col-sm-9">
+                            <select class="form-control form-small form-select" formControlName="folderPurpose"
+                                id="folderPurpose" required>
+                                <option value="" disabled>Select Service</option>
+                                <option>Attached</option>
+                                <option>Email Content</option>
+                            </select>
+                            <div class="mb-3 row"></div>
+                        </div>
+
+                        <label class="col-sm-3 col-form-label">Select Vendor</label>
+                        <div class="col-sm-9">
+                            <select class="form-control form-small form-select" formControlName="vendor"
+                                id="selectVendor" required>
+                                <option>-----</option>
+                                <option>All</option>
+                                <option>Vendor 01</option>
+                                <option>Vendor 02</option>
+                                <option>Vendor 03</option>
+                                <option>Vendor 04</option>
+                                <option>Vendor 05</option>
+                            </select>
+                            <div class="mb-3 row"></div>
+                        </div>
+                        <label class="col-sm-3 col-form-label">Email Content</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" rows="10" formControlName="emailContent" id="emailContent"
+                                required></textarea>
+                            <div class="mb-3 row"></div>
+                        </div>
+                        <div class="float-end">
+                            <button type="submit" class="btn btn-primary float-end" aria-label="">Upload</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
