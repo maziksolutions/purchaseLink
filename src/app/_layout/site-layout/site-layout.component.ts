@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router,ActivatedRoute  } from '@angular/router';
+import { Router,ActivatedRoute,NavigationEnd   } from '@angular/router';
 import { RightsModel } from 'src/app/Pages/Models/page-rights';
 import { Keys } from 'src/app/Pages/Shared/localKeys';
 import { registerNavEnum } from 'src/app/Pages/Shared/rights-enum';
@@ -42,8 +42,13 @@ export class SiteLayoutComponent implements OnInit {
   currentRoute: string;
   routeUrl:any;
   abUrl: string;
+  //test
+  purchaseroute:string;
+  purchaseroutee:boolean=false;
+  currentPath: string = '';
+
   constructor(private authStatusService: AuthStatusService,private userManagementService: UserManagementService
-    ,private swal: SwalToastService,private router: Router, private fb: FormBuilder) {
+    ,private swal: SwalToastService,private router: Router, private fb: FormBuilder,private route: ActivatedRoute) {
       var url= window.location.href; 
       this.routeUrl=url.split('//')[1].split('/')[1].toString(); 
      }
@@ -62,6 +67,7 @@ export class SiteLayoutComponent implements OnInit {
     this.loadModules();
     this.loadName();
     this.loadDesignation();
+    this.loadNotificationMenuRights();
   }
   get fm() { return this.changePassForm.controls };
 
@@ -216,4 +222,33 @@ export class SiteLayoutComponent implements OnInit {
   this.notMatched=false;
 }
 
-}
+loadNotificationMenuRights()
+   {
+
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        
+        this.currentPath = event.url;
+        if(this.currentPath=="/Requisition/Requisitionslist")
+        this.purchaseroutee = true;
+      alert( this.purchaseroutee)
+      }
+      else
+      {
+        this.purchaseroutee = false;
+
+      }
+    });
+
+      }
+   
+
+
+
+  }
+
+
+
+
+

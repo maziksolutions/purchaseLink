@@ -33,21 +33,35 @@ class="toggle-line"></span></span></button>
             <hr class="mb-0 navbar-vertical-divider" />
           </div>
         </div>
+
         <a class="nav-link dropdown-indicator" href="#purchase-link" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="register">
           <div class="d-flex align-items-center"><span class="nav-link-icon"><i class="fas fa-link"></i></span><span class="nav-link-text ps-1">Purchase Link</span>
           </div>
         </a> 
+
+
+
+
+
+        
 <ul class="nav collapse" id="purchase-link">                    
   <li class="nav-item"><a class="nav-link" href="purchase-link-purchase-tracking.html" aria-expanded="false">
               <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Purchase Tracking</span>
               </div>
             </a>
           </li>
-  <li class="nav-item"><a class="nav-link" href="purchase-link-requisition.html" aria-expanded="false">
-              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Requisition</span>
-              </div>
+
+
+          <li routerLinkActive="active"  class="nav-item">
+            <a class="nav-link" routerLink="/Requisition/Requisitionslist" aria-expanded="false">
+            <div class="d-flex align-items-center">
+              <span class="nav-link-text ps-1">Requisition</span>
+            </div>
             </a>
-          </li>
+            </li>
+
+
+
   <li class="nav-item"><a class="nav-link" href="purchase-link-rfq.html" aria-expanded="false">
               <div class="d-flex align-items-center"><span class="nav-link-text ps-1">RFQ</span>
               </div>
@@ -74,7 +88,14 @@ class="toggle-line"></span></span></button>
             </a>
           </li>
 </ul>
-      </li>
+ </li>
+
+
+
+
+
+
+      
       <li class="nav-item">
         <!-- label-->
         <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
@@ -115,7 +136,7 @@ class="toggle-line"></span></span></button>
               </div>
               </a>
               </li>
-  <li class="nav-item"><a class="nav-link" href="purchase-link-priority.html" aria-expanded="false">
+  <li class="nav-item"><a class="nav-link" href="/master/priority" aria-expanded="false">
               <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Priority</span>
               </div>
             </a>
@@ -127,11 +148,17 @@ class="toggle-line"></span></span></button>
             </div>
             </a>
           </li>
-  <li class="nav-item"><a class="nav-link" routerLink="/master/MaterialQuality" aria-expanded="false">
-              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Material Quality</span>
-              </div>
+
+
+          <li routerLinkActive="active"  class="nav-item">
+            <a class="nav-link"routerLink="/master/MaterialQuality"aria-expanded="false">
+            <div class="d-flex align-items-center">
+              <span class="nav-link-text ps-1">Material Quality</span>
+            </div>
             </a>
-          </li>
+            </li>
+
+
   <li class="nav-item"><a class="nav-link" href="purchase-link-additional-cost.html" aria-expanded="false">
               <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Additional Cost</span>
               </div>
@@ -142,11 +169,7 @@ class="toggle-line"></span></span></button>
               </div>
             </a>
           </li>
-  <li class="nav-item"><a class="nav-link" href="purchase-link-vendor-preference.html" aria-expanded="false">
-              <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Vendor Preference</span>
-              </div>
-            </a>
-          </li>
+
 </ul>					
       </li>
       <li class="nav-item">
@@ -187,22 +210,21 @@ class="toggle-line"></span></span></button>
   <span class="font-sans-serif font-small-3">Purchase Link</span>
 </div>
 </a>
-<div class="collapse navbar-collapse scrollbar" id="navbarStandard">
-<!-- <ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
+<div *ngIf="purchaseroutee" class="collapse navbar-collapse scrollbar" id="navbarStandard">
+<ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
  <li routerLinkActive="active" class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button"
-data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dashboards">Modules</a>
+data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="dashboards">Purchase Views</a>
 <div class="dropdown-menu dropdown-menu-card border-0 mt-0" aria-labelledby="dashboards">
 <div class="bg-white dark__bg-1000 rounded-3 py-2">
-<a *ngIf="PMS_View" class="dropdown-item link-600 fw-medium" routerLink="/master/category">PMS Link</a>
-<a *ngIf="QHSE_View" class="dropdown-item link-600 fw-medium" href="#">QHSE Link</a>
-<a *ngIf="Purchase_View" class="dropdown-item link-600 fw-medium" href="#">Purchase Link</a>
-<a *ngIf="Crewlink_View" class="dropdown-item link-600 fw-medium" href="#">Crewlink</a>
-<a *ngIf="Administration_View" class="dropdown-item link-600 fw-medium"
-href="administration">Administration</a>
+<a *ngIf="PMS_View" class="dropdown-item link-600 fw-medium" routerLink="/master/category">Workflow Based</a>
+<a *ngIf="QHSE_View" class="dropdown-item link-600 fw-medium" href="#">Time Based</a>
+<a *ngIf="Purchase_View" class="dropdown-item link-600 fw-medium" href="#">Location Based</a>
+<a *ngIf="Crewlink_View" class="dropdown-item link-600 fw-medium" href="#">Assignee Based</a>
+
 </div>
 </div>
 </li>
-</ul> -->
+</ul>
 </div>
 <ul class="navbar-nav navbar-nav-icons ms-auto flex-row align-items-center">
  <li routerLinkActive="active" class="nav-item">

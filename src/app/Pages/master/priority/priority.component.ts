@@ -1,32 +1,33 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UnitmasterService } from '../../../services/unitmaster.service';
+import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {SelectionModel} from '@angular/cdk/collections';
-import { ViewChild } from '@angular/core';
-import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportDataComponent } from '../../common/import-data/import-data.component';
+declare let Swal, PerfectScrollbar: any;
+import {  SelectionModel} from '@angular/cdk/collections';
+import { ViewChild } from '@angular/core';
+import { ExportExcelService } from 'src/app/services/export-excel.service';
+import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
 import { Router } from '@angular/router';
-import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
 import { RightsModel } from '../../Models/page-rights';
-import { SwalToastService } from 'src/app/services/swal-toast.service';
-import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
-declare let Swal,$, PerfectScrollbar: any;
-@Component({
-  selector: 'app-material-quality',
-  templateUrl: './material-quality.component.html',
-  styleUrls: ['./material-quality.component.css']
-})
-export class MaterialQualityComponent implements OnInit {
+import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
+import { userInfo } from 'os';
+import { filter } from 'rxjs/operators';
+declare var $: any;
 
-  materialqualitiesForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox','materialqualities'];
+@Component({
+  selector: 'app-priority',
+  templateUrl: './priority.component.html',
+  styleUrls: ['./priority.component.css']
+})
+export class PriorityComponent implements OnInit {
+  PriorityForm: FormGroup; flag; pkey: number = 0;
+  displayedColumns: string[] = ['checkbox', 'servicetype','description','orderTypeId','defaultPriority'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   rights:RightsModel;
@@ -35,20 +36,52 @@ export class MaterialQualityComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   selectedIndex: any;
-  constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
-    private purchasemasterService: PurchaseMasterService, private swal: SwalToastService,
-    private router:Router,private userManagementService: UserManagementService) { }
+  orderTypes: any;
+
+
+  selectorderType: string[] = [];
+  selectedorderType: string[] = [];
+  dropdownOrderTypeSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean;  tooltipField:string;};
+
+  selectedDocumentReference: string[] = [];
+  defchecked: boolean = false;
+  ordertypename: any;
+
+
+  constructor(private fb: FormBuilder, 
+    public dialog: MatDialog, 
+    private exportExcelService: ExportExcelService,
+    private purchaseService: PurchaseMasterService,
+    private swal: SwalToastService,
+    private router:Router,
+    private userManagementService: UserManagementService) { }
 
   ngOnInit(): void {
-    this.materialqualitiesForm = this.fb.group({
-      materialQualityId: [0],
-      materialQualities: ['', [Validators.required]],
+    this.PriorityForm = this.fb.group({
+      prefenceId: [0],
+      preferenceNumber: ['', [Validators.required]],
+      description:['', [Validators.required]],
+      orderTypeId:['', [Validators.required]],
+      defaultPriority:[false],
     });
-    //this.servicetypeForm.controls.directCompletion.setValue('');
-  //  this.loadRights();
+
+    this.dropdownOrderTypeSetting = {
+      singleSelection: false,
+      idField: 'orderTypeId',
+      textField: 'orderTypes',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true,
+      tooltipField:'description'
+    };
+
+    //this.PriorityForm.controls.directCompletion.setValue('');
+    this.loadRights();
     this.loadData(0);
+    this.LoadOrderType();
   }
-  get fm() { return this.materialqualitiesForm.controls };
+  get fm() { return this.PriorityForm.controls };
 
   loadRights(){
     this.userManagementService.checkAccessRight(unitMasterNavEnum.jobGroup).subscribe((response)=>{
@@ -67,6 +100,39 @@ console.log(error);
     })
   } 
 
+  LoadOrderType() {
+    this.purchaseService.getOrderTypes(0)
+      .subscribe(response => {
+        this.orderTypes = response.data;
+       
+      })
+  }
+
+  onOrderTypeSelect(event: any) {
+    let isSelect = event.orderTypeId;
+    if (isSelect) {
+      this.selectedorderType.push(event.orderTypeId);
+       
+    }
+  }
+
+  onOrderTypeSelectAll(event: any) {
+    if (event)
+      this.selectedorderType = event.map((x: { orderTypeId: any; }) => x.orderTypeId);
+  }
+
+  onOrderTypeDeSelect(event: any) {
+    let rindex = this.selectedorderType.findIndex(orderTypeId => orderTypeId == event.orderTypeId);
+    if (rindex != -1) {
+      this.selectedorderType.splice(rindex, 1)
+    }
+  }
+
+  onOrderTypeDeSelectAll(event: any) {
+    this.selectedDocumentReference.length = 0;
+    // this.selectedCountries.splice(0, this.selectedCountries.length);
+  }
+
   loadData(status: number) {
     if (status == 1) {
       this.deletetooltip ='UnArchive';
@@ -82,10 +148,10 @@ console.log(error);
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
-    this.purchasemasterService.getmaterialquality(status)
+    this.purchaseService.GetPreferenceType(status)
       .subscribe(response => {
         this.flag = status;
-        this.dataSource.data = response.data;
+        this.dataSource.data = response.data; 
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.clear();
@@ -93,7 +159,13 @@ console.log(error);
       });
   }
   onSubmit(form: any) {
-    this.purchasemasterService.addmaterialquality(form.value)
+
+    form.value.orderTypeId = this.selectedorderType.join(',');
+
+const fmdata = new FormData();
+fmdata.append('data', JSON.stringify(form.value));
+
+    this.purchaseService.AddPreference(fmdata)
       .subscribe(data => {
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
@@ -119,15 +191,30 @@ console.log(error);
       });
   }
   Updatedata(id) {
-
     this.selectedIndex=id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
-    this.purchasemasterService.getmaterialqualityId(id)
+    this.purchaseService.GetPreferenceById(id)
       .subscribe((response) => {
         if (response.status) {
-          this.materialqualitiesForm.patchValue(response.data);
-          this.pkey = response.data.materialQualityId;
+        
+
+          var objProcR = [];
+          this.selectorderType = [];
+          if (response.data.orderTypeId != '' && response.data.orderTypeId != null) {
+            objProcR = response.data.orderTypeId.split(',')
+            this.selectedorderType = response.data.orderTypeId.split(',');
+
+            objProcR.forEach((item) => {
+              this.selectorderType.push(this.orderTypes.filter(x => x.orderTypeId == item));
+            })
+            const merge4 = this.selectorderType.flat(1);
+            this.selectorderType = merge4;
+          }
+
+          this.defchecked =response.data.defaultPriority;
+          this.PriorityForm.patchValue(response.data);   
+          this.pkey = response.data.prefenceId;
 
         }
       },
@@ -160,7 +247,7 @@ console.log(error);
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value) {
-          this.purchasemasterService.archivematerialquality(numSelected).subscribe(result => {
+          this.purchaseService.archivePreference(numSelected).subscribe(result => {
             this.selection.clear();
             this.swal.success(message);
             this.loadData(this.flag);
@@ -183,17 +270,16 @@ console.log(error);
     this.applyFilter(this.searchInput.nativeElement.value)
  }
   isAllSelected() {
-    console.log(this.dataSource)
     const numSelected = this.selection.selected.length;
     const numRows = !!this.dataSource && this.dataSource.data.length;
     return numSelected === numRows;
   }
   masterToggle() {
-
     this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
   }
   /** The label for the checkbox on the passed row */
   checkboxLabel(row: any): string {
+    //console.log(row);
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
@@ -201,10 +287,12 @@ console.log(error);
   }
 
   clear() {
-    this.materialqualitiesForm.reset();
-    this.materialqualitiesForm.controls.materialQualityId.setValue(0);
-    this.materialqualitiesForm.controls.materialQualities.setValue('');    
-
+    this.PriorityForm.reset();
+    this.PriorityForm.controls.prefenceId.setValue(0);
+    this.PriorityForm.controls.preferenceNumber.setValue('');    
+    this.PriorityForm.controls.description.setValue('');    
+    this.PriorityForm.controls.orderTypeId.setValue('');   
+    this.PriorityForm.controls.defaultPriority.setValue(false);    
     (document.getElementById('abc') as HTMLElement).focus();
   }
   // export excel
@@ -216,10 +304,11 @@ console.log(error);
   }
   exportAsXLSX(data: any[]): void {
     data.forEach((item) => {
-      delete item.materialQualityId,
-        delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
+      delete item.prefenceId,
+        delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy,
+        delete item.orderTypeId
     })
-    this.exportExcelService.exportAsExcelFile(data, 'Material Quality', 'Material Quality');
+    this.exportExcelService.exportAsExcelFile(data, 'Priority', 'Priority');
   }
 
   exportLoadSheet() {
@@ -228,18 +317,19 @@ console.log(error);
     if (numSelected.length > 0) {
       data = numSelected;
       data.forEach((item) => {
-        delete item.materialQualityId,
-          delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
+        delete item.prefenceId,
+          delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy,
+          delete item.orderTypeId
       })
     }
     else
-      data = { materialQuality: '' };
-    this.exportExcelService.LoadSheet(data, 'MaterialQualitySheet', 'Material Quality Load Sheet',2);
+      data = [{ jobGroup: '', directCompletion : '' }];
+    this.exportExcelService.LoadSheet(data, 'PriorityGroupLoadSheet', 'Priority Load Sheet',2);
   }
 
   close() {
-    this.materialqualitiesForm.reset();
-    this.materialqualitiesForm.controls.materialQualityId.setValue(0);
+    this.PriorityForm.reset();
+    this.PriorityForm.controls.serviceTypeId.setValue(0);
     (document.getElementById('collapse1') as HTMLElement).classList.add("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
   }
@@ -248,7 +338,7 @@ console.log(error);
     openModal() {   
       const dialogRef = this.dialog.open(ImportDataComponent, {
         width: '500px',
-        data:{modalTitle: "Import Maintenance Group Master",tablename:"tblJobGroup",columname:"JobGroup"},
+        data:{modalTitle: "Import Priority Master",tablename:"tblJobGroup",columname:"JobGroup"},
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result === 'success') {
@@ -256,5 +346,4 @@ console.log(error);
         }
       });
     }    
-
 }

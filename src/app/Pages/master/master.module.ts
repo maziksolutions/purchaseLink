@@ -10,6 +10,9 @@ import { MaterialQualityComponent } from './material-quality/material-quality.co
 import { ServicetypeComponent } from './servicetype/servicetype.component';
 import { ServiceCategoryComponent } from './service-category/service-category.component';
 import { ProjectnameComponent } from './projectname/projectname.component';
+import { PriorityComponent } from './priority/priority.component';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+
 
 
 
@@ -18,13 +21,17 @@ import { ProjectnameComponent } from './projectname/projectname.component';
   declarations: [       
   
     OrdertypeComponent, ServicetypeComponent,
+     ServiceCategoryComponent,
+     ProjectnameComponent,
+     PriorityComponent,
      ServiceCategoryComponent,MaterialQualityComponent,
      ProjectnameComponent
   ],
   imports: [
     CommonModule,  FormsModule,HttpClientModule,AppMaterialModule,
     ReactiveFormsModule,
-    MasterRoutingModule,DirectivesModule,CommonModule
+    MasterRoutingModule,DirectivesModule,CommonModule,
+    NgMultiSelectDropDownModule.forRoot() 
   ]
 })
 export class MasterModule { }

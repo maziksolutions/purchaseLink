@@ -74,6 +74,31 @@ archiveServiceType(jobType: any[]): Observable < string > {
 //#endregion Service Type Master
 
 
+  //#region Priority Master
+
+  GetPreferenceType(status): Observable<any> {  
+    return this.httpClient.get<any[]>(`${this.linkurl}filterPreferenceType/${status}`, httpOptions);
+  }
+  GetPreferenceById(id):Observable<any>{  
+    return  this.httpClient.get<any>(this.linkurl + 'getPreferencebyid/' + id,httpOptions)
+    .pipe(catchError(this.handleError));
+  }
+  
+  // AddPreference(formData): Observable<any> {
+  //   return this.httpClient.post<any>(this.linkurl + 'addPreference', formData)
+  //   .pipe(catchError(this.handleError));
+  // }
+
+  AddPreference(formData): Observable<any> {
+    return this.httpClient.post(this.linkurl + 'addPreference', formData).pipe(catchError(this.handleError));
+  }
+
+  archivePreference(jobType: any[]): Observable < string > {   
+    return this.httpClient.post<string> (`${this.linkurl}deletePreference/`, jobType, httpOptions);  
+  }  
+  //#endregion Priority Master
+
+
 
 //#region  materialquality
 
