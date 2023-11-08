@@ -44,7 +44,7 @@ export class PriorityComponent implements OnInit {
   dropdownOrderTypeSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean;  tooltipField:string;};
 
   selectedDocumentReference: string[] = [];
-  defchecked: any;
+  defchecked: boolean = false;
   ordertypename: any;
 
 
