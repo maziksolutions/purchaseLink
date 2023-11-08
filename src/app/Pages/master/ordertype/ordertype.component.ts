@@ -132,7 +132,7 @@ export class OrdertypeComponent implements OnInit {
 
     this.purchaseService.getOrderTypes(status)
       .subscribe(response => {
-        debugger;
+       
         this.flag = status;
         var serviceType = response.data;
 
@@ -144,7 +144,7 @@ export class OrdertypeComponent implements OnInit {
       });
   }
   onSubmit(form: any) {
-    debugger;
+    
     form.value.serviceTypeId = this.selectedItems.join(',');
     console.log(form.value.serviceTypeId)
     const fmdata = new FormData();
@@ -178,7 +178,7 @@ export class OrdertypeComponent implements OnInit {
       });
   }
   Updatedata(id) {
-    debugger;
+    
     this.selectedIndex = id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
@@ -186,11 +186,11 @@ export class OrdertypeComponent implements OnInit {
       .subscribe((response) => {
 
         if (response.status) {
-          debugger;
+        
           var objProcR = [];
           this.dropdownList = [];
           if (response.data.serviceTypeId != '' && response.data.serviceTypeId != null) {
-            debugger;
+            
             const objProcR = response.data.serviceTypeId.split(',');
 
             this.dropdownList = objProcR.map(item => {
@@ -301,7 +301,7 @@ export class OrdertypeComponent implements OnInit {
   }
 
   exportLoadSheet() {
-    debugger;
+  
     var data;
     const numSelected = this.selection.selected;
     if (numSelected.length > 0) {
