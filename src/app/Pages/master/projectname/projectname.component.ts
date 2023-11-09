@@ -93,7 +93,7 @@ export class ProjectnameComponent implements OnInit {
 
   onProjectNameDeSelect(event: any) {
     let rindex = this.selectedserviceType.findIndex(serviceTypeId => serviceTypeId == event.serviceTypeId);
-    if (rindex == -1) {
+    if (rindex != -1) {
       this.selectedserviceType.splice(rindex, 1)
     }
   }
