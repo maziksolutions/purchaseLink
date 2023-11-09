@@ -56,9 +56,9 @@
             <form (ngSubmit)="onSubmit(PriorityForm)" [formGroup]="PriorityForm">
                 <div class="row g-3 mb-2">
                     <div class="col-sm-6">
-                        <fieldset class="form-group mb-0">                           
+                        <fieldset class="form-group mb-0" disabled>                           
                             <input type="text" formControlName="preferenceNumber" class="form-control form-small" id="abc"
-                                placeholder="Preference Number *" appUppercase maxlength="100" required>
+                                placeholder="Number *" required>
                         </fieldset>
                     </div>                    
                       <div class="col-sm-6">
