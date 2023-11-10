@@ -157,7 +157,6 @@ console.log(error);
       
         this.dataSource.data = response.data; 
         let preferenceValues = response.data.map(x=>x.preferenceNumber);
-        alert(  preferenceValues)
         if (preferenceValues.length > 0) {
            this.lastpreferenceValues = preferenceValues.pop();  
       } 
