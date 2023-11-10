@@ -146,7 +146,6 @@ export class OrdertypeComponent implements OnInit {
   onSubmit(form: any) {
     
     form.value.serviceTypeId = this.selectedItems.join(',');
-    console.log(form.value.serviceTypeId)
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
 
@@ -308,12 +307,12 @@ export class OrdertypeComponent implements OnInit {
       data = numSelected;
       data.forEach((item) => {
         delete item.orderTypeId,
-          delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
+          delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy,delete item.serviceTypeId
       })
     }
     else
       data = [{ orderTypes: '', description: '' }];
-    this.exportExcelService.LoadSheet(data, 'OrderTypeLoadSheet', 'Order Type Load Sheet', 2);
+    this.exportExcelService.LoadSheet(data, 'OrderTypeLoadSheet', 'Order Type Load Sheet', 4);
   }
 
   close() {

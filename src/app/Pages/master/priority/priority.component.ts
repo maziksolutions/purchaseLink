@@ -78,7 +78,7 @@ export class PriorityComponent implements OnInit {
     };
 
     //this.PriorityForm.controls.directCompletion.setValue('');
-    this.loadRights();
+   // this.loadRights();
      this.loadData(0);
     this.LoadOrderType();
   }
@@ -157,6 +157,7 @@ console.log(error);
       
         this.dataSource.data = response.data; 
         let preferenceValues = response.data.map(x=>x.preferenceNumber);
+        alert(  preferenceValues)
         if (preferenceValues.length > 0) {
            this.lastpreferenceValues = preferenceValues.pop();  
       } 

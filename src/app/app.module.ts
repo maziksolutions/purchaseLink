@@ -32,6 +32,10 @@ import {
   NgxUiLoaderHttpModule,
 } from 'ngx-ui-loader';
 import { NgxSummernoteModule } from 'ngx-summernote';
+import { NumberOnlyDirective } from './number-only.directive';
+
+
+
 
 export function tokenGetter() {
   return localStorage.getItem(Keys.token);
@@ -82,7 +86,9 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     ImportDataComponent,
     WelcomeComponent,
     AdministrationLayoutComponent,
-    
+
+
+   
   ],
   imports: [
     BrowserModule,AppMaterialModule,CommonModule,
