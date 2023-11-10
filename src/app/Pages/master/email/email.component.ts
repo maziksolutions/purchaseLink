@@ -39,7 +39,7 @@ export class EmailComponent implements OnInit {
   LoadServiceType() {
     this.purchaseService.getEmails(0)
       .subscribe(response => {
-        debugger;
+        
         this.folderTitle = response.data.map(item => item.folderTitle);
       })
   }
@@ -94,7 +94,7 @@ export class EmailComponent implements OnInit {
 
     this.purchaseService.getEmails(status)
       .subscribe(response => {
-        debugger;
+      
         this.flag = status;
         this.dataSource.data = response.data;
         // this.dataSource.sort = this.sort;

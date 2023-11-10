@@ -125,13 +125,13 @@ console.log(error);
 
   onOrderTypeDeSelect(event: any) {
     let rindex = this.selectedorderType.findIndex(orderTypeId => orderTypeId == event.orderTypeId);
-    if (rindex != -1) {
+    if (rindex == -1) {
       this.selectedorderType.splice(rindex, 1)
     }
   }
 
   onOrderTypeDeSelectAll(event: any) {
-    this.selectedDocumentReference.length = 0;
+    this.selectedorderType.length = 0;
     // this.selectedCountries.splice(0, this.selectedCountries.length);
   }
 

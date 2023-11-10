@@ -45,7 +45,7 @@ export class OrdertypeComponent implements OnInit {
   dropdownList: { serviceTypeId: number, serviceType: string }[] = [];
   selectedItems: string[] = [];
   dropdownServiceSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
-
+  
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
     private purchaseService: PurchaseMasterService, private swal: SwalToastService,
     private router: Router, private userManagementService: UserManagementService) { }
@@ -92,17 +92,31 @@ export class OrdertypeComponent implements OnInit {
   //     })
   //   } 
   onSelectAll(event: any) {
+    
     if (event)
       this.selectedItems = event.map((x: { serviceTypeId: any; }) => x.serviceTypeId);
   }
 
   onItemSelect(event: any) {
+    
     let isSelect = event.serviceTypeId;
     if (isSelect) {
       this.selectedItems.push(event.serviceTypeId);
     }
   }
+  onOrderTypeDeSelect(event: any) {
+    
+    let rindex = this.selectedItems.findIndex(orderTypeId => orderTypeId == event.serviceTypeId);
+    if (rindex !== -1) {
+      this.selectedItems.splice(rindex, 1)
+    }
+  }
 
+  onOrderTypeDeSelectAll(event: any) {
+    
+    this.selectedItems.length = 0;
+    // this.selectedCountries.splice(0, this.selectedCountries.length);
+  }
 
 
   LoadServiceType() {
@@ -144,7 +158,7 @@ export class OrdertypeComponent implements OnInit {
       });
   }
   onSubmit(form: any) {
-    
+   
     form.value.serviceTypeId = this.selectedItems.join(',');
     console.log(form.value.serviceTypeId)
     const fmdata = new FormData();
@@ -186,7 +200,7 @@ export class OrdertypeComponent implements OnInit {
       .subscribe((response) => {
 
         if (response.status) {
-        
+       
           var objProcR = [];
           this.dropdownList = [];
           if (response.data.serviceTypeId != '' && response.data.serviceTypeId != null) {
@@ -197,7 +211,11 @@ export class OrdertypeComponent implements OnInit {
               return this.serviceTypes.find(x => x.serviceTypeId == item);
             });
             const merge4 = this.dropdownList.flat(1);
-            this.dropdownList = merge4;
+            this.dropdownList = merge4;  
+            this.selectedItems.length=0; 
+            this.dropdownList.map(item=>{
+              this.selectedItems.push(item.serviceTypeId.toString());
+            })       
           }
           
           // var serviceTypeIds = response.data.serviceTypeId.split(',');
