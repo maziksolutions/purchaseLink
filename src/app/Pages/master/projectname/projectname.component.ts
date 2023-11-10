@@ -35,10 +35,9 @@ export class ProjectnameComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   selectedIndex: any;
 
-  selectorderType: string[] = [];
-  selectedorderType: string[] = [];
+  selectprojectname: string[] = [];
+  selectedserviceType: string[] = [];
   dropdownOrderTypeSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean;  tooltipField:string;};
-  selectedDocumentReference: string[] = [];
 
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
     private purchasemasterService: PurchaseMasterService, private swal: SwalToastService,
@@ -78,31 +77,29 @@ export class ProjectnameComponent implements OnInit {
       })
   }
 
-  onOrderTypeSelect(event: any) {
+  onProjectNameSelect(event: any) {
     
     let isSelect = event.serviceTypeId;
     if (isSelect) {
-      this.selectedorderType.push(event.serviceTypeId);
+      this.selectedserviceType.push(event.serviceTypeId);
        
     }
   }
 
-  onOrderTypeSelectAll(event: any) {
+  onProjectNameSelectAll(event: any) {
     if (event)
-      this.selectedorderType = event.map((x: { serviceTypeId: any; }) => x.serviceTypeId);
+      this.selectedserviceType = event.map((x: { serviceTypeId: any; }) => x.serviceTypeId);
   }
 
-  onOrderTypeDeSelect(event: any) {
-  
-    let rindex = this.selectedorderType.findIndex(serviceTypeId => serviceTypeId == event.serviceTypeId);
+  onProjectNameDeSelect(event: any) {
+    let rindex = this.selectedserviceType.findIndex(serviceTypeId => serviceTypeId == event.serviceTypeId);
     if (rindex != -1) {
-      this.selectedorderType.splice(rindex, 1)
+      this.selectedserviceType.splice(rindex, 1)
     }
   }
 
-  onOrderTypeDeSelectAll(event: any) {
-   
-    this.selectedDocumentReference.length = 0;
+  onProjectNameDeSelectAll(event: any) {
+    this.selectedserviceType.length = 0;
     // this.selectedCountries.splice(0, this.selectedCountries.length);
   }
 
@@ -153,7 +150,7 @@ console.log(error);
   }
   onSubmit(form: any) {
   
-    form.value.serviceTypeId = this.selectedorderType.join(',');
+    form.value.serviceTypeId = this.selectedserviceType.join(',');
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
    
@@ -192,18 +189,18 @@ console.log(form.value)
         if (response.status) {
 
           var objProcR = [];
-          this.selectorderType = [];
+          this.selectprojectname = [];
           if (response.data.serviceTypeId != '' && response.data.serviceTypeId != null) {
             objProcR = response.data.serviceTypeId.split(',')
-            this.selectedorderType = response.data.serviceTypeId.split(',');
+            this.selectedserviceType = response.data.serviceTypeId.split(',');
 
             objProcR.forEach((item) => {
-              this.selectorderType.push(this.serviceTypes.filter(x => x.serviceTypeId == item));
+              this.selectprojectname.push(this.serviceTypes.filter(x => x.serviceTypeId == item));
             })
-            const merge4 = this.selectorderType.flat(1);
-            this.selectorderType = merge4;
+            const merge4 = this.selectprojectname.flat(1);
+            this.selectprojectname = merge4;
           }
-          response.data.serviceTypeId = this.selectorderType;
+          response.data.serviceTypeId = this.selectprojectname;
           this.projectnameForm.patchValue(response.data);
         }
       },

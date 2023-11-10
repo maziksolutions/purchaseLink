@@ -46,6 +46,7 @@ export class PriorityComponent implements OnInit {
   selectedDocumentReference: string[] = [];
   defchecked: boolean = false;
   ordertypename: any;
+  lastpreferenceValues: any;
 
 
   constructor(private fb: FormBuilder, 
@@ -59,7 +60,7 @@ export class PriorityComponent implements OnInit {
   ngOnInit(): void {
     this.PriorityForm = this.fb.group({
       prefenceId: [0],
-      preferenceNumber: ['', [Validators.required]],
+      preferenceNumber: [this.lastpreferenceValues + 1, [Validators.required]],
       description:['', [Validators.required]],
       orderTypeId:['', [Validators.required]],
       defaultPriority:[false],
@@ -153,7 +154,12 @@ console.log(error);
     this.purchaseService.GetPreferenceType(status)
       .subscribe(response => {
         this.flag = status;
+      
         this.dataSource.data = response.data; 
+        let preferenceValues = response.data.map(x=>x.preferenceNumber);
+        if (preferenceValues.length > 0) {
+           this.lastpreferenceValues = preferenceValues.pop();  
+      } 
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.clear();
@@ -292,7 +298,7 @@ fmdata.append('data', JSON.stringify(form.value));
   clear() {
     this.PriorityForm.reset();
     this.PriorityForm.controls.prefenceId.setValue(0);
-    this.PriorityForm.controls.preferenceNumber.setValue('');    
+    this.PriorityForm.controls.preferenceNumber.setValue(this.lastpreferenceValues + 1);    
     this.PriorityForm.controls.description.setValue('');    
     this.PriorityForm.controls.orderTypeId.setValue('');   
     this.PriorityForm.controls.defaultPriority.setValue(false);    
