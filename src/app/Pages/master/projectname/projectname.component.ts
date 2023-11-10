@@ -93,7 +93,7 @@ export class ProjectnameComponent implements OnInit {
 
   onProjectNameDeSelect(event: any) {
     let rindex = this.selectedserviceType.findIndex(serviceTypeId => serviceTypeId == event.serviceTypeId);
-    if (rindex == -1) {
+    if (rindex != -1) {
       this.selectedserviceType.splice(rindex, 1)
     }
   }
@@ -287,7 +287,7 @@ console.log(form.value)
       delete item.projectNameId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
     })
-    this.exportExcelService.exportAsExcelFile(data, 'Maintenance Group', 'Maintenance Group');
+    this.exportExcelService.exportAsExcelFile(data, 'Project Name/Code', 'Project Name / Code');
   }
 
   exportLoadSheet() {
@@ -316,7 +316,7 @@ console.log(form.value)
     openModal() {   
       const dialogRef = this.dialog.open(ImportDataComponent, {
         width: '500px',
-        data:{modalTitle: "Import Maintenance Group Master",tablename:"tblJobGroup",columname:"JobGroup"},
+        data:{modalTitle: "Import Project Name/Code Master",tablename:"tblPMProjectName",columname:"ProjectName"},
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result === 'success') {
