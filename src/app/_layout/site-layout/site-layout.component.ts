@@ -43,9 +43,7 @@ export class SiteLayoutComponent implements OnInit {
   routeUrl:any;
   abUrl: string;
   //test
-  purchaseroute:string;
-  purchaseroutee:boolean=false;
-  
+  purchaseroute:boolean=false;
   currentPath: string = '';
 
   constructor(private authStatusService: AuthStatusService,private userManagementService: UserManagementService
@@ -68,7 +66,22 @@ export class SiteLayoutComponent implements OnInit {
     this.loadModules();
     this.loadName();
     this.loadDesignation();
-    this.loadNotificationMenuRights();
+    this.loadpurchaseroute();
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        // Check the route whenever a navigation starts
+        this.loadpurchaseroute();
+      }
+    });
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        // Check the route whenever a navigation starts
+        this.loadpurchaseroute();
+      }
+    });
+
+
+
   }
   get fm() { return this.changePassForm.controls };
 
@@ -223,103 +236,14 @@ export class SiteLayoutComponent implements OnInit {
   this.notMatched=false;
 }
 
-// loadNotificationMenuRights()
-//    {
-
-
-//     this.router.events.subscribe((event) => {
-//       if (event instanceof NavigationEnd) {
-        
-//         this.currentPath = event.url;
-//         if(this.currentPath=="/Requisition/Requisitionslist")
-//         this.purchaseroutee = true;
-//       alert("if")
-   
-//       }
-//       else
-//       {
-//         alert("else")
-//         this.purchaseroutee = false;
-
-//       }
-//     });
-
-//       }
-   
-// loadtest()
-// {
-//   this.router.events.subscribe((event) => {
-//     if (event instanceof NavigationEnd) {
-      
-//       this.currentPath = event.url;
-//   }};
-
-//   if(this.currentPath=="/Requisition/Requisitionslist")
-//   this.purchaseroutee = true;
-
-//   else
-//   {
-//     this.purchaseroutee = false;
-
-//   }
-// }
-
-
-// loadNotificationMenuRights() {
-//   this.router.events.subscribe((event) => {
-//     if (event instanceof  RouteConfigLoadStart) {
-//       this.currentPath = event.url;
-      
-//       if (this.currentPath === "/Requisition/Requisitionslist") {
-//         this.purchaseroutee = true;
-      
-        
-//       } else {
-//         this.purchaseroutee = false;
-        
-//       }
-//     }
-//   });
-// }
-
-loadNotificationMenuRights() {
-   this.router.events.subscribe((event) => {
-    if (event instanceof NavigationStart   ) {
- 
-      // Get the current URL from the router service
-      const currentPath = this.router.url;
-      
-      if (currentPath === "/Requisition/Requisitionslist") {
-   
-        this.purchaseroutee = true;
-      } else {
-        this.purchaseroutee = false;
-      }
-    }
-
-
-    if (event instanceof NavigationEnd   ) {
-
-      // Get the current URL from the router service
-      const currentPath = this.router.url;
-      
-      if (currentPath === "/Requisition/Requisitionslist") {
-    
-        this.purchaseroutee = true;
-      } else {
-        this.purchaseroutee = false;
-      }
-    }
 
 
 
-  });
+
+private loadpurchaseroute(): void {
+  // Check if the current route matches the desired route
+  this.purchaseroute = this.router.url === '/Requisition/Requisitionslist';
 }
-
-
-
-
-
 
 
   }

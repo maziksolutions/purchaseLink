@@ -7,9 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportDataComponent } from '../../common/import-data/import-data.component';
-
 import { MultiSelectComponent } from 'ng-multiselect-dropdown';
-
 declare let Swal, PerfectScrollbar: any;
 
 import {
