@@ -297,19 +297,34 @@
               </div>
                    <hr class="m-0">
                    <div class="card-body fs--1 collapse show" id="document-header">
+                    <form (ngSubmit)="onSubmit(RequisitionForm)" [formGroup]="RequisitionForm">
                        <div class="row">
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-2">Origin Site</h6>
-                               <h6 class="mb-0 fs--2 text-500">Origin Site</h6>
+                              
+                               <fieldset class="form-group mb-0">
+                                <input type="text" class="form-control form-small" 
+                                    disabled value="{{userDetail.site}}">
+                            </fieldset>
+                               
                                </div>
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-2">Site Required at</h6>
-                               <h6 class="mb-0 fs--2 text-500">Site Required at</h6>
+                                  <fieldset class="form-group mb-0">
+                                <select class="form-control form-small form-select" formControlName="siteRequiredAt" [(ngModel)]="selectedVesselId" (change)="LoadShipCompnent()"  required>
+                                  <option value="" selected disabled>Select Site Required at</option>
+                                  <option *ngFor="let item of  Vessels" id="abc"  value="{{item.vesselId}}">
+                                  {{item.vesselName | titlecase}}
+                                    
+                                  </option>
+                                </select>
+                              </fieldset>
                                </div>
+                               
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-1">Request Order Type</h6>
                                <fieldset class="form-group mb-0">
-                        <select class="form-control form-small form-select"  required>
+                        <select class="form-control form-small form-select" formControlName="orderTypeId"  required>
                           <option value="" selected disabled>Select OrderTypes</option>
                           <option *ngFor="let item of orderTypes" value="{{item.orderTypeId}}">
                             {{item.orderTypes | titlecase}}
@@ -319,22 +334,43 @@
                                </div>
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-2">Order Title</h6>
-                               <h6 class="mb-0 fs--2 text-500">Order Title</h6>
+                               <h6 class="mb-0 fs--2 text-500"></h6>
+                               <fieldset class="form-group mb-0">
+                                <input type="text" formControlName="orderTitle"  class="form-control form-small" 
+                                    placeholder="Order Title"  maxlength="100" required>
+                            </fieldset>
                                </div>
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-2">Order Reference</h6>
-                               <h6 class="mb-0 fs--2 text-500">Order Reference</h6>
+                             
+                               <fieldset class="form-group mb-0">
+                                <ng-multiselect-dropdown [placeholder]="'Select Order Reference'" class="multiselect-dropdown"
+                                    [settings]="dropdownShipcomSetting" [data]="Shipcomponent" [(ngModel)]="dropdownList"
+                                    (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
+                                    formControlName="orderReference" (onDeSelect)="onShipCompoDeSelect($event)"
+                                    (onDeSelectAll)="onShipCompoDeSelectAll($event)"
+                                    >
+                                </ng-multiselect-dropdown>
+                            </fieldset>
                                </div>
                            </div>
                        <div class="row">							 
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-2">Department</h6>
-                               <h6 class="mb-0 fs--2 text-500">Department</h6>
+                              
+                               <fieldset class="form-group mb-0">
+                                <select class="form-control form-small form-select" formControlName="department" required>
+                                  <option value="" selected disabled>Select Department</option>
+                                  <option *ngFor="let item of Departments" value="{{item.departmentId}}">
+                                    {{item.departmentName | titlecase}}
+                                  </option>
+                                </select>
+                              </fieldset>
                                </div>
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-1">Priority</h6>
                                <fieldset class="form-group mb-0">
-                                <select class="form-control form-small form-select"  required>
+                                <select class="form-control form-small form-select" formControlName="priorityId" required>
                                   <option value="" selected disabled>Select Priority </option>
                                   <option *ngFor="let item of Priority" value="{{item.prefenceId}}">
                                     {{item.description |titlecase }}
@@ -346,7 +382,7 @@
                            <div class="col-lg mb-3">
                                <h6 class="text-900 mb-1">Project Name / Code</h6>
                                <fieldset class="form-group mb-0">
-                                <select class="form-control form-small form-select"  required>
+                                <select class="form-control form-small form-select" formControlName="projectNameCodeId" required>
                                   <option value="" selected disabled>Select </option>
                                   <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
                                     {{item.projectName|titlecase }}-{{item.projectCode}} 
@@ -355,9 +391,13 @@
                       </fieldset>
                                </div>							 
                            <div class="col-lg mb-3">
-                               <h6 class="text-900 mb-2">Remarks</h6>
-                               <h6 class="mb-0 fs--2 text-500">Remarks</h6>
+                               <h6 class="text-900 mb-2">Remarks</h6> 
+                               <fieldset class="form-group mb-0">
+                                <input type="text" class="form-control form-small" 
+                                formControlName="remarks"   placeholder="Remarks" maxlength="100" required>
+                            </fieldset>
                                </div>
+
                            <div class="col-lg mb-2">
                                <h6 class="text-900 mb-2">Comments</h6>
                                <div class="form-check form-check-inline mb-0">
@@ -368,8 +408,16 @@
                   <input class="form-check-input" id="" type="checkbox" value="option2">
                   <label class="form-check-label mb-0" for="">Internal</label>
                 </div>
+
+                <div class="col-md-2">
+                  <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
+                      data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""
+                    ><i class="fas fa-save"></i></button>
+                 
+              </div>
                                </div>
                            </div>
+                          </form>
                        </div>
                    </div>
 

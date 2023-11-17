@@ -91,6 +91,9 @@ GetSpareList(status): Observable<any> {
 GetComponentList(status): Observable<any> {  
   return this.httpClient.get<any[]>(`${this.linkurl}getComponentList/${status}`, httpOptions);
 }
+getShipComponentwithvessel(vesselId): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}getShipComponentwithvessel/${vesselId}`, httpOptions);
+}
 //#endregion
 
 //#region  Counter Master
