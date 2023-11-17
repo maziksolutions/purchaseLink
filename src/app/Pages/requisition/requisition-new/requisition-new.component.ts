@@ -27,7 +27,7 @@ declare let Swal, PerfectScrollbar: any;
   templateUrl: './requisition-new.component.html',
   styleUrls: ['./requisition-new.component.css']
 })
-export class RequisitionNewComponent implements OnInit{
+export class RequisitionNewComponent implements OnInit {
 
   orderForm: FormGroup; flag; pkey: number = 0;
   displayedColumns: string[] = ['checkbox', 'orderTypes', 'defaultOrderType', 'serviceType', 'abbreviation'];
@@ -44,7 +44,8 @@ export class RequisitionNewComponent implements OnInit{
   Priority: any;
   portList: any;
   deliveryForm: FormGroup;
-
+  genericCheckbox: boolean = false;
+  internalCheckbox: boolean = false;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder,
     private router: Router, private purchaseService: PurchaseMasterService) {
@@ -56,7 +57,7 @@ export class RequisitionNewComponent implements OnInit{
       deliveryAddressType: [''],
     });
   }
- 
+
   ngOnInit(): void {
     this.LoadOrdertype();
     this.LoadProjectnameAndcode();
@@ -64,11 +65,22 @@ export class RequisitionNewComponent implements OnInit{
     this.loadPortList();
   }
 
-  onCheckboxChecked(checkboxType: string) {
-    console.log(`Checkbox ${checkboxType} is selected`);
+  onCheckboxChanged(event: any) {
+    debugger;
+    const checkboxType = event.target.id;
+    const isChecked = event.target.checked;
 
+    if (checkboxType === 'genric') {
+      this.genericCheckbox = isChecked;
+      this.internalCheckbox=false;
+    } else if (checkboxType === 'internal'){
+      this.internalCheckbox = isChecked;
+      this.genericCheckbox=false;
+    }
+     
+
+    console.log(`Checkbox ${checkboxType} is changed to ${isChecked}`);
   }
-
 
   loadPortList() {
     debugger;

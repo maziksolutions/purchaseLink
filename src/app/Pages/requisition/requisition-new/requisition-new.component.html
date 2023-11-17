@@ -386,11 +386,11 @@
             <div class="col-lg mb-2">
               <h6 class="text-900 mb-2">Comments</h6>
               <div class="form-check form-check-inline mb-0">
-                <input class="form-check-input" id="genric" type="checkbox" value="option1"  (click)="onCheckboxChecked('genric')">
+                <input class="form-check-input" id="genric" type="checkbox" [checked]="genericCheckbox" (change)="onCheckboxChanged($event)">
                 <label class="form-check-label mb-0" for="genric">Generic</label>
               </div>
               <div class="form-check form-check-inline mb-0">
-                <input class="form-check-input" id="internal" type="checkbox" value="option2" (click)="onCheckboxChecked('internal')">
+                <input class="form-check-input" id="internal" type="checkbox" [checked]="internalCheckbox" (change)="onCheckboxChanged($event)">
                 <label class="form-check-label mb-0" for="internal">Internal</label>
               </div>
             </div>
