@@ -100,7 +100,6 @@ export class RequisitionNewComponent implements OnInit{
     this.purchaseService.GetPreferenceType(0)
       .subscribe(response => {
         this.Priority = response.data;
-        console.log(this.Priority)
       })
   }
 
