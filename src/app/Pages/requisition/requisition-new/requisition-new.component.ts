@@ -14,7 +14,7 @@ import { ViewChild } from '@angular/core';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
-import { Router ,ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { RightsModel } from '../../Models/page-rights';
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
 import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
@@ -102,6 +102,7 @@ export class RequisitionNewComponent implements OnInit {
   get fm() { return this.RequisitionForm.controls };
 
   LoadOrdertype() {
+    debugger;
     this.purchaseService.getOrderTypes(0)
       .subscribe(response => {
         this.orderTypes = response.data;
