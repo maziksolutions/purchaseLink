@@ -24,6 +24,12 @@ import { RequisitionService } from 'src/app/services/requisition.service';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 
+enum CheckBoxType {
+  Generic,
+  Internal,
+  NONE,
+}
+
 @Component({
   selector: 'app-requisition-new',
   templateUrl: './requisition-new.component.html',
@@ -50,10 +56,17 @@ export class RequisitionNewComponent implements OnInit {
   Departments: any;
   selectedVesselId: any;
   Shipcomponent: any;
+  portList: any;
+
+  check_box_type = CheckBoxType;
+
+  currentlyChecked: CheckBoxType;
 
   dropdownList: { shipComponentId: number, Shipcomponent: string }[] = [];
   selectedItems: string[] = [];
   dropdownShipcomSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
+  checkGeneric: boolean = false;
+  checkInternal: boolean = false;
 
   constructor( private fb: FormBuilder,   private route: ActivatedRoute,
     private router:Router, private purchaseService: PurchaseMasterService,
@@ -68,15 +81,16 @@ export class RequisitionNewComponent implements OnInit {
     this.RequisitionForm = this.fb.group({
       requisitionId: [0],
       originSite: ['', [Validators.required]],
-      siteRequiredAt: ['', [Validators.required]],
+      vesselId: ['', [Validators.required]],
       orderTypeId: ['', [Validators.required]],
       orderTitle: ['', [Validators.required]],
       orderReference: ['', [Validators.required]],
-      department: ['', [Validators.required]],
+      departmentId: ['', [Validators.required]],
       priorityId: ['', [Validators.required]],
       projectNameCodeId: ['', [Validators.required]],
       remarks: ['', [Validators.required]],
       genericComment: ['', [Validators.required]],
+      internalComment: ['', [Validators.required]],
      
     });
 
@@ -87,6 +101,7 @@ export class RequisitionNewComponent implements OnInit {
     this.LoadUserDetails();
     this.LoadVessel();
     this.LoadDepartment();
+    this.loadPortList();
    
     this.dropdownShipcomSetting = {
       singleSelection: false,
@@ -101,8 +116,32 @@ export class RequisitionNewComponent implements OnInit {
 
   get fm() { return this.RequisitionForm.controls };
 
+
+  selectCheckBox(targetType: CheckBoxType) {
+    // If the checkbox was already checked, clear the currentlyChecked variable
+    if (this.currentlyChecked === targetType) {
+      this.currentlyChecked = CheckBoxType.NONE;
+
+      return;
+    }
+
+    this.currentlyChecked = targetType;
+
+if(this.currentlyChecked == 0){
+
+  this.checkGeneric = true ;
+  alert('checkGeneric'+this.checkGeneric);
+}
+if(this.currentlyChecked == 1){
+
+  this.checkInternal = true;
+  alert('checkInternal'+this.checkInternal);
+}
+
+    
+  }
+
   LoadOrdertype() {
-    debugger;
     this.purchaseService.getOrderTypes(0)
       .subscribe(response => {
         this.orderTypes = response.data;
@@ -143,6 +182,14 @@ export class RequisitionNewComponent implements OnInit {
       .subscribe(response => {
         this.Departments = response.data;
 
+      })
+  }
+
+  loadPortList() {
+   
+    this.purchaseService.GetPortList(0)
+      .subscribe(response => {
+        this.portList = response.data;
       })
   }
 
@@ -192,40 +239,13 @@ export class RequisitionNewComponent implements OnInit {
     // (document.getElementById('abc') as HTMLElement).focus();
   }
 
-  loadData(status: number) {
-    if (status == 1) {
-      this.deletetooltip = 'UnArchive';
-      if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
-        (document.querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
-        (document.querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
-      }
-    }
-    else {
-      this.deletetooltip = 'Archive';
-      if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
-        (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
-        (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
-      }
-    }
-
-    this.purchaseService.getOrderTypes(status)
-      .subscribe(response => {
-       
-        this.flag = status;
-        var serviceType = response.data;
-
-        this.dataSource.data = serviceType;
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
-        this.clear();
-        (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
-      });
-  }
-
   onSubmit(form: any) {
    
     form.value.orderReference = this.selectedItems.join(',');
     form.value.originSite = this.userDetail.site; 
+    form.value.genericComment = this.checkGeneric;
+    form.value.internalComment = this.checkInternal;
+
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
 
@@ -236,20 +256,20 @@ export class RequisitionNewComponent implements OnInit {
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
           this.clear();
-          this.loadData(0);
+         
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
           this.clear();
-          this.loadData(0);
+        
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
-          this.loadData(0);
+         
         }
         else if (data.message == "not found") {
           this.swal.info('Data exist not exist');
-          this.loadData(0);
+          
         }
         else {
 

@@ -19,8 +19,12 @@ export class RequisitionService {
   constructor(private httpClient: HttpClient) { }
 
   //Get Maintenance Type data
-getOrderTypes(status): Observable<any> {  
-  return this.httpClient.get<any[]>(`${this.linkurl}filterOrderType/${status}`, httpOptions);
+getRequisitionMaster(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}filterRequisitionMaster/${status}`, httpOptions);
+}
+
+filterRequisitionMasterwithvessel(vesselId): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}GetRequisitionMasterWithVessel/${vesselId}`, httpOptions);
 }
 getOrderTypeById(id):Observable<any>{  
   return  this.httpClient.get<any>(this.linkurl + 'getOrderTypeById/' + id,httpOptions)
