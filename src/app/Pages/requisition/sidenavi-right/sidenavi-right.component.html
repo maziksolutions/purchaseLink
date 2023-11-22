@@ -1,0 +1,285 @@
+<div id="sideNavi">
+    <!-- sidenavi menu //-->
+    <div class="side-navi-item-default"></div>
+    <div class="side-navi-item item1">
+        <div><i class="fas fa-chevron-up"></i></div>
+    </div>
+    <!-- sidenavi data //-->
+    <div class="side-navi-data">
+        <div class="side-navi-tab">
+            <div>
+                <a class="px-3"><i class="fas fa-calendar-check mb-3 font-medium-2"></i></a><br>
+                <a class="px-3"><i class="fas fa-map-marker-alt mb-3 font-medium-2"></i></a><br>
+                <a class="px-3"><i class="fas fa-sync-alt mb-3 font-medium-2"></i></a><br>
+                <a class="px-3" data-bs-toggle="modal" data-bs-target="#searchbox"><i
+                        class="fas fa-search mb-3 font-medium-2"></i></a><br>
+                <a class="px-3" data-bs-toggle="modal" data-bs-target="#remarks"><i
+                        class="fas fa-comment mb-3 font-medium-2"></i></a><br>
+                <div class="theme-control-toggle fa-icon-wait p-l-10 mb-3">
+                    <input class="form-check-input ms-0 theme-control-toggle-input" id="themeControlToggle"
+                        type="checkbox" data-theme-control="theme" value="dark" />
+                    <label class="theme-control-toggle-label theme-control-toggle-light" for="themeControlToggle">
+                        <span class="fas fa-sun fs-0"></span></label>
+                    <label class="mb-0 theme-control-toggle-label theme-control-toggle-dark"
+                        for="themeControlToggle"><span class="fas fa-moon fs-0"></span></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="searchbox" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl mt-6" role="document">
+        <div class="modal-content border-0">
+            <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="">Search</h5>
+
+            </div>
+            <div class="modal-body mt-0 scrollbar-visible" style="height: 70vh">
+                <h6 class="p-3 alert alert-primary">Document Header</h6>
+                <div class="row g-3">
+                    <div class="col-lg">
+                        <div class="form-floating mb-2">
+                            <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+                                <option selected="">---</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Delivery Site Selection</label>
+                        </div>
+                    </div>
+
+                    <div class="col-lg">
+                        <div class="form-floating mb-2">
+                            <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+                                <option selected="">---</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Origin Site Selection</label>
+                        </div>
+                    </div>
+
+                    <div class="col-lg">
+                        <div class="form-floating mb-2">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Purchase Document Number"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Purchase Document Number</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Order Title"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Order Title</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Equipment Reference"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Equipment Reference</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-lg">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Order Type"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Order Type</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Department"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Department</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Priority"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Priority</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Project Name / Code"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Project Name / Code</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="form-floating mb-2">
+                            <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+                                <option selected="">---</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Delivery Port Selection</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3">
+
+                    <div class="col-lg">
+                        <div class="form-floating mb-2">
+                            <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+                                <option selected="">---</option>
+                                <option value="1">Requisition</option>
+                                <option value="2">RFQ</option>
+                                <option value="3">Quotation</option>
+                                <option value="4">Purchase Order</option>
+                                <option value="5">Material Delivery</option>
+                                <option value="6">Invoice</option>
+                            </select>
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Purchase Stage Selection</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="form-floating mb-2">
+                            <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+                                <option selected="">---</option>
+                                <option value="1">Draft</option>
+                                <option value="2">Review</option>
+                                <option value="3">Approved</option>
+                                <option value="4">Approval</option>
+                            </select>
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Purchase Sub Stage</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Date Range"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Date Range</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                    </div>
+                    <div class="col-lg">
+                    </div>
+
+                </div>
+
+                <h6 class="p-3 mt-4 alert alert-primary">Accounts Info</h6>
+                <div class="row g-3">
+                    <div class="col-lg">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Account Code"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Account Code</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Budget Year"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Budget Year</label>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Account Category"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Account Category</label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <h6 class="p-3 mt-4 alert alert-primary">Delivery Info</h6>
+                <div class="row g-3">
+                    <div class="col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Vendor Info"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Vendor Name</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Agent Info"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Agent Name</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-floating mb-3">
+                            <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                                id="" type="text" placeholder="Warehouse Info"
+                                style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+                            <label for="" class="px-0" style="line-height: 0.625rem;">Warehouse Name</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary me-1" aria-label="">Search</button> <button type="button"
+                    class="btn btn-danger me-1" aria-label="">Clear</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="remarks" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog mt-6" role="document">
+        <div class="modal-content border-0">
+            <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                    data-bs-dismiss="modal" (click)="cancelUpdate()" aria-label="Close"></button>
+            </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="">Add Comments</h5>
+
+            </div>
+            <div class="modal-body mt-0 scrollbar-visible">
+                <ul class="list-group comments-list" *ngIf="comments.length > 0">
+                    <li class="list-group-item" *ngFor="let comment of comments">
+                        <span (click)="editComment(comment)">{{ comment.commentData }}</span>
+                    </li>
+                </ul>
+                <div *ngIf="comments.length === 0">No comments available.</div>
+            </div>
+            <form (ngSubmit)="onSubmit(commentsForm)" [formGroup]="commentsForm">
+                <div class="modal-footer d-flex justify-content-end align-items-center">
+                    <div class="flex-grow-1">
+                        <input type="text" formControlName="commentData" class="form-control" [(ngModel)]="selectedComment" />
+                    </div>
+                    <div class="ml-2">
+                        <button *ngIf="!commentsForm.get('commentId')?.value" type="submit" class="btn btn-primary" aria-label="">Add</button>
+                        <button *ngIf="commentsForm.get('commentId')?.value" type="submit" class="btn btn-primary" aria-label="">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

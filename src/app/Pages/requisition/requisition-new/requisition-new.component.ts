@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -18,9 +18,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RightsModel } from '../../Models/page-rights';
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
 import { response } from '../../Models/response-model';
+import { SideNavService } from '../sidenavi-right/sidenavi-service';
+import { RequisitionMasterService } from 'src/app/services/requisition-master.service';
 
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
+declare var SideNavi: any;
 
 @Component({
   selector: 'app-requisition-new',
@@ -46,40 +49,85 @@ export class RequisitionNewComponent implements OnInit {
   deliveryForm: FormGroup;
   genericCheckbox: boolean = false;
   internalCheckbox: boolean = false;
+  commetType: string = '';
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder,
-    private router: Router, private purchaseService: PurchaseMasterService) {
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private reqService: RequisitionMasterService,
+    private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService) {
     this.deliveryForm = this.fb.group({
+      delInfoId: [0],
       expectedDeliveryPort: ['', Validators.required],
       expectedDeliveryDate: [''],
       vesselETA: [''],
       vesselETB: [''],
-      deliveryAddressType: [''],
+      deliveryAddressType: ['vessel'],
     });
   }
+
+  get fm() { return this.deliveryForm.controls }
 
   ngOnInit(): void {
     this.LoadOrdertype();
     this.LoadProjectnameAndcode();
     this.LoadPriority();
     this.loadPortList();
-  }
+  }   
 
   onCheckboxChanged(event: any) {
     debugger;
     const checkboxType = event.target.id;
     const isChecked = event.target.checked;
-
+    this.commetType = '';
     if (checkboxType === 'genric') {
       this.genericCheckbox = isChecked;
-      this.internalCheckbox=false;
-    } else if (checkboxType === 'internal'){
+      this.internalCheckbox = false;
+      this.commetType = 'generic';
+      this.sideNavService.setCommetType(this.commetType);
+    } else if (checkboxType === 'internal') {
       this.internalCheckbox = isChecked;
-      this.genericCheckbox=false;
+      this.genericCheckbox = false;
+      this.commetType = 'internal';
+      this.sideNavService.setCommetType(this.commetType);
     }
-     
 
     console.log(`Checkbox ${checkboxType} is changed to ${isChecked}`);
+  }
+
+  onSubmit(form: any) {
+    debugger;
+    console.log('Form validity:', this.deliveryForm.valid);
+    console.log('Form value:', this.deliveryForm.value);
+    if (this.deliveryForm.valid) {
+      debugger;
+      this.reqService.addDeliveryAddress(form.value)
+        .subscribe(data => {
+
+          if (data.message == "data added") {
+            this.swal.success('Added successfully.');
+            this.clear();
+            // this.loadData(0);
+          }
+          else if (data.message == "updated") {
+            this.swal.success('Data has been updated successfully.');
+            this.clear();
+            // this.loadData(0);
+          }
+          else if (data.message == "duplicate") {
+            this.swal.info('Data already exist. Please enter new data');
+            // this.loadData(0);
+          }
+          else if (data.message == "not found") {
+            this.swal.info('Data exist not exist');
+            // this.loadData(0);
+          }
+          else {
+
+          }
+        },
+          error => {
+            debugger;
+            console.error('Service error:', error);
+          });
+    }
   }
 
   loadPortList() {
@@ -115,6 +163,6 @@ export class RequisitionNewComponent implements OnInit {
       })
   }
 
-
+  clear() { }
 
 }

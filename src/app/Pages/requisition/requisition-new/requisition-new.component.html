@@ -1,3 +1,4 @@
+<app-sidenavi-right></app-sidenavi-right>
 <main class="main" id="top">
   <div class="container-fluid" data-layout="container">
     <!-- <nav class="navbar navbar-light navbar-vertical navbar-expand-xl navbar-inverted">
@@ -386,11 +387,13 @@
             <div class="col-lg mb-2">
               <h6 class="text-900 mb-2">Comments</h6>
               <div class="form-check form-check-inline mb-0">
-                <input class="form-check-input" id="genric" type="checkbox" [checked]="genericCheckbox" (change)="onCheckboxChanged($event)">
+                <input class="form-check-input" id="genric" type="checkbox" [checked]="genericCheckbox"
+                  (change)="onCheckboxChanged($event)">
                 <label class="form-check-label mb-0" for="genric">Generic</label>
               </div>
               <div class="form-check form-check-inline mb-0">
-                <input class="form-check-input" id="internal" type="checkbox" [checked]="internalCheckbox" (change)="onCheckboxChanged($event)">
+                <input class="form-check-input" id="internal" type="checkbox" [checked]="internalCheckbox"
+                  (change)="onCheckboxChanged($event)">
                 <label class="form-check-label mb-0" for="internal">Internal</label>
               </div>
             </div>
@@ -464,137 +467,141 @@
 
 
       <div class="card mb-3">
-        <div class="card-header bg-light">
-          <div class="row flex-between-end">
-            <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#delivery"
-              aria-expanded="false" aria-controls="document-header">
-              <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3"
-                  data-fa-transform="shrink-2"></span>Delivery Info</h5>
-            </div>
-            <div class="col-auto ms-auto">
-              <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                data-bs-original-title="Edit Delivery Info" aria-label=""><i class="fas fa-edit text-primary"></i></a>
-              <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                data-bs-original-title="Send Delivery Instructions" aria-label=""><i
-                  class="fas fa-share-square text-primary"></i></a>
-            </div>
-          </div>
-        </div>
-        <hr class="m-0">
-        <div class="card-body collapse" id="delivery">
-          <div class="row">
-            <div class="col-lg mb-3">
-              <h6 class="text-900 mb-2">Expected Delivery Port</h6>
-              <fieldset class="form-group mb-0">
-                <select class="form-control form-small form-select" formControlName="expectedDeliveryPort" required>
-                  <option value="" selected disabled>Select </option>
-                  <option *ngFor="let item of portList" value="{{item.locationId}}">
-                    {{item.locationName}}
-                  </option>
-                </select>
-              </fieldset>
-            </div>
-            <div class="col-lg mb-3">
-              <h6 class="text-900 mb-2">Expected Delivery Date</h6>
-              <input type="date" class="mb-0 fs--2 text-500" formControlName="expectedDeliveryDate"/>
-            </div>
-            <div class="col-lg mb-3">
-              <h6 class="text-900 mb-2">Vessel ETA</h6>
-              <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETA"/>
-            </div>
-            <div class="col-lg mb-3">
-              <h6 class="text-900 mb-2">Vessel ETB</h6>
-              <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETB"/>
-            </div>
-            <div class="col-lg mb-3">
-              <h6 class="text-900 mb-2">Delivery Address</h6>
-              <h6 class="mb-0 fs--2"><a type="button" data-bs-toggle="modal" data-bs-target="#delivery-address"
-                  data-bs-placement="top" aria-label="">Address</a></h6>
-              <div class="modal fade" id="delivery-address" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg mt-6" role="document">
-                  <div class="modal-content border-0">
-                    <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                      <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                        data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="">Delivery Address</h5>
-
-                    </div>
-                    <div class="modal-body mt-0 scrollbar-visible" style="height: 70vh">
-                      <div class="table-responsive scrollbar">
-                        <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
-                          <thead class="bg-300">
-                            <tr>
-                              <th>Type (Agent / Warehouse)</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>
-                                <select class="form-control form-small form-select" formControlName="deliveryAddressType">
-                                  <option>-----</option>
-                                  <option>Agent</option>
-                                  <option>Warehouse</option>
-                                </select>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#details"
-                        data-bs-placement="top" aria-label="">Ok</a> <button type="button" class="btn btn-danger me-1"
-                        aria-label="">Cancel</button>
-                    </div>
-
-                  </div>
-                </div>
+        <form (ngSubmit)="onSubmit(deliveryForm)" [formGroup]="deliveryForm">
+          <div class="card-header bg-light">
+            <div class="row flex-between-end">
+              <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#delivery"
+                aria-expanded="false" aria-controls="document-header">
+                <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3"
+                    data-fa-transform="shrink-2"></span>Delivery Info</h5>
               </div>
-
-              <div class="modal fade" id="details" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog mt-6" role="document">
-                  <div class="modal-content border-0">
-                    <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                      <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                        data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="">Delivery Address</h5>
-
-                    </div>
-                    <div class="modal-body mt-0 scrollbar-visible" style="height: 70vh">
-                      <div class="table-responsive scrollbar">
-                        <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
-                          <thead class="bg-300">
-                            <tr>
-                              <th>Name</th>
-                              <th>Location</th>
-                              <th>city</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>-----</td>
-                              <td>-----</td>
-                              <td>-----</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-primary me-1" aria-label="">Ok</button> <button type="button"
-                        class="btn btn-danger me-1" aria-label="">Cancel</button>
-                    </div>
-
-                  </div>
-                </div>
+              <div class="col-auto ms-auto">
+                <button class="btn btn-primary form-small  m-r-5" data-bs-toggle="tooltip" data-bs-placement="top"
+                  title="" data-bs-original-title="Save" aria-label=""><i class="fas fa-save"></i></button>
+                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                  data-bs-original-title="Edit Delivery Info" aria-label=""><i class="fas fa-edit text-primary"></i></a>
+                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                  data-bs-original-title="Send Delivery Instructions" aria-label=""><i
+                    class="fas fa-share-square text-primary"></i></a>
               </div>
             </div>
           </div>
-        </div>
+          <hr class="m-0">
+          <div class="card-body collapse" id="delivery">
+            <div class="row">
+              <div class="col-lg mb-3">
+                <h6 class="text-900 mb-2">Expected Delivery Port</h6>
+                <fieldset class="form-group mb-0">
+                  <select class="form-control form-small form-select" formControlName="expectedDeliveryPort" required>
+                    <option value="" selected disabled>Select </option>
+                    <option *ngFor="let item of portList" value="{{item.locationName}}">
+                      {{item.locationName}}
+                    </option>
+                  </select>
+                </fieldset>
+              </div>
+              <div class="col-lg mb-3">
+                <h6 class="text-900 mb-2">Expected Delivery Date</h6>
+                <input type="date" class="mb-0 fs--2 text-500" formControlName="expectedDeliveryDate" />
+              </div>
+              <div class="col-lg mb-3">
+                <h6 class="text-900 mb-2">Vessel ETA</h6>
+                <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETA" />
+              </div>
+              <div class="col-lg mb-3">
+                <h6 class="text-900 mb-2">Vessel ETB</h6>
+                <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETB" />
+              </div>
+              <div class="col-lg mb-3">
+                <h6 class="text-900 mb-2">Delivery Address</h6>
+                <h6 class="mb-0 fs--2"><a type="button" data-bs-toggle="modal" data-bs-target="#delivery-address"
+                    data-bs-placement="top" aria-label="">Address</a></h6>
+                <div class="modal fade" id="delivery-address" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog modal-lg mt-6" role="document">
+                    <div class="modal-content border-0">
+                      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                          data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="">Delivery Address</h5>
+
+                      </div>
+                      <div class="modal-body mt-0 scrollbar-visible" style="height: 70vh">
+                        <div class="table-responsive scrollbar">
+                          <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                            <thead class="bg-300">
+                              <tr>
+                                <th>Type (Agent / Warehouse)</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <select class="form-control form-small form-select"
+                                    formControlName="deliveryAddressType">
+                                    <option>-----</option>
+                                    <option>Agent</option>
+                                    <option>Warehouse</option>
+                                  </select>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#details"
+                          data-bs-placement="top" aria-label="">Ok</a> <button type="button" class="btn btn-danger me-1"
+                          aria-label="">Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="modal fade" id="details" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog mt-6" role="document">
+                    <div class="modal-content border-0">
+                      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                          data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="">Delivery Address</h5>
+
+                      </div>
+                      <div class="modal-body mt-0 scrollbar-visible" style="height: 70vh">
+                        <div class="table-responsive scrollbar">
+                          <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                            <thead class="bg-300">
+                              <tr>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>city</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>-----</td>
+                                <td>-----</td>
+                                <td>-----</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-primary me-1" aria-label="">Ok</button> <button
+                          type="button" class="btn btn-danger me-1" aria-label="">Cancel</button>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
 
 
@@ -1217,7 +1224,7 @@
         </div>
       </div>
 
-        <!-- <footer class="footer">
+      <!-- <footer class="footer">
           <div class="row g-0 justify-content-between fs--1 mt-4 mb-3">
             <div class="col-12 col-sm-auto text-center">
               <p class="mb-0 text-600">Copyright © 2023, All rights reserved.</p>
