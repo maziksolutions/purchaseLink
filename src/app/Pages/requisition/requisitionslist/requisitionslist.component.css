@@ -1,0 +1,47 @@
+.mat-column-denger {
+    word-wrap: break-word !important;
+    white-space: unset !important;
+    flex: 0 0 4% !important;
+    width: 4% !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  
+    word-break: break-word;
+  
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+
+  .mat-column-checkbox {
+    word-wrap: break-word !important;
+    white-space: unset !important;
+    flex: 0 0 3% !important;
+    width: 3% !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  
+    word-break: break-word;
+  
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+
+  .mat-column-Requisition_No {
+    word-wrap: break-word !important;
+    white-space: unset !important;
+    flex: 0 20% !important;
+    width: 25% !important;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  
+    word-break: break-word;
+  
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }

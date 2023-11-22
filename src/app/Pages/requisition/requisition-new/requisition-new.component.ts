@@ -19,11 +19,20 @@ import { RightsModel } from '../../Models/page-rights';
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
 import { response } from '../../Models/response-model';
 import { SideNavService } from '../sidenavi-right/sidenavi-service';
-import { RequisitionMasterService } from 'src/app/services/requisition-master.service';
 
+import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
+import { VesselManagementService } from 'src/app/services/vessel-management.service';
+import { ShipmasterService } from 'src/app/services/shipmaster.service';
+import { RequisitionService } from 'src/app/services/requisition.service';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 declare var SideNavi: any;
+
+enum CheckBoxType {
+  Generic,
+  Internal,
+  NONE,
+}
 
 @Component({
   selector: 'app-requisition-new',
@@ -32,7 +41,7 @@ declare var SideNavi: any;
 })
 export class RequisitionNewComponent implements OnInit {
 
-  orderForm: FormGroup; flag; pkey: number = 0;
+  RequisitionForm: FormGroup; flag; pkey: number = 0;
   displayedColumns: string[] = ['checkbox', 'orderTypes', 'defaultOrderType', 'serviceType', 'abbreviation'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
@@ -45,14 +54,49 @@ export class RequisitionNewComponent implements OnInit {
   projectnameAndcode: any;
   orderTypes: any;
   Priority: any;
+  userId: string;
+  userDetail: any;
+  Vessels: any;
+  Departments: any;
+  selectedVesselId: any;
+  Shipcomponent: any;
   portList: any;
   deliveryForm: FormGroup;
   genericCheckbox: boolean = false;
   internalCheckbox: boolean = false;
   commetType: string = '';
+  check_box_type = CheckBoxType;
+  currentlyChecked: CheckBoxType;
+  dropdownList: { shipComponentId: number, Shipcomponent: string }[] = [];
+  selectedItems: string[] = [];
+  dropdownShipcomSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
+  checkGeneric: boolean = false;
+  checkInternal: boolean = false;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private reqService: RequisitionMasterService,
-    private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService) {
+    private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService,
+    private authStatusService: AuthStatusService, private userService: UserManagementService,
+    private vesselService: VesselManagementService, private shipmasterService: ShipmasterService,
+    private requisitionService: RequisitionService) { }
+
+  ngOnInit(): void {
+    this.userId = this.authStatusService.userId();
+
+    this.RequisitionForm = this.fb.group({
+      requisitionId: [0],
+      originSite: ['', [Validators.required]],
+      vesselId: ['', [Validators.required]],
+      orderTypeId: ['', [Validators.required]],
+      orderTitle: ['', [Validators.required]],
+      orderReference: ['', [Validators.required]],
+      departmentId: ['', [Validators.required]],
+      priorityId: ['', [Validators.required]],
+      projectNameCodeId: ['', [Validators.required]],
+      remarks: ['', [Validators.required]],
+      genericComment: ['', [Validators.required]],
+      internalComment: ['', [Validators.required]],
+    });
+
     this.deliveryForm = this.fb.group({
       delInfoId: [0],
       expectedDeliveryPort: ['', Validators.required],
@@ -61,16 +105,30 @@ export class RequisitionNewComponent implements OnInit {
       vesselETB: [''],
       deliveryAddressType: ['vessel'],
     });
-  }
 
-  get fm() { return this.deliveryForm.controls }
+    this.dropdownShipcomSetting = {
+      singleSelection: false,
+      idField: 'shipComponentId',
+      textField: 'shipComponentName',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true
+    }
 
-  ngOnInit(): void {
     this.LoadOrdertype();
     this.LoadProjectnameAndcode();
     this.LoadPriority();
+    this.LoadUserDetails();
+    this.LoadVessel();
+    this.LoadDepartment();
+    this.getPortList();
     this.loadPortList();
-  }   
+  }
+
+  get fm() { return this.RequisitionForm.controls };
+  get fmd() { return this.deliveryForm.controls }
+
 
   onCheckboxChanged(event: any) {
     debugger;
@@ -88,8 +146,17 @@ export class RequisitionNewComponent implements OnInit {
       this.commetType = 'internal';
       this.sideNavService.setCommetType(this.commetType);
     }
+  }
 
-    console.log(`Checkbox ${checkboxType} is changed to ${isChecked}`);
+
+  selectCheckBox(targetType: CheckBoxType) {
+    // If the checkbox was already checked, clear the currentlyChecked variable
+    if (this.currentlyChecked === targetType) {
+      this.currentlyChecked = CheckBoxType.NONE;
+      return;
+    }
+
+    this.currentlyChecked = targetType;
   }
 
   onSubmit(form: any) {
@@ -130,7 +197,8 @@ export class RequisitionNewComponent implements OnInit {
     }
   }
 
-  loadPortList() {
+
+  getPortList() {
     debugger;
     this.purchaseService.GetPortList(0)
       .subscribe(response => {
@@ -138,10 +206,20 @@ export class RequisitionNewComponent implements OnInit {
         console.log(response.data);
         this.portList = response.data;
       })
+    if (this.currentlyChecked == 0) {
+
+      this.checkGeneric = true;
+      alert('checkGeneric' + this.checkGeneric);
+    }
+    if (this.currentlyChecked == 1) {
+
+      this.checkInternal = true;
+      alert('checkInternal' + this.checkInternal);
+    }
+
   }
 
   LoadOrdertype() {
-    debugger;
     this.purchaseService.getOrderTypes(0)
       .subscribe(response => {
         this.orderTypes = response.data;
@@ -163,6 +241,121 @@ export class RequisitionNewComponent implements OnInit {
       })
   }
 
-  clear() { }
+
+  LoadUserDetails() {
+    this.userService.getUserById(this.userId)
+      .subscribe(response => {
+        this.userDetail = response.data;
+
+      })
+  }
+
+  LoadVessel() {
+    this.vesselService.getVessels(0)
+      .subscribe(response => {
+        this.Vessels = response.data;
+      })
+  }
+  LoadDepartment() {
+    this.userService.getDepartment(0)
+      .subscribe(response => {
+        this.Departments = response.data;
+
+      })
+  }
+
+  loadPortList() {
+
+    this.purchaseService.GetPortList(0)
+      .subscribe(response => {
+        this.portList = response.data;
+      })
+  }
+
+  LoadShipCompnent() {
+    this.shipmasterService.getShipComponentwithvessel(this.selectedVesselId)
+      .subscribe(response => {
+        this.Shipcomponent = response.data.map(item => ({
+          shipComponentId: item.shipComponentId,
+          shipComponentName: item.shipComponentName
+        }));
+
+      })
+  }
+
+  onSelectAll(event: any) {
+
+    if (event)
+      this.selectedItems = event.map((x: { shipComponentId: any; }) => x.shipComponentId);
+  }
+
+  onItemSelect(event: any) {
+
+    let isSelect = event.shipComponentId;
+    if (isSelect) {
+      this.selectedItems.push(event.shipComponentId);
+    }
+  }
+  onShipCompoDeSelect(event: any) {
+
+    let rindex = this.selectedItems.findIndex(shipComponentId => shipComponentId == event.shipComponentId);
+    if (rindex !== -1) {
+      this.selectedItems.splice(rindex, 1)
+    }
+  }
+
+  onShipCompoDeSelectAll(event: any) {
+
+    this.selectedItems.length = 0;
+  }
+
+  clear() {
+    // this.RequisitionForm.reset();
+    // this.RequisitionForm.controls.orderTypeId.setValue(0);
+    // this.RequisitionForm.controls.defaultOrderType.setValue('');
+    // this.RequisitionForm.controls.serviceTypeId.setValue('');
+
+    // (document.getElementById('abc') as HTMLElement).focus();
+  }
+
+  onSave(form: any) {
+
+    form.value.orderReference = this.selectedItems.join(',');
+    form.value.originSite = this.userDetail.site;
+    form.value.genericComment = this.checkGeneric;
+    form.value.internalComment = this.checkInternal;
+
+    const fmdata = new FormData();
+    fmdata.append('data', JSON.stringify(form.value));
+
+    console.log(form.value)
+    this.requisitionService.addRequisitionMaster(fmdata)
+      .subscribe(data => {
+
+        if (data.message == "data added") {
+          this.swal.success('Added successfully.');
+          this.clear();
+
+        }
+        else if (data.message == "updated") {
+          this.swal.success('Data has been updated successfully.');
+          this.clear();
+
+        }
+        else if (data.message == "duplicate") {
+          this.swal.info('Data already exist. Please enter new data');
+
+        }
+        else if (data.message == "not found") {
+          this.swal.info('Data exist not exist');
+
+        }
+        else {
+
+        }
+
+      });
+  }
 
 }
+
