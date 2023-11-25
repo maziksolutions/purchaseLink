@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -15,6 +15,9 @@ import { UserManagementService } from 'src/app/services/user-management.service'
 import { Router, ActivatedRoute } from '@angular/router';
 import { RightsModel } from '../../Models/page-rights';
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
+import { response } from '../../Models/response-model';
+import { SideNavService } from '../sidenavi-right/sidenavi-service';
+
 import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
 import { VesselManagementService } from 'src/app/services/vessel-management.service';
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
@@ -22,6 +25,7 @@ import { RequisitionService } from 'src/app/services/requisition.service';
 import { filter } from 'rxjs/operators';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
+declare var SideNavi: any;
 
 enum CheckBoxType {
   Generic,
@@ -37,7 +41,7 @@ enum CheckBoxType {
 export class RequisitionNewComponent implements OnInit {
 
   RequisitionForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox', 'orderTypes', 'defaultOrderType','serviceType','abbreviation'];
+  displayedColumns: string[] = ['checkbox', 'orderTypes', 'defaultOrderType', 'serviceType', 'abbreviation'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   rights: RightsModel;
@@ -46,9 +50,9 @@ export class RequisitionNewComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   selectedIndex: any;
-  projectnameAndcode:any;
-  orderTypes:any;
-  Priority:any;
+  projectnameAndcode: any;
+  orderTypes: any;
+  Priority: any;
   userId: string;
   userDetail: any;
   Vessels: any;
@@ -57,11 +61,12 @@ export class RequisitionNewComponent implements OnInit {
   selectedOrderTypeId:any = '0';
   Shipcomponent: any;
   portList: any;
-
+  deliveryForm: FormGroup;
+  genericCheckbox: boolean = false;
+  internalCheckbox: boolean = false;
+  commetType: string = '';
   check_box_type = CheckBoxType;
-
   currentlyChecked: CheckBoxType;
-
   dropdownList: { shipComponentId: number, Shipcomponent: string }[] = [];
   selectedItems: string[] = [];
   dropdownShipcomSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
@@ -75,16 +80,15 @@ export class RequisitionNewComponent implements OnInit {
   headserialNumber: string;
  
 
-  constructor( private fb: FormBuilder,   private route: ActivatedRoute,
-    private router:Router, private purchaseService: PurchaseMasterService,
-    private authStatusService: AuthStatusService ,private userService :UserManagementService,
-    private vesselService :VesselManagementService,private shipmasterService:ShipmasterService,
-    private swal: SwalToastService, private requisitionService :RequisitionService) { }
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, 
+    private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService,
+    private authStatusService: AuthStatusService, private userService: UserManagementService,
+    private vesselService: VesselManagementService, private shipmasterService: ShipmasterService,
+    private requisitionService: RequisitionService) { }
 
-  ngOnInit(): void 
-  {
+  ngOnInit(): void {
     this.userId = this.authStatusService.userId();
-   
+
     this.RequisitionForm = this.fb.group({
       requisitionId: [0],
       originSite: ['', [Validators.required]],
@@ -99,13 +103,21 @@ export class RequisitionNewComponent implements OnInit {
       remarks: ['', [Validators.required]],
       genericComment: ['', [Validators.required]],
       internalComment: ['', [Validators.required]],
-     
     });
 
     this.loadData(0);
     
    
    
+    this.deliveryForm = this.fb.group({
+      delInfoId: [0],
+      expectedDeliveryPort: ['', Validators.required],
+      expectedDeliveryDate: [''],
+      vesselETA: [''],
+      vesselETB: [''],
+      deliveryAddressType: ['vessel'],
+    });
+
     this.dropdownShipcomSetting = {
       singleSelection: false,
       idField: 'shipComponentId',
@@ -114,34 +126,107 @@ export class RequisitionNewComponent implements OnInit {
       unSelectAllText: 'UnSelect All',
       itemsShowLimit: 1,
       allowSearchFilter: true
-    };
+    }
+
+    this.LoadOrdertype();
+    this.LoadProjectnameAndcode();
+    this.LoadPriority();
+    this.LoadUserDetails();
+    this.LoadVessel();
+    this.LoadDepartment();
+    this.getPortList();
+    this.loadPortList();
   }
 
   get fm() { return this.RequisitionForm.controls };
+  get fmd() { return this.deliveryForm.controls }
+
+
+  onCheckboxChanged(event: any) {
+    debugger;
+    const checkboxType = event.target.id;
+    const isChecked = event.target.checked;
+    this.commetType = '';
+    if (checkboxType === 'genric') {
+      this.genericCheckbox = isChecked;
+      this.internalCheckbox = false;
+      this.commetType = 'generic';
+      this.sideNavService.setCommetType(this.commetType);
+    } else if (checkboxType === 'internal') {
+      this.internalCheckbox = isChecked;
+      this.genericCheckbox = false;
+      this.commetType = 'internal';
+      this.sideNavService.setCommetType(this.commetType);
+    }
+  }
 
 
   selectCheckBox(targetType: CheckBoxType) {
     // If the checkbox was already checked, clear the currentlyChecked variable
     if (this.currentlyChecked === targetType) {
       this.currentlyChecked = CheckBoxType.NONE;
-
       return;
     }
 
     this.currentlyChecked = targetType;
+  }
 
-if(this.currentlyChecked == 0){
+  onSubmit(form: any) {
+    debugger;
+    console.log('Form validity:', this.deliveryForm.valid);
+    console.log('Form value:', this.deliveryForm.value);
+    if (this.deliveryForm.valid) {
+      debugger;
+      this.requisitionService.addDeliveryAddress(form.value)
+        .subscribe(data => {
 
-  this.checkGeneric = true ;
- 
-}
-if(this.currentlyChecked == 1){
 
-  this.checkInternal = true;
-  
-}
+          if (data.message == "data added") {
+            this.swal.success('Added successfully.');
+          }
+          else if (data.message == "updated") {
+            this.swal.success('Data has been updated successfully.');
+           
+          }
+          else if (data.message == "duplicate") {
+            this.swal.info('Data already exist. Please enter new data');
+           
+          }
+          else if (data.message == "not found") {
+            this.swal.info('Data exist not exist');
+        
+          }
+          else {
 
-    
+          }
+        },
+          error => {
+            debugger;
+            console.error('Service error:', error);
+          });
+    }
+  }
+
+
+  getPortList() {
+    debugger;
+    this.purchaseService.GetPortList(0)
+      .subscribe(response => {
+        debugger;
+        console.log(response.data);
+        this.portList = response.data;
+      })
+    if (this.currentlyChecked == 0) {
+
+      this.checkGeneric = true;
+      alert('checkGeneric' + this.checkGeneric);
+    }
+    if (this.currentlyChecked == 1) {
+
+      this.checkInternal = true;
+      alert('checkInternal' + this.checkInternal);
+    }
+
   }
 
   LoadOrdertype() {
@@ -165,6 +250,7 @@ if(this.currentlyChecked == 1){
         this.Priority = response.data;
       })
   }
+
 
   LoadUserDetails() {
     this.userService.getUserById(this.userId)
@@ -239,7 +325,8 @@ if(this.currentlyChecked == 1){
       })
   }
 
-  loadPortList() {  
+  loadPortList() {
+
     this.purchaseService.GetPortList(0)
       .subscribe(response => {
         this.portList = response.data;
@@ -264,20 +351,20 @@ if(this.currentlyChecked == 1){
     this.headabb  = this.orderTypes.filter(x=>x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x=>x.abbreviation);
   }
   onSelectAll(event: any) {
-    
+
     if (event)
       this.selectedItems = event.map((x: { shipComponentId: any; }) => x.shipComponentId);
   }
 
   onItemSelect(event: any) {
-    
+
     let isSelect = event.shipComponentId;
     if (isSelect) {
       this.selectedItems.push(event.shipComponentId);
     }
   }
   onShipCompoDeSelect(event: any) {
-    
+
     let rindex = this.selectedItems.findIndex(shipComponentId => shipComponentId == event.shipComponentId);
     if (rindex !== -1) {
       this.selectedItems.splice(rindex, 1)
@@ -285,17 +372,20 @@ if(this.currentlyChecked == 1){
   }
 
   onShipCompoDeSelectAll(event: any) {
-    
+
     this.selectedItems.length = 0;
   }
 
   
-  onSubmit(form: any) {
-   
+ 
+
+
+  onSave(form: any) {
+
     form.value.orderReference = this.selectedItems.join(',');
     const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
     const h6Value = documentHeaderElement.textContent;
-    form.value.originSite = this.userDetail.site; 
+    form.value.originSite = this.userDetail.site;
     form.value.genericComment = this.checkGeneric;
     form.value.internalComment = this.checkInternal;
     form.value.documentHeader = h6Value;
@@ -317,11 +407,11 @@ if(this.currentlyChecked == 1){
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
-         
+
         }
         else if (data.message == "not found") {
           this.swal.info('Data exist not exist');
-          
+
         }
         else {
 
@@ -329,5 +419,7 @@ if(this.currentlyChecked == 1){
 
       });
   }
+  
 
 }
+
