@@ -98,8 +98,7 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Requisition No.</mat-header-cell>
                 <mat-cell *matCellDef="let row" (click)="editRequisition(row)">
                   <a class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">REQ – V – LAM – SP - 2020
-                    – E – 0001</a>
+                    data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">{{row.documentHeader}}</a>
 
                 </mat-cell>
               </ng-container>

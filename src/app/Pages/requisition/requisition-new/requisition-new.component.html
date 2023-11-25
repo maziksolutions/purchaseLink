@@ -29,10 +29,12 @@
             <div class="row flex-between-end">
               <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse"
                 data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
-                <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3"
-                    data-fa-transform="shrink-2"></span>Document Header <small class="ms-5"><i
-                      class="fas fa-radiation text-danger"></i> <i class="fas fa-exclamation-triangle text-danger"></i>
-                    REQ – V – ABB – SP - V – 0001</small></h5>
+                <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2">
+                  </span>Document Header <small class="ms-5" id="documentHeader"><i
+                      class="fas fa-radiation text-danger"></i>
+                    <i class="fas fa-exclamation-triangle text-danger"></i> REQ – {{headsite}} – {{headCode}} –
+                    {{headabb}} - {{currentyear}} – {{headserialNumber}}
+                  </small></h5>
               </div>
               <div class="col-auto ms-auto">
                 <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#transit" aria-label=""> <img
@@ -78,7 +80,8 @@
                   </div>
                 </div>
                 <a class="px-1 m-r-5" id="navbarDropdownNotification" href="#" role="button" data-bs-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false"><i class="far fa-calendar-alt text-primary"></i></a>
+                  aria-haspopup="true" aria-expanded="false">
+                  <i class="far fa-calendar-alt text-primary"></i></a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification"
                   aria-labelledby="navbarDropdownNotification">
                   <div class="card card-notification shadow-none">
@@ -98,8 +101,7 @@
                             </div>
                             <div class="col ms-2">
                               <p class="fs--1 text-600 mb-0">Spares Requisition Created by Chief Officer on 02 Apr 2020.
-                                Requestor Comments - xxxxxxxx
-                              </p>
+                                Requestor Comments - xxxxxxxx </p>
                             </div>
 
                           </div>
@@ -187,6 +189,18 @@
               </div>
 
               <div class="col-lg mb-3">
+                <h6 class="text-900 mb-1">Project Name / Code</h6>
+                <fieldset class="form-group mb-0">
+                  <select class="form-control form-small form-select" formControlName="projectNameCodeId" required>
+                    <option value="" selected disabled>Select </option>
+                    <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
+                      {{item.projectName|titlecase }}-{{item.projectCode}}
+                    </option>
+                  </select>
+                </fieldset>
+              </div>
+
+              <div class="col-lg mb-3">
                 <h6 class="text-900 mb-1">Request Order Type</h6>
                 <fieldset class="form-group mb-0">
                   <select class="form-control form-small form-select" formControlName="orderTypeId" required>
@@ -205,6 +219,9 @@
                     placeholder="Order Title" maxlength="100" required>
                 </fieldset>
               </div>
+            </div>
+
+            <div class="row">
               <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2">Order Reference</h6>
 
@@ -217,8 +234,7 @@
                   </ng-multiselect-dropdown>
                 </fieldset>
               </div>
-            </div>
-            <div class="row">
+
               <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2">Department</h6>
 
@@ -244,24 +260,13 @@
               </div>
 
               <div class="col-lg mb-3">
-                <h6 class="text-900 mb-1">Project Name / Code</h6>
-                <fieldset class="form-group mb-0">
-                  <select class="form-control form-small form-select" formControlName="projectNameCodeId" required>
-                    <option value="" selected disabled>Select </option>
-                    <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
-                      {{item.projectName|titlecase }}-{{item.projectCode}}
-                    </option>
-                  </select>
-                </fieldset>
-              </div>
-              <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2">Remarks</h6>
                 <fieldset class="form-group mb-0">
                   <input type="text" class="form-control form-small" formControlName="remarks" placeholder="Remarks"
                     maxlength="100" required>
                 </fieldset>
-              </div>
-
+              </div>              
+              
               <div class="col-lg mb-2">
                 <h6 class="text-900 mb-2">Comments</h6>
                 <div class="form-check form-check-inline mb-0">
@@ -358,7 +363,8 @@
               </div>
               <div class="col-auto ms-auto">
                 <button class="btn btn-primary form-small  m-r-5" data-bs-toggle="tooltip" data-bs-placement="top"
-                  title="" data-bs-original-title="Save" aria-label="" [disabled]="!reqId"><i class="fas fa-save"></i></button>
+                  title="" data-bs-original-title="Save" aria-label="" [disabled]="!reqId"><i
+                    class="fas fa-save"></i></button>
                 <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                   data-bs-original-title="Edit Delivery Info" aria-label=""><i class="fas fa-edit text-primary"></i></a>
                 <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
