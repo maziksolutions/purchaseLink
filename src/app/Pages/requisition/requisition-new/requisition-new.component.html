@@ -203,14 +203,16 @@
               <div class="col-lg mb-3">
                 <h6 class="text-900 mb-1">Request Order Type</h6>
                 <fieldset class="form-group mb-0">
-                  <select class="form-control form-small form-select" formControlName="orderTypeId" required>
-                    <option value="" selected disabled>Select OrderTypes</option>
+                  <select class="form-control form-small form-select" formControlName="orderTypeId"
+                    [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
+                    <option value="0" selected disabled>Select OrderTypes</option>
                     <option *ngFor="let item of orderTypes" value="{{item.orderTypeId}}">
                       {{item.orderTypes | titlecase}}
                     </option>
                   </select>
                 </fieldset>
               </div>
+              
               <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2">Order Title</h6>
                 <h6 class="mb-0 fs--2 text-500"></h6>
@@ -265,8 +267,8 @@
                   <input type="text" class="form-control form-small" formControlName="remarks" placeholder="Remarks"
                     maxlength="100" required>
                 </fieldset>
-              </div>              
-              
+              </div>
+
               <div class="col-lg mb-2">
                 <h6 class="text-900 mb-2">Comments</h6>
                 <div class="form-check form-check-inline mb-0">
