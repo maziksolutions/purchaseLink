@@ -188,7 +188,7 @@
                   <div class="card-header bg-light">
               <div class="row flex-between-end">
                   <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
-                  <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2"></span>Document Header <small class="ms-5"><i class="fas fa-radiation text-danger"></i> <i class="fas fa-exclamation-triangle text-danger"></i> REQ – V – LAM – SP - 2020 – E – 0001</small></h5>
+                  <h5 class="mb-0" ><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2"></span>Document Header <small class="ms-5" id="documentHeader"><i class="fas fa-radiation text-danger"></i> <i class="fas fa-exclamation-triangle text-danger"></i> REQ – {{headsite}} – {{headCode}} – {{headabb}} - {{currentyear}} – {{headserialNumber}}</small></h5>
                       </div>
                   <div class="col-auto ms-auto">
                       <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#transit" aria-label=""> <img src="assets/img/transition.png" width="25px"></a>
@@ -313,20 +313,32 @@
                              <h6 class="text-900 mb-2">Site Required at</h6>
                                 <fieldset class="form-group mb-0">
                               <select class="form-control form-small form-select" formControlName="vesselId" [(ngModel)]="selectedVesselId" (change)="LoadShipCompnent()"  required>
-                                <option value="" selected disabled>Select Site Required at</option>
-                                <option *ngFor="let item of  Vessels" id="abc"  value="{{item.vesselId}}">
+                                <option value="0" selected disabled>Select Site Required at</option>
+                                <option *ngFor="let item of  Vessels"  value="{{item.vesselId}}">
                                 {{item.vesselName | titlecase}}
                                   
                                 </option>
                               </select>
                             </fieldset>
                              </div>
+
+                             <div class="col-lg mb-3">
+                              <h6 class="text-900 mb-1">Project Name / Code</h6>
+                              <fieldset class="form-group mb-0">
+                               <select class="form-control form-small form-select" formControlName="projectNameCodeId" required>
+                                 <option value="" selected disabled>Select </option>
+                                 <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
+                                   {{item.projectName|titlecase }}-{{item.projectCode}} 
+                                 </option>
+                               </select>
+                     </fieldset>
+                              </div>	
                              
                          <div class="col-lg mb-3">
                              <h6 class="text-900 mb-1">Request Order Type</h6>
                              <fieldset class="form-group mb-0">
-                      <select class="form-control form-small form-select" formControlName="orderTypeId"  required>
-                        <option value="" selected disabled>Select OrderTypes</option>
+                      <select class="form-control form-small form-select" formControlName="orderTypeId" [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
+                        <option value="0" selected disabled>Select OrderTypes</option>
                         <option *ngFor="let item of orderTypes" value="{{item.orderTypeId}}">
                           {{item.orderTypes | titlecase}}
                         </option>
@@ -341,21 +353,24 @@
                                   placeholder="Order Title"  maxlength="100" required>
                           </fieldset>
                              </div>
-                         <div class="col-lg mb-3">
-                             <h6 class="text-900 mb-2">Order Reference</h6>
-                           
-                             <fieldset class="form-group mb-0">
-                              <ng-multiselect-dropdown [placeholder]="'Select Order Reference'" class="multiselect-dropdown"
-                                  [settings]="dropdownShipcomSetting" [data]="Shipcomponent" [(ngModel)]="dropdownList"
-                                  (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
-                                  formControlName="orderReference" (onDeSelect)="onShipCompoDeSelect($event)"
-                                  (onDeSelectAll)="onShipCompoDeSelectAll($event)"
-                                  >
-                              </ng-multiselect-dropdown>
-                          </fieldset>
-                             </div>
+                        
                          </div>
-                     <div class="row">							 
+                     <div class="row">				
+                      
+                      <div class="col-lg mb-3">
+                        <h6 class="text-900 mb-2">Order Reference</h6>
+                      
+                        <fieldset class="form-group mb-0">
+                         <ng-multiselect-dropdown [placeholder]="'Select Order Reference'" class="multiselect-dropdown"
+                             [settings]="dropdownShipcomSetting" [data]="Shipcomponent" [(ngModel)]="dropdownList"
+                             (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
+                             formControlName="orderReference" (onDeSelect)="onShipCompoDeSelect($event)"
+                             (onDeSelectAll)="onShipCompoDeSelectAll($event)"
+                             >
+                         </ng-multiselect-dropdown>
+                     </fieldset>
+                        </div>
+
                          <div class="col-lg mb-3">
                              <h6 class="text-900 mb-2">Department</h6>
                             
@@ -380,17 +395,7 @@
                     </fieldset>
                              </div>
                          
-                         <div class="col-lg mb-3">
-                             <h6 class="text-900 mb-1">Project Name / Code</h6>
-                             <fieldset class="form-group mb-0">
-                              <select class="form-control form-small form-select" formControlName="projectNameCodeId" required>
-                                <option value="" selected disabled>Select </option>
-                                <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
-                                  {{item.projectName|titlecase }}-{{item.projectCode}} 
-                                </option>
-                              </select>
-                    </fieldset>
-                             </div>							 
+                         						 
                          <div class="col-lg mb-3">
                              <h6 class="text-900 mb-2">Remarks</h6> 
                              <fieldset class="form-group mb-0">

@@ -7,9 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportDataComponent } from '../../common/import-data/import-data.component';
-import {
-  SelectionModel
-} from '@angular/cdk/collections';
+import {SelectionModel} from '@angular/cdk/collections';
 import { ViewChild } from '@angular/core';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
@@ -21,6 +19,7 @@ import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
 import { VesselManagementService } from 'src/app/services/vessel-management.service';
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
 import { RequisitionService } from 'src/app/services/requisition.service';
+import { filter } from 'rxjs/operators';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 
@@ -54,7 +53,8 @@ export class RequisitionNewComponent implements OnInit {
   userDetail: any;
   Vessels: any;
   Departments: any;
-  selectedVesselId: any;
+  selectedVesselId: any  = '0';
+  selectedOrderTypeId:any = '0';
   Shipcomponent: any;
   portList: any;
 
@@ -67,6 +67,13 @@ export class RequisitionNewComponent implements OnInit {
   dropdownShipcomSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
   checkGeneric: boolean = false;
   checkInternal: boolean = false;
+  headsite: string;
+  headCode: string;
+  currentyear : any;
+  headabb: string;
+  requisitiondata: any;
+  headserialNumber: string;
+ 
 
   constructor( private fb: FormBuilder,   private route: ActivatedRoute,
     private router:Router, private purchaseService: PurchaseMasterService,
@@ -81,8 +88,9 @@ export class RequisitionNewComponent implements OnInit {
     this.RequisitionForm = this.fb.group({
       requisitionId: [0],
       originSite: ['', [Validators.required]],
-      vesselId: ['', [Validators.required]],
-      orderTypeId: ['', [Validators.required]],
+      documentHeader: ['', [Validators.required]],
+      vesselId: ['0', [Validators.required]],
+      orderTypeId: ['0', [Validators.required]],
       orderTitle: ['', [Validators.required]],
       orderReference: ['', [Validators.required]],
       departmentId: ['', [Validators.required]],
@@ -94,14 +102,9 @@ export class RequisitionNewComponent implements OnInit {
      
     });
 
-
-    this.LoadOrdertype();
-    this.LoadProjectnameAndcode();
-    this.LoadPriority();
-    this.LoadUserDetails();
-    this.LoadVessel();
-    this.LoadDepartment();
-    this.loadPortList();
+    this.loadData(0);
+    
+   
    
     this.dropdownShipcomSetting = {
       singleSelection: false,
@@ -130,12 +133,12 @@ export class RequisitionNewComponent implements OnInit {
 if(this.currentlyChecked == 0){
 
   this.checkGeneric = true ;
-  alert('checkGeneric'+this.checkGeneric);
+ 
 }
 if(this.currentlyChecked == 1){
 
   this.checkInternal = true;
-  alert('checkInternal'+this.checkInternal);
+  
 }
 
     
@@ -167,9 +170,60 @@ if(this.currentlyChecked == 1){
     this.userService.getUserById(this.userId)
       .subscribe(response => {
         this.userDetail = response.data;
+        this.currentyear = new Date().getFullYear();
 
+        if(this.userDetail.site == 'Office' ){
+        this.headsite = 'O';
+        this.headCode = 'OFF';
+        this.headabb = '___';
+        let requisitionValues = this.requisitiondata.filter(x=>x.originSite === 'Office').length;
+        this.headserialNumber = `${requisitionValues + 1}`.padStart(4, '0');
+         
+        }
+        else if(this.userDetail.site == 'Vessel'){
+          this.headsite = 'V';
+          this.headCode = '___ ';
+          this.headabb = '___';
+
+          let requisitionValues = this.requisitiondata.filter(x=>x.originSite === 'Vessel'); 
+          this.headserialNumber = `${requisitionValues.length + 1}`.padStart(4, '0');
+        }
+      
       })
   }
+
+  loadData(status: number) {
+   
+    if (status == 1) {
+      this.deletetooltip = 'UnArchive';
+      if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
+        (document.querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
+        (document.querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
+      }
+    }
+    else {
+      this.deletetooltip = 'Archive';
+      if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
+        (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
+        (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
+      }
+    }
+    this.requisitionService.getRequisitionMaster(status)
+      .subscribe(response => {
+        // this.flag = status;
+        this.requisitiondata =response.data;
+
+        this.LoadUserDetails();
+        this.LoadOrdertype();
+        this.LoadProjectnameAndcode();
+        this.LoadPriority();
+        this.LoadVessel();
+        this.LoadDepartment();
+        this.loadPortList();
+        // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+      });
+  }
+
 
   LoadVessel() {
     this.vesselService.getVessels(0)
@@ -185,8 +239,7 @@ if(this.currentlyChecked == 1){
       })
   }
 
-  loadPortList() {
-   
+  loadPortList() {  
     this.purchaseService.GetPortList(0)
       .subscribe(response => {
         this.portList = response.data;
@@ -200,10 +253,16 @@ if(this.currentlyChecked == 1){
           shipComponentId: item.shipComponentId,
           shipComponentName: item.shipComponentName
         }));
-       
+        if(  this.headsite == 'V'){
+        this.headCode  = this.Vessels.filter(x=>x.vesselId === parseInt(this.selectedVesselId)).map(x=>x.vesselCode);
+     
+        }
       })
   }
 
+  LoadheadorderType(){
+    this.headabb  = this.orderTypes.filter(x=>x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x=>x.abbreviation);
+  }
   onSelectAll(event: any) {
     
     if (event)
@@ -230,38 +289,31 @@ if(this.currentlyChecked == 1){
     this.selectedItems.length = 0;
   }
 
-  clear() {
-    // this.RequisitionForm.reset();
-    // this.RequisitionForm.controls.orderTypeId.setValue(0);
-    // this.RequisitionForm.controls.defaultOrderType.setValue('');
-    // this.RequisitionForm.controls.serviceTypeId.setValue('');
-
-    // (document.getElementById('abc') as HTMLElement).focus();
-  }
-
+  
   onSubmit(form: any) {
    
     form.value.orderReference = this.selectedItems.join(',');
+    const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
+    const h6Value = documentHeaderElement.textContent;
     form.value.originSite = this.userDetail.site; 
     form.value.genericComment = this.checkGeneric;
     form.value.internalComment = this.checkInternal;
+    form.value.documentHeader = h6Value;
+
 
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
 
-    console.log(form.value)
     this.requisitionService.addRequisitionMaster(fmdata)
       .subscribe(data => {
 
         if (data.message == "data added") {
-          this.swal.success('Added successfully.');
-          this.clear();
+          this.swal.success('Added successfully.');        
          
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
-          this.clear();
-        
+             
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
