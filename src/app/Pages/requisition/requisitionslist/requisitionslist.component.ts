@@ -74,7 +74,9 @@ export class RequisitionslistComponent implements OnInit {
     this.LoadVessel();
   }
 
-
+  editRequisition(row: any): void {
+    this.route.navigate(['/Requisition/RequisitionsNew', row.requisitionId]);
+  }
 
   loadRights() {
     this.userManagementService.checkAccessRight(unitMasterNavEnum.jobGroup).subscribe((response) => {
@@ -156,7 +158,7 @@ export class RequisitionslistComponent implements OnInit {
     }
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
-
+        debugger;
         this.flag = status;
 
         this.dataSource.data = response.data;

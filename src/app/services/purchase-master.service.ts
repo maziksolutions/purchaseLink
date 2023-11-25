@@ -16,7 +16,6 @@ export class PurchaseMasterService {
 
   baseUrl = environment.apiurl;
   private linkurl = this.baseUrl + 'pmPurchaseMaster/';
-  private requisitionUrl=this.baseUrl+'PMRequisitionMaster/';
   constructor(private httpClient: HttpClient) { }
 
   //#region Maintenance Type Master
@@ -73,11 +72,7 @@ export class PurchaseMasterService {
     return this.httpClient.post<string>(`${this.linkurl}deleteServiceType/`, jobType, httpOptions);
   }
   //#endregion Service Type Master
-
-  GetPortList(status): Observable<any> {
-    debugger;
-    return this.httpClient.get<any[]>(`${this.requisitionUrl}filterPortInfo/${status}`, httpOptions);
-  }
+  
   //#region Priority Master
 
   GetPreferenceType(status): Observable<any> {

@@ -5,12 +5,17 @@ import { RequisitionslistComponent } from './requisitionslist/requisitionslist.c
 import { RequisitionNewComponent } from './requisition-new/requisition-new.component';
 
 const routes: Routes = [
- {path: '', component: SiteLayoutComponent,
- children:[
-   {path: 'Requisitionslist',component:RequisitionslistComponent }, 
-   {path: 'RequisitionsNew',component:RequisitionNewComponent }, 
-  
-]} 
+  {
+    path: '', component: SiteLayoutComponent,
+    children: [
+      { path: 'Requisitionslist', component: RequisitionslistComponent },
+      { path: 'RequisitionsNew', component: RequisitionNewComponent },
+      {
+        path: 'RequisitionsNew/:requisitionId',
+        component: RequisitionNewComponent
+      },
+    ]
+  }
 
 ];
 

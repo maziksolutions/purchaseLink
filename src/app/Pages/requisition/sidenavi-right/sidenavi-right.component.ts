@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { SideNavService } from './sidenavi-service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RequisitionMasterService } from 'src/app/services/requisition-master.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { error } from 'console';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -10,6 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { RequisitionService } from 'src/app/services/requisition.service';
 
 export interface CommentData {
   commentId: number;
@@ -34,7 +34,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private sideNaviService: SideNavService, private fb: FormBuilder, private reqService: RequisitionMasterService,
+  constructor(private sideNaviService: SideNavService, private fb: FormBuilder, private reqService: RequisitionService,
     private swal: SwalToastService, private activatedRoute: ActivatedRoute, private router: Router) {
 
     this.commentsForm = this.fb.group({
@@ -134,7 +134,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.clear();
-        (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+        // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
   }
 

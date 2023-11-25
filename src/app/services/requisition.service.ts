@@ -40,6 +40,40 @@ archiveOrderType(jobType: any[]): Observable < string > {
 }  
 //#endregion
 
+//#region   
+ // Add New unit
+ addComments(formData): Observable<any> {
+  debugger;
+  return this.httpClient.post<any>(this.linkurl + 'addReqComments', formData)
+    .pipe(catchError(this.handleError));
+}
+getComments(status): Observable<any>{
+  return this.httpClient.get<any[]>(`${this.linkurl}filterCommentsInfo/${status}`, httpOptions);
+}
+addDeliveryAddress(formData): Observable<any> {
+  debugger;
+  return this.httpClient.post<any>(this.linkurl + 'addDeliveryInfo', formData)
+    .pipe(catchError(this.handleError));      
+}
+//#endregion
+
+//#region  Delivery Info
+GetPortList(status): Observable<any> {
+  debugger;
+  return this.httpClient.get<any[]>(`${this.linkurl}filterPortInfo/${status}`, httpOptions);
+}
+//#endregion
+
+getRequisitionById(id):Observable<any>{  
+  return  this.httpClient.get<any>(this.linkurl + 'getRequisitionMasterById/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
+
+getDeliveryInfoByReqId(id):Observable<any>{  
+  return  this.httpClient.get<any>(this.linkurl + 'getDeliveryInfoByReqId/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
+
 private handleError(error: HttpErrorResponse) {
   if (error.error instanceof ErrorEvent) {
     console.error('An error occurred:', error.error.message);
