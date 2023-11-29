@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -38,7 +38,7 @@ declare var SideNavi: any;
 export class RequisitionNewComponent implements OnInit {
 
   RequisitionForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox', 'orderTypes', 'defaultOrderType', 'serviceType', 'abbreviation'];
+  displayedColumns: string[] = ['checkbox', 'Item Name', 'Item Code', 'Part', 'DWG', 'Make', 'Model', 'Units', 'Req Qty', 'RoB', 'Remarks'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   rights: RightsModel;
@@ -46,6 +46,7 @@ export class RequisitionNewComponent implements OnInit {
   deletetooltip: any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild('shipItemsModal') shipItemsModal!: ElementRef;
   projectnameAndcode: any;
   orderTypes: any;
   Priority: any;
@@ -53,8 +54,8 @@ export class RequisitionNewComponent implements OnInit {
   userDetail: any;
   Vessels: any;
   Departments: any;
-  selectedVesselId: any  = '0';
-  selectedOrderTypeId:any = '0';
+  selectedVesselId: any = '0';
+  selectedOrderTypeId: any = '0';
   Shipcomponent: any;
   portList: any;
   deliveryForm: FormGroup;
@@ -63,7 +64,7 @@ export class RequisitionNewComponent implements OnInit {
   commetType: string = '';
 
   selectedItems: string[] = [];
- 
+
   dropdownList: { shipComponentId: number, shipComponentName: string }[] = [];
   selectedDropdown: { shipComponentId: number, shipComponentName: string }[] = [];
   dropdownShipcomSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
@@ -75,16 +76,26 @@ export class RequisitionNewComponent implements OnInit {
   checkInternal: boolean = false;
   headsite: string;
   headCode: string;
-  currentyear : any;
+  currentyear: any;
   headabb: string;
   requisitiondata: any;
   headserialNumber: string;
- 
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, 
-    private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService,
+  // This is for Items
+  spareItems: any[] = [];
+  selectedSpareItems: any[] = [];
+  finalSelectedSpareItems: any[] = [];
+  leftTableItems: any[] = [];
+  rightTableItems: any[] = [];
+  selectedSpareItemsInput: any[] = [];
+  displayFinalSpareItems: any[] = [];
+
+  isHeaderCheckboxChecked = false;
+
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
+    private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone,
     private authStatusService: AuthStatusService, private userService: UserManagementService,
-    private vesselService: VesselManagementService, private shipmasterService: ShipmasterService,private requisitionService:RequisitionService,
+    private vesselService: VesselManagementService, private shipmasterService: ShipmasterService, private requisitionService: RequisitionService,
   ) { }
 
   ngOnInit(): void {
@@ -106,9 +117,9 @@ export class RequisitionNewComponent implements OnInit {
       remarks: ['', [Validators.required]],
       genericCheckbox: [false],
       internalCheckbox: [false],
-    });  
-    
-   
+    });
+
+
     this.deliveryForm = this.fb.group({
       delInfoId: [0],
       expectedDeliveryPort: ['', Validators.required],
@@ -128,17 +139,17 @@ export class RequisitionNewComponent implements OnInit {
       itemsShowLimit: 1,
       allowSearchFilter: true
     }
-    
-      this.loadData(0);   
-   
+
+    this.loadData(0);
+
   }
 
   get fm() { return this.RequisitionForm.controls };
-  // get fmd() { return this.deliveryForm.controls }
+  get fmd() { return this.deliveryForm.controls }
 
 
   onCheckboxChanged(event: any) {
-    debugger;
+
     const checkboxType = event.target.id;
     const isChecked = event.target.checked;
     this.commetType = '';
@@ -153,6 +164,14 @@ export class RequisitionNewComponent implements OnInit {
     }
 
     this.sideNavService.setCommetType(this.commetType);
+  }
+
+  toggleAllCheckboxes() {
+    debugger;
+    this.isHeaderCheckboxChecked = !this.isHeaderCheckboxChecked;
+
+    // Update the state of all items checkboxes in the table based on the header checkbox
+    this.displayFinalSpareItems.forEach(item => item.selected = this.isHeaderCheckboxChecked);
   }
 
   onSubmit(form: any) {
@@ -172,22 +191,22 @@ export class RequisitionNewComponent implements OnInit {
           }
           else if (data.message == "updated") {
             this.swal.success('Data has been updated successfully.');
-           
+
           }
           else if (data.message == "duplicate") {
             this.swal.info('Data already exist. Please enter new data');
-           
+
           }
           else if (data.message == "not found") {
             this.swal.info('Data exist not exist');
-        
+
           }
           else {
 
           }
         },
           error => {
-            debugger;
+
             console.error('Service error:', error);
           });
     }
@@ -217,8 +236,10 @@ export class RequisitionNewComponent implements OnInit {
         this.reqId = requisitionData.requisitionId;
         this.loadDeliveryInfo();
 
+        this.getSpareItems(requisitionData.orderReference);
+
         this.selectedVesselId = requisitionData.vesselId;
-        debugger;
+
         // Load ship components and then process orderReference
         this.LoadShipCompnentList().subscribe(shipComponentResponse => {
           debugger;
@@ -236,15 +257,38 @@ export class RequisitionNewComponent implements OnInit {
             }
           });
           this.RequisitionForm.controls['orderReference'].setValue(this.selectedDropdown);
+
+          this.RequisitionForm.controls['orderTypeId'].setValue(requisitionData.orderTypeId);
+
+          this.updateDocumentHeader(requisitionData);
+
+          this.LoadheadorderType();
         });
-
-
       });
+  }
+
+  updateDocumentHeader(requisitionData: any) {
+    debugger;
+    this.headsite = requisitionData.originSite === 'Office' ? 'O' : 'V';
+    this.headCode = requisitionData.originSite === 'Office' ? 'OFF' : '___';
+    this.headabb = '___';
+
+    const headerStringParts = requisitionData.documentHeader.split(' – ');
+    if (headerStringParts.length === 6) {
+      const headerSerialNumber = headerStringParts[5];
+      // const headerAbbText = headerStringParts[3];
+      this.headserialNumber = headerSerialNumber;
+      // this.headabb = headerAbbText;
+    }
+
+    // Update document header element
+    //   const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
+    //   documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
   }
 
   loadDeliveryInfo() {
     this.requisitionService.getDeliveryInfoByReqId(this.reqId).subscribe(res => {
-      debugger;
+
       const deliveryInfoData = res.data;
       console.log(deliveryInfoData);
       if (deliveryInfoData)
@@ -268,17 +312,17 @@ export class RequisitionNewComponent implements OnInit {
 
     return this.shipmasterService.getShipComponentwithvessel(this.selectedVesselId)
       .pipe(map(res => {
-        debugger;
+
         this.dropdownList = res.data;
         return { data: this.dropdownList };
       }));
   }
 
   getPortList() {
-    debugger;
+
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
-        debugger;
+
         console.log(response.data);
         this.portList = response.data;
       })
@@ -308,35 +352,35 @@ export class RequisitionNewComponent implements OnInit {
 
 
   LoadUserDetails() {
-    debugger;
+
     this.userService.getUserById(this.userId)
       .subscribe(response => {
         debugger;
         this.userDetail = response.data;
         this.currentyear = new Date().getFullYear();
 
-        if(this.userDetail.site == 'Office' ){
-        this.headsite = 'O';
-        this.headCode = 'OFF';
-        this.headabb = '___';
-        let requisitionValues = this.requisitiondata.filter(x=>x.originSite === 'Office').length;
-        this.headserialNumber = `${requisitionValues + 1}`.padStart(4, '0');
-         
+        if (this.userDetail.site == 'Office') {
+          this.headsite = 'O';
+          this.headCode = 'OFF';
+          this.headabb = '___';
+          let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Office').length;
+          this.headserialNumber = `${requisitionValues + 1}`.padStart(4, '0');
+
         }
-        else if(this.userDetail.site == 'Vessel'){
+        else if (this.userDetail.site == 'Vessel') {
           this.headsite = 'V';
           this.headCode = '___ ';
           this.headabb = '___';
 
-          let requisitionValues = this.requisitiondata.filter(x=>x.originSite === 'Vessel'); 
+          let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Vessel');
           this.headserialNumber = `${requisitionValues.length + 1}`.padStart(4, '0');
         }
-      
+
       })
   }
 
   loadData(status: number) {
-   
+
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -354,20 +398,23 @@ export class RequisitionNewComponent implements OnInit {
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
         // this.flag = status;
-        this.requisitiondata =response.data;
+        this.requisitiondata = response.data;
 
         if (this.reqGetId) {
+          debugger;
+          this.loadItemByReqId(this.reqGetId);
           this.LoadVessel();
           this.getReqData();
           this.LoadShipCompnent();
           this.LoadOrdertype();
           this.LoadProjectnameAndcode();
           this.LoadPriority();
-          this.LoadUserDetails();
           this.LoadDepartment();
           this.getPortList();
           this.loadPortList();
-        }else{
+          this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
+          // this.loadItems();
+        } else {
           this.LoadUserDetails();
           this.LoadOrdertype();
           this.LoadProjectnameAndcode();
@@ -376,14 +423,13 @@ export class RequisitionNewComponent implements OnInit {
           this.LoadDepartment();
           this.loadPortList();
         }
-        
+
         // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
   }
 
 
   LoadVessel() {
-    debugger;
     this.vesselService.getVessels(0)
       .subscribe(response => {
         this.Vessels = response.data;
@@ -405,7 +451,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   LoadShipCompnent() {
-    debugger;
+
     this.shipmasterService.getShipComponentwithvessel(this.selectedVesselId)
       .subscribe(response => {
         debugger;
@@ -414,20 +460,27 @@ export class RequisitionNewComponent implements OnInit {
           shipComponentId: item.shipComponentId,
           shipComponentName: item.shipComponentName
         }));
-        if(  this.headsite == 'V'){
-        this.headCode  = this.Vessels.filter(x=>x.vesselId === parseInt(this.selectedVesselId)).map(x=>x.vesselCode);
-     
+        if (this.headsite == 'V') {
+          this.headCode = this.Vessels.filter(x => x.vesselId === parseInt(this.selectedVesselId)).map(x => x.vesselCode);
+
         }
       })
   }
 
-  LoadheadorderType(){
-    this.headabb  = this.orderTypes.filter(x=>x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x=>x.abbreviation);
+  LoadheadorderType() {
+    this.zone.run(() => {
+      debugger;
+      this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
+      console.log(this.headabb);
+      this.cdr.markForCheck();
+      // Update document header element
+      const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
+      documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
+    })
   }
   onSelectAll(event: any) {
-    debugger;
-    if (event)
-      this.selectedItems = event.map((x: { shipComponentId: any; }) => x.shipComponentId);
+
+    this.selectedItems = event.map((x: { shipComponentId: any; }) => x.shipComponentId);
   }
 
   onItemSelect(event: any) {
@@ -435,6 +488,7 @@ export class RequisitionNewComponent implements OnInit {
     let isSelect = event.shipComponentId;
     if (isSelect) {
       this.selectedItems.push(event.shipComponentId);
+      this.getSpareItems(this.selectedItems);
     }
   }
   onShipCompoDeSelect(event: any) {
@@ -446,24 +500,20 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   onShipCompoDeSelectAll(event: any) {
-    debugger;
+
     this.selectedItems.length = 0;
   }
-
-  
- 
-
 
   onSave(form: any) {
     debugger;
     form.value.orderReference = this.selectedItems.join(',');
     const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
     const h6Value = documentHeaderElement.textContent;
-    form.value.originSite = this.userDetail.site;
 
     const requisitionData = {
       requisitionId: form.value.requisitionId,
-      originSite: form.value.originSite,
+      documentHeader: h6Value,
+      originSite: this.userDetail.site,
       vesselId: form.value.vesselId,
       orderTypeId: form.value.orderTypeId,
       orderTitle: form.value.orderTitle,
@@ -490,11 +540,11 @@ export class RequisitionNewComponent implements OnInit {
         if (data.message == "data added") {
           this.reqId = data.data;
           this.swal.success('Added successfully.');
-         
+
         }
         else if (data.message == "Update") {
           this.swal.success('Data has been updated successfully.');
-             
+
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -510,7 +560,167 @@ export class RequisitionNewComponent implements OnInit {
 
       });
   }
-  
 
+  //#region  PM Items
+  getSpareItems(ids: any) {
+    debugger;
+    this.requisitionService.getItemsInfo(ids)
+      .subscribe(res => {
+        debugger;
+        this.spareItems = [];
+        this.spareItems = res;
+      })
+  }
+
+  getSelectedSpareItems(item: any) {
+    if (item.selected) {
+      this.selectedSpareItems.push(item);
+    } else {
+      const index = this.selectedSpareItems.indexOf(item);
+      if (index !== -1) {
+        this.selectedSpareItems.splice(index, 1);
+      }
+    }
+  }
+
+  getFinalSelectedSpareItems(item: any) {
+    if (item.selected) {
+      this.finalSelectedSpareItems.push(item);
+    } else {
+      const index = this.finalSelectedSpareItems.indexOf(item);
+      if (index !== -1) {
+        this.finalSelectedSpareItems.splice(index, 1);
+      }
+    }
+  }
+
+  moveItemsToRight() {
+    debugger;
+    this.selectedSpareItems.forEach(item => {
+      item.selected = false;
+      const index = this.spareItems.indexOf(item);
+      if (index !== -1) {
+        this.spareItems.splice(index, 1);
+      }
+      this.rightTableItems.push(item);
+    });
+    this.selectedSpareItems = [];
+  }
+
+  moveItemsToLeft() {
+    debugger;
+    this.finalSelectedSpareItems.forEach(item => {
+      item.selected = false;
+      const index = this.rightTableItems.indexOf(item);
+      if (index !== -1) {
+        this.rightTableItems.splice(index, 1);
+      }
+      this.spareItems.push(item);
+    });
+    this.finalSelectedSpareItems = [];
+  }
+
+  storeTableData() {
+    debugger;
+    const itemsToAdd: {
+      ItemCode: string;
+      ItemName: string;
+      Part: string;
+      DWG: string;
+      Make: string;
+      Model: string;
+      EnterQuantity: number;
+      ROB: number;
+      Remarks: string;
+      PMReqId: number;
+    }[] = [];
+    this.finalSelectedSpareItems.forEach((item, index) => {
+      debugger;
+      item.selected = false;
+
+      const inputElement = document.getElementById(`enterQuantity_${index}`) as HTMLInputElement;
+      if (inputElement) {
+        item.enterQuantity = inputElement.value;
+      }
+      const indexInRightTable = this.rightTableItems.indexOf(item);
+      if (indexInRightTable !== -1) {
+        this.rightTableItems.splice(indexInRightTable, 1);
+      }
+      // this.displayFinalSpareItems.push(item);
+
+      const newItem = {
+        ItemCode: item.shipSpares.inventoryCode,
+        ItemName: item.shipSpares.inventoryName,
+        Part: item.partNo,
+        DWG: item.drawingNo,
+        Make: item.shipSpares.makerReference,
+        Model: item.modelNo,
+        EnterQuantity: item.enterQuantity,
+        ROB: item.shipSpares.rob,
+        Remarks: item.remarks,
+        PMReqId: this.reqId
+      };
+
+      debugger;
+      itemsToAdd.push(newItem);
+      console.log(itemsToAdd);
+    });
+
+    this.requisitionService.addItemsInfo(itemsToAdd).subscribe(res => {
+      debugger;
+
+      this.loadDisplayItems();
+      console.log('Server response:', res);
+    });
+
+    this.finalSelectedSpareItems = [];
+
+    // Close the modal
+    $("#ship-items").modal('hide');
+  }
+
+  loadDisplayItems() {
+    if (this.reqGetId)
+      this.requisitionService.getItemsByReqId(parseInt(this.reqGetId)).subscribe(res => {
+        debugger;
+        this.displayFinalSpareItems = [];
+
+        this.displayFinalSpareItems = res;
+        console.log(res);
+      })
+  }
+  loadItems(ids) {
+    debugger;
+
+    this.requisitionService.getItemsInfo(ids).subscribe(res => {
+      debugger;
+      this.spareItems = [];
+      this.spareItems = res;
+    })
+  }
+
+  loadItemByReqId(ids: string) {
+    debugger;
+    const id = parseInt(ids);
+    this.requisitionService.getItemsByReqId(id).subscribe(res => {
+      debugger;
+      this.displayFinalSpareItems = [];
+
+      this.displayFinalSpareItems = res;
+    })
+  }
+  deleteItems() {
+    debugger;
+    const selectedIds = this.displayFinalSpareItems
+      .filter(item => item.selected);
+    this.requisitionService.deleteItemsInfo(selectedIds).subscribe(res => {
+      debugger;
+      if (res) {
+        this.loadDisplayItems();
+      }
+      console.log(res);
+    })
+  }
+  //#endregion
 }
 

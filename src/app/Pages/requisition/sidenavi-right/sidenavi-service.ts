@@ -20,7 +20,7 @@ export class SideNavService {
   }
 
   initSidenav() {
-    debugger;
+    
     if (!this.sideNavInitialized) {
       SideNavi.init('right', {
         container: '#sideNavi',
@@ -42,7 +42,7 @@ export class SideNavService {
   }
 
   toggleSidenav() {
-    debugger;
+    
     SideNavi.slideEvent();
   }
 

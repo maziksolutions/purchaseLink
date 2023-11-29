@@ -5,7 +5,7 @@
  * init param : Object css data
  */
 var SideNavi = (function ($) {
-	debugger;
+	
 
 	var container = {},
 		cssElements = {},

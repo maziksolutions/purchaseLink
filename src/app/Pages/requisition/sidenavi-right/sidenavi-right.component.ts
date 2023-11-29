@@ -51,19 +51,19 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    debugger;
+    
     this.destroy$.next();
     this.destroy$.complete();
     this.sideNaviService.destroySidenav();
   }
 
   onSubmit(form: any) {
-    debugger;
+    
     if (form.value.commentId == null) {
       form.value.commentId = 0;
       form.value.commentType = this.sideNaviService.getCommetType();
     } else {
-      debugger;
+      
       const updatedComment = this.commentsForm.get('commentData')?.value;
       if (this.selectedComment && updatedComment) {
         form.value.commentData = updatedComment;
@@ -100,13 +100,13 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
         }
       },
         error => {
-          debugger;
+          
           console.error('Service error:', error);
         });
   }
 
   loadData(status: number) {
-    debugger;
+    
     // if (status == 1) {
     //   this.deletetooltip ='UnArchive';
     //   if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -123,7 +123,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
     // }
     this.reqService.getComments(status)
       .subscribe(response => {
-        debugger;
+       
         this.flag = status;
         var data = response.data;
 
@@ -139,7 +139,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   }
 
   editComment(comment: any): void {
-    debugger;
+    
     this.selectedComment = comment;
     this.commentsForm.patchValue({
       commentId: comment.commentId,
