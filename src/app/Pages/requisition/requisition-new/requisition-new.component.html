@@ -228,11 +228,12 @@
                 <h6 class="text-900 mb-2">Order Reference</h6>
 
                 <fieldset class="form-group mb-0">
-                  <ng-multiselect-dropdown [placeholder]="'Select Order Reference'" class="multiselect-dropdown"
+                  <ng-multiselect-dropdown  [placeholder]="'Select Order Reference'" class="multiselect-dropdown"
                     [settings]="dropdownShipcomSetting" [data]="dropdownList" [(ngModel)]="selectedDropdown"
-                    (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
+                    (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)" 
                     formControlName="orderReference" (onDeSelect)="onShipCompoDeSelect($event)"
                     (onDeSelectAll)="onShipCompoDeSelectAll($event)">
+
                   </ng-multiselect-dropdown>
                 </fieldset>
               </div>

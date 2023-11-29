@@ -23,8 +23,8 @@ import { VesselManagementService } from 'src/app/services/vessel-management.serv
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
 import { RequisitionService } from 'src/app/services/requisition.service';
 import { parse } from 'path';
-import { map } from 'rxjs/operators';
-import { filter } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
+import { isNull } from '@angular/compiler/src/output/output_ast';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 declare var SideNavi: any;
@@ -53,20 +53,21 @@ export class RequisitionNewComponent implements OnInit {
   userDetail: any;
   Vessels: any;
   Departments: any;
-  selectedVesselId: any  = '0';
-  selectedOrderTypeId:any = '0';
+  selectedVesselId: any = '0';
+  selectedOrderTypeId: any = '0';
   Shipcomponent: any;
   portList: any;
   deliveryForm: FormGroup;
   genericCheckbox: boolean = false;
   internalCheckbox: boolean = false;
   commetType: string = '';
-
   selectedItems: string[] = [];
- 
-  dropdownList: { shipComponentId: number, shipComponentName: string }[] = [];
+
+  dropdownList: {
+    accountCode: any; shipComponentId: number, shipComponentName: string, isDisabled: boolean
+  }[] = [];
   selectedDropdown: { shipComponentId: number, shipComponentName: string }[] = [];
-  dropdownShipcomSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
+  dropdownShipcomSetting: { enableCheckAll: boolean; singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
 
   requisitionId: number;
   reqGetId: string | null;
@@ -75,20 +76,21 @@ export class RequisitionNewComponent implements OnInit {
   checkInternal: boolean = false;
   headsite: string;
   headCode: string;
-  currentyear : any;
+  currentyear: any;
   headabb: string;
   requisitiondata: any;
   headserialNumber: string;
- 
+  storeAccountCode: string[] = [];
+  isDropdownDisabled: boolean = false;
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, 
+
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService,
     private authStatusService: AuthStatusService, private userService: UserManagementService,
-    private vesselService: VesselManagementService, private shipmasterService: ShipmasterService,private requisitionService:RequisitionService,
+    private vesselService: VesselManagementService, private shipmasterService: ShipmasterService, private requisitionService: RequisitionService,
   ) { }
 
   ngOnInit(): void {
-    debugger;
     this.userId = this.authStatusService.userId();
     this.reqGetId = this.route.snapshot.paramMap.get('requisitionId');
 
@@ -106,9 +108,9 @@ export class RequisitionNewComponent implements OnInit {
       remarks: ['', [Validators.required]],
       genericCheckbox: [false],
       internalCheckbox: [false],
-    });  
-    
-   
+    });
+
+
     this.deliveryForm = this.fb.group({
       delInfoId: [0],
       expectedDeliveryPort: ['', Validators.required],
@@ -126,11 +128,13 @@ export class RequisitionNewComponent implements OnInit {
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       itemsShowLimit: 1,
-      allowSearchFilter: true
+      allowSearchFilter: true,
+      enableCheckAll: false
     }
-    
-      this.loadData(0);   
-   
+
+
+    this.loadData(0);
+
   }
 
   get fm() { return this.RequisitionForm.controls };
@@ -138,7 +142,6 @@ export class RequisitionNewComponent implements OnInit {
 
 
   onCheckboxChanged(event: any) {
-    debugger;
     const checkboxType = event.target.id;
     const isChecked = event.target.checked;
     this.commetType = '';
@@ -156,14 +159,12 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   onSubmit(form: any) {
-    debugger;
     console.log('Form validity:', this.deliveryForm.valid);
     console.log('Form value:', this.deliveryForm.value);
 
     form.value.reqIds = this.reqId;
 
     if (this.deliveryForm.valid) {
-      debugger;
       this.requisitionService.addDeliveryAddress(form.value)
         .subscribe(data => {
 
@@ -172,22 +173,21 @@ export class RequisitionNewComponent implements OnInit {
           }
           else if (data.message == "updated") {
             this.swal.success('Data has been updated successfully.');
-           
+
           }
           else if (data.message == "duplicate") {
             this.swal.info('Data already exist. Please enter new data');
-           
+
           }
           else if (data.message == "not found") {
             this.swal.info('Data exist not exist');
-        
+
           }
           else {
 
           }
         },
           error => {
-            debugger;
             console.error('Service error:', error);
           });
     }
@@ -196,7 +196,6 @@ export class RequisitionNewComponent implements OnInit {
   getReqData() {
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
-        debugger;
         const requisitionData = response.data;
         // Populate the form controls with the data for editing
         this.RequisitionForm.patchValue({
@@ -218,10 +217,8 @@ export class RequisitionNewComponent implements OnInit {
         this.loadDeliveryInfo();
 
         this.selectedVesselId = requisitionData.vesselId;
-        debugger;
         // Load ship components and then process orderReference
         this.LoadShipCompnentList().subscribe(shipComponentResponse => {
-          debugger;
           const shipComponentData = shipComponentResponse.data;
 
           const objProcR = requisitionData.orderReference ? requisitionData.orderReference.split(',') : [];
@@ -229,7 +226,6 @@ export class RequisitionNewComponent implements OnInit {
           objProcR.forEach((item) => {
             const selectedShipComponent = shipComponentData.find(x => x.shipComponentId === parseInt(item));
             if (selectedShipComponent) {
-              debugger;
 
               this.selectedDropdown.push(selectedShipComponent);
               this.selectedItems.push(selectedShipComponent.shipComponentId.toString());
@@ -244,7 +240,6 @@ export class RequisitionNewComponent implements OnInit {
 
   loadDeliveryInfo() {
     this.requisitionService.getDeliveryInfoByReqId(this.reqId).subscribe(res => {
-      debugger;
       const deliveryInfoData = res.data;
       console.log(deliveryInfoData);
       if (deliveryInfoData)
@@ -268,18 +263,14 @@ export class RequisitionNewComponent implements OnInit {
 
     return this.shipmasterService.getShipComponentwithvessel(this.selectedVesselId)
       .pipe(map(res => {
-        debugger;
         this.dropdownList = res.data;
         return { data: this.dropdownList };
       }));
   }
 
   getPortList() {
-    debugger;
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
-        debugger;
-        console.log(response.data);
         this.portList = response.data;
       })
   }
@@ -308,35 +299,33 @@ export class RequisitionNewComponent implements OnInit {
 
 
   LoadUserDetails() {
-    debugger;
     this.userService.getUserById(this.userId)
       .subscribe(response => {
-        debugger;
         this.userDetail = response.data;
         this.currentyear = new Date().getFullYear();
 
-        if(this.userDetail.site == 'Office' ){
-        this.headsite = 'O';
-        this.headCode = 'OFF';
-        this.headabb = '___';
-        let requisitionValues = this.requisitiondata.filter(x=>x.originSite === 'Office').length;
-        this.headserialNumber = `${requisitionValues + 1}`.padStart(4, '0');
-         
+        if (this.userDetail.site == 'Office') {
+          this.headsite = 'O';
+          this.headCode = 'OFF';
+          this.headabb = '___';
+          let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Office').length;
+          this.headserialNumber = `${requisitionValues + 1}`.padStart(4, '0');
+
         }
-        else if(this.userDetail.site == 'Vessel'){
+        else if (this.userDetail.site == 'Vessel') {
           this.headsite = 'V';
           this.headCode = '___ ';
           this.headabb = '___';
 
-          let requisitionValues = this.requisitiondata.filter(x=>x.originSite === 'Vessel'); 
+          let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Vessel');
           this.headserialNumber = `${requisitionValues.length + 1}`.padStart(4, '0');
         }
-      
+
       })
   }
 
   loadData(status: number) {
-   
+
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -354,7 +343,7 @@ export class RequisitionNewComponent implements OnInit {
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
         // this.flag = status;
-        this.requisitiondata =response.data;
+        this.requisitiondata = response.data;
 
         if (this.reqGetId) {
           this.LoadVessel();
@@ -367,7 +356,7 @@ export class RequisitionNewComponent implements OnInit {
           this.LoadDepartment();
           this.getPortList();
           this.loadPortList();
-        }else{
+        } else {
           this.LoadUserDetails();
           this.LoadOrdertype();
           this.LoadProjectnameAndcode();
@@ -376,14 +365,13 @@ export class RequisitionNewComponent implements OnInit {
           this.LoadDepartment();
           this.loadPortList();
         }
-        
+
         // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
   }
 
 
   LoadVessel() {
-    debugger;
     this.vesselService.getVessels(0)
       .subscribe(response => {
         this.Vessels = response.data;
@@ -405,57 +393,167 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   LoadShipCompnent() {
-    debugger;
     this.shipmasterService.getShipComponentwithvessel(this.selectedVesselId)
       .subscribe(response => {
-        debugger;
         this.dropdownList = response.data;
         this.Shipcomponent = response.data.map(item => ({
+          accountCode: item.accountCode,
           shipComponentId: item.shipComponentId,
           shipComponentName: item.shipComponentName
         }));
-        if(  this.headsite == 'V'){
-        this.headCode  = this.Vessels.filter(x=>x.vesselId === parseInt(this.selectedVesselId)).map(x=>x.vesselCode);
-     
+        if (this.headsite == 'V') {
+          this.headCode = this.Vessels.filter(x => x.vesselId === parseInt(this.selectedVesselId)).map(x => x.vesselCode);
+
         }
       })
   }
 
-  LoadheadorderType(){
-    this.headabb  = this.orderTypes.filter(x=>x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x=>x.abbreviation);
-  }
-  onSelectAll(event: any) {
-    debugger;
-    if (event)
-      this.selectedItems = event.map((x: { shipComponentId: any; }) => x.shipComponentId);
+  LoadheadorderType() {
+    this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
   }
 
-  onItemSelect(event: any) {
-    debugger;
-    let isSelect = event.shipComponentId;
-    if (isSelect) {
-      this.selectedItems.push(event.shipComponentId);
-    }
+
+  onSelectAll(event: any) {
+
+    this.selectedItems = event.map((x: { shipComponentId: any; }) => x.shipComponentId);
   }
+
+
+  onItemSelect(event: any) {
+
+    let isSelect = event.shipComponentId;
+
+    if (isSelect) {
+
+
+      let ss = this.dropdownList.filter(x => x.shipComponentId === event.shipComponentId).map(x => x.accountCode)[0];
+
+      if (this.storeAccountCode[0] == undefined) {
+
+        this.storeAccountCode.push(ss[0]);
+      }
+
+      if (ss == this.storeAccountCode) {
+        this.selectedItems.push(event.shipComponentId);
+
+        this.dropdownShipcomSetting = {
+          singleSelection: false,
+          idField: 'shipComponentId',
+          textField: 'shipComponentName',
+          selectAllText: 'Select All',
+          unSelectAllText: 'UnSelect All',
+          itemsShowLimit: 1,
+          allowSearchFilter: true,
+          enableCheckAll: true
+        }
+
+        let list = this.dropdownList.filter(x => x.accountCode == this.storeAccountCode).map(item => ({
+
+          accountCode: item.accountCode,
+          shipComponentId: item.shipComponentId,
+          shipComponentName: item.shipComponentName,
+          isDisabled: false,
+
+        }));
+        let list2 = this.dropdownList.filter(x => x.accountCode != this.storeAccountCode).map(item => ({
+
+          accountCode: item.accountCode,
+          shipComponentId: item.shipComponentId,
+          shipComponentName: item.shipComponentName,
+          isDisabled: true,
+
+        }));
+
+        this.dropdownList = list.concat(list2);
+
+
+
+
+        return
+      }
+
+    }
+
+  }
+
   onShipCompoDeSelect(event: any) {
-    debugger;
+
     let rindex = this.selectedItems.findIndex(shipComponentId => shipComponentId == event.shipComponentId);
     if (rindex !== -1) {
       this.selectedItems.splice(rindex, 1)
     }
+    if (this.selectedItems.length != 0) {
+      let list = this.dropdownList.filter(x => x.accountCode == this.storeAccountCode).map(item => ({
+
+        accountCode: item.accountCode,
+        shipComponentId: item.shipComponentId,
+        shipComponentName: item.shipComponentName,
+        isDisabled: false,
+
+      }));
+      let list2 = this.dropdownList.filter(x => x.accountCode != this.storeAccountCode).map(item => ({
+
+        accountCode: item.accountCode,
+        shipComponentId: item.shipComponentId,
+        shipComponentName: item.shipComponentName,
+        isDisabled: true,
+
+      }));
+
+      this.dropdownList = list.concat(list2);
+      return
+    }
+    let listfull = this.dropdownList.map(item => ({
+
+      accountCode: item.accountCode,
+      shipComponentId: item.shipComponentId,
+      shipComponentName: item.shipComponentName,
+      isDisabled: false,
+
+    }));
+
+    let ds = listfull.map(x => x.accountCode)[0]
+    const index: number = this.storeAccountCode.indexOf(ds);
+    if (index !== -1) {
+      this.storeAccountCode.splice(index, 1);
+    }
+
+    this.dropdownList = listfull;
   }
 
   onShipCompoDeSelectAll(event: any) {
-    debugger;
+    let listfull = this.dropdownList.map(item => ({
+
+      accountCode: item.accountCode,
+      shipComponentId: item.shipComponentId,
+      shipComponentName: item.shipComponentName,
+      isDisabled: false,
+
+    }));
+    let ds = listfull.map(x => x.accountCode)[0]
+    const index: number = this.storeAccountCode.indexOf(ds);
+    if (index !== -1) {
+      this.storeAccountCode.splice(index, 1);
+    }
+    this.dropdownShipcomSetting = {
+      singleSelection: false,
+      idField: 'shipComponentId',
+      textField: 'shipComponentName',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true,
+      enableCheckAll: false
+    }
+    this.dropdownList = listfull;
     this.selectedItems.length = 0;
   }
 
-  
- 
+
+
 
 
   onSave(form: any) {
-    debugger;
     form.value.orderReference = this.selectedItems.join(',');
     const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
     const h6Value = documentHeaderElement.textContent;
@@ -486,15 +584,14 @@ export class RequisitionNewComponent implements OnInit {
 
     this.requisitionService.addRequisitionMaster(fmdata)
       .subscribe(data => {
-        debugger;
         if (data.message == "data added") {
           this.reqId = data.data;
           this.swal.success('Added successfully.');
-         
+
         }
         else if (data.message == "Update") {
           this.swal.success('Data has been updated successfully.');
-             
+
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -510,7 +607,7 @@ export class RequisitionNewComponent implements OnInit {
 
       });
   }
-  
+
 
 }
 

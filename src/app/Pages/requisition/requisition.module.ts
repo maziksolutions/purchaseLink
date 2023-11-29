@@ -11,13 +11,15 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { DirectivesModule } from 'src/app/directives.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AppMaterialModule } from 'src/app/app.material.module';
+import { RfqlistComponent } from './rfqlist/rfqlist.component';
 
 
 @NgModule({
   declarations: [
     RequisitionslistComponent,
     RequisitionNewComponent,
-    SidenaviRightComponent
+    SidenaviRightComponent,
+    RfqlistComponent
   ],
   imports: [
     CommonModule,

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SiteLayoutComponent } from 'src/app/_layout/site-layout/site-layout.component';
 import { RequisitionslistComponent } from './requisitionslist/requisitionslist.component';
 import { RequisitionNewComponent } from './requisition-new/requisition-new.component';
+import { RfqlistComponent } from './rfqlist/rfqlist.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,7 @@ const routes: Routes = [
         path: 'RequisitionsNew/:requisitionId',
         component: RequisitionNewComponent
       },
+      { path: 'Rfqlist', component: RfqlistComponent },
     ]
   }
 
