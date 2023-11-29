@@ -33,7 +33,7 @@
                   </span>Document Header <small class="ms-5" id="documentHeader"><i
                       class="fas fa-radiation text-danger"></i>
                     <i class="fas fa-exclamation-triangle text-danger"></i> REQ – {{headsite}} – {{headCode}} –
-                    {{headabb}} - {{currentyear}} – {{headserialNumber}}
+                    {{headabb}} – {{currentyear}} – {{headserialNumber}}
                   </small></h5>
               </div>
               <div class="col-auto ms-auto">
@@ -212,7 +212,7 @@
                   </select>
                 </fieldset>
               </div>
-              
+
               <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2">Order Title</h6>
                 <h6 class="mb-0 fs--2 text-500"></h6>
@@ -509,10 +509,16 @@
               <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#ship-items"
                 data-bs-placement="top" title="Add RFQ" data-bs-original-title="Add RFQ" aria-label=""><i
                   class="fas fa-plus text-primary"></i></a>
+              <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" (click)="deleteItems()"
+                data-bs-placement="top" matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""><i
+                  class="fas fa-trash text-danger"></i></a>
               <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                 data-bs-original-title="Approve Items" aria-label=""><i
                   class="far fa-check-circle text-primary"></i></a>
-              <div class="modal fade" id="ship-items" tabindex="-1" aria-hidden="true">
+
+              <!--Strat here Items Pop Up View-->
+              <div class="modal fade" id="ship-items" tabindex="-1" aria-hidden="true" role="dialog"
+                aria-labelledby="authentication-modal-label">
                 <div class="modal-dialog modal-xl mt-6" role="document">
                   <div class="modal-content border-0">
                     <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
@@ -530,7 +536,6 @@
                         <button class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
                           data-bs-placement="top" title="" data-bs-original-title="Add Folder" aria-label=""><i
                             class="fas fa-search"></i></button>
-
 
                       </div>
                       <div class="row">
@@ -552,42 +557,25 @@
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr>
-                                  <td><input type="checkbox"></td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox"></td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox"></td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
+                                <tr *ngFor="let item of spareItems">
+                                  <td><input type="checkbox" [(ngModel)]="item.selected"
+                                      (change)="getSelectedSpareItems(item)"></td>
+                                  <td>{{ item.shipSpares.inventoryCode}}</td>
+                                  <td>{{ item.shipSpares.inventoryName}}</td>
+                                  <td>{{ item.partNo}}</td>
+                                  <td>{{ item.quantity}}</td>
                                 </tr>
                               </tbody>
                             </table>
-
 
                           </div>
                         </div>
 
                         <div class="col-md-2">
-                          <button type="button" id="multiselect_rightSelected" class="btn w-100 btn-primary mb-1"><i
-                              class="fas fa-angle-right"></i></button>
-                          <button type="button" id="multiselect_leftSelected" class="btn w-100 btn-primary mb-1"><i
-                              class="fas fa-angle-left"></i></button>
+                          <button type="button" (click)="moveItemsToRight()" id="multiselect_rightSelected"
+                            class="btn w-100 btn-primary mb-1"><i class="fas fa-angle-right"></i></button>
+                          <button type="button" (click)="moveItemsToLeft()" id="multiselect_leftSelected"
+                            class="btn w-100 btn-primary mb-1"><i class="fas fa-angle-left"></i></button>
                           <button type="button" id="multiselect_rightAll" class="btn w-100 btn-primary mb-1"><i
                               class="fas fa-angle-double-right"></i></button>
                           <button type="button" id="multiselect_leftAll" class="btn w-100 btn-primary"><i
@@ -612,28 +600,15 @@
                               </thead>
                               <tbody>
                                 <tr>
-                                  <td><input type="checkbox"></td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox"></td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                </tr>
-                                <tr>
-                                  <td><input type="checkbox"></td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
-                                  <td>-----</td>
+                                <tr *ngFor="let selectedItem of rightTableItems; let i = index">
+                                  <td><input type="checkbox" [(ngModel)]="selectedItem.selected"
+                                      (change)="getFinalSelectedSpareItems(selectedItem)"></td>
+                                  <td class="col-md-2"><input type="text" class="col-md-10" placeholder="Enter quantity"
+                                      [id]="'enterQuantity_' + i" /></td>
+                                  <td>{{ selectedItem.shipSpares.inventoryName }}</td>
+                                  <td>{{ selectedItem.partNo }}</td>
+                                  <td>{{ selectedItem.quantity }}</td>
+                                  <td> --- </td>
                                 </tr>
                               </tbody>
                             </table>
@@ -642,12 +617,14 @@
                       </div>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-primary me-1" aria-label="">Ok</button> <button type="button"
-                        class="btn btn-danger me-1" aria-label="">Cancel</button>
+                      <button type="button" class="btn btn-primary me-1" aria-label=""
+                        (click)="storeTableData()">Ok</button>
+                      <button type="button" class="btn btn-danger me-1" aria-label="">Cancel</button>
                     </div>
                   </div>
                 </div>
               </div>
+              <!--End here Items Pop Up View-->
               <div class="nav nav-pills nav-pills-pms flex-grow-1 d-inline-block m-r-5" role="tablist">
                 <button class="btn btn-sm active" data-bs-toggle="pill" data-bs-target="#list-view" type="button"
                   role="tab"><i class="fas fa-list"></i> List View</button>
@@ -672,7 +649,8 @@
                 <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                   <thead>
                     <tr>
-                      <th width="2%"><input type="checkbox"></th>
+                      <th width="2%"><input type="checkbox" [(ngModel)]="isHeaderCheckboxChecked"
+                          (change)="toggleAllCheckboxes()"></th>
                       <th width="3%">#</th>
                       <th>Item Name</th>
                       <th>Item Code</th>
@@ -688,53 +666,22 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td><input type="checkbox"></td>
-                      <td>001</td>
+                    <tr *ngFor="let selectedItem of displayFinalSpareItems; let i = index">
+                      <td><input type="checkbox" [(ngModel)]="selectedItem.selected"
+                          (change)="getFinalSelectedSpareItems(selectedItem)"></td>
+                      <td>{{ i + 1 }}</td>
+                      <td>{{ selectedItem.itemName }}</td>
+                      <td>{{ selectedItem.itemCode }}</td>
+                      <td>{{ selectedItem.part }}</td>
+                      <td>{{selectedItem.dwg}}</td>
+                      <td>{{ selectedItem.make }}</td>
+                      <td>{{selectedItem.model}}</td>
                       <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
+                      <td>{{selectedItem.enterQuantity}}</td>
+                      <td>{{ selectedItem.rob }}</td>
                       <td>-----</td>
                       <td><a class="px-1 m-r-5" type="button" data-bs-toggle="modal"
                           data-bs-target="#attachents-list-01"><i class="fas fa-paperclip text-success"></i></a></td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"></td>
-                      <td>002</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td><a class="px-1 m-r-5" type="button" data-bs-toggle="modal"
-                          data-bs-target="#attachents-list-02"><i class="fas fa-paperclip text-success"></i></a></td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox"></td>
-                      <td>003</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td>-----</td>
-                      <td><a class="px-1 m-r-5" type="button" data-bs-toggle="modal"
-                          data-bs-target="#attachents-list-03"><i class="fas fa-paperclip text-success"></i></a></td>
                     </tr>
                   </tbody>
                 </table>

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -38,7 +38,7 @@ declare var SideNavi: any;
 export class RequisitionNewComponent implements OnInit {
 
   RequisitionForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox', 'orderTypes', 'defaultOrderType', 'serviceType', 'abbreviation'];
+  displayedColumns: string[] = ['checkbox', 'Item Name', 'Item Code', 'Part', 'DWG', 'Make', 'Model', 'Units', 'Req Qty', 'RoB', 'Remarks'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   rights: RightsModel;
@@ -46,6 +46,7 @@ export class RequisitionNewComponent implements OnInit {
   deletetooltip: any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild('shipItemsModal') shipItemsModal!: ElementRef;
   projectnameAndcode: any;
   orderTypes: any;
   Priority: any;
@@ -62,6 +63,7 @@ export class RequisitionNewComponent implements OnInit {
   internalCheckbox: boolean = false;
   commetType: string = '';
   selectedItems: string[] = [];
+  storeAccountCode: string[] = [];
 
   dropdownList: {
     accountCode: any; shipComponentId: number, shipComponentName: string, isDisabled: boolean
@@ -80,12 +82,20 @@ export class RequisitionNewComponent implements OnInit {
   headabb: string;
   requisitiondata: any;
   headserialNumber: string;
-  storeAccountCode: string[] = [];
-  isDropdownDisabled: boolean = false;
 
+  // This is for Items
+  spareItems: any[] = [];
+  selectedSpareItems: any[] = [];
+  finalSelectedSpareItems: any[] = [];
+  leftTableItems: any[] = [];
+  rightTableItems: any[] = [];
+  selectedSpareItemsInput: any[] = [];
+  displayFinalSpareItems: any[] = [];
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService,
-    private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService,
+  isHeaderCheckboxChecked = false;
+
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
+    private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone,
     private authStatusService: AuthStatusService, private userService: UserManagementService,
     private vesselService: VesselManagementService, private shipmasterService: ShipmasterService, private requisitionService: RequisitionService,
   ) { }
@@ -132,13 +142,12 @@ export class RequisitionNewComponent implements OnInit {
       enableCheckAll: false
     }
 
-
     this.loadData(0);
 
   }
 
   get fm() { return this.RequisitionForm.controls };
-  // get fmd() { return this.deliveryForm.controls }
+  get fmd() { return this.deliveryForm.controls }
 
 
   onCheckboxChanged(event: any) {
@@ -156,6 +165,13 @@ export class RequisitionNewComponent implements OnInit {
     }
 
     this.sideNavService.setCommetType(this.commetType);
+  }
+
+  toggleAllCheckboxes() {
+    this.isHeaderCheckboxChecked = !this.isHeaderCheckboxChecked;
+
+    // Update the state of all items checkboxes in the table based on the header checkbox
+    this.displayFinalSpareItems.forEach(item => item.selected = this.isHeaderCheckboxChecked);
   }
 
   onSubmit(form: any) {
@@ -216,6 +232,8 @@ export class RequisitionNewComponent implements OnInit {
         this.reqId = requisitionData.requisitionId;
         this.loadDeliveryInfo();
 
+        this.getSpareItems(requisitionData.orderReference);
+
         this.selectedVesselId = requisitionData.vesselId;
         // Load ship components and then process orderReference
         this.LoadShipCompnentList().subscribe(shipComponentResponse => {
@@ -232,10 +250,32 @@ export class RequisitionNewComponent implements OnInit {
             }
           });
           this.RequisitionForm.controls['orderReference'].setValue(this.selectedDropdown);
+
+          this.RequisitionForm.controls['orderTypeId'].setValue(requisitionData.orderTypeId);
+
+          this.updateDocumentHeader(requisitionData);
+
+          this.LoadheadorderType();
         });
-
-
       });
+  }
+
+  updateDocumentHeader(requisitionData: any) {
+    this.headsite = requisitionData.originSite === 'Office' ? 'O' : 'V';
+    this.headCode = requisitionData.originSite === 'Office' ? 'OFF' : '___';
+    this.headabb = '___';
+
+    const headerStringParts = requisitionData.documentHeader.split(' – ');
+    if (headerStringParts.length === 6) {
+      const headerSerialNumber = headerStringParts[5];
+      // const headerAbbText = headerStringParts[3];
+      this.headserialNumber = headerSerialNumber;
+      // this.headabb = headerAbbText;
+    }
+
+    // Update document header element
+    //   const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
+    //   documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
   }
 
   loadDeliveryInfo() {
@@ -269,8 +309,11 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   getPortList() {
+
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
+
+        console.log(response.data);
         this.portList = response.data;
       })
   }
@@ -346,16 +389,18 @@ export class RequisitionNewComponent implements OnInit {
         this.requisitiondata = response.data;
 
         if (this.reqGetId) {
+          this.loadItemByReqId(this.reqGetId);
           this.LoadVessel();
           this.getReqData();
           this.LoadShipCompnent();
           this.LoadOrdertype();
           this.LoadProjectnameAndcode();
           this.LoadPriority();
-          this.LoadUserDetails();
           this.LoadDepartment();
           this.getPortList();
           this.loadPortList();
+          this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
+          // this.loadItems();
         } else {
           this.LoadUserDetails();
           this.LoadOrdertype();
@@ -409,15 +454,23 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   LoadheadorderType() {
-    this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
+    this.zone.run(() => {
+      this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
+      console.log(this.headabb);
+      this.cdr.markForCheck();
+      // Update document header element
+      const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
+      documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
+    })
+  
   }
 
 
   onSelectAll(event: any) {
 
     this.selectedItems = event.map((x: { shipComponentId: any; }) => x.shipComponentId);
+   
   }
-
 
   onItemSelect(event: any) {
 
@@ -435,7 +488,7 @@ export class RequisitionNewComponent implements OnInit {
 
       if (ss == this.storeAccountCode) {
         this.selectedItems.push(event.shipComponentId);
-
+        this.getSpareItems(this.selectedItems);
         this.dropdownShipcomSetting = {
           singleSelection: false,
           idField: 'shipComponentId',
@@ -557,11 +610,11 @@ export class RequisitionNewComponent implements OnInit {
     form.value.orderReference = this.selectedItems.join(',');
     const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
     const h6Value = documentHeaderElement.textContent;
-    form.value.originSite = this.userDetail.site;
 
     const requisitionData = {
       requisitionId: form.value.requisitionId,
-      originSite: form.value.originSite,
+      documentHeader: h6Value,
+      originSite: this.userDetail.site,
       vesselId: form.value.vesselId,
       orderTypeId: form.value.orderTypeId,
       orderTitle: form.value.orderTitle,
@@ -608,6 +661,152 @@ export class RequisitionNewComponent implements OnInit {
       });
   }
 
+  //#region  PM Items
+  getSpareItems(ids: any) {
+    this.requisitionService.getItemsInfo(ids)
+      .subscribe(res => {
+        this.spareItems = [];
+        this.spareItems = res;
+      })
+  }
 
+  getSelectedSpareItems(item: any) {
+    if (item.selected) {
+      this.selectedSpareItems.push(item);
+    } else {
+      const index = this.selectedSpareItems.indexOf(item);
+      if (index !== -1) {
+        this.selectedSpareItems.splice(index, 1);
+      }
+    }
+  }
+
+  getFinalSelectedSpareItems(item: any) {
+    if (item.selected) {
+      this.finalSelectedSpareItems.push(item);
+    } else {
+      const index = this.finalSelectedSpareItems.indexOf(item);
+      if (index !== -1) {
+        this.finalSelectedSpareItems.splice(index, 1);
+      }
+    }
+  }
+
+  moveItemsToRight() {
+    
+    this.selectedSpareItems.forEach(item => {
+      item.selected = false;
+      const index = this.spareItems.indexOf(item);
+      if (index !== -1) {
+        this.spareItems.splice(index, 1);
+      }
+      this.rightTableItems.push(item);
+    });
+    this.selectedSpareItems = [];
+  }
+
+  moveItemsToLeft() {
+    this.finalSelectedSpareItems.forEach(item => {
+      item.selected = false;
+      const index = this.rightTableItems.indexOf(item);
+      if (index !== -1) {
+        this.rightTableItems.splice(index, 1);
+      }
+      this.spareItems.push(item);
+    });
+    this.finalSelectedSpareItems = [];
+  }
+
+  storeTableData() {
+    const itemsToAdd: {
+      ItemCode: string;
+      ItemName: string;
+      Part: string;
+      DWG: string;
+      Make: string;
+      Model: string;
+      EnterQuantity: number;
+      ROB: number;
+      Remarks: string;
+      PMReqId: number;
+    }[] = [];
+    this.finalSelectedSpareItems.forEach((item, index) => {
+      item.selected = false;
+
+      const inputElement = document.getElementById(`enterQuantity_${index}`) as HTMLInputElement;
+      if (inputElement) {
+        item.enterQuantity = inputElement.value;
+      }
+      const indexInRightTable = this.rightTableItems.indexOf(item);
+      if (indexInRightTable !== -1) {
+        this.rightTableItems.splice(indexInRightTable, 1);
+      }
+      // this.displayFinalSpareItems.push(item);
+
+      const newItem = {
+        ItemCode: item.shipSpares.inventoryCode,
+        ItemName: item.shipSpares.inventoryName,
+        Part: item.partNo,
+        DWG: item.drawingNo,
+        Make: item.shipSpares.makerReference,
+        Model: item.modelNo,
+        EnterQuantity: item.enterQuantity,
+        ROB: item.shipSpares.rob,
+        Remarks: item.remarks,
+        PMReqId: this.reqId
+      };
+
+      itemsToAdd.push(newItem);
+      console.log(itemsToAdd);
+    });
+
+    this.requisitionService.addItemsInfo(itemsToAdd).subscribe(res => {
+
+      this.loadDisplayItems();
+      console.log('Server response:', res);
+    });
+
+    this.finalSelectedSpareItems = [];
+
+    // Close the modal
+    $("#ship-items").modal('hide');
+  }
+
+  loadDisplayItems() {
+    if (this.reqGetId)
+      this.requisitionService.getItemsByReqId(parseInt(this.reqGetId)).subscribe(res => {
+        this.displayFinalSpareItems = [];
+
+        this.displayFinalSpareItems = res;
+        console.log(res);
+      })
+  }
+  loadItems(ids) {
+
+    this.requisitionService.getItemsInfo(ids).subscribe(res => {
+      this.spareItems = [];
+      this.spareItems = res;
+    })
+  }
+
+  loadItemByReqId(ids: string) {
+    const id = parseInt(ids);
+    this.requisitionService.getItemsByReqId(id).subscribe(res => {
+      this.displayFinalSpareItems = [];
+
+      this.displayFinalSpareItems = res;
+    })
+  }
+  deleteItems() {
+    const selectedIds = this.displayFinalSpareItems
+      .filter(item => item.selected);
+    this.requisitionService.deleteItemsInfo(selectedIds).subscribe(res => {
+      if (res) {
+        this.loadDisplayItems();
+      }
+      console.log(res);
+    })
+  }
+  //#endregion
 }
 
