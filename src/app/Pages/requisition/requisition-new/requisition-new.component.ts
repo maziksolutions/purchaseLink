@@ -68,7 +68,7 @@ export class RequisitionNewComponent implements OnInit {
   dropdownList: {
     accountCode: any; shipComponentId: number, shipComponentName: string, isDisabled: boolean
   }[] = [];
-  selectedDropdown: { shipComponentId: number, shipComponentName: string }[] = [];
+  selectedDropdown: { shipComponentId: number, shipComponentName: string  ,accountCode: any;}[] = [];
   dropdownShipcomSetting: { enableCheckAll: boolean; singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
 
   requisitionId: number;
@@ -256,7 +256,41 @@ export class RequisitionNewComponent implements OnInit {
           this.updateDocumentHeader(requisitionData);
 
           this.LoadheadorderType();
+
+          this.dropdownShipcomSetting = {
+            singleSelection: false,
+            idField: 'shipComponentId',
+            textField: 'shipComponentName',
+            selectAllText: 'Select All',
+            unSelectAllText: 'UnSelect All',
+            itemsShowLimit: 1,
+            allowSearchFilter: true,
+            enableCheckAll: true
+          }
+
+       let accountstore =  this.selectedDropdown.map(x=>x.accountCode)[0]
+          let list = this.dropdownList.filter(x => x.accountCode == accountstore).map(item => ({
+
+            accountCode: item.accountCode,
+            shipComponentId: item.shipComponentId,
+            shipComponentName: item.shipComponentName,
+            isDisabled: false,
+  
+          }));
+          let list2 = this.dropdownList.filter(x => x.accountCode != accountstore).map(item => ({
+  
+            accountCode: item.accountCode,
+            shipComponentId: item.shipComponentId,
+            shipComponentName: item.shipComponentName,
+            isDisabled: true,
+  
+          }));
+  
+          this.dropdownList = list.concat(list2);
+  
+  
         });
+        
       });
   }
 
@@ -483,7 +517,7 @@ export class RequisitionNewComponent implements OnInit {
 
       if (this.storeAccountCode[0] == undefined) {
 
-        this.storeAccountCode.push(ss[0]);
+        this.storeAccountCode.push(ss);
       }
 
       if (ss == this.storeAccountCode) {
@@ -565,10 +599,22 @@ export class RequisitionNewComponent implements OnInit {
 
     }));
 
+    console.log(this.storeAccountCode)
     let ds = listfull.map(x => x.accountCode)[0]
     const index: number = this.storeAccountCode.indexOf(ds);
     if (index !== -1) {
       this.storeAccountCode.splice(index, 1);
+    }
+
+    this.dropdownShipcomSetting = {
+      singleSelection: false,
+      idField: 'shipComponentId',
+      textField: 'shipComponentName',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true,
+      enableCheckAll: false
     }
 
     this.dropdownList = listfull;
@@ -663,6 +709,7 @@ export class RequisitionNewComponent implements OnInit {
 
   //#region  PM Items
   getSpareItems(ids: any) {
+    
     this.requisitionService.getItemsInfo(ids)
       .subscribe(res => {
         this.spareItems = [];

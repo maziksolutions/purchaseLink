@@ -179,7 +179,7 @@
                 <fieldset class="form-group mb-0">
                   <select class="form-control form-small form-select" formControlName="vesselId"
                     [(ngModel)]="selectedVesselId" (change)="LoadShipCompnent()" required>
-                    <option value="" selected disabled>Select Site Required at</option>
+                    <option value="0" selected disabled>Select Site Required at</option>
                     <option *ngFor="let item of  Vessels" id="abc" value="{{item.vesselId}}">
                       {{item.vesselName | titlecase}}
 
