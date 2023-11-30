@@ -249,13 +249,7 @@ export class RequisitionNewComponent implements OnInit {
               this.selectedItems.push(selectedShipComponent.shipComponentId.toString());
             }
           });
-          this.RequisitionForm.controls['orderReference'].setValue(this.selectedDropdown);
 
-          this.RequisitionForm.controls['orderTypeId'].setValue(requisitionData.orderTypeId);
-
-          this.updateDocumentHeader(requisitionData);
-
-          this.LoadheadorderType();
 
           this.dropdownShipcomSetting = {
             singleSelection: false,
@@ -287,6 +281,16 @@ export class RequisitionNewComponent implements OnInit {
           }));
   
           this.dropdownList = list.concat(list2);
+
+          this.RequisitionForm.controls['orderReference'].setValue(this.selectedDropdown);
+
+          this.RequisitionForm.controls['orderTypeId'].setValue(requisitionData.orderTypeId);
+
+          this.updateDocumentHeader(requisitionData);
+
+          this.LoadheadorderType();
+
+
   
   
         });
