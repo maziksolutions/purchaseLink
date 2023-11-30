@@ -27,5 +27,9 @@
   }
   .ng-invalid {
     border-color:#d8e2ef;
-    
+
+  }
+
+  .mat-column-index {
+    flex: 0 0 3%; /* Adjust the width as needed */
   }

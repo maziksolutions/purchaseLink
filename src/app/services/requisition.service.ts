@@ -87,6 +87,10 @@ export class RequisitionService {
       .pipe(catchError(this.handleError));
   }  
 
+  getAllSpareitems(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterItemsInfo/${status}`, httpOptions);
+  }
+
   addItemsInfo(items: any[]): Observable<any> {
     return this.httpClient.post<any>(this.linkurl + 'addItemsInfo', items)
       .pipe(catchError(this.handleError));

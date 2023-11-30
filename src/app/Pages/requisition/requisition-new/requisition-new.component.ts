@@ -38,9 +38,10 @@ declare var SideNavi: any;
 export class RequisitionNewComponent implements OnInit {
 
   RequisitionForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox', 'Item Name', 'Item Code', 'Part', 'DWG', 'Make', 'Model', 'Units', 'Req Qty', 'RoB', 'Remarks'];
+  displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'enterQuantity', 'rob', 'remarks'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
+  selectedIndex: any;
   rights: RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
   deletetooltip: any;
@@ -90,7 +91,6 @@ export class RequisitionNewComponent implements OnInit {
   leftTableItems: any[] = [];
   rightTableItems: any[] = [];
   selectedSpareItemsInput: any[] = [];
-  displayFinalSpareItems: any[] = [];
 
   isHeaderCheckboxChecked = false;
 
@@ -144,6 +144,8 @@ export class RequisitionNewComponent implements OnInit {
 
     this.loadData(0);
 
+    // this.loadItemsData(0);
+
   }
 
   get fm() { return this.RequisitionForm.controls };
@@ -165,13 +167,6 @@ export class RequisitionNewComponent implements OnInit {
     }
 
     this.sideNavService.setCommetType(this.commetType);
-  }
-
-  toggleAllCheckboxes() {
-    this.isHeaderCheckboxChecked = !this.isHeaderCheckboxChecked;
-
-    // Update the state of all items checkboxes in the table based on the header checkbox
-    this.displayFinalSpareItems.forEach(item => item.selected = this.isHeaderCheckboxChecked);
   }
 
   onSubmit(form: any) {
@@ -389,7 +384,7 @@ export class RequisitionNewComponent implements OnInit {
         this.requisitiondata = response.data;
 
         if (this.reqGetId) {
-          this.loadItemByReqId(this.reqGetId);
+          // this.loadItemByReqId(this.reqGetId);
           this.LoadVessel();
           this.getReqData();
           this.LoadShipCompnent();
@@ -400,7 +395,7 @@ export class RequisitionNewComponent implements OnInit {
           this.getPortList();
           this.loadPortList();
           this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
-          // this.loadItems();
+          this.loadItemsData(0)
         } else {
           this.LoadUserDetails();
           this.LoadOrdertype();
@@ -462,18 +457,18 @@ export class RequisitionNewComponent implements OnInit {
       const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
       documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
     })
-  
+
   }
 
 
   onSelectAll(event: any) {
 
     this.selectedItems = event.map((x: { shipComponentId: any; }) => x.shipComponentId);
-   
+
   }
 
   onItemSelect(event: any) {
-
+    debugger
     let isSelect = event.shipComponentId;
 
     if (isSelect) {
@@ -483,10 +478,11 @@ export class RequisitionNewComponent implements OnInit {
 
       if (this.storeAccountCode[0] == undefined) {
 
-        this.storeAccountCode.push(ss[0]);
+        this.storeAccountCode.push(ss);
       }
 
       if (ss == this.storeAccountCode) {
+        debugger
         this.selectedItems.push(event.shipComponentId);
         this.getSpareItems(this.selectedItems);
         this.dropdownShipcomSetting = {
@@ -665,6 +661,7 @@ export class RequisitionNewComponent implements OnInit {
   getSpareItems(ids: any) {
     this.requisitionService.getItemsInfo(ids)
       .subscribe(res => {
+        debugger;
         this.spareItems = [];
         this.spareItems = res;
       })
@@ -693,7 +690,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   moveItemsToRight() {
-    
+
     this.selectedSpareItems.forEach(item => {
       item.selected = false;
       const index = this.spareItems.indexOf(item);
@@ -762,7 +759,7 @@ export class RequisitionNewComponent implements OnInit {
 
     this.requisitionService.addItemsInfo(itemsToAdd).subscribe(res => {
 
-      this.loadDisplayItems();
+      this.loadItemsData(0);
       console.log('Server response:', res);
     });
 
@@ -771,16 +768,7 @@ export class RequisitionNewComponent implements OnInit {
     // Close the modal
     $("#ship-items").modal('hide');
   }
-
-  loadDisplayItems() {
-    if (this.reqGetId)
-      this.requisitionService.getItemsByReqId(parseInt(this.reqGetId)).subscribe(res => {
-        this.displayFinalSpareItems = [];
-
-        this.displayFinalSpareItems = res;
-        console.log(res);
-      })
-  }
+  
   loadItems(ids) {
 
     this.requisitionService.getItemsInfo(ids).subscribe(res => {
@@ -788,24 +776,84 @@ export class RequisitionNewComponent implements OnInit {
       this.spareItems = res;
     })
   }
-
-  loadItemByReqId(ids: string) {
-    const id = parseInt(ids);
-    this.requisitionService.getItemsByReqId(id).subscribe(res => {
-      this.displayFinalSpareItems = [];
-
-      this.displayFinalSpareItems = res;
-    })
-  }
+ 
   deleteItems() {
-    const selectedIds = this.displayFinalSpareItems
-      .filter(item => item.selected);
-    this.requisitionService.deleteItemsInfo(selectedIds).subscribe(res => {
-      if (res) {
-        this.loadDisplayItems();
-      }
-      console.log(res);
-    })
+    debugger;
+    var message = ""
+    var title = "";
+
+    if (this.flag == 1) {
+      message = "Un-archived successfully.";
+      title = "you want to un-archive data."
+    }
+    else {
+      message = "Archived successfully.";
+      title = "you want to archive data."
+
+    }
+    const numSelected = this.selection.selected;
+    if (numSelected.length > 0) {
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: title,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+      }).then((result) => {
+        if (result.value) {
+          this.requisitionService.deleteItemsInfo(numSelected).subscribe(result => {
+            this.selection.clear();
+            this.swal.success(message);
+            this.loadItemsData(0);
+          })
+
+        }
+      })
+
+    } else {
+      this.swal.info('Select at least one row')
+    }
+    // const selectedIds = this.displayFinalSpareItems
+    //   .filter(item => item.selected);
+    // this.requisitionService.deleteItemsInfo(selectedIds).subscribe(res => {
+    //   if (res) {
+    //     this.loadDisplayItems();
+    //   }
+    //   console.log(res);
+    // })
+  }
+
+  loadItemsData(status: number) {
+    debugger;    
+    if (this.reqGetId)
+      this.requisitionService.getItemsByReqId(parseInt(this.reqGetId))
+        .subscribe(response => {
+          debugger;
+          this.flag = status;
+
+          this.dataSource.data = response;
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+          // this.clear();
+          (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+        });
+  }
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = !!this.dataSource && this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+  masterToggle() {
+    this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
+  }
+  checkboxLabel(row: any): string {
+    //console.log(row);
+    if (!row) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.UserId + 1}`;
   }
   //#endregion
 }

@@ -228,9 +228,9 @@
                 <h6 class="text-900 mb-2">Order Reference</h6>
 
                 <fieldset class="form-group mb-0">
-                  <ng-multiselect-dropdown  [placeholder]="'Select Order Reference'" class="multiselect-dropdown"
+                  <ng-multiselect-dropdown [placeholder]="'Select Order Reference'" class="multiselect-dropdown"
                     [settings]="dropdownShipcomSetting" [data]="dropdownList" [(ngModel)]="selectedDropdown"
-                    (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)" 
+                    (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
                     formControlName="orderReference" (onDeSelect)="onShipCompoDeSelect($event)"
                     (onDeSelectAll)="onShipCompoDeSelectAll($event)">
 
@@ -646,7 +646,7 @@
                 </div>
               </div>
               <div class="table-responsive scrollbar">
-                <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                <!-- <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                   <thead>
                     <tr>
                       <th width="2%"><input type="checkbox" [(ngModel)]="isHeaderCheckboxChecked"
@@ -684,7 +684,73 @@
                           data-bs-target="#attachents-list-01"><i class="fas fa-paperclip text-success"></i></a></td>
                     </tr>
                   </tbody>
-                </table>
+                </table> -->
+                <mat-table #table [dataSource]="dataSource" matSort
+                  class="table table-hover table-striped table-sm small table-bordered">
+                  <ng-container matColumnDef="checkbox">
+                    <mat-header-cell *matHeaderCellDef>
+                      <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()">
+                      </mat-checkbox>
+
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+                        [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="index">
+                    <mat-header-cell class="mat-column-index" *matHeaderCellDef>#</mat-header-cell>
+                    <mat-cell class="mat-column-index" *matCellDef="let row; let i = index">{{ i + 1 }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="itemName">
+                    <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.itemName }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="itemCode">
+                    <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.itemCode }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="part">
+                    <mat-header-cell *matHeaderCellDef>Part</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.part }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="dwg">
+                    <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="make">
+                    <mat-header-cell *matHeaderCellDef>Make</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.make }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="model">
+                    <mat-header-cell *matHeaderCellDef>Model</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.model }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="enterQuantity">
+                    <mat-header-cell *matHeaderCellDef>Req Qty</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.enterQuantity }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="rob">
+                    <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.rob }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="remarks">
+                    <mat-header-cell *matHeaderCellDef>Remarks</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{ row.remarks }}</mat-cell>
+                  </ng-container>
+                  <!-- <ng-container matColumnDef="attachments">
+                    <mat-header-cell *matHeaderCellDef>Attachments</mat-header-cell>
+                    <mat-cell>---</mat-cell>
+                  </ng-container> -->
+                  <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
+                    [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.itemsId==selectedIndex))}"></mat-row>
+                </mat-table>
+                <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
+                  [pageSizeOptions]="[20, 40, 60, 100]">
+                </mat-paginator>
                 <div class="modal fade" id="attachents-list-01" tabindex="-1" aria-hidden="true">
                   <div class="modal-dialog mt-6" role="document">
                     <div class="modal-content border-0">
