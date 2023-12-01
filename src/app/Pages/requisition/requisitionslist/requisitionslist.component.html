@@ -104,8 +104,8 @@
               </ng-container>
               <ng-container matColumnDef="Delivery_Site">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Delivery Site</mat-header-cell>
-                <mat-cell *matCellDef="let row">
-                  <span>gfgfg </span>
+                <mat-cell *matCellDef="let row" title={{row.deliverySiteNames}}>
+                  <span>{{row.deliverySiteNames}} </span>
                 </mat-cell>
               </ng-container>
               <ng-container matColumnDef="OriginSite">
