@@ -540,34 +540,57 @@
                       </div>
                       <div class="row">
                         <div class="col-md-5">
-                          <div class="table-responsive scrollbar-visible">
-                            <table class="table table-hover table-striped table-sm small table-bordered">
+                          <div class="table-responsive scrollbar-visible">                           
+                            <table class="table table-hover table-striped table-sm small">
                               <thead>
                                 <tr>
                                   <th colspan="6" class="bg-primary text-light text-center">Choose Ship Spare Parts
                                   </th>
                                 </tr>
-                                <tr class="bg-300">
-                                  <th><input type="checkbox"></th>
-                                  <th>Part ID</th>
-                                  <th>Part Name</th>
-                                  <th>Mfg Part No.</th>
-                                  <th>ROB</th>
-                                  <th>Unit</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr *ngFor="let item of spareItems">
-                                  <td><input type="checkbox" [(ngModel)]="item.selected"
-                                      (change)="getSelectedSpareItems(item)"></td>
-                                  <td>{{ item.shipSpares.inventoryCode}}</td>
-                                  <td>{{ item.shipSpares.inventoryName}}</td>
-                                  <td>{{ item.partNo}}</td>
-                                  <td>{{ item.quantity}}</td>
-                                </tr>
-                              </tbody>
-                            </table>
+                                <mat-table #table [dataSource]="leftTableDataSource"
+                                  class="table table-hover table-striped table-sm small table-bordered">
+                                  <ng-container matColumnDef="checkbox">
+                                    <mat-header-cell *matHeaderCellDef>
+                                      <mat-checkbox (change)="$event ? masterLeftTableToggle() : null"
+                                        [checked]="leftTableSelection.hasValue() && isAllLeftTableSelected()"
+                                        [indeterminate]="leftTableSelection.hasValue() && !isAllLeftTableSelected()">
+                                      </mat-checkbox>
 
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let row">
+                                      <mat-checkbox (click)="$event.stopPropagation()"
+                                        (change)="$event ? leftTableSelection.toggle(row) : null"
+                                        [checked]="leftTableSelection.isSelected(row)"
+                                        [aria-label]="checkboxLeftTableLabel(row)"></mat-checkbox>
+                                    </mat-cell>
+                                  </ng-container>
+                                  <ng-container matColumnDef="inventoryCode">
+                                    <mat-header-cell *matHeaderCellDef>Part Id</mat-header-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.shipSpares.inventoryCode }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container matColumnDef="inventoryName">
+                                    <mat-header-cell *matHeaderCellDef>Part Name</mat-header-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.shipSpares.inventoryName }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container matColumnDef="partNo">
+                                    <mat-header-cell *matHeaderCellDef>Mfg Part No.</mat-header-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.partNo }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container matColumnDef="quantity">
+                                    <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.quantity }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container matColumnDef="availableQty">
+                                    <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.shipSpares.availableQty }}</mat-cell>
+                                  </ng-container>
+                                  <mat-header-row class="bg-300"
+                                    *matHeaderRowDef="leftTableColumn; sticky:true"></mat-header-row>
+                                  <mat-row *matRowDef="let row; columns: leftTableColumn; let i = index"
+                                    [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.shipComponentSpareId==selectedIndex))}"></mat-row>
+                                </mat-table>
+                              </thead>
+                            </table>
                           </div>
                         </div>
 
@@ -584,33 +607,63 @@
 
                         <div class="col-md-5">
                           <div class="table-responsive scrollbar-visible">
-                            <table class="table table-hover table-striped table-sm small table-bordered">
+                            <table class="table table-hover table-striped table-sm small">
                               <thead>
                                 <tr>
                                   <th colspan="6" class="bg-primary text-light text-center">Selected Spare Parts</th>
                                 </tr>
-                                <tr class="bg-300">
-                                  <th><input type="checkbox"></th>
-                                  <th>Qty</th>
-                                  <th>Part Name</th>
-                                  <th>Mfg Part No.</th>
-                                  <th>ROB</th>
-                                  <th>Unit</th>
-                                </tr>
+                              
+                                <mat-table #table [dataSource]="rightTableDataSource"
+                                  class="table table-hover table-striped table-sm small table-bordered">
+                                  <ng-container matColumnDef="checkbox">
+                                    <mat-header-cell *matHeaderCellDef>
+                                      <mat-checkbox (change)="$event ? masterRightTableToggle() : null"
+                                        [checked]="rightTableSelection.hasValue() && isAllRightTableSelected()"
+                                        [indeterminate]="rightTableSelection.hasValue() && !isAllRightTableSelected()">
+                                      </mat-checkbox>
+
+                                    </mat-header-cell>
+                                    <mat-cell *matCellDef="let row">
+                                      <mat-checkbox (click)="$event.stopPropagation()"
+                                        (change)="$event ? rightTableSelection.toggle(row) : null"
+                                        [checked]="rightTableSelection.isSelected(row)"
+                                        [aria-label]="checkboxRightTableLabel(row)"></mat-checkbox>
+                                    </mat-cell>
+                                  </ng-container>
+                                  <ng-container style="min-width: 50px; width: 50px; max-width: 50px;" matColumnDef="userInput">
+                                    <mat-header-cell style="min-width: 50px; width: 50px; max-width: 50px;" *matHeaderCellDef>Qty</mat-header-cell>
+                                    <mat-cell style="min-width: 50px; width: 50px; max-width: 50px;" *matCellDef="let row">
+                                      <input matInput placeholder="Enter data" [(ngModel)]="row.userInput">
+                                    </mat-cell>
+                                  </ng-container>
+                                  <ng-container class="rightTableCode" matColumnDef="inventoryCode">
+                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part Id</mat-header-cell>
+                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{
+                                      row.shipSpares.inventoryCode }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container class="rightTableCode" matColumnDef="inventoryName">
+                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part Name</mat-header-cell>
+                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{
+                                      row.shipSpares.inventoryName }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container class="rightTableCode" matColumnDef="partNo">
+                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Mfg Part No.</mat-header-cell>
+                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{ row.partNo }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container class="rightTableNo" matColumnDef="quantity">
+                                    <mat-header-cell class="rightTableNo" *matHeaderCellDef>ROB</mat-header-cell>
+                                    <mat-cell class="rightTableNo" *matCellDef="let row">{{ row.quantity }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container class="rightTableNo" matColumnDef="availableQty">
+                                    <mat-header-cell class="rightTableNo" *matHeaderCellDef>Unit</mat-header-cell>
+                                    <mat-cell class="rightTableNo" *matCellDef="let row">{{ row.shipSpares.availableQty }}</mat-cell>
+                                  </ng-container>
+                                  <mat-header-row class="bg-300"
+                                    *matHeaderRowDef="rightTableColumn; sticky:true"></mat-header-row>
+                                  <mat-row *matRowDef="let row; columns: rightTableColumn; let i = index"
+                                    [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.shipComponentSpareId==selectedIndex))}"></mat-row>
+                                </mat-table>
                               </thead>
-                              <tbody>
-                                <tr>
-                                <tr *ngFor="let selectedItem of rightTableItems; let i = index">
-                                  <td><input type="checkbox" [(ngModel)]="selectedItem.selected"
-                                      (change)="getFinalSelectedSpareItems(selectedItem)"></td>
-                                  <td class="col-md-2"><input type="text" class="col-md-10" placeholder="Enter quantity"
-                                      [id]="'enterQuantity_' + i" /></td>
-                                  <td>{{ selectedItem.shipSpares.inventoryName }}</td>
-                                  <td>{{ selectedItem.partNo }}</td>
-                                  <td>{{ selectedItem.quantity }}</td>
-                                  <td> --- </td>
-                                </tr>
-                              </tbody>
                             </table>
                           </div>
                         </div>
@@ -645,46 +698,7 @@
 
                 </div>
               </div>
-              <div class="table-responsive scrollbar">
-                <!-- <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
-                  <thead>
-                    <tr>
-                      <th width="2%"><input type="checkbox" [(ngModel)]="isHeaderCheckboxChecked"
-                          (change)="toggleAllCheckboxes()"></th>
-                      <th width="3%">#</th>
-                      <th>Item Name</th>
-                      <th>Item Code</th>
-                      <th>Part #</th>
-                      <th>DWG #</th>
-                      <th>Make</th>
-                      <th>Model</th>
-                      <th>Units</th>
-                      <th>Req Qty</th>
-                      <th>RoB</th>
-                      <th>Remarks</th>
-                      <th>&nbsp;</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let selectedItem of displayFinalSpareItems; let i = index">
-                      <td><input type="checkbox" [(ngModel)]="selectedItem.selected"
-                          (change)="getFinalSelectedSpareItems(selectedItem)"></td>
-                      <td>{{ i + 1 }}</td>
-                      <td>{{ selectedItem.itemName }}</td>
-                      <td>{{ selectedItem.itemCode }}</td>
-                      <td>{{ selectedItem.part }}</td>
-                      <td>{{selectedItem.dwg}}</td>
-                      <td>{{ selectedItem.make }}</td>
-                      <td>{{selectedItem.model}}</td>
-                      <td>-----</td>
-                      <td>{{selectedItem.enterQuantity}}</td>
-                      <td>{{ selectedItem.rob }}</td>
-                      <td>-----</td>
-                      <td><a class="px-1 m-r-5" type="button" data-bs-toggle="modal"
-                          data-bs-target="#attachents-list-01"><i class="fas fa-paperclip text-success"></i></a></td>
-                    </tr>
-                  </tbody>
-                </table> -->
+              <div class="table-responsive scrollbar">                
                 <mat-table #table [dataSource]="dataSource" matSort
                   class="table table-hover table-striped table-sm small table-bordered">
                   <ng-container matColumnDef="checkbox">
@@ -700,15 +714,16 @@
                         [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>
                     </mat-cell>
                   </ng-container>
-                  <ng-container matColumnDef="index">
+                  <ng-container matColumnDef="index" style="width: 50px;">
                     <mat-header-cell class="mat-column-index" *matHeaderCellDef>#</mat-header-cell>
-                    <mat-cell class="mat-column-index" *matCellDef="let row; let i = index">{{ i + 1 }}</mat-cell>
+                    <mat-cell class="mat-column-index" style="width: 50px;" *matCellDef="let row; let i = index">{{ i +
+                      1 }}</mat-cell>
                   </ng-container>
                   <ng-container matColumnDef="itemName">
                     <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
                     <mat-cell *matCellDef="let row">{{ row.itemName }}</mat-cell>
                   </ng-container>
-                  <ng-container matColumnDef="itemCode">
+                  <ng-container class="rightTableCode" matColumnDef="itemCode">
                     <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
                     <mat-cell *matCellDef="let row">{{ row.itemCode }}</mat-cell>
                   </ng-container>
@@ -824,8 +839,6 @@
                             <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
                           </div>
                         </div>
-
-
                       </div>
                     </div>
                   </div>
