@@ -29,6 +29,14 @@ declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 declare var SideNavi: any;
 
+export interface RightTableItem {
+  userInput?: string;
+  inventoryCode: string;
+  inventoryName: string;
+  partNo: string;
+  quantity: number;
+  availableQty: number;
+}
 
 @Component({
   selector: 'app-requisition-new',
@@ -39,8 +47,14 @@ export class RequisitionNewComponent implements OnInit {
 
   RequisitionForm: FormGroup; flag; pkey: number = 0;
   displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'enterQuantity', 'rob', 'remarks'];
+  leftTableColumn: string[] = ['checkbox', 'inventoryCode', 'inventoryName', 'partNo', 'quantity', 'availableQty'];
+  rightTableColumn: string[] = ['checkbox', 'userInput', 'inventoryCode', 'inventoryName', 'partNo', 'quantity', 'availableQty'];
   dataSource = new MatTableDataSource<any>();
+  leftTableDataSource = new MatTableDataSource<any>();
+  rightTableDataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
+  leftTableSelection = new SelectionModel<any>(true, []);
+  rightTableSelection = new SelectionModel<RightTableItem>(true, []);
   selectedIndex: any;
   rights: RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
@@ -69,7 +83,7 @@ export class RequisitionNewComponent implements OnInit {
   dropdownList: {
     accountCode: any; shipComponentId: number, shipComponentName: string, isDisabled: boolean
   }[] = [];
-  selectedDropdown: { shipComponentId: number, shipComponentName: string  ,accountCode: any;}[] = [];
+  selectedDropdown: { shipComponentId: number, shipComponentName: string, accountCode: any; }[] = [];
   dropdownShipcomSetting: { enableCheckAll: boolean; singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
 
   requisitionId: number;
@@ -84,12 +98,6 @@ export class RequisitionNewComponent implements OnInit {
   requisitiondata: any;
   headserialNumber: string;
 
-  // This is for Items
-  spareItems: any[] = [];
-  selectedSpareItems: any[] = [];
-  finalSelectedSpareItems: any[] = [];
-  leftTableItems: any[] = [];
-  rightTableItems: any[] = [];
   selectedSpareItemsInput: any[] = [];
 
   isHeaderCheckboxChecked = false;
@@ -153,16 +161,21 @@ export class RequisitionNewComponent implements OnInit {
 
 
   onCheckboxChanged(event: any) {
+    debugger;
     const checkboxType = event.target.id;
     const isChecked = event.target.checked;
     this.commetType = '';
     if (checkboxType === 'genric') {
       this.RequisitionForm.get('genericCheckbox')?.setValue(isChecked);
       this.RequisitionForm.get('internalCheckbox')?.setValue(false);
+      this.genericCheckbox = isChecked;
+      this.internalCheckbox = false;
       this.commetType = 'generic';
     } else if (checkboxType === 'internal') {
       this.RequisitionForm.get('internalCheckbox')?.setValue(isChecked);
       this.RequisitionForm.get('genericCheckbox')?.setValue(false);
+      this.internalCheckbox = isChecked;
+      this.genericCheckbox = false;
       this.commetType = 'internal';
     }
 
@@ -257,24 +270,24 @@ export class RequisitionNewComponent implements OnInit {
             enableCheckAll: true
           }
 
-       let accountstore =  this.selectedDropdown.map(x=>x.accountCode)[0]
+          let accountstore = this.selectedDropdown.map(x => x.accountCode)[0]
           let list = this.dropdownList.filter(x => x.accountCode == accountstore).map(item => ({
 
             accountCode: item.accountCode,
             shipComponentId: item.shipComponentId,
             shipComponentName: item.shipComponentName,
             isDisabled: false,
-  
+
           }));
           let list2 = this.dropdownList.filter(x => x.accountCode != accountstore).map(item => ({
-  
+
             accountCode: item.accountCode,
             shipComponentId: item.shipComponentId,
             shipComponentName: item.shipComponentName,
             isDisabled: true,
-  
+
           }));
-  
+
           this.dropdownList = list.concat(list2);
 
           this.RequisitionForm.controls['orderReference'].setValue(this.selectedDropdown);
@@ -285,11 +298,8 @@ export class RequisitionNewComponent implements OnInit {
 
           this.LoadheadorderType();
 
-
-  
-  
         });
-        
+
       });
   }
 
@@ -648,10 +658,6 @@ export class RequisitionNewComponent implements OnInit {
     this.selectedItems.length = 0;
   }
 
-
-
-
-
   onSave(form: any) {
     form.value.orderReference = this.selectedItems.join(',');
     const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -709,63 +715,39 @@ export class RequisitionNewComponent implements OnInit {
 
   //#region  PM Items
   getSpareItems(ids: any) {
-    
+
     this.requisitionService.getItemsInfo(ids)
       .subscribe(res => {
         debugger;
-        this.spareItems = [];
-        this.spareItems = res;
+        this.leftTableDataSource.data = res;
+        console.log(this.leftTableDataSource.data);
+        // this.spareItems = res;
       })
-  }
-
-  getSelectedSpareItems(item: any) {
-    if (item.selected) {
-      this.selectedSpareItems.push(item);
-    } else {
-      const index = this.selectedSpareItems.indexOf(item);
-      if (index !== -1) {
-        this.selectedSpareItems.splice(index, 1);
-      }
-    }
-  }
-
-  getFinalSelectedSpareItems(item: any) {
-    if (item.selected) {
-      this.finalSelectedSpareItems.push(item);
-    } else {
-      const index = this.finalSelectedSpareItems.indexOf(item);
-      if (index !== -1) {
-        this.finalSelectedSpareItems.splice(index, 1);
-      }
-    }
-  }
+  }  
 
   moveItemsToRight() {
+    debugger;
+    const selectedItems = this.leftTableDataSource.data.filter(item => this.leftTableSelection.isSelected(item));
 
-    this.selectedSpareItems.forEach(item => {
-      item.selected = false;
-      const index = this.spareItems.indexOf(item);
-      if (index !== -1) {
-        this.spareItems.splice(index, 1);
-      }
-      this.rightTableItems.push(item);
-    });
-    this.selectedSpareItems = [];
+    this.rightTableDataSource.data = [...this.rightTableDataSource.data, ...selectedItems];
+
+    this.leftTableDataSource.data = this.leftTableDataSource.data.filter(item => !this.leftTableSelection.isSelected(item));
+
+    this.leftTableSelection.clear();
   }
 
   moveItemsToLeft() {
-    this.finalSelectedSpareItems.forEach(item => {
-      item.selected = false;
-      const index = this.rightTableItems.indexOf(item);
-      if (index !== -1) {
-        this.rightTableItems.splice(index, 1);
-      }
-      this.spareItems.push(item);
-    });
-    this.finalSelectedSpareItems = [];
+    const selectedItems = this.rightTableDataSource.data.filter(item => this.rightTableSelection.isSelected(item));
+
+    this.leftTableDataSource.data = [...this.leftTableDataSource.data, ...selectedItems];
+
+    this.rightTableDataSource.data = this.rightTableDataSource.data.filter(item => !this.rightTableSelection.isSelected(item));
+
+    this.rightTableSelection.clear();
   }
 
   storeTableData() {
+
     const itemsToAdd: {
       ItemCode: string;
       ItemName: string;
@@ -778,56 +760,45 @@ export class RequisitionNewComponent implements OnInit {
       Remarks: string;
       PMReqId: number;
     }[] = [];
-    this.finalSelectedSpareItems.forEach((item, index) => {
-      item.selected = false;
+    this.rightTableDataSource.data.forEach((item, index) => {
+      if (this.rightTableSelection.isSelected(item)) {
 
-      const inputElement = document.getElementById(`enterQuantity_${index}`) as HTMLInputElement;
-      if (inputElement) {
-        item.enterQuantity = inputElement.value;
+        const enterQuantity = item.userInput ? +item.userInput : 0;
+
+        const newItem = {
+          ItemCode: item.shipSpares.inventoryCode,
+          ItemName: item.shipSpares.inventoryName,
+          Part: item.partNo,
+          DWG: item.drawingNo,
+          Make: item.shipSpares.makerReference,
+          Model: item.modelNo,
+          EnterQuantity: enterQuantity,
+          ROB: item.shipSpares.rob,
+          Remarks: item.remarks,
+          PMReqId: this.reqId
+        };
+
+        itemsToAdd.push(newItem);
       }
-      const indexInRightTable = this.rightTableItems.indexOf(item);
-      if (indexInRightTable !== -1) {
-        this.rightTableItems.splice(indexInRightTable, 1);
-      }
-      // this.displayFinalSpareItems.push(item);
-
-      const newItem = {
-        ItemCode: item.shipSpares.inventoryCode,
-        ItemName: item.shipSpares.inventoryName,
-        Part: item.partNo,
-        DWG: item.drawingNo,
-        Make: item.shipSpares.makerReference,
-        Model: item.modelNo,
-        EnterQuantity: item.enterQuantity,
-        ROB: item.shipSpares.rob,
-        Remarks: item.remarks,
-        PMReqId: this.reqId
-      };
-
-      itemsToAdd.push(newItem);
-      console.log(itemsToAdd);
     });
 
-    this.requisitionService.addItemsInfo(itemsToAdd).subscribe(res => {
+    this.rightTableDataSource.data = this.rightTableDataSource.data.filter(item => !this.rightTableSelection.isSelected(item));
+    this.rightTableDataSource._updateChangeSubscription();
 
-      this.loadItemsData(0);
-      console.log('Server response:', res);
-    });
+    this.rightTableSelection.clear();
 
-    this.finalSelectedSpareItems = [];
+    if (itemsToAdd.length > 0) {
+      this.requisitionService.addItemsInfo(itemsToAdd).subscribe(res => {
 
-    // Close the modal
-    $("#ship-items").modal('hide');
-  }
-  
-  loadItems(ids) {
+        this.loadItemsData(0);
+        console.log('Server response:', res);
 
-    this.requisitionService.getItemsInfo(ids).subscribe(res => {
-      this.spareItems = [];
-      this.spareItems = res;
-    })
-  }
- 
+        // Close the modal
+        $("#ship-items").modal('hide');
+      });
+    }
+  }  
+
   deleteItems() {
     debugger;
     var message = ""
@@ -877,7 +848,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   loadItemsData(status: number) {
-    debugger;    
+    debugger;
     if (this.reqGetId)
       this.requisitionService.getItemsByReqId(parseInt(this.reqGetId))
         .subscribe(response => {
@@ -896,15 +867,52 @@ export class RequisitionNewComponent implements OnInit {
     const numRows = !!this.dataSource && this.dataSource.data.length;
     return numSelected === numRows;
   }
+  isAllLeftTableSelected() {
+
+    const numSelected = this.leftTableSelection.selected.length;
+    const numRows = !!this.leftTableDataSource && this.leftTableDataSource.data.length;
+    return numSelected === numRows;
+  }
+  isAllRightTableSelected() {
+
+    const numSelected = this.rightTableSelection.selected.length;
+    const numRows = !!this.rightTableDataSource && this.rightTableDataSource.data.length;
+    return numSelected === numRows;
+  }
   masterToggle() {
     this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
   }
+  masterLeftTableToggle() {
+
+    this.isAllLeftTableSelected() ? this.leftTableSelection.clear() : this.leftTableDataSource.data.forEach(r => this.leftTableSelection.select(r));
+  }
+  masterRightTableToggle() {
+
+    this.isAllRightTableSelected() ? this.rightTableSelection.clear() : this.rightTableDataSource.data.forEach(r => this.rightTableSelection.select(r));
+  }
   checkboxLabel(row: any): string {
+
     //console.log(row);
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.UserId + 1}`;
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.shipComponentSpareId + 1}`;
+  }
+  checkboxLeftTableLabel(row: any): string {
+
+    //console.log(row);
+    if (!row) {
+      return `${this.isAllLeftTableSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.leftTableSelection.isSelected(row) ? 'deselect' : 'select'} row ${row.shipComponentSpareId + 1}`;
+  }
+  checkboxRightTableLabel(row: any): string {
+
+    //console.log(row);
+    if (!row) {
+      return `${this.isAllRightTableSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.rightTableSelection.isSelected(row) ? 'deselect' : 'select'} row ${row.shipComponentSpareId + 1}`;
   }
   //#endregion
 }
