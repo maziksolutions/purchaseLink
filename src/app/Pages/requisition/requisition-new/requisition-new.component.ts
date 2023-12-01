@@ -97,6 +97,7 @@ export class RequisitionNewComponent implements OnInit {
   headabb: string;
   requisitiondata: any;
   headserialNumber: string;
+  listViewItems:any;
 
   selectedSpareItemsInput: any[] = [];
 
@@ -161,7 +162,7 @@ export class RequisitionNewComponent implements OnInit {
 
 
   onCheckboxChanged(event: any) {
-    debugger;
+    
     const checkboxType = event.target.id;
     const isChecked = event.target.checked;
     this.commetType = '';
@@ -322,11 +323,13 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   loadDeliveryInfo() {
+    
     this.requisitionService.getDeliveryInfoByReqId(this.reqId).subscribe(res => {
+     
       const deliveryInfoData = res.data;
-      console.log(deliveryInfoData);
+      this.deliveryForm.controls['expectedDeliveryPort'].setValue(deliveryInfoData.expectedDeliveryPort);
       if (deliveryInfoData)
-        this.deliveryForm.patchValue({
+        this.deliveryForm.setValue({
           delInfoId: deliveryInfoData.delInfoId,
           expectedDeliveryPort: deliveryInfoData.expectedDeliveryPort,
           expectedDeliveryDate: this.formatDate(deliveryInfoData.expectedDeliveryDate),
@@ -335,6 +338,7 @@ export class RequisitionNewComponent implements OnInit {
           deliveryAddress: deliveryInfoData.deliveryAddress,
           reqIds: this.reqId
         });
+      this.deliveryForm.controls['expectedDeliveryPort'].setValue(deliveryInfoData.expectedDeliveryPort);
     })
   }
 
@@ -349,16 +353,6 @@ export class RequisitionNewComponent implements OnInit {
         this.dropdownList = res.data;
         return { data: this.dropdownList };
       }));
-  }
-
-  getPortList() {
-
-    this.requisitionService.GetPortList(0)
-      .subscribe(response => {
-
-        console.log(response.data);
-        this.portList = response.data;
-      })
   }
 
   LoadOrdertype() {
@@ -434,14 +428,13 @@ export class RequisitionNewComponent implements OnInit {
         if (this.reqGetId) {
           // this.loadItemByReqId(this.reqGetId);
           this.LoadVessel();
+          this.loadPortList();
           this.getReqData();
           this.LoadShipCompnent();
           this.LoadOrdertype();
           this.LoadProjectnameAndcode();
           this.LoadPriority();
           this.LoadDepartment();
-          this.getPortList();
-          this.loadPortList();
           this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
           this.loadItemsData(0)
         } else {
@@ -518,7 +511,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   onItemSelect(event: any) {
-    debugger
+    
     let isSelect = event.shipComponentId;
 
     if (isSelect) {
@@ -532,7 +525,7 @@ export class RequisitionNewComponent implements OnInit {
       }
 
       if (ss == this.storeAccountCode) {
-        debugger
+        
         this.selectedItems.push(event.shipComponentId);
         this.getSpareItems(this.selectedItems);
         this.dropdownShipcomSetting = {
@@ -720,15 +713,15 @@ export class RequisitionNewComponent implements OnInit {
 
     this.requisitionService.getItemsInfo(ids)
       .subscribe(res => {
-        debugger;
+        
         this.leftTableDataSource.data = res;
         console.log(this.leftTableDataSource.data);
         // this.spareItems = res;
       })
-  }  
+  }
 
   moveItemsToRight() {
-    debugger;
+   
     const selectedItems = this.leftTableDataSource.data.filter(item => this.leftTableSelection.isSelected(item));
 
     this.rightTableDataSource.data = [...this.rightTableDataSource.data, ...selectedItems];
@@ -799,10 +792,10 @@ export class RequisitionNewComponent implements OnInit {
         $("#ship-items").modal('hide');
       });
     }
-  }  
+  }
 
   deleteItems() {
-    debugger;
+    
     var message = ""
     var title = "";
 
@@ -850,11 +843,11 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   loadItemsData(status: number) {
-    debugger;
+   
     if (this.reqGetId)
       this.requisitionService.getItemsByReqId(parseInt(this.reqGetId))
         .subscribe(response => {
-          debugger;
+        
           this.flag = status;
 
           this.dataSource.data = response;
@@ -917,5 +910,17 @@ export class RequisitionNewComponent implements OnInit {
     return `${this.rightTableSelection.isSelected(row) ? 'deselect' : 'select'} row ${row.shipComponentSpareId + 1}`;
   }
   //#endregion
+
+  listDetails(id){
+    debugger;
+   this.listViewItems = this.dataSource.data.filter(item=>item.itemsId==id);       
+  }
+
+  applyFilter(filterValue: string) {
+    debugger;
+    filterValue = filterValue.trim();
+    filterValue = filterValue.toLowerCase();
+    this.leftTableDataSource.filter = filterValue;
+  }
 }
 

@@ -532,15 +532,15 @@
                     <div class="modal-body mt-0 scrollbar-visible">
                       <div class="form-inline mb-3">
                         <input type="text" class="form-control form-small m-r-5 mb-d3 m-r-d0"
-                          placeholder="Fixed Propeller">
+                          placeholder="Search" (keyup)="applyFilter($any($event.target).value)" #searchInput>
                         <button class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
-                          data-bs-placement="top" title="" data-bs-original-title="Add Folder" aria-label=""><i
-                            class="fas fa-search"></i></button>
+                          data-bs-placement="top" title="" data-bs-original-title="Search" aria-label=""><i
+                            class="fas fa-search" aria-hidden="true"></i></button>
 
                       </div>
                       <div class="row">
                         <div class="col-md-5">
-                          <div class="table-responsive scrollbar-visible">                           
+                          <div class="table-responsive scrollbar-visible">
                             <table class="table table-hover table-striped table-sm small">
                               <thead>
                                 <tr>
@@ -612,7 +612,7 @@
                                 <tr>
                                   <th colspan="6" class="bg-primary text-light text-center">Selected Spare Parts</th>
                                 </tr>
-                              
+
                                 <mat-table #table [dataSource]="rightTableDataSource"
                                   class="table table-hover table-striped table-sm small table-bordered">
                                   <ng-container matColumnDef="checkbox">
@@ -630,9 +630,12 @@
                                         [aria-label]="checkboxRightTableLabel(row)"></mat-checkbox>
                                     </mat-cell>
                                   </ng-container>
-                                  <ng-container style="min-width: 50px; width: 50px; max-width: 50px;" matColumnDef="userInput">
-                                    <mat-header-cell style="min-width: 50px; width: 50px; max-width: 50px;" *matHeaderCellDef>Qty</mat-header-cell>
-                                    <mat-cell style="min-width: 50px; width: 50px; max-width: 50px;" *matCellDef="let row">
+                                  <ng-container style="min-width: 50px; width: 50px; max-width: 50px;"
+                                    matColumnDef="userInput">
+                                    <mat-header-cell style="min-width: 50px; width: 50px; max-width: 50px;"
+                                      *matHeaderCellDef>Qty</mat-header-cell>
+                                    <mat-cell style="min-width: 50px; width: 50px; max-width: 50px;"
+                                      *matCellDef="let row">
                                       <input matInput placeholder="Enter data" [(ngModel)]="row.userInput">
                                     </mat-cell>
                                   </ng-container>
@@ -642,12 +645,14 @@
                                       row.shipSpares.inventoryCode }}</mat-cell>
                                   </ng-container>
                                   <ng-container class="rightTableCode" matColumnDef="inventoryName">
-                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part Name</mat-header-cell>
+                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part
+                                      Name</mat-header-cell>
                                     <mat-cell class="rightTableCode" *matCellDef="let row">{{
                                       row.shipSpares.inventoryName }}</mat-cell>
                                   </ng-container>
                                   <ng-container class="rightTableCode" matColumnDef="partNo">
-                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Mfg Part No.</mat-header-cell>
+                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Mfg Part
+                                      No.</mat-header-cell>
                                     <mat-cell class="rightTableCode" *matCellDef="let row">{{ row.partNo }}</mat-cell>
                                   </ng-container>
                                   <ng-container class="rightTableNo" matColumnDef="quantity">
@@ -656,7 +661,8 @@
                                   </ng-container>
                                   <ng-container class="rightTableNo" matColumnDef="availableQty">
                                     <mat-header-cell class="rightTableNo" *matHeaderCellDef>Unit</mat-header-cell>
-                                    <mat-cell class="rightTableNo" *matCellDef="let row">{{ row.shipSpares.availableQty }}</mat-cell>
+                                    <mat-cell class="rightTableNo" *matCellDef="let row">{{ row.shipSpares.availableQty
+                                      }}</mat-cell>
                                   </ng-container>
                                   <mat-header-row class="bg-300"
                                     *matHeaderRowDef="rightTableColumn; sticky:true"></mat-header-row>
@@ -672,7 +678,8 @@
                     <div class="modal-footer">
                       <button type="button" class="btn btn-primary me-1" aria-label=""
                         (click)="storeTableData()">Ok</button>
-                      <button type="button" class="btn btn-danger me-1" aria-label="">Cancel</button>
+                      <button type="button" data-bs-dismiss="modal" class="btn btn-danger me-1"
+                        aria-label="">Cancel</button>
                     </div>
                   </div>
                 </div>
@@ -698,7 +705,7 @@
 
                 </div>
               </div>
-              <div class="table-responsive scrollbar">                
+              <div class="table-responsive scrollbar">
                 <mat-table #table [dataSource]="dataSource" matSort
                   class="table table-hover table-striped table-sm small table-bordered">
                   <ng-container matColumnDef="checkbox">
@@ -852,55 +859,19 @@
                   <div class="table-responsive scrollbar">
                     <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                       <tbody>
-                        <tr>
-                          <td>001</td>
-                          <td>Shaft (P/N 2131)</td>
-                        </tr>
-                        <tr>
-                          <td>002</td>
-                          <td>Key</td>
-                        </tr>
-                        <tr>
-                          <td>003</td>
-                          <td>Impeller</td>
-                        </tr>
-                        <tr>
-                          <td>004</td>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>005</td>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>006</td>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>007</td>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>008</td>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>009</td>
-                          <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                          <td>010</td>
-                          <td>&nbsp;</td>
+                        <tr *ngFor="let item of dataSource.data; let i = index">
+                          <td class="listTableNo">{{i+1}}</td>
+                          <td (click)="listDetails(item.itemsId)">{{item.itemName}}</td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
-                <div class="col-lg-9">
+                <div class="col-lg-9" *ngFor="let item of listViewItems" >
                   <div class="row mb-4">
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Q.App</h6>
-                      <h6 class="mb-0 fs--2 text-500">Q.App</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.itemCode}}</h6>
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">PUR</h6>
@@ -908,11 +879,11 @@
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Item No</h6>
-                      <h6 class="mb-0 fs--2 text-500">Item No</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.itemCode}}</h6>
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Item Name</h6>
-                      <h6 class="mb-0 fs--2 text-500">Item Name</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.itemName}}</h6>
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">LPP</h6>
@@ -974,23 +945,23 @@
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Item Name</h6>
-                      <h6 class="mb-0 fs--2 text-500">Item Name</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.itemName}}</h6>
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Item Code</h6>
-                      <h6 class="mb-0 fs--2 text-500">Item Code</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.itemCode}}</h6>
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Drawing #</h6>
-                      <h6 class="mb-0 fs--2 text-500">Drawing #</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.dwg}}</h6>
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Maker / Model</h6>
-                      <h6 class="mb-0 fs--2 text-500">Maker / Model</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.make}}</h6>
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Part #</h6>
-                      <h6 class="mb-0 fs--2 text-500">Part #</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.part}}</h6>
                     </div>
                   </div>
                   <div class="row mb-4">
@@ -1004,7 +975,7 @@
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Requested Qty</h6>
-                      <h6 class="mb-0 fs--2 text-500">Requested Qty (PCS)</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.enterQuantity}}</h6>
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Approved Qty</h6>
