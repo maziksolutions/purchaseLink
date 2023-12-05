@@ -18,7 +18,7 @@
 ::ng-deep .dropdown-btn {
   padding: 3px 15px !important;
   border: 1px solid var(--pms-input-border-color) !important;
-  background: #fff !important;
+  /* background: #fff !important; */
 }
 
 ::ng-deep span {

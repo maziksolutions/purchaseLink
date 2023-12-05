@@ -10,6 +10,7 @@ declare var SideNavi: any;
 export class SideNavService {
   private commentType: string = '';
   private sideNavInitialized: boolean = false;
+  private activeComponent: boolean = false;
 
   constructor(private route: Router) {
     this.route.events.pipe(
@@ -20,7 +21,7 @@ export class SideNavService {
   }
 
   initSidenav() {
-    
+
     if (!this.sideNavInitialized) {
       SideNavi.init('right', {
         container: '#sideNavi',
@@ -42,7 +43,7 @@ export class SideNavService {
   }
 
   toggleSidenav() {
-    
+
     SideNavi.slideEvent();
   }
 
@@ -52,5 +53,14 @@ export class SideNavService {
 
   setCommetType(value: string): void {
     this.commentType = value;
+  }
+
+  setActiveComponent(comName: boolean) {
+    debugger;
+    this.activeComponent = comName;
+  }
+
+  getActiveComponent(): boolean {
+    return this.activeComponent;
   }
 }

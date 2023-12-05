@@ -13,8 +13,8 @@
                 <a class="px-3"><i class="fas fa-sync-alt mb-3 font-medium-2"></i></a><br>
                 <a class="px-3" data-bs-toggle="modal" data-bs-target="#searchbox"><i
                         class="fas fa-search mb-3 font-medium-2"></i></a><br>
-                <a class="px-3" data-bs-toggle="modal" data-bs-target="#remarks"><i
-                        class="fas fa-comment mb-3 font-medium-2"></i></a><br>
+                <a class="px-3" data-bs-toggle="modal" *ngIf="isActive" data-bs-target="#remarks">
+                    <i class="fas fa-comment mb-3 font-medium-2"></i></a><br>
                 <div class="theme-control-toggle fa-icon-wait p-l-10 mb-3">
                     <input class="form-check-input ms-0 theme-control-toggle-input" id="themeControlToggle"
                         type="checkbox" data-theme-control="theme" value="dark" />
@@ -272,11 +272,14 @@
             <form (ngSubmit)="onSubmit(commentsForm)" [formGroup]="commentsForm">
                 <div class="modal-footer d-flex justify-content-end align-items-center">
                     <div class="flex-grow-1">
-                        <input type="text" formControlName="commentData" class="form-control" [(ngModel)]="selectedComment" />
+                        <input type="text" formControlName="commentData" class="form-control"
+                            [(ngModel)]="selectedComment" />
                     </div>
                     <div class="ml-2">
-                        <button *ngIf="!commentsForm.get('commentId')?.value" type="submit" class="btn btn-primary" aria-label="">Add</button>
-                        <button *ngIf="commentsForm.get('commentId')?.value" type="submit" class="btn btn-primary" aria-label="">Update</button>
+                        <button *ngIf="!commentsForm.get('commentId')?.value" type="submit" class="btn btn-primary"
+                            aria-label="">Add</button>
+                        <button *ngIf="commentsForm.get('commentId')?.value" type="submit" class="btn btn-primary"
+                            aria-label="">Update</button>
                     </div>
                 </div>
             </form>

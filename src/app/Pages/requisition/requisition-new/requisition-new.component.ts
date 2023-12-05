@@ -97,11 +97,13 @@ export class RequisitionNewComponent implements OnInit {
   headabb: string;
   requisitiondata: any;
   headserialNumber: string;
-  listViewItems:any;
+  listViewItems: any;
 
   selectedSpareItemsInput: any[] = [];
 
   isHeaderCheckboxChecked = false;
+
+  comName = true;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone,
@@ -151,10 +153,9 @@ export class RequisitionNewComponent implements OnInit {
       enableCheckAll: false
     }
 
-    this.loadData(0);
+    this.loadData(0);   
 
-    // this.loadItemsData(0);
-
+    this.sideNavService.setActiveComponent(this.comName);
   }
 
   get fm() { return this.RequisitionForm.controls };
@@ -162,7 +163,7 @@ export class RequisitionNewComponent implements OnInit {
 
 
   onCheckboxChanged(event: any) {
-    
+
     const checkboxType = event.target.id;
     const isChecked = event.target.checked;
     this.commetType = '';
@@ -237,6 +238,14 @@ export class RequisitionNewComponent implements OnInit {
 
         this.genericCheckbox = requisitionData.genericComment === true;
         this.internalCheckbox = requisitionData.internalComment === true;
+        if (this.genericCheckbox == true) {
+          this.commetType = 'generic';
+          this.sideNavService.setCommetType(this.commetType);
+        }
+        if (this.internalCheckbox == true) {
+          this.commetType = 'internal';
+          this.sideNavService.setCommetType(this.commetType);
+        }
 
         this.reqId = requisitionData.requisitionId;
         this.loadDeliveryInfo();
@@ -323,9 +332,9 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   loadDeliveryInfo() {
-    
+
     this.requisitionService.getDeliveryInfoByReqId(this.reqId).subscribe(res => {
-     
+
       const deliveryInfoData = res.data;
       this.deliveryForm.controls['expectedDeliveryPort'].setValue(deliveryInfoData.expectedDeliveryPort);
       if (deliveryInfoData)
@@ -511,7 +520,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   onItemSelect(event: any) {
-    
+
     let isSelect = event.shipComponentId;
 
     if (isSelect) {
@@ -525,7 +534,7 @@ export class RequisitionNewComponent implements OnInit {
       }
 
       if (ss == this.storeAccountCode) {
-        
+
         this.selectedItems.push(event.shipComponentId);
         this.getSpareItems(this.selectedItems);
         this.dropdownShipcomSetting = {
@@ -713,7 +722,7 @@ export class RequisitionNewComponent implements OnInit {
 
     this.requisitionService.getItemsInfo(ids)
       .subscribe(res => {
-        
+
         this.leftTableDataSource.data = res;
         console.log(this.leftTableDataSource.data);
         // this.spareItems = res;
@@ -721,7 +730,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   moveItemsToRight() {
-   
+
     const selectedItems = this.leftTableDataSource.data.filter(item => this.leftTableSelection.isSelected(item));
 
     this.rightTableDataSource.data = [...this.rightTableDataSource.data, ...selectedItems];
@@ -795,7 +804,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   deleteItems() {
-    
+
     var message = ""
     var title = "";
 
@@ -843,11 +852,11 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   loadItemsData(status: number) {
-   
+
     if (this.reqGetId)
       this.requisitionService.getItemsByReqId(parseInt(this.reqGetId))
         .subscribe(response => {
-        
+
           this.flag = status;
 
           this.dataSource.data = response;
@@ -911,9 +920,9 @@ export class RequisitionNewComponent implements OnInit {
   }
   //#endregion
 
-  listDetails(id){
+  listDetails(id) {
     debugger;
-   this.listViewItems = this.dataSource.data.filter(item=>item.itemsId==id);       
+    this.listViewItems = this.dataSource.data.filter(item => item.itemsId == id);
   }
 
   applyFilter(filterValue: string) {

@@ -12,6 +12,7 @@ import { DirectivesModule } from 'src/app/directives.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AppMaterialModule } from 'src/app/app.material.module';
 import { RfqlistComponent } from './rfqlist/rfqlist.component';
+import { RequisitionTrackingComponent } from './requisition-tracking/requisition-tracking.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { RfqlistComponent } from './rfqlist/rfqlist.component';
     RequisitionslistComponent,
     RequisitionNewComponent,
     SidenaviRightComponent,
-    RfqlistComponent
+    RfqlistComponent,
+    RequisitionTrackingComponent
   ],
   imports: [
     CommonModule,

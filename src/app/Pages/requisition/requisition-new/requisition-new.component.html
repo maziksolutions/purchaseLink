@@ -677,7 +677,7 @@
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-primary me-1" aria-label=""
-                        (click)="storeTableData()">Ok</button>
+                        (click)="storeTableData()" [disabled]="!reqId">Ok</button>
                       <button type="button" data-bs-dismiss="modal" class="btn btn-danger me-1"
                         aria-label="">Cancel</button>
                     </div>
@@ -957,7 +957,7 @@
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Maker / Model</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.make}}</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.make}} / {{item.model}}</h6>
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Part #</h6>
@@ -987,7 +987,7 @@
                     </div>
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Qty RoB</h6>
-                      <h6 class="mb-0 fs--2 text-500">Qty RoB (PCS)</h6>
+                      <h6 class="mb-0 fs--2 text-500">{{item.rob}}</h6>
                     </div>
                   </div>
                   <div class="row mb-4">

@@ -29,6 +29,8 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  
+  isActive = false;
 
   selectedComment: any = null;
 
@@ -39,7 +41,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
 
     this.commentsForm = this.fb.group({
       commentId: 0,
-      commentType: [''],
+      commentType: ['', Validators.required],
       commentData: ['', Validators.required]
     });
   }
@@ -47,66 +49,72 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   get fm() { return this.commentsForm.controls }
 
   ngOnInit(): void {
-    this.loadData(0);
+    this.loadData(0);    
+    this.isActive=this.sideNaviService.getActiveComponent();
   }
 
   ngOnDestroy(): void {
-    
+
     this.destroy$.next();
     this.destroy$.complete();
     this.sideNaviService.destroySidenav();
   }
 
   onSubmit(form: any) {
-    
+    debugger;
     if (form.value.commentId == null) {
       form.value.commentId = 0;
       form.value.commentType = this.sideNaviService.getCommetType();
     } else {
-      
+
       const updatedComment = this.commentsForm.get('commentData')?.value;
       if (this.selectedComment && updatedComment) {
         form.value.commentData = updatedComment;
         console.log(form.value);
       }
     }
-    this.reqService.addComments(form.value)
-      .subscribe(data => {
+    if (this.commentsForm.valid) {
+      this.reqService.addComments(form.value)
+        .subscribe(data => {
 
-        if (data.message == "data added") {
-          this.swal.success('Added successfully.');
-          this.clear();
-          this.comments = [];
-          this.loadData(0);
-        }
-        else if (data.message == "updated") {
-          this.swal.success('Data has been updated successfully.');
-          this.clear();
-          this.comments = [];
-          this.loadData(0);
-        }
-        else if (data.message == "duplicate") {
-          this.swal.info('Data already exist. Please enter new data');
-          this.comments = [];
-          this.loadData(0);
-        }
-        else if (data.message == "not found") {
-          this.swal.info('Data exist not exist');
-          this.comments = [];
-          this.loadData(0);
-        }
-        else {
+          if (data.message == "data added") {
+            this.swal.success('Added successfully.');
+            this.clear();
+            this.comments = [];
+            this.loadData(0);
+          }
+          else if (data.message == "updated") {
+            this.swal.success('Data has been updated successfully.');
+            this.clear();
+            this.comments = [];
+            this.loadData(0);
+          }
+          else if (data.message == "duplicate") {
+            this.swal.info('Data already exist. Please enter new data');
+            this.comments = [];
+            this.loadData(0);
+          }
+          else if (data.message == "not found") {
+            this.swal.info('Data exist not exist');
+            this.comments = [];
+            this.loadData(0);
+          }
+          else {
 
-        }
-      },
-        error => {
-          
-          console.error('Service error:', error);
-        });
+          }
+        },
+          error => {
+
+            console.error('Service error:', error);
+          });
+    } else {
+      this.swal.error('Please Select Comment Type First.');
+    }
+
   }
 
   loadData(status: number) {
-    
+
     // if (status == 1) {
     //   this.deletetooltip ='UnArchive';
     //   if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -123,7 +131,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
     // }
     this.reqService.getComments(status)
       .subscribe(response => {
-       
+
         this.flag = status;
         var data = response.data;
 
@@ -139,7 +147,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   }
 
   editComment(comment: any): void {
-    
+
     this.selectedComment = comment;
     this.commentsForm.patchValue({
       commentId: comment.commentId,
@@ -149,10 +157,15 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   }
   cancelUpdate() {
     this.commentsForm.reset();
-}
+  }
 
   clear() {
     this.commentsForm.reset();
+  }
+
+  setActiveComponent(comName: boolean): void {
+    this.sideNaviService.setActiveComponent(comName);
+    this.isActive = comName;
   }
 
 }

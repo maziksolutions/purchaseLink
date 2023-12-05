@@ -4,6 +4,7 @@ import { SiteLayoutComponent } from 'src/app/_layout/site-layout/site-layout.com
 import { RequisitionslistComponent } from './requisitionslist/requisitionslist.component';
 import { RequisitionNewComponent } from './requisition-new/requisition-new.component';
 import { RfqlistComponent } from './rfqlist/rfqlist.component';
+import { RequisitionTrackingComponent } from './requisition-tracking/requisition-tracking.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,7 @@ const routes: Routes = [
         component: RequisitionNewComponent
       },
       { path: 'Rfqlist', component: RfqlistComponent },
+      { path: 'RequisitionTracking', component: RequisitionTrackingComponent }
     ]
   }
 
