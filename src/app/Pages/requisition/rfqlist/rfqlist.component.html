@@ -39,12 +39,23 @@
 
 
               <div class="mb-2">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select Vessel</button>
+                <!-- <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select Vessel</button>
                 <div class="dropdown-menu">
                   <a class="dropdown-item" href="#">Vessel 1</a>
                   <a class="dropdown-item" href="#">Vessel 2</a>
                   <a class="dropdown-item" href="#">Vessel 3</a>
-                </div>
+                </div> -->
+
+                <select class="form-control form-small form-select" [(ngModel)]="selectedVesselId"
+                >
+                <option value="0" selected disabled>Select Vessel</option>
+                <option *ngFor="let item of  Vessels" value="{{item.vesselId}}">
+                  {{item.vesselName | titlecase}}
+
+                </option>
+              </select>
+
+
               </div>
 
 

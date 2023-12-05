@@ -584,6 +584,8 @@ export class RequisitionNewComponent implements OnInit {
       this.selectedItems.splice(rindex, 1)
     }
     if (this.selectedItems.length != 0) {
+
+      this.storeAccountCode = this.dropdownList.filter(x=>x.shipComponentId == event.shipComponentId).map(x=>x.accountCode);  
       let list = this.dropdownList.filter(x => x.accountCode == this.storeAccountCode).map(item => ({
 
         accountCode: item.accountCode,
