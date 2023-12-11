@@ -11,6 +11,7 @@ const routes: Routes = [
   { path: 'welcome', component: WelcomeComponent,canActivate:[Guard]},
   { path: 'Requisition', loadChildren: () => import('./Pages/requisition/requisition.module').then(m => m.RequisitionModule) },
   { path: 'master', loadChildren: () => import('./Pages/master/master.module').then(m => m.MasterModule) },
+  { path: 'Account', loadChildren: () => import('./Pages/account/account.module').then(m => m.AccountModule) },
   { path: 'administration', loadChildren: () => import('./Pages/administration/administration.module').then(m => m.AdministrationModule) },
 { path: '**', component: PageNotFoundComponent,pathMatch: 'full' ,canActivate:[Guard]},
 ];

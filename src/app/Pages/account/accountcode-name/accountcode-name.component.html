@@ -1,0 +1,336 @@
+<div class="card px-3 py-2 mb-1">
+<div class="position-relative">
+    <div class="row flex-between-center">
+      <div class="col-auto align-self-center">
+        <h5 class="mb-0">Account Code / Name</h5>
+          <span class="btn-sm ps-0 text-primary fw-bold">Accounts Link<span class="fas fa-chevron-right ms-1 fs--2"></span></span> <span class="btn-sm p-0">Account Code / Name</span>
+      </div>
+        <div class="col-auto ms-auto">
+            <button class="btn btn-secondary dropdown-toggle pe-1 me-1" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="pe-1"><i class="fas fa-plus"></i></span></button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#add-cat" aria-label="">Add Category</a>
+              <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#add-sub-cat" aria-label="">Add Sub Category</a>
+              <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#add-acc-head" aria-label="">Add Account Head</a>
+              <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#add-acc-code" aria-label="">Add Account Code</a>
+            </div>
+            <div class="modal fade" id="add-cat" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl mt-6" role="document">
+            <div class="modal-content border-0">
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+                <div class="modal-header">
+                <h5 class="modal-title" id="">Add Category</h5>
+                
+              </div>
+              <div class="modal-body mt-0">
+                  <div class="row g-3">
+                      <div class="col-lg">
+                      <div class="form-floating mb-2">
+          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+            <option selected="">---</option>
+              <option>Assets</option>
+              <option>Liabilities</option>
+              <option>Income</option>
+              <option>Expense</option>
+              <option>Capital</option>
+          </select>
+          <label for="" class="px-0" style="line-height: 0.625rem;">Select Accounts Type</label>
+        </div>
+                      </div>
+                      <div class="col-lg">
+          <div class="form-floating mb-3">
+          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Account Category" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+          <label for="" class="px-0" style="line-height: 0.625rem;">Category Name</label>
+        </div>	
+                      </div>
+                      <div class="col-lg">
+          <div class="form-floating mb-3">
+          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Category Code" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+          <label for="" class="px-0" style="line-height: 0.625rem;">Category Code (3 Digit)</label>
+        </div>	
+                      </div>
+                      </div>					
+              </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-primary me-1" aria-label="">Add</button> <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+            <div class="modal fade" id="add-sub-cat" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl mt-6" role="document">
+            <div class="modal-content border-0">
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+                <div class="modal-header">
+                <h5 class="modal-title" id="">Add Sub Category</h5>
+                
+              </div>
+              <div class="modal-body mt-0">
+                  
+                  <div class="row g-3">							
+                      
+                      <div class="col-lg">
+                          <div class="form-floating mb-2">
+          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+            <option selected="">---</option>
+          </select>
+          <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
+        </div>									
+                      </div>
+                      <div class="col-lg">
+                          <div class="form-floating mb-2">
+          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Sub Category" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+          <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category Name</label>
+        </div>									
+                      </div>
+                      <div class="col-lg">
+          <div class="form-floating mb-3">
+          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Category Code" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+          <label for="" class="px-0" style="line-height: 0.625rem;">Category Code (3 Digit)</label>
+        </div>
+                  </div>
+                      
+                      </div>
+              </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-primary me-1" aria-label="">Add</button> <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+            <div class="modal fade" id="add-acc-head" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl mt-6" role="document">
+            <div class="modal-content border-0">
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+                <div class="modal-header">
+                <h5 class="modal-title" id="">Add Account Head</h5>
+                
+              </div>
+              <div class="modal-body mt-0">
+                  <div class="row g-3">
+                      <div class="col-lg">
+          <div class="form-floating mb-2">
+          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+            <option selected="">---</option>
+          </select>
+          <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
+        </div>	
+                      </div>
+                      <div class="col-lg">
+          <div class="form-floating mb-3">
+          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+            <option selected="">---</option>
+          </select>
+          <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category</label>
+        </div>	
+                      </div>
+                      <div class="col-lg">
+          <div class="form-floating mb-3">
+          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Warehouse Info" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+          <label for="" class="px-0" style="line-height: 0.625rem;">Account Head</label>
+        </div>	
+                      </div>
+                      <div class="col-lg">
+          <div class="form-floating mb-3">
+          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Warehouse Info" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+          <label for="" class="px-0" style="line-height: 0.625rem;">Head Code (1 Digit)</label>
+        </div>	
+                      </div>
+                      </div>
+                  
+              </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-primary me-1" aria-label="">Add</button> <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+            <div class="modal fade" id="add-acc-code" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl mt-6" role="document">
+            <div class="modal-content border-0">
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+                <div class="modal-header">
+                <h5 class="modal-title" id="">Add Account Code</h5>
+                
+              </div>
+              <div class="modal-body mt-0">
+                  
+                  <div class="row g-3">
+                      <div class="col-lg">
+                      <div class="form-floating mb-3">
+          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Account Category" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+          <label for="" class="px-0" style="line-height: 0.625rem;">Department Name</label>
+        </div>
+                          </div>								
+                      <div class="col-lg">
+          <div class="form-floating mb-2">
+          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+            <option selected="">---</option>
+          </select>
+          <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
+        </div>	
+                      </div>
+                      <div class="col-lg">
+          <div class="form-floating mb-3">
+          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+            <option selected="">---</option>
+          </select>
+          <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category</label>
+        </div>	
+                      </div>
+                      <div class="col-lg">
+          <div class="form-floating mb-3">
+          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
+            <option selected="">---</option>
+          </select>
+          <label for="" class="px-0" style="line-height: 0.625rem;">Account Head</label>
+        </div>	
+                      </div>
+                      <div class="col-lg">
+          <div class="form-floating mb-3">
+          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Warehouse Info" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+          <label for="" class="px-0" style="line-height: 0.625rem;">Account Name</label>
+        </div>	
+                      </div>
+                      <div class="col-lg">
+          <div class="form-floating mb-3">
+          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Warehouse Info" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
+          <label for="" class="px-0" style="line-height: 0.625rem;">Account Code (3 Digit)</label>
+        </div>	
+                      </div>
+                      </div>
+              </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-primary me-1" aria-label="">Add</button> <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+             <a class="px-1 m-r-5 text-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit"></i></a> 
+         <a class="px-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Delete" aria-label=""><i class="fas fa-trash text-danger"></i></a> 
+      </div>
+    </div>
+  </div>
+      
+</div>
+
+<div class="card mb-3">
+            
+    <div class="card-body">
+        <div class="table-responsive scrollbar">
+      <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+          <thead class="bg-200">
+            <tr>
+                <th></th>
+                <th>Department</th>
+              <th>Category</th>
+                <th>Sub Category</th>
+              <th>Account Head</th>
+              <th>Account Codes</th>
+                <th>Account Name</th>
+                <th>Description</th>
+              </tr>
+          </thead>
+          <tbody>
+            <tr>
+                <td><input type="checkbox"></td>
+              <td>-----</td>
+              <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+              </tr>
+              <tr>
+                  <td><input type="checkbox"></td>
+              <td>-----</td>
+              <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                  <td>-----</td>
+              </tr>
+              <tr>
+                  <td><input type="checkbox"></td>
+              <td>-----</td>
+              <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                  <td>-----</td>
+              </tr>
+              <tr>
+                  <td><input type="checkbox"></td>
+              <td>-----</td>
+              <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                  <td>-----</td>
+              </tr>
+              <tr>
+                  <td><input type="checkbox"></td>
+              <td>-----</td>
+              <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                  <td>-----</td>
+              </tr>
+              <tr>
+                  <td><input type="checkbox"></td>
+              <td>-----</td>
+              <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                  <td>-----</td>
+              </tr>
+              <tr>
+                  <td><input type="checkbox"></td>
+              <td>-----</td>
+              <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                  <td>-----</td>
+              </tr>
+              <tr>
+                  <td><input type="checkbox"></td>
+              <td>-----</td>
+              <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                  <td>-----</td>
+              </tr>
+              <tr>
+                  <td><input type="checkbox"></td>
+              <td>-----</td>
+              <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                <td>-----</td>
+                  <td>-----</td>
+              </tr>
+              </tbody>
+        </table>
+            </div>				
+    </div>
+  </div>
