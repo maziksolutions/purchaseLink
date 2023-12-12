@@ -24,264 +24,409 @@
 
       <!--Header Form Start Here -->
       <div class="card mb-3">
-        <form (ngSubmit)="onSave(RequisitionForm)" [formGroup]="RequisitionForm">
-          <div class="card-header bg-light">
-            <div class="row flex-between-end">
-              <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse"
-                data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
-                <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2">
-                  </span>Document Header <small class="ms-5" id="documentHeader">
-                    <!-- <i class="fas fa-radiation text-danger"></i> -->
-                    <!-- <i class="fas fa-exclamation-triangle text-danger"></i>-->
-                    REQ – {{headsite}} – {{headCode}} – {{headabb}} – {{currentyear}} – {{headserialNumber}}
-                  </small></h5>
-              </div>
-              <div class="col-auto ms-auto">
-                <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#transit" aria-label=""> <img
-                    src="assets/img/transition.png" width="25px"></a>
-                <div class="modal fade" id="transit" tabindex="-1" aria-hidden="true">
-                  <div class="modal-dialog modal-lg mt-6" role="document">
-                    <div class="modal-content border-0">
-                      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                          data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="">&nbsp;</h5>
-
-                      </div>
-                      <div class="modal-body mt-0 scrollbar-visible">
-                        <div class="row">
-                          <div class="col-lg mb-3">
-                            <h6 class="text-900 mb-2">To Stage</h6>
-                            <h6 class="mb-0 fs--2 text-500">To Stage</h6>
-                          </div>
-                          <div class="col-lg mb-3">
-                            <h6 class="text-900 mb-2">Assignee</h6>
-                            <h6 class="mb-0 fs--2 text-500">Assignee</h6>
-                          </div>
-                          <div class="col-lg mb-3">
-                            <h6 class="text-900 mb-2">Date</h6>
-                            <h6 class="mb-0 fs--2 text-500">Date</h6>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-lg mb-3">
-                            <h6 class="text-900 mb-2">Comments</h6>
-                            <textarea class="form-control" rows="5"></textarea>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-primary me-1" aria-label="">Ok</button> <button
-                          type="button" class="btn btn-danger me-1" aria-label="">Cancel</button>
-                      </div>
-                    </div>
-                  </div>
+        <form [formGroup]="RequisitionForm">
+          <div formGroupName="header">
+            <div class="card-header bg-light">
+              <div class="row flex-between-end">
+                <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
+                  <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2">
+                    </span>Document Header <small class="ms-5" id="documentHeader" *ngIf="isRequisitionApproved">
+                      
+                      REQ – {{headsite}} – {{headCode}} – {{headabb}} – {{currentyear}} – {{headserialNumber}}
+                    </small>
+                    <small class="ms-5" *ngIf="!isRequisitionApproved">
+                      <!-- Show temporary number for unapproved requisitions -->
+                      Temp - {{temporaryNumber}}
+                    </small>
+                  </h5>
                 </div>
-                <a class="px-1 m-r-5" id="navbarDropdownNotification" href="#" role="button" data-bs-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-                  <i class="far fa-calendar-alt text-primary"></i></a>
-                <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification"
-                  aria-labelledby="navbarDropdownNotification">
-                  <div class="card card-notification shadow-none">
-                    <div class="card-header bg-light shadow">
-                      <div class="row justify-content-between align-items-center">
-                        <div class="col-auto">
-                          <h6 class="card-header-title mb-0">Timeline</h6>
+                <div class="col-auto ms-auto">
+                  <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#transit" aria-label="">
+                    <img src="assets/img/transition.png" width="25px"></a>
+                  <div class="modal fade" id="transit" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg mt-6" role="document">
+                      <div class="modal-content border-0">
+                        <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                          <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                      </div>
-                    </div>
-                    <div class="scrollbar-overlay py-4 pe-4" style="max-height:19rem">
-                      <div class="row g-3 timeline timeline-primary timeline-past pb-card">
-                        <div class="col ps-4 ms-2">
-                          <div class="row gx-0 border-bottom pb-card">
-                            <div class="col-auto p-2 bg-soft-info">
-                              <p class="fs--2 text-800 mb-0">6 days <br><br></p>
-                            </div>
-                            <div class="col ms-2">
-                              <p class="fs--1 text-600 mb-0">Spares Requisition Created by Chief Officer on 02 Apr 2020.
-                                Requestor Comments - xxxxxxxx </p>
-                            </div>
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="">&nbsp;</h5>
 
+                        </div>
+                        <div class="modal-body mt-0 scrollbar-visible">
+                          <div class="row">
+                            <div class="col-lg mb-3">
+                              <h6 class="text-900 mb-2">To Stage</h6>
+                              <h6 class="mb-0 fs--2 text-500">To Stage</h6>
+                            </div>
+                            <div class="col-lg mb-3">
+                              <h6 class="text-900 mb-2">Assignee</h6>
+                              <h6 class="mb-0 fs--2 text-500">Assignee</h6>
+                            </div>
+                            <div class="col-lg mb-3">
+                              <h6 class="text-900 mb-2">Date</h6>
+                              <h6 class="mb-0 fs--2 text-500">Date</h6>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-lg mb-3">
+                              <h6 class="text-900 mb-2">Comments</h6>
+                              <textarea class="form-control" rows="5"></textarea>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="row g-3 timeline timeline-primary timeline-past pb-card">
-                        <div class="col ps-4 ms-2">
-                          <div class="row gx-0 border-bottom pb-card">
-                            <div class="col-auto p-2 bg-soft-info">
-                              <p class="fs--2 text-800 mb-0">1 day <br><br>7 Days</p>
-                            </div>
-                            <div class="col ms-2">
-                              <p class="fs--1 text-600 mb-0">Spares Requisition Reviewed & Approved by Master on 03 Apr
-                                2020. Approver Comments - yyyyyyy</p>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row g-3 timeline timeline-primary timeline-past">
-                        <div class="col ps-4 ms-2">
-                          <div class="row gx-0 pb-card">
-                            <div class="col-auto p-2 bg-soft-info">
-                              <p class="fs--2 text-800 mb-0">3 day <br><br>10 Days</p>
-                            </div>
-                            <div class="col ms-2">
-                              <p class="fs--1 text-600 mb-0">Spares Requisition Reviewed by Purchase Executive on 06 Apr
-                                2020.</p>
-                            </div>
-
-                          </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-primary me-1" aria-label="">Ok</button> <button
+                            type="button" class="btn btn-danger me-1" aria-label="">Cancel</button>
                         </div>
                       </div>
                     </div>
                   </div>
+                  <a class="px-1 m-r-5" id="navbarDropdownNotification" href="#" role="button" data-bs-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="far fa-calendar-alt text-primary"></i></a>
+                  <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification"
+                    aria-labelledby="navbarDropdownNotification">
+                    <div class="card card-notification shadow-none">
+                      <div class="card-header bg-light shadow">
+                        <div class="row justify-content-between align-items-center">
+                          <div class="col-auto">
+                            <h6 class="card-header-title mb-0">Timeline</h6>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="scrollbar-overlay py-4 pe-4" style="max-height:19rem">
+                        <div class="row g-3 timeline timeline-primary timeline-past pb-card">
+                          <div class="col ps-4 ms-2">
+                            <div class="row gx-0 border-bottom pb-card">
+                              <div class="col-auto p-2 bg-soft-info">
+                                <p class="fs--2 text-800 mb-0">6 days <br><br></p>
+                              </div>
+                              <div class="col ms-2">
+                                <p class="fs--1 text-600 mb-0">Spares Requisition Created by Chief Officer on 02 Apr
+                                  2020.
+                                  Requestor Comments - xxxxxxxx </p>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row g-3 timeline timeline-primary timeline-past pb-card">
+                          <div class="col ps-4 ms-2">
+                            <div class="row gx-0 border-bottom pb-card">
+                              <div class="col-auto p-2 bg-soft-info">
+                                <p class="fs--2 text-800 mb-0">1 day <br><br>7 Days</p>
+                              </div>
+                              <div class="col ms-2">
+                                <p class="fs--1 text-600 mb-0">Spares Requisition Reviewed & Approved by Master on 03
+                                  Apr
+                                  2020. Approver Comments - yyyyyyy</p>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row g-3 timeline timeline-primary timeline-past">
+                          <div class="col ps-4 ms-2">
+                            <div class="row gx-0 pb-card">
+                              <div class="col-auto p-2 bg-soft-info">
+                                <p class="fs--2 text-800 mb-0">3 day <br><br>10 Days</p>
+                              </div>
+                              <div class="col ms-2">
+                                <p class="fs--1 text-600 mb-0">Spares Requisition Reviewed by Purchase Executive on 06
+                                  Apr
+                                  2020.</p>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <a class="px-1 m-r-5" href="purchase-link-new-requisition-approval.html" type="button"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Send for Approval"
+                    aria-label=""> <i class="fas fa-share-square text-primary"></i></a>
+
+                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Add Attachment" aria-label=""><i
+                      class="fas fa-paperclip text-primary"></i></a>
+
+                  <button class="px-1 m-r-5" type="submit" style="border: #f9fafd;" data-bs-toggle="tooltip"
+                    data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
+                      class="fas fa-save text-primary"></i></button>
+
+                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban text-danger"></i></a>
+
+                  <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Export PDF" aria-label=""><i class="fas fa-file-pdf text-danger"></i></a>
+
+                  <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Export Excel" aria-label=""><i
+                      class="fas fa-file-excel text-success"></i></a>
                 </div>
-
-                <a class="px-1 m-r-5" href="purchase-link-new-requisition-approval.html" type="button"
-                  data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Send for Approval"
-                  aria-label=""> <i class="fas fa-share-square text-primary"></i></a>
-
-                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                  data-bs-original-title="Add Attachment" aria-label=""><i
-                    class="fas fa-paperclip text-primary"></i></a>
-
-                <button class="px-1 m-r-5" type="submit" style="border: #f9fafd;" data-bs-toggle="tooltip"
-                  data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
-                    class="fas fa-save text-primary"></i></button>
-
-                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                  data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban text-danger"></i></a>
-
-                <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                  data-bs-original-title="Export PDF" aria-label=""><i class="fas fa-file-pdf text-danger"></i></a>
-
-                <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                  data-bs-original-title="Export Excel" aria-label=""><i class="fas fa-file-excel text-success"></i></a>
               </div>
             </div>
-          </div>
-          <hr class="m-0">
-          <div class="card-body fs--1 collapse show" id="document-header">
+            <hr class="m-0">
+            <div class="card-body fs--1 collapse show" id="document-header">
 
-            <div class="row">
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">Origin Site</h6>
+              <div class="row">
+                <div class="col-lg mb-3">
+                  <h6 class="text-900 mb-2">Origin Site</h6>
 
-                <fieldset class="form-group mb-0">
-                  <input type="text" class="form-control form-small" disabled value="{{userDetail.site}}">
-                </fieldset>
+                  <fieldset class="form-group mb-0">
+                    <input type="text" class="form-control form-small" disabled value="{{userDetail.site}}">
+                  </fieldset>
 
-              </div>
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">Site Required at</h6>
-                <fieldset class="form-group mb-0">
-                  <select class="form-control form-small form-select" formControlName="vesselId"
-                    [(ngModel)]="selectedVesselId" (change)="LoadShipCompnent()" required>
-                    <option value="0" selected disabled>Select Site Required at</option>
-                    <option *ngFor="let item of  Vessels" id="abc" value="{{item.vesselId}}">
-                      {{item.vesselName | titlecase}}
-
-                    </option>
-                  </select>
-                </fieldset>
-              </div>
-
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-1">Project Name / Code</h6>
-                <fieldset class="form-group mb-0">
-                  <select class="form-control form-small form-select" formControlName="projectNameCodeId" required>
-                    <option value="" selected disabled>Select </option>
-                    <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
-                      {{item.projectName|titlecase }}-{{item.projectCode}}
-                    </option>
-                  </select>
-                </fieldset>
-              </div>
-
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-1">Request Order Type</h6>
-                <fieldset class="form-group mb-0">
-                  <select class="form-control form-small form-select" formControlName="orderTypeId"
-                    [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
-                    <option value="0" selected disabled>Select OrderTypes</option>
-                    <option *ngFor="let item of orderTypes" value="{{item.orderTypeId}}">
-                      {{item.orderTypes | titlecase}}
-                    </option>
-                  </select>
-                </fieldset>
-              </div>
-
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">Order Title</h6>
-                <h6 class="mb-0 fs--2 text-500"></h6>
-                <fieldset class="form-group mb-0">
-                  <input type="text" formControlName="orderTitle" class="form-control form-small"
-                    placeholder="Order Title" maxlength="100" required>
-                </fieldset>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">Order Reference</h6>
-
-                <fieldset class="form-group mb-0">
-                  <ng-multiselect-dropdown [placeholder]="'Select Order Reference'" class="multiselect-dropdown"
-                    [settings]="dropdownShipcomSetting" [data]="dropdownList" [(ngModel)]="selectedDropdown"
-                    (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
-                    formControlName="orderReference" (onDeSelect)="onShipCompoDeSelect($event)"
-                    (onDeSelectAll)="onShipCompoDeSelectAll($event)">
-
-                  </ng-multiselect-dropdown>
-                </fieldset>
-              </div>
-
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">Department</h6>
-
-                <fieldset class="form-group mb-0">
-                  <select class="form-control form-small form-select" formControlName="departmentId" required>
-                    <option value="" selected disabled>Select Department</option>
-                    <option *ngFor="let item of Departments" value="{{item.departmentId}}">
-                      {{item.departmentName | titlecase}}
-                    </option>
-                  </select>
-                </fieldset>
-              </div>
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-1">Priority</h6>
-                <fieldset class="form-group mb-0">
-                  <select class="form-control form-small form-select" formControlName="priorityId" required>
-                    <option value="" selected disabled>Select Priority </option>
-                    <option *ngFor="let item of Priority" value="{{item.prefenceId}}">
-                      {{item.description |titlecase }}
-                    </option>
-                  </select>
-                </fieldset>
-              </div>
-
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">Remarks</h6>
-                <fieldset class="form-group mb-0">
-                  <input type="text" class="form-control form-small" formControlName="remarks" placeholder="Remarks"
-                    maxlength="100" required>
-                </fieldset>
-              </div>
-
-              <div class="col-lg mb-2">
-                <h6 class="text-900 mb-2">Comments</h6>
-                <div class="form-check form-check-inline mb-0">
-                  <input class="form-check-input" id="genric" type="checkbox" [checked]="genericCheckbox"
-                    (change)="onCheckboxChanged($event)">
-                  <label class="form-check-label mb-0" for="genric">Generic</label>
                 </div>
-                <div class="form-check form-check-inline mb-0">
-                  <input class="form-check-input" id="internal" type="checkbox" [checked]="internalCheckbox"
-                    (change)="onCheckboxChanged($event)" />
-                  <label class="form-check-label mb-0" for="internal">Internal</label>
+                <div class="col-lg mb-3">
+                  <h6 class="text-900 mb-2">Site Required at</h6>
+                  <fieldset class="form-group mb-0">
+                    <select class="form-control form-small form-select" formControlName="vesselId"
+                      [(ngModel)]="selectedVesselId" (change)="LoadShipCompnent()" required>
+                      <option value="0" selected disabled>Select Site Required at</option>
+                      <option *ngFor="let item of  Vessels" id="abc" value="{{item.vesselId}}">
+                        {{item.vesselName | titlecase}}
 
+                      </option>
+                    </select>
+                  </fieldset>
+                </div>
+
+                <div class="col-lg mb-3">
+                  <h6 class="text-900 mb-1">Project Name / Code</h6>
+                  <fieldset class="form-group mb-0">
+                    <select class="form-control form-small form-select" formControlName="projectNameCodeId" required>
+                      <option value="" selected disabled>Select </option>
+                      <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
+                        {{item.projectName|titlecase }}-{{item.projectCode}}
+                      </option>
+                    </select>
+                  </fieldset>
+                </div>
+
+                <div class="col-lg mb-3">
+                  <h6 class="text-900 mb-1">Request Order Type</h6>
+                  <fieldset class="form-group mb-0">
+                    <select class="form-control form-small form-select" formControlName="orderTypeId"
+                      [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
+                      <option value="0" selected disabled>Select OrderTypes</option>
+                      <option *ngFor="let item of orderTypes" value="{{item.orderTypeId}}">
+                        {{item.orderTypes | titlecase}}
+                      </option>
+                    </select>
+                  </fieldset>
+                </div>
+
+                <div class="col-lg mb-3">
+                  <h6 class="text-900 mb-2">Order Title</h6>
+                  <h6 class="mb-0 fs--2 text-500"></h6>
+                  <fieldset class="form-group mb-0">
+                    <input type="text" formControlName="orderTitle" class="form-control form-small"
+                      placeholder="Order Title" maxlength="100" required>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg mb-3">
+                  <h6 class="text-900 mb-2">Order Reference</h6>
+                  <fieldset class="form-group mb-0">
+                    <input type="text" class="form-control form-small" placeholder="Select Component Items"
+                      data-bs-placement="top" data-bs-toggle="modal" data-bs-target="#orderReference" formControlName="orderReference"
+                      value="{{formatSelectedComponents()}}" readonly>
+                  </fieldset>
+                  <!-- <h6 class="mb-0 fs--2"></h6> -->
+                  <div #orderReferenceModal class="modal fade" id="orderReference" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg mt-6" role="document">
+                      <div class="modal-content border-0">
+                        <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                          <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="">Order Reference</h5>
+
+                        </div>
+                        <div class="modal-body mt-0 scrollbar-visible" style="height: 70vh">
+                          <div class="row">
+                            <div class="col-md-6" *ngIf="defaultOrderType[0] === 'Spare'">
+                              <div class="table-responsive scrollbar-visible">
+                                <table class="table table-hover table-striped table-sm small">
+                                  <thead>
+                                    <tr>
+                                      <th colspan="6" class="bg-primary text-light text-center">Choose Components
+                                      </th>
+                                    </tr>
+                                    <mat-table #table [dataSource]="componentsDataSourse"
+                                      class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+
+                                      <ng-container matColumnDef="checkbox">
+                                        <mat-header-cell *matHeaderCellDef>
+                                          <mat-checkbox *ngIf="componentSelection.hasValue()"
+                                            [checked]="componentSelection.hasValue() && isAllCompSelected()"
+                                            [indeterminate]="componentSelection.hasValue() && !isAllCompSelected()"
+                                            (change)="onCheckAllChange($event.checked)">
+                                          </mat-checkbox>
+
+                                        </mat-header-cell>
+                                        <mat-cell *matCellDef="let row">
+                                          <mat-checkbox [checked]="row.checkboxState" [disabled]="row.checkboxDisabled"
+                                            (change)="onCheckboxChange($event.checked, row)"></mat-checkbox>
+                                        </mat-cell>
+                                      </ng-container>
+                                      <ng-container matColumnDef="shipComponentName">
+                                        <mat-header-cell *matHeaderCellDef>Ship Component Name</mat-header-cell>
+                                        <mat-cell *matCellDef="let row">{{ row.shipComponentName }}</mat-cell>
+                                      </ng-container>
+
+                                      <mat-header-row class="bg-300"
+                                        *matHeaderRowDef="componentTableColumn; sticky:true"></mat-header-row>
+                                      <mat-row *matRowDef="let row; columns: componentTableColumn; let i = index"
+                                        [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.shipComponentId==selectedIndex))}">
+                                      </mat-row>
+
+                                    </mat-table>
+                                  </thead>
+                                </table>
+                              </div>
+                            </div>
+
+                            <div class="col-md-6" *ngIf="defaultOrderType[0] === 'Store'">
+                              <div class="table-responsive scrollbar-visible">
+                                <table class="table table-hover table-striped table-sm small">
+                                  <thead>
+                                    <tr>
+                                      <th colspan="6" class="bg-primary text-light text-center">Choose Groups
+                                      </th>
+                                    </tr>
+                                    <mat-table #table [dataSource]="groupTableDataSource"
+                                      class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+
+                                      <ng-container matColumnDef="checkbox">
+                                        <mat-header-cell *matHeaderCellDef>
+                                          <mat-checkbox (change)="$event ? groupToggle() : null"
+                                            [checked]="groupSelection.hasValue() && isAllGroupSelected()"
+                                            [indeterminate]="groupSelection.hasValue() && !isAllGroupSelected()">
+                                          </mat-checkbox>
+
+                                        </mat-header-cell>
+                                        <mat-cell *matCellDef="let row">
+                                          <mat-checkbox (click)="$event.stopPropagation()"
+                                            (change)="$event ? groupSelection.toggle(row) : null"
+                                            [checked]="groupSelection.isSelected(row)"
+                                            [aria-label]="groupLabel(row)"></mat-checkbox>
+                                        </mat-cell>
+                                      </ng-container>
+                                      <ng-container matColumnDef="groupName">
+                                        <mat-header-cell *matHeaderCellDef>Group Name</mat-header-cell>
+                                        <mat-cell *matCellDef="let row">{{ row.groupName }}</mat-cell>
+                                      </ng-container>
+
+                                      <mat-header-row class="bg-300"
+                                        *matHeaderRowDef="groupTableColumn; sticky:true"></mat-header-row>
+                                      <mat-row *matRowDef="let row; columns: groupTableColumn; let i = index"
+                                        [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.pmsGroupId==selectedIndex))}"></mat-row>
+
+                                    </mat-table>
+                                  </thead>
+                                </table>
+
+                              </div>
+                            </div>
+
+                            <div class="col-md-6">
+                              <div class="table-responsive scrollbar-visible">
+                                <table class="table table-hover table-striped table-sm small">
+                                  <thead>
+                                    <tr>
+                                      <th colspan="6" class="bg-primary text-light text-center">Choose Cart Items
+                                      </th>
+                                    </tr>
+                                    <table
+                                      class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                                      <thead class="bg-300">
+                                        <tr>
+                                          <th>Type (Agent / Warehouse)</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr>
+                                          <td>
+                                            <select class="form-control form-small form-select"
+                                              formControlName="deliveryAddressType">
+                                              <option>-----</option>
+                                              <option>Agent</option>
+                                              <option>Warehouse</option>
+                                            </select>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </thead>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <a class="btn btn-primary" type="button" (click)="saveComponent()">Ok</a> <button type="button"
+                            class="btn btn-danger me-1" aria-label="">Cancel</button>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>                  
+                </div>
+
+                <div class="col-lg mb-3">
+                  <h6 class="text-900 mb-2">Department</h6>
+
+                  <fieldset class="form-group mb-0">
+                    <select class="form-control form-small form-select" formControlName="departmentId" required>
+                      <option value="" selected disabled>Select Department</option>
+                      <option *ngFor="let item of Departments" value="{{item.departmentId}}">
+                        {{item.departmentName | titlecase}}
+                      </option>
+                    </select>
+                  </fieldset>
+                </div>
+                <div class="col-lg mb-3">
+                  <h6 class="text-900 mb-1">Priority</h6>
+                  <fieldset class="form-group mb-0">
+                    <select class="form-control form-small form-select" formControlName="priorityId" required>
+                      <option value="" selected disabled>Select Priority </option>
+                      <option *ngFor="let item of Priority" value="{{item.prefenceId}}">
+                        {{item.description |titlecase }}
+                      </option>
+                    </select>
+                  </fieldset>
+                </div>
+
+                <div class="col-lg mb-3">
+                  <h6 class="text-900 mb-2">Remarks</h6>
+                  <fieldset class="form-group mb-0">
+                    <input type="text" class="form-control form-small" formControlName="remarks" placeholder="Remarks"
+                      maxlength="100" required>
+                  </fieldset>
+                </div>
+
+                <div class="col-lg mb-2">
+                  <h6 class="text-900 mb-2">Comments</h6>
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" id="generic" type="checkbox" formControlName="genericComment" (input)="onCheckboxChanged($event)"
+                      [checked]="genericCheckbox">
+                    <label class="form-check-label mb-0" for="generic">Generic</label>
+                  </div>
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" id="internal" type="checkbox" (input)="onCheckboxChanged($event)"
+                      [checked]="internalCheckbox" formControlName="internalComment"/>
+                    <label class="form-check-label mb-0" for="internal">Internal</label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -382,7 +527,8 @@
               <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2">Expected Delivery Port</h6>
                 <fieldset class="form-group mb-0">
-                  <select class="form-control form-small form-select" formControlName="expectedDeliveryPort" required>
+                  <select class="form-control form-small form-select" formControlName="expectedDeliveryPort" required
+                    (input)="autoSave('delivery')">
                     <option value="" selected disabled>Select </option>
                     <option *ngFor="let item of portList" value="{{item.locationName}}">
                       {{item.locationName}}
@@ -392,15 +538,18 @@
               </div>
               <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2">Expected Delivery Date</h6>
-                <input type="date" class="mb-0 fs--2 text-500" formControlName="expectedDeliveryDate" />
+                <input type="date" class="mb-0 fs--2 text-500" formControlName="expectedDeliveryDate"
+                  (input)="autoSave('delivery')" />
               </div>
               <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2">Vessel ETA</h6>
-                <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETA" />
+                <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETA"
+                  (input)="autoSave('delivery')" />
               </div>
               <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2">Vessel ETB</h6>
-                <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETB" />
+                <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETB"
+                  (input)="autoSave('delivery')" />
               </div>
               <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2">Delivery Address</h6>
@@ -531,8 +680,8 @@
                     </div>
                     <div class="modal-body mt-0 scrollbar-visible">
                       <div class="form-inline mb-3">
-                        <input type="text" class="form-control form-small m-r-5 mb-d3 m-r-d0"
-                          placeholder="Search" (keyup)="applyFilter($any($event.target).value)" #searchInput>
+                        <input type="text" class="form-control form-small m-r-5 mb-d3 m-r-d0" placeholder="Search"
+                          (keyup)="applyFilter($any($event.target).value)" #searchInput>
                         <button class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
                           data-bs-placement="top" title="" data-bs-original-title="Search" aria-label=""><i
                             class="fas fa-search" aria-hidden="true"></i></button>
@@ -676,8 +825,8 @@
                       </div>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-primary me-1" aria-label=""
-                        (click)="storeTableData()" [disabled]="!reqId">Ok</button>
+                      <button type="button" class="btn btn-primary me-1" aria-label="" (click)="storeTableData()"
+                        [disabled]="!reqId">Ok</button>
                       <button type="button" data-bs-dismiss="modal" class="btn btn-danger me-1"
                         aria-label="">Cancel</button>
                     </div>
@@ -867,7 +1016,7 @@
                     </table>
                   </div>
                 </div>
-                <div class="col-lg-9" *ngFor="let item of listViewItems" >
+                <div class="col-lg-9" *ngFor="let item of listViewItems">
                   <div class="row mb-4">
                     <div class="col-lg-2">
                       <h6 class="text-900 mb-2">Q.App</h6>

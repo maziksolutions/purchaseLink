@@ -23,8 +23,11 @@ import { VesselManagementService } from 'src/app/services/vessel-management.serv
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
 import { RequisitionService } from 'src/app/services/requisition.service';
 import { parse } from 'path';
-import { map, filter } from 'rxjs/operators';
+import { map, filter, debounce } from 'rxjs/operators';
 import { isNull } from '@angular/compiler/src/output/output_ast';
+import { AutoSaveService } from 'src/app/services/auto-save.service';
+import { debug, error } from 'console';
+import { PmsgroupService } from 'src/app/services/pmsgroup.service';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 declare var SideNavi: any;
@@ -38,6 +41,15 @@ export interface RightTableItem {
   availableQty: number;
 }
 
+export interface componentTableItems {
+  userInput?: string;
+  accountCode: string;
+  shipComponentId: number;
+  shipComponentName: string;
+  checkboxState: boolean;
+  checkboxDisabled: boolean;
+}
+
 @Component({
   selector: 'app-requisition-new',
   templateUrl: './requisition-new.component.html',
@@ -45,16 +57,22 @@ export interface RightTableItem {
 })
 export class RequisitionNewComponent implements OnInit {
 
-  RequisitionForm: FormGroup; flag; pkey: number = 0;
+  RequisitionForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'enterQuantity', 'rob', 'remarks'];
   leftTableColumn: string[] = ['checkbox', 'inventoryCode', 'inventoryName', 'partNo', 'quantity', 'availableQty'];
   rightTableColumn: string[] = ['checkbox', 'userInput', 'inventoryCode', 'inventoryName', 'partNo', 'quantity', 'availableQty'];
+  componentTableColumn: string[] = ['checkbox', 'shipComponentName'];
+  groupTableColumn: string[] = ['checkbox', 'groupName'];
   dataSource = new MatTableDataSource<any>();
   leftTableDataSource = new MatTableDataSource<any>();
   rightTableDataSource = new MatTableDataSource<any>();
+  componentsDataSourse = new MatTableDataSource<componentTableItems>();
+  groupTableDataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   leftTableSelection = new SelectionModel<any>(true, []);
   rightTableSelection = new SelectionModel<RightTableItem>(true, []);
+  componentSelection = new SelectionModel<any>(true, []);
+  groupSelection = new SelectionModel<any>(true, []);
   selectedIndex: any;
   rights: RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
@@ -62,6 +80,7 @@ export class RequisitionNewComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('shipItemsModal') shipItemsModal!: ElementRef;
+  @ViewChild('orderReferenceModal') orderReferenceModal!: ElementRef;
   projectnameAndcode: any;
   orderTypes: any;
   Priority: any;
@@ -83,9 +102,9 @@ export class RequisitionNewComponent implements OnInit {
   dropdownList: {
     accountCode: any; shipComponentId: number, shipComponentName: string, isDisabled: boolean
   }[] = [];
+  dropdownGroupsList: { accountCode: any; pmsGroupId: number, groupName: string, isDisabled: boolean }[] = [];
   selectedDropdown: { shipComponentId: number, shipComponentName: string, accountCode: any; }[] = [];
-  dropdownShipcomSetting: { enableCheckAll: boolean; singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
-
+  selectedGroupsDropdown: { pmsGroupId: number, groupName: string, accountCode: any; }[] = [];
   requisitionId: number;
   reqGetId: string | null;
   reqId: number;
@@ -105,9 +124,13 @@ export class RequisitionNewComponent implements OnInit {
 
   comName = true;
 
+  defaultOrderType = '';
+
+  selectedComponents: componentTableItems[] = [];
+
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
-    private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone,
-    private authStatusService: AuthStatusService, private userService: UserManagementService,
+    private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
+    private authStatusService: AuthStatusService, private userService: UserManagementService, private autoSaveService: AutoSaveService,
     private vesselService: VesselManagementService, private shipmasterService: ShipmasterService, private requisitionService: RequisitionService,
   ) { }
 
@@ -115,22 +138,16 @@ export class RequisitionNewComponent implements OnInit {
     this.userId = this.authStatusService.userId();
     this.reqGetId = this.route.snapshot.paramMap.get('requisitionId');
 
-    this.RequisitionForm = this.fb.group({
-      requisitionId: [0],
-      originSite: ['', [Validators.required]],
-      documentHeader: ['', [Validators.required]],
-      vesselId: ['0', [Validators.required]],
-      orderTypeId: ['0', [Validators.required]],
-      orderTitle: ['', [Validators.required]],
-      orderReference: ['', [Validators.required]],
-      departmentId: ['', [Validators.required]],
-      priorityId: ['', [Validators.required]],
-      projectNameCodeId: ['', [Validators.required]],
-      remarks: ['', [Validators.required]],
-      genericCheckbox: [false],
-      internalCheckbox: [false],
-    });
+    this.initForm();
 
+    this.RequisitionForm.get('header')?.valueChanges.subscribe(() => {
+      this.autoSave('header');
+    })
+
+    this.RequisitionForm.get('delivery')?.valueChanges.subscribe(() => {
+      if (this.reqId)
+        this.autoSave('delivery');
+    })
 
     this.deliveryForm = this.fb.group({
       delInfoId: [0],
@@ -142,46 +159,188 @@ export class RequisitionNewComponent implements OnInit {
       reqIds: []
     });
 
-    this.dropdownShipcomSetting = {
-      singleSelection: false,
-      idField: 'shipComponentId',
-      textField: 'shipComponentName',
-      selectAllText: 'Select All',
-      unSelectAllText: 'UnSelect All',
-      itemsShowLimit: 1,
-      allowSearchFilter: true,
-      enableCheckAll: false
-    }
-
-    this.loadData(0);   
+    this.loadData(0);
 
     this.sideNavService.setActiveComponent(this.comName);
+
+    this.sortItems();
+    this.generateTempNumber()
+    // const orderTypeIdControl = this.RequisitionForm.get('header.orderTypeId');
+    // if (orderTypeIdControl) {
+    //   debugger
+    //   orderTypeIdControl.valueChanges.subscribe(() => {
+    //     debugger
+    //     // Reset orderReference value when orderTypeId changes
+    //     const orderReferenceControl = this.RequisitionForm.get('header.orderReference');
+    //     if (orderReferenceControl) {
+    //       // orderReferenceControl.setValue('');
+    //     }
+    //   });
+    // }
   }
 
   get fm() { return this.RequisitionForm.controls };
   get fmd() { return this.deliveryForm.controls }
 
+  generateTempNumber() {
+    this.requisitionService.getTempNumber(0).subscribe(res => {
+      debugger
+      console.log(res.data);
+      if (!this.reqGetId) {
+        var formattedNumber = parseInt(res.data.documentHeader[2])
+        formattedNumber++;
+        this.temporaryNumber = formattedNumber.toString().padStart(3, '0');
+      }
+    })
+  }
 
-  onCheckboxChanged(event: any) {
+  initForm(): void {
+    this.RequisitionForm = this.fb.group({
+      header: this.fb.group({
+        requisitionId: [0],
+        originSite: ['', [Validators.required]],
+        documentHeader: ['', [Validators.required]],
+        vesselId: ['0', [Validators.required]],
+        orderTypeId: ['0', [Validators.required]],
+        orderTitle: ['', [Validators.required]],
+        orderReference: ['', [Validators.required]],
+        departmentId: ['', [Validators.required]],
+        priorityId: ['', [Validators.required]],
+        projectNameCodeId: ['', [Validators.required]],
+        remarks: ['', [Validators.required]],
+        genericComment: [false],
+        internalComment: [false],
+      }),
 
+      account: this.fb.group({
+
+      }),
+
+      delivery: this.fb.group({
+        delInfoId: [0],
+        expectedDeliveryPort: ['', Validators.required],
+        expectedDeliveryDate: ['', Validators.required],
+        vesselETA: ['', Validators.required],
+        vesselETB: ['', Validators.required],
+        deliveryAddress: ['vessel'],
+        reqIds: []
+      }),
+
+      items: this.fb.group({
+        itemsId: [0],
+        itemCode: ['', [Validators.required]],
+        itemName: ['', [Validators.required]],
+        part: ['', [Validators.required]],
+        dwg: ['', [Validators.required]],
+        make: ['', [Validators.required]],
+        model: ['', [Validators.required]],
+        enterQuantity: [0, [Validators.required]],
+        rob: [0, [Validators.required]],
+        remarks: ['', [Validators.required]],
+        pmReqId: [0, [Validators.required]]
+      }),
+    });
+  }
+
+  autoSave(partName: string): void {
+
+    if (partName == 'header') {
+
+      const formPart = this.RequisitionForm.get(partName);
+      if (this.isRequisitionApproved) {
+        const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
+        this.temporaryNumber = documentHeaderElement.textContent;
+      }
+
+      const orderRef = this.selectedItems.join(',');
+
+      formPart?.patchValue({
+        requisitionId: formPart?.value.requisitionId,
+        documentHeader: this.temporaryNumber,
+        originSite: this.userDetail.site,
+        vesselId: formPart?.value.vesselId,
+        orderTypeId: formPart?.value.orderTypeId,
+        orderTitle: formPart?.value.orderTitle,
+        orderReference: orderRef,
+        departmentId: formPart?.value.departmentId,
+        priorityId: formPart?.value.priorityId,
+        projectNameCodeId: formPart?.value.projectNameCodeId,
+        remarks: formPart?.value.remarks,
+        genericComment: this.commetType == 'generic' ? true : false,
+        internalComment: this.commetType == 'internal' ? true : false
+      });
+
+      if (partName == 'header' && formPart != null && formPart.valid) {
+
+        const formData = new FormData();
+        formData.append('data', JSON.stringify(formPart.value))
+
+        this.requisitionService.addRequisitionMaster(formData)
+          .subscribe(data => {
+            if (data.message == "data added") {
+              this.reqId = data.data;
+              this.swal.success('Added successfully.');
+
+            }
+            else if (data.message == "Update") {
+              this.swal.success('Data has been updated successfully.');
+
+            }
+            else if (data.message == "duplicate") {
+              this.swal.info('Data already exist. Please enter new data');
+
+            }
+            else if (data.message == "not found") {
+              this.swal.info('Data exist not exist');
+
+            }
+            else {
+              this.swal.info(data.message);
+            }
+
+          },
+            error => {
+              console.error('Error:', error);
+              this.swal.error('An error occurred. Please try again.');
+            })
+      }
+    }
+    else if (partName == 'delivery') {
+
+      if (this.reqId) {
+        alert('delivery clicked');
+      }
+    }
+    else if (partName == 'items') {
+      if (this.reqId) {
+        alert('items clicked');
+      }
+    }
+  }
+
+  onCheckboxChanged(event) {
+    debugger;
     const checkboxType = event.target.id;
     const isChecked = event.target.checked;
     this.commetType = '';
-    if (checkboxType === 'genric') {
-      this.RequisitionForm.get('genericCheckbox')?.setValue(isChecked);
-      this.RequisitionForm.get('internalCheckbox')?.setValue(false);
+    if (checkboxType === 'generic') {
+      this.RequisitionForm.get('header.genericCheckbox')?.setValue(isChecked);
+      this.RequisitionForm.get('header.internalCheckbox')?.setValue(false);
       this.genericCheckbox = isChecked;
       this.internalCheckbox = false;
       this.commetType = 'generic';
     } else if (checkboxType === 'internal') {
-      this.RequisitionForm.get('internalCheckbox')?.setValue(isChecked);
-      this.RequisitionForm.get('genericCheckbox')?.setValue(false);
+      this.RequisitionForm.get('header.internalCheckbox')?.setValue(isChecked);
+      this.RequisitionForm.get('header.genericCheckbox')?.setValue(false);
       this.internalCheckbox = isChecked;
       this.genericCheckbox = false;
       this.commetType = 'internal';
     }
 
     this.sideNavService.setCommetType(this.commetType);
+    if (!this.reqGetId) {
+      this.autoSave('header');
+    }
   }
 
   onSubmit(form: any) {
@@ -222,9 +381,12 @@ export class RequisitionNewComponent implements OnInit {
   getReqData() {
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
+        debugger;
         const requisitionData = response.data;
+        const formPart = this.RequisitionForm.get('header');
+
         // Populate the form controls with the data for editing
-        this.RequisitionForm.patchValue({
+        formPart?.patchValue({
           requisitionId: requisitionData.requisitionId,
           originSite: requisitionData.originSite,
           vesselId: requisitionData.vesselId,
@@ -234,18 +396,16 @@ export class RequisitionNewComponent implements OnInit {
           priorityId: requisitionData.priorityId,
           projectNameCodeId: requisitionData.projectNameCodeId,
           remarks: requisitionData.remarks,
+          genericComment: requisitionData.genericComment,
+          internalComment: requisitionData.internalComment
         });
+
+        if (!this.isRequisitionApproved) (
+          this.temporaryNumber = requisitionData.documentHeader
+        )
 
         this.genericCheckbox = requisitionData.genericComment === true;
         this.internalCheckbox = requisitionData.internalComment === true;
-        if (this.genericCheckbox == true) {
-          this.commetType = 'generic';
-          this.sideNavService.setCommetType(this.commetType);
-        }
-        if (this.internalCheckbox == true) {
-          this.commetType = 'internal';
-          this.sideNavService.setCommetType(this.commetType);
-        }
 
         this.reqId = requisitionData.requisitionId;
         this.loadDeliveryInfo();
@@ -253,82 +413,69 @@ export class RequisitionNewComponent implements OnInit {
         this.getSpareItems(requisitionData.orderReference);
 
         this.selectedVesselId = requisitionData.vesselId;
+
+        this.LoadOrdertype()
+
         // Load ship components and then process orderReference
         this.LoadShipCompnentList().subscribe(shipComponentResponse => {
+          debugger;
           const shipComponentData = shipComponentResponse.data;
 
           const objProcR = requisitionData.orderReference ? requisitionData.orderReference.split(',') : [];
-
-          objProcR.forEach((item) => {
-            const selectedShipComponent = shipComponentData.find(x => x.shipComponentId === parseInt(item));
-            if (selectedShipComponent) {
-
-              this.selectedDropdown.push(selectedShipComponent);
-              this.selectedItems.push(selectedShipComponent.shipComponentId.toString());
-            }
-          });
-
-
-          this.dropdownShipcomSetting = {
-            singleSelection: false,
-            idField: 'shipComponentId',
-            textField: 'shipComponentName',
-            selectAllText: 'Select All',
-            unSelectAllText: 'UnSelect All',
-            itemsShowLimit: 1,
-            allowSearchFilter: true,
-            enableCheckAll: true
+          const selectedItems = this.componentsDataSourse.data.filter(item => objProcR.includes(item.shipComponentId.toString()));
+          if (selectedItems.length > 0) {
+            debugger
+            this.RequisitionForm.get('header')?.patchValue({
+              orderReference: selectedItems.map(item => item.shipComponentName).join(', ')
+            });
+          } else {
+            this.loadGroupList().subscribe(groupItems => {
+              debugger
+              const groupData = groupItems.data;
+              const selectedItems = this.groupTableDataSource.data.filter(item => objProcR.includes(item.pmsGroupId.toString()));
+              this.RequisitionForm.get('header')?.patchValue({
+                orderReference: selectedItems.map(item => item.groupName).join(', ')
+              });
+            });
           }
 
-          let accountstore = this.selectedDropdown.map(x => x.accountCode)[0]
-          let list = this.dropdownList.filter(x => x.accountCode == accountstore).map(item => ({
+          this.RequisitionForm.get('header')?.patchValue({ orderTypeId: requisitionData.orderTypeId });
 
-            accountCode: item.accountCode,
-            shipComponentId: item.shipComponentId,
-            shipComponentName: item.shipComponentName,
-            isDisabled: false,
 
-          }));
-          let list2 = this.dropdownList.filter(x => x.accountCode != accountstore).map(item => ({
+          debugger
+          this.headCode = this.Vessels.filter(x => x.vesselId === parseInt(this.selectedVesselId)).map(x => x.vesselCode);
 
-            accountCode: item.accountCode,
-            shipComponentId: item.shipComponentId,
-            shipComponentName: item.shipComponentName,
-            isDisabled: true,
-
-          }));
-
-          this.dropdownList = list.concat(list2);
-
-          this.RequisitionForm.controls['orderReference'].setValue(this.selectedDropdown);
-
-          this.RequisitionForm.controls['orderTypeId'].setValue(requisitionData.orderTypeId);
 
           this.updateDocumentHeader(requisitionData);
 
-          this.LoadheadorderType();
+          //  this.LoadheadorderType();
 
         });
-
       });
   }
 
   updateDocumentHeader(requisitionData: any) {
+    debugger
     this.headsite = requisitionData.originSite === 'Office' ? 'O' : 'V';
-    this.headCode = requisitionData.originSite === 'Office' ? 'OFF' : '___';
-    this.headabb = '___';
+    this.headCode = requisitionData.originSite === 'Office' ? 'OFF' : this.headCode[0];
 
     const headerStringParts = requisitionData.documentHeader.split(' – ');
     if (headerStringParts.length === 6) {
       const headerSerialNumber = headerStringParts[5];
-      // const headerAbbText = headerStringParts[3];
+      this.headabb = headerStringParts[3];
       this.headserialNumber = headerSerialNumber;
-      // this.headabb = headerAbbText;
     }
+    this.zone.run(() => {
+      debugger
+      this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
+      this.cdr.markForCheck();
+      // Update document header element
+      const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
+      // documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
+      documentHeaderElement.innerHTML = ` REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
 
-    // Update document header element
-    //   const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
-    //   documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
+    })
+    this.loadGroupsComponent();
   }
 
   loadDeliveryInfo() {
@@ -359,15 +506,30 @@ export class RequisitionNewComponent implements OnInit {
 
     return this.shipmasterService.getShipComponentwithvessel(this.selectedVesselId)
       .pipe(map(res => {
-        this.dropdownList = res.data;
-        return { data: this.dropdownList };
+        this.componentsDataSourse.data = res.data;
+        return { data: this.componentsDataSourse.data };
       }));
+  }
+
+  loadGroupList() {
+    debugger
+    if (this.selectedVesselId)
+      debugger
+    return this.pmsService.GetStoreByShipId(this.selectedVesselId).pipe(map(res => {
+      this.groupTableDataSource.data = res.data;
+      return { data: this.groupTableDataSource.data };
+    }));
   }
 
   LoadOrdertype() {
     this.purchaseService.getOrderTypes(0)
       .subscribe(response => {
         this.orderTypes = response.data;
+        this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
+        if (this.defaultOrderType[0] === 'Spare')
+          this.LoadShipCompnent();
+        else if (this.defaultOrderType[0] === 'Store')
+          this.loadGroupsComponent()
       })
   }
 
@@ -399,7 +561,6 @@ export class RequisitionNewComponent implements OnInit {
           this.headabb = '___';
           let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Office').length;
           this.headserialNumber = `${requisitionValues + 1}`.padStart(4, '0');
-
         }
         else if (this.userDetail.site == 'Vessel') {
           this.headsite = 'V';
@@ -465,6 +626,7 @@ export class RequisitionNewComponent implements OnInit {
     this.vesselService.getVessels(0)
       .subscribe(response => {
         this.Vessels = response.data;
+        console.log(this.Vessels);
       })
   }
   LoadDepartment() {
@@ -483,9 +645,11 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   LoadShipCompnent() {
+
     this.shipmasterService.getShipComponentwithvessel(this.selectedVesselId)
       .subscribe(response => {
-        this.dropdownList = response.data;
+        this.componentsDataSourse.data = response.data;
+
         this.Shipcomponent = response.data.map(item => ({
           accountCode: item.accountCode,
           shipComponentId: item.shipComponentId,
@@ -493,228 +657,54 @@ export class RequisitionNewComponent implements OnInit {
         }));
         if (this.headsite == 'V') {
           this.headCode = this.Vessels.filter(x => x.vesselId === parseInt(this.selectedVesselId)).map(x => x.vesselCode);
-
         }
+      })
+  }
+
+  loadGroupsComponent() {
+
+    if (this.selectedVesselId)
+      this.pmsService.GetStoreByShipId(this.selectedVesselId).subscribe(res => {
+
+        this.groupTableDataSource.data = res.data.map(item => {
+          return {
+            pmsGroupId: item.pmsGroupId,
+            groupName: item.groupName,
+            accountCode: item.accountCode,
+            // Add other properties as needed
+          };
+        });
       })
   }
 
   LoadheadorderType() {
     this.zone.run(() => {
+      debugger
       this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
-      console.log(this.headabb);
+      this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
+
+      // Clear the selections when the order type changes
+      this.componentSelection.clear();
+      this.groupSelection.clear();
+
+      this.componentsDataSourse.data.length = 0
+      this.groupTableDataSource.data.length = 0;
+
+      if (this.defaultOrderType[0] === 'Spare') {
+        this.LoadShipCompnent();
+      }
+      else if (this.defaultOrderType[0] === 'Store') {
+        this.loadGroupsComponent()
+        //  this.isAllGroupSelected()
+      }
+
+      this.RequisitionForm.get('header')?.patchValue({ orderReference: '' });
       this.cdr.markForCheck();
       // Update document header element
       const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
       // documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
       documentHeaderElement.innerHTML = ` REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
-
     })
-
-  }
-
-
-  onSelectAll(event: any) {
-
-    this.selectedItems = event.map((x: { shipComponentId: any; }) => x.shipComponentId);
-
-  }
-
-  onItemSelect(event: any) {
-
-    let isSelect = event.shipComponentId;
-
-    if (isSelect) {
-
-
-      let ss = this.dropdownList.filter(x => x.shipComponentId === event.shipComponentId).map(x => x.accountCode)[0];
-
-      if (this.storeAccountCode[0] == undefined) {
-
-        this.storeAccountCode.push(ss);
-      }
-
-      if (ss == this.storeAccountCode) {
-
-        this.selectedItems.push(event.shipComponentId);
-        this.getSpareItems(this.selectedItems);
-        this.dropdownShipcomSetting = {
-          singleSelection: false,
-          idField: 'shipComponentId',
-          textField: 'shipComponentName',
-          selectAllText: 'Select All',
-          unSelectAllText: 'UnSelect All',
-          itemsShowLimit: 1,
-          allowSearchFilter: true,
-          enableCheckAll: true
-        }
-
-        let list = this.dropdownList.filter(x => x.accountCode == this.storeAccountCode).map(item => ({
-
-          accountCode: item.accountCode,
-          shipComponentId: item.shipComponentId,
-          shipComponentName: item.shipComponentName,
-          isDisabled: false,
-
-        }));
-        let list2 = this.dropdownList.filter(x => x.accountCode != this.storeAccountCode).map(item => ({
-
-          accountCode: item.accountCode,
-          shipComponentId: item.shipComponentId,
-          shipComponentName: item.shipComponentName,
-          isDisabled: true,
-
-        }));
-
-        this.dropdownList = list.concat(list2);
-
-
-
-
-        return
-      }
-
-    }
-
-  }
-
-  onShipCompoDeSelect(event: any) {
-
-    let rindex = this.selectedItems.findIndex(shipComponentId => shipComponentId == event.shipComponentId);
-    if (rindex !== -1) {
-      this.selectedItems.splice(rindex, 1)
-    }
-    if (this.selectedItems.length != 0) {
-      let list = this.dropdownList.filter(x => x.accountCode == this.storeAccountCode).map(item => ({
-
-        accountCode: item.accountCode,
-        shipComponentId: item.shipComponentId,
-        shipComponentName: item.shipComponentName,
-        isDisabled: false,
-
-      }));
-      let list2 = this.dropdownList.filter(x => x.accountCode != this.storeAccountCode).map(item => ({
-
-        accountCode: item.accountCode,
-        shipComponentId: item.shipComponentId,
-        shipComponentName: item.shipComponentName,
-        isDisabled: true,
-
-      }));
-
-      this.dropdownList = list.concat(list2);
-      return
-    }
-    let listfull = this.dropdownList.map(item => ({
-
-      accountCode: item.accountCode,
-      shipComponentId: item.shipComponentId,
-      shipComponentName: item.shipComponentName,
-      isDisabled: false,
-
-    }));
-
-    console.log(this.storeAccountCode)
-    let ds = listfull.map(x => x.accountCode)[0]
-    const index: number = this.storeAccountCode.indexOf(ds);
-    if (index !== -1) {
-      this.storeAccountCode.splice(index, 1);
-    }
-
-    this.dropdownShipcomSetting = {
-      singleSelection: false,
-      idField: 'shipComponentId',
-      textField: 'shipComponentName',
-      selectAllText: 'Select All',
-      unSelectAllText: 'UnSelect All',
-      itemsShowLimit: 1,
-      allowSearchFilter: true,
-      enableCheckAll: false
-    }
-
-    this.dropdownList = listfull;
-  }
-
-  onShipCompoDeSelectAll(event: any) {
-    let listfull = this.dropdownList.map(item => ({
-
-      accountCode: item.accountCode,
-      shipComponentId: item.shipComponentId,
-      shipComponentName: item.shipComponentName,
-      isDisabled: false,
-
-    }));
-    let ds = listfull.map(x => x.accountCode)[0]
-    const index: number = this.storeAccountCode.indexOf(ds);
-    if (index !== -1) {
-      this.storeAccountCode.splice(index, 1);
-    }
-    this.dropdownShipcomSetting = {
-      singleSelection: false,
-      idField: 'shipComponentId',
-      textField: 'shipComponentName',
-      selectAllText: 'Select All',
-      unSelectAllText: 'UnSelect All',
-      itemsShowLimit: 1,
-      allowSearchFilter: true,
-      enableCheckAll: false
-    }
-    this.dropdownList = listfull;
-    this.selectedItems.length = 0;
-  }
-
-  onSave(form: any) {
-    form.value.orderReference = this.selectedItems.join(',');
-    const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
-    const h6Value = documentHeaderElement.textContent;
-
-    const requisitionData = {
-      requisitionId: form.value.requisitionId,
-      documentHeader: h6Value,
-      originSite: this.userDetail.site,
-      vesselId: form.value.vesselId,
-      orderTypeId: form.value.orderTypeId,
-      orderTitle: form.value.orderTitle,
-      orderReference: form.value.orderReference,
-      departmentId: form.value.departmentId,
-      priorityId: form.value.priorityId,
-      projectNameCodeId: form.value.projectNameCodeId,
-      remarks: form.value.remarks,
-      genericComment: form.value.genericCheckbox,
-      internalComment: form.value.internalCheckbox,
-    };
-    form.value.genericComment = this.checkGeneric;
-    form.value.internalComment = this.checkInternal;
-    form.value.documentHeader = h6Value;
-
-
-    const fmdata = new FormData();
-
-    fmdata.append('data', JSON.stringify(requisitionData));
-
-    this.requisitionService.addRequisitionMaster(fmdata)
-      .subscribe(data => {
-        if (data.message == "data added") {
-          this.reqId = data.data;
-          this.swal.success('Added successfully.');
-
-        }
-        else if (data.message == "Update") {
-          this.swal.success('Data has been updated successfully.');
-
-        }
-        else if (data.message == "duplicate") {
-          this.swal.info('Data already exist. Please enter new data');
-
-        }
-        else if (data.message == "not found") {
-          this.swal.info('Data exist not exist');
-
-        }
-        else {
-          this.swal.info(data.message);
-        }
-
-      });
   }
 
   //#region  PM Items
@@ -724,11 +714,13 @@ export class RequisitionNewComponent implements OnInit {
       .subscribe(res => {
 
         this.leftTableDataSource.data = res;
-        console.log(this.leftTableDataSource.data);
-        // this.spareItems = res;
       })
   }
+  getSpareItemByGroup(id: any) {
+    this.requisitionService.getItemInfoByGroups(id).subscribe(res => {
 
+    })
+  }
   moveItemsToRight() {
 
     const selectedItems = this.leftTableDataSource.data.filter(item => this.leftTableSelection.isSelected(item));
@@ -866,53 +858,74 @@ export class RequisitionNewComponent implements OnInit {
           (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
         });
   }
+
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = !!this.dataSource && this.dataSource.data.length;
     return numSelected === numRows;
   }
+  masterToggle() {
+    this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
+  }
+  checkboxLabel(row: any): string {
+
+    if (!row) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.shipComponentSpareId + 1}`;
+  }
+
+  //#region this is for GroupItems Table Checkbox handling code 
+  isAllGroupSelected() {
+    debugger
+    const numSelected = this.groupSelection.selected.length;
+    const numRows = !!this.groupTableDataSource && this.groupTableDataSource.data.length;
+    return numSelected === numRows;
+  }
+  groupToggle() {
+
+    this.isAllGroupSelected() ? this.groupSelection.clear() : this.groupTableDataSource.data.forEach(r => this.groupSelection.select(r));
+  }
+  groupLabel(row: any): string {
+
+    if (!row) {
+      return `${this.isAllGroupSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.groupSelection.isSelected(row) ? 'deselect' : 'select'} row ${row.pmsGroupId + 1}`;
+  }
+  //#endregion
+
+
   isAllLeftTableSelected() {
 
     const numSelected = this.leftTableSelection.selected.length;
     const numRows = !!this.leftTableDataSource && this.leftTableDataSource.data.length;
     return numSelected === numRows;
   }
+  masterLeftTableToggle() {
+
+    this.isAllLeftTableSelected() ? this.leftTableSelection.clear() : this.leftTableDataSource.data.forEach(r => this.leftTableSelection.select(r));
+  }
+  checkboxLeftTableLabel(row: any): string {
+
+    if (!row) {
+      return `${this.isAllLeftTableSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.leftTableSelection.isSelected(row) ? 'deselect' : 'select'} row ${row.shipComponentSpareId + 1}`;
+  }
+
   isAllRightTableSelected() {
 
     const numSelected = this.rightTableSelection.selected.length;
     const numRows = !!this.rightTableDataSource && this.rightTableDataSource.data.length;
     return numSelected === numRows;
   }
-  masterToggle() {
-    this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
-  }
-  masterLeftTableToggle() {
-
-    this.isAllLeftTableSelected() ? this.leftTableSelection.clear() : this.leftTableDataSource.data.forEach(r => this.leftTableSelection.select(r));
-  }
   masterRightTableToggle() {
 
     this.isAllRightTableSelected() ? this.rightTableSelection.clear() : this.rightTableDataSource.data.forEach(r => this.rightTableSelection.select(r));
   }
-  checkboxLabel(row: any): string {
-
-    //console.log(row);
-    if (!row) {
-      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.shipComponentSpareId + 1}`;
-  }
-  checkboxLeftTableLabel(row: any): string {
-
-    //console.log(row);
-    if (!row) {
-      return `${this.isAllLeftTableSelected() ? 'select' : 'deselect'} all`;
-    }
-    return `${this.leftTableSelection.isSelected(row) ? 'deselect' : 'select'} row ${row.shipComponentSpareId + 1}`;
-  }
   checkboxRightTableLabel(row: any): string {
 
-    //console.log(row);
     if (!row) {
       return `${this.isAllRightTableSelected() ? 'select' : 'deselect'} all`;
     }
@@ -921,15 +934,112 @@ export class RequisitionNewComponent implements OnInit {
   //#endregion
 
   listDetails(id) {
-    debugger;
+
     this.listViewItems = this.dataSource.data.filter(item => item.itemsId == id);
   }
 
   applyFilter(filterValue: string) {
-    debugger;
+
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase();
     this.leftTableDataSource.filter = filterValue;
+  }
+
+  isAllCompSelected() {
+    debugger
+    const numSelected = this.componentSelection.selected.length;
+    const numRows = this.getItemsWithSameAccountCode();
+    return numSelected === numRows.length;
+  }
+  getItemsWithSameAccountCode(): componentTableItems[] {
+    const selectedAccountCode = this.componentSelection.selected.length > 0 ? this.componentSelection.selected[0].accountCode : null;
+    return selectedAccountCode ? this.componentsDataSourse.data.filter(item => item.accountCode === selectedAccountCode) : [];
+  }
+  onCheckboxChange(checked: boolean, item: componentTableItems): void {
+
+    item.checkboxState = checked;
+
+    this.componentsDataSourse.data.forEach(otherItems => {
+      if (otherItems !== item) {
+        otherItems.checkboxDisabled = otherItems.accountCode !== item.accountCode;
+      }
+    })
+
+    if (checked) {
+      this.componentSelection.select(item);
+    } else {
+      this.componentSelection.deselect(item);
+    }
+    if (this.componentSelection.selected.length === 0) {
+
+      this.componentsDataSourse.data.forEach(item => item.checkboxDisabled = false);
+    }
+
+    this.sortItems();
+  }
+  onCheckAllChange(checked: boolean): void {
+
+    if (checked) {
+
+      const itemsToCheck = this.getItemsWithSameAccountCode();
+      itemsToCheck.forEach(item => {
+
+        item.checkboxState = true;
+        this.componentSelection.select(item);
+      });
+    } else {
+      this.componentsDataSourse.data.forEach(item => (item.checkboxState = false));
+      this.componentSelection.clear();
+      this.componentsDataSourse.data.forEach(item => item.checkboxDisabled = false);
+    }
+
+    this.sortItems();
+  }
+  sortItems(): void {
+
+    // Sort the items so that items with matching account codes come first
+    if (this.componentSelection.selected.length === 0) {
+      this.componentsDataSourse.data.sort((a, b) => a.shipComponentId - b.shipComponentId);
+    } else {
+      // Sort the items so that items with matching account codes come first
+      this.componentsDataSourse.data.sort((a, b) => {
+        if (a.checkboxDisabled === b.checkboxDisabled) {
+          return 0;
+        }
+        return a.checkboxDisabled ? 1 : -1;
+      });
+    }
+    this.componentsDataSourse.sort = this.sort;
+  }
+  formatSelectedComponents(): string {
+
+    if (this.selectedComponents.length > 0) {
+      return this.selectedComponents.map(item => item.shipComponentName).join(', ');
+    }
+    else {
+      return this.selectedGroupsDropdown.map(item => item.groupName).join(', ');
+    }
+  }
+  saveComponent() {
+    debugger
+    this.selectedComponents = this.componentsDataSourse.data.filter(row => row.checkboxState);
+    this.selectedGroupsDropdown = this.groupTableDataSource.data.filter(row => this.groupSelection.isSelected(row));
+    console.log(this.selectedGroupsDropdown);
+    if (this.selectedComponents.length > 0) {
+      debugger;
+      this.selectedItems = this.selectedComponents.map((x: { shipComponentId: any; }) => x.shipComponentId);
+      const itemsId = this.selectedItems.join(',');
+      this.getSpareItems(itemsId);
+    }
+    else if (this.selectedGroupsDropdown) {
+      debugger
+      this.selectedItems = this.selectedGroupsDropdown.map((x: { pmsGroupId: any; }) => x.pmsGroupId);
+      const itemsId = this.selectedItems.join(',');
+      console.log(itemsId);
+    }
+
+
+    $("#orderReference").modal('hide');
   }
 }
 

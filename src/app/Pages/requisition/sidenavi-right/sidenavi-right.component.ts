@@ -13,7 +13,7 @@ import { RequisitionService } from 'src/app/services/requisition.service';
 
 export interface CommentData {
   commentId: number;
-  commentType: string;
+  commentType: any;
   commentData: string;
 };
 
@@ -26,10 +26,12 @@ declare var SideNavi: any;
 export class SidenaviRightComponent implements OnInit, OnDestroy {
   commentsForm: FormGroup; flag; pkey: number = 0;
   comments: any[] = [];
+  commentType: string;
+  getCommentType: string;
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  
+
   isActive = false;
 
   selectedComment: any = null;
@@ -49,8 +51,14 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   get fm() { return this.commentsForm.controls }
 
   ngOnInit(): void {
-    this.loadData(0);    
-    this.isActive=this.sideNaviService.getActiveComponent();
+    this.loadData(0);
+    this.isActive = this.sideNaviService.getActiveComponent();
+
+    this.sideNaviService.commentTypeChange$.subscribe((commentType: string) => {
+     
+      this.comments=[];
+      this.loadData(0, commentType);
+    })
   }
 
   ngOnDestroy(): void {
@@ -61,19 +69,12 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(form: any) {
-    debugger;
+    
     if (form.value.commentId == null) {
       form.value.commentId = 0;
-      form.value.commentType = this.sideNaviService.getCommetType();
-    } else {
-
-      const updatedComment = this.commentsForm.get('commentData')?.value;
-      if (this.selectedComment && updatedComment) {
-        form.value.commentData = updatedComment;
-        console.log(form.value);
-      }
     }
     if (this.commentsForm.valid) {
+      
       this.reqService.addComments(form.value)
         .subscribe(data => {
 
@@ -113,8 +114,8 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
 
   }
 
-  loadData(status: number) {
-
+  loadData(status: number, commentType?: string) {
+    
     // if (status == 1) {
     //   this.deletetooltip ='UnArchive';
     //   if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -131,16 +132,17 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
     // }
     this.reqService.getComments(status)
       .subscribe(response => {
-
+        
         this.flag = status;
         var data = response.data;
 
         data.map(res => { this.comments.push({ commentId: res.commentId, commentData: res.commentData, commentType: res.commentType }) });
+        if (commentType)
+        this.comments = this.comments.filter(res => res.commentType == commentType);
+        // this.dataSource.data = response.data;
 
-        this.dataSource.data = response.data;
-
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+        // this.dataSource.sort = this.sort;
+        // this.dataSource.paginator = this.paginator;
         this.clear();
         // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });

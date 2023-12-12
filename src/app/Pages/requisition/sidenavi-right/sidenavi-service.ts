@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 declare var SideNavi: any;
 @Injectable({
@@ -11,6 +12,10 @@ export class SideNavService {
   private commentType: string = '';
   private sideNavInitialized: boolean = false;
   private activeComponent: boolean = false;
+
+  // Add a subject to emit events when the comment type changes
+  private commentTypeChangeSource = new Subject<string>();
+  commentTypeChange$ = this.commentTypeChangeSource.asObservable();
 
   constructor(private route: Router) {
     this.route.events.pipe(
@@ -53,10 +58,11 @@ export class SideNavService {
 
   setCommetType(value: string): void {
     this.commentType = value;
+    this.commentTypeChangeSource.next(value);
   }
 
   setActiveComponent(comName: boolean) {
-    debugger;
+    
     this.activeComponent = comName;
   }
 
