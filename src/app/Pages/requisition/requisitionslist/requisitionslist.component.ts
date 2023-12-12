@@ -13,9 +13,21 @@ import { RightsModel } from '../../Models/page-rights';
 import { UserManagementService } from 'src/app/services/user-management.service';
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
 import { VesselManagementService } from 'src/app/services/vessel-management.service';
-
-
+import { saveAs } from 'file-saver';
+import { filter, map } from 'rxjs/operators';
+import { SwalToastService } from 'src/app/services/swal-toast.service';
+declare var $: any;
+declare let Swal, PerfectScrollbar: any;
 declare var SideNavi: any;
+
+interface Item {
+  id: number;
+  name: string;
+  quantity: number;
+  unit: string;
+}
+
+
 @Component({
   selector: 'app-requisitionslist',
   templateUrl: './requisitionslist.component.html',
@@ -25,7 +37,7 @@ export class RequisitionslistComponent implements OnInit {
   RequisitionForm: FormGroup; flag; pkey: number = 0;
   selectedIndex: any;
   dataSource = new MatTableDataSource<any>();
-  displayedColumns: string[] = [ 'checkbox', 'Requisition_No', 'Delivery_Site', 'OriginSite', 'RequestOrderType', 'OrderTitle',
+  displayedColumns: string[] = ['checkbox', 'Requisition_No', 'Delivery_Site', 'OriginSite', 'RequestOrderType', 'OrderTitle',
     'OrderReference', 'Department', 'Priority', 'ProjectName_Code'];
   selection = new SelectionModel<any>(true, []);
   rights: RightsModel;
@@ -36,10 +48,16 @@ export class RequisitionslistComponent implements OnInit {
   Vessels: any;
   selectedVesselId: number = 0;
 
+  items: Item[] = [
+    { id: 1, name: 'ENVIROCLEAN', quantity: 200, unit: 'LTR' },
+    { id: 2, name: 'NATURAL HAND CLEANER', quantity: 50, unit: 'LTR' },
+    // Add more items as needed
+  ];
+  vesselcode: any;
 
   constructor(private sideNavService: SideNavService, private route: Router,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService,
-    private fb: FormBuilder, private requisitionService: RequisitionService) { }
+    private fb: FormBuilder, private requisitionService: RequisitionService,private swal: SwalToastService,) { }
 
   get fm() { return this.RequisitionForm.controls };
 
@@ -183,6 +201,72 @@ export class RequisitionslistComponent implements OnInit {
     this.route.navigate(['/Requisition/RequisitionsNew'])
 
 
+  }
+
+  downloadNotepad() {
+    let stepData = `ISO-10303-21;
+    HEADER;
+    FILE_DESCRIPTION(('Requisition data transfer in StarIPS');
+    FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\BMY23113.RTO','20230409');
+    ENDSEC;
+    DATA;`;
+
+    
+    this.vesselcode = this.Vessels.filter(x => x.vesselId == this.selectedVesselId).map(x => x.vesselCode);
+
+    // Ensure that the items array is unique based on some identifier
+    const uniqueItems = Array.from(new Set(this.items.map(item => item.id)))
+      .map(id => this.items.find(item => item.id === id));
+    console.log(uniqueItems)
+   
+    // Generate dynamic data based on the items array
+
+    if (this.vesselcode.length == 0) {
+      this.vesselcode = this.dataSource.data;
+
+      uniqueItems.forEach(item => {
+        
+        const matchingVesselCode = this.vesselcode.find(vessel => vessel.requisitionId === item?.id);
+        if (matchingVesselCode) {
+          
+          stepData += `
+          #${item?.id}=Items_for_ordering_mr('${matchingVesselCode.vessel.vesselCode}','23/113','${item?.id}','','${item?.name}','','','','','','','0.00','${item?.unit}','${item?.quantity}','','','','','','','','');`;
+
+        }
+      
+      });
+      stepData += `
+      ENDSEC;`;
+  
+      // Convert the content to a Blob
+      const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
+  
+      // Use FileSaver.js to save the file
+      saveAs(blob, 'notepad_file.txt');
+    return;
+    }
+    if(this.vesselcode.length != 0 && this.dataSource.data.length != 0){
+      this.items.forEach(item => {
+        stepData += `
+            #${item.id}=Items_for_ordering_mr('${this.vesselcode}','23/113','${item.id}','','${item.name}','','','','','','','0.00','${item.unit}','${item.quantity}','','','','','','','','');`;
+
+      });
+      stepData += `
+      ENDSEC;`;
+  
+      // Convert the content to a Blob
+      const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
+  
+      // Use FileSaver.js to save the file
+      saveAs(blob, 'notepad_file.txt');
+      return
+    }
+
+    else{
+      this.swal.error('This selected vessel has no Requisition Data.');
+
+    }
+   
   }
 
 }

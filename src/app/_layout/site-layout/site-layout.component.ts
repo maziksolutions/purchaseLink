@@ -70,7 +70,7 @@ export class SiteLayoutComponent implements OnInit {
     
     this.activeRoute.getCurrentRoute().subscribe((currentRoute) => {
       this.activeRouteResult = this.router.url === '/Requisition/Requisitionslist' ||
-        this.router.url === '/Requisition/RequisitionTracking';
+        this.router.url === '/Requisition/RequisitionTracking' ||  this.router.url === '/Requisition/Rfqlist' ;
     })
 
 
