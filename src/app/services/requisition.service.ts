@@ -78,6 +78,10 @@ export class RequisitionService {
     
     return this.httpClient.get<any[]>(`${this.linkurl}getItems/${data}`, httpOptions);
   }
+  getGroupsInfo(data:string): Observable<any> {
+    
+    return this.httpClient.get<any[]>(`${this.linkurl}getGroups/${data}`, httpOptions);
+  }
   getItemInfoByGroups(data:string):Observable<any> {
     
     return this.httpClient.get<any[]>(`${this.linkurl}getItemsByGroups/${data}`, httpOptions);

@@ -32,7 +32,7 @@
                   data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
                   <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2">
                     </span>Document Header <small class="ms-5" id="documentHeader" *ngIf="isRequisitionApproved">
-                      
+
                       REQ – {{headsite}} – {{headCode}} – {{headabb}} – {{currentyear}} – {{headserialNumber}}
                     </small>
                     <small class="ms-5" *ngIf="!isRequisitionApproved">
@@ -200,7 +200,8 @@
                 <div class="col-lg mb-3">
                   <h6 class="text-900 mb-1">Project Name / Code</h6>
                   <fieldset class="form-group mb-0">
-                    <select class="form-control form-small form-select" formControlName="projectNameCodeId" required>
+                    <select class="form-control form-small form-select" formControlName="projectNameCodeId"
+                      (change)="autoSave('header')" required>
                       <option value="" selected disabled>Select </option>
                       <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
                         {{item.projectName|titlecase }}-{{item.projectCode}}
@@ -227,7 +228,7 @@
                   <h6 class="mb-0 fs--2 text-500"></h6>
                   <fieldset class="form-group mb-0">
                     <input type="text" formControlName="orderTitle" class="form-control form-small"
-                      placeholder="Order Title" maxlength="100" required>
+                      (change)="autoSave('header')" placeholder="Order Title" maxlength="100" required>
                   </fieldset>
                 </div>
               </div>
@@ -237,8 +238,9 @@
                   <h6 class="text-900 mb-2">Order Reference</h6>
                   <fieldset class="form-group mb-0">
                     <input type="text" class="form-control form-small" placeholder="Select Component Items"
-                      data-bs-placement="top" data-bs-toggle="modal" data-bs-target="#orderReference" formControlName="orderReference"
-                      value="{{formatSelectedComponents()}}" readonly>
+                      (change)="autoSave('header')" data-bs-placement="top" data-bs-toggle="modal"
+                      data-bs-target="#orderReference" formControlName="orderReference"
+                      [value]="formatSelectedComponents()?.displayValue" readonly>
                   </fieldset>
                   <!-- <h6 class="mb-0 fs--2"></h6> -->
                   <div #orderReferenceModal class="modal fade" id="orderReference" tabindex="-1" aria-hidden="true">
@@ -374,20 +376,21 @@
                           </div>
                         </div>
                         <div class="modal-footer">
-                          <a class="btn btn-primary" type="button" (click)="saveComponent()">Ok</a> <button type="button"
-                            class="btn btn-danger me-1" aria-label="">Cancel</button>
+                          <a class="btn btn-primary" type="button" (click)="saveComponent()">Ok</a> <button
+                            type="button" class="btn btn-danger me-1" aria-label="">Cancel</button>
                         </div>
 
                       </div>
                     </div>
-                  </div>                  
+                  </div>
                 </div>
 
                 <div class="col-lg mb-3">
                   <h6 class="text-900 mb-2">Department</h6>
 
                   <fieldset class="form-group mb-0">
-                    <select class="form-control form-small form-select" formControlName="departmentId" required>
+                    <select class="form-control form-small form-select" formControlName="departmentId"
+                      (change)="autoSave('header')" required>
                       <option value="" selected disabled>Select Department</option>
                       <option *ngFor="let item of Departments" value="{{item.departmentId}}">
                         {{item.departmentName | titlecase}}
@@ -398,7 +401,8 @@
                 <div class="col-lg mb-3">
                   <h6 class="text-900 mb-1">Priority</h6>
                   <fieldset class="form-group mb-0">
-                    <select class="form-control form-small form-select" formControlName="priorityId" required>
+                    <select class="form-control form-small form-select" formControlName="priorityId"
+                      (change)="autoSave('header')" required>
                       <option value="" selected disabled>Select Priority </option>
                       <option *ngFor="let item of Priority" value="{{item.prefenceId}}">
                         {{item.description |titlecase }}
@@ -411,20 +415,20 @@
                   <h6 class="text-900 mb-2">Remarks</h6>
                   <fieldset class="form-group mb-0">
                     <input type="text" class="form-control form-small" formControlName="remarks" placeholder="Remarks"
-                      maxlength="100" required>
+                    (change)="autoSave('header')" maxlength="100" required>
                   </fieldset>
                 </div>
 
                 <div class="col-lg mb-2">
                   <h6 class="text-900 mb-2">Comments</h6>
                   <div class="form-check form-check-inline mb-0">
-                    <input class="form-check-input" id="generic" type="checkbox" formControlName="genericComment" (input)="onCheckboxChanged($event)"
-                      [checked]="genericCheckbox">
+                    <input class="form-check-input" id="generic" type="checkbox" formControlName="genericComment"
+                      (input)="onCheckboxChanged($event)" [checked]="genericCheckbox">
                     <label class="form-check-label mb-0" for="generic">Generic</label>
                   </div>
                   <div class="form-check form-check-inline mb-0">
                     <input class="form-check-input" id="internal" type="checkbox" (input)="onCheckboxChanged($event)"
-                      [checked]="internalCheckbox" formControlName="internalComment"/>
+                      [checked]="internalCheckbox" formControlName="internalComment" />
                     <label class="form-check-label mb-0" for="internal">Internal</label>
                   </div>
                 </div>
@@ -715,23 +719,23 @@
                                   </ng-container>
                                   <ng-container matColumnDef="inventoryCode">
                                     <mat-header-cell *matHeaderCellDef>Part Id</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.shipSpares.inventoryCode }}</mat-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.itemCode }}</mat-cell>
                                   </ng-container>
                                   <ng-container matColumnDef="inventoryName">
                                     <mat-header-cell *matHeaderCellDef>Part Name</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.shipSpares.inventoryName }}</mat-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.itemName }}</mat-cell>
                                   </ng-container>
                                   <ng-container matColumnDef="partNo">
                                     <mat-header-cell *matHeaderCellDef>Mfg Part No.</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.partNo }}</mat-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.part }}</mat-cell>
                                   </ng-container>
                                   <ng-container matColumnDef="quantity">
                                     <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.quantity }}</mat-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.rob }}</mat-cell>
                                   </ng-container>
                                   <ng-container matColumnDef="availableQty">
                                     <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.shipSpares.availableQty }}</mat-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.availableQty }}</mat-cell>
                                   </ng-container>
                                   <mat-header-row class="bg-300"
                                     *matHeaderRowDef="leftTableColumn; sticky:true"></mat-header-row>
@@ -790,27 +794,25 @@
                                   </ng-container>
                                   <ng-container class="rightTableCode" matColumnDef="inventoryCode">
                                     <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part Id</mat-header-cell>
-                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{
-                                      row.shipSpares.inventoryCode }}</mat-cell>
+                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{ row.itemCode }}</mat-cell>
                                   </ng-container>
                                   <ng-container class="rightTableCode" matColumnDef="inventoryName">
                                     <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part
                                       Name</mat-header-cell>
-                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{
-                                      row.shipSpares.inventoryName }}</mat-cell>
+                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{row.itemName }}</mat-cell>
                                   </ng-container>
                                   <ng-container class="rightTableCode" matColumnDef="partNo">
-                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Mfg Part
-                                      No.</mat-header-cell>
-                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{ row.partNo }}</mat-cell>
+                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Mfg
+                                      PartNo.</mat-header-cell>
+                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{ row.part }}</mat-cell>
                                   </ng-container>
                                   <ng-container class="rightTableNo" matColumnDef="quantity">
                                     <mat-header-cell class="rightTableNo" *matHeaderCellDef>ROB</mat-header-cell>
-                                    <mat-cell class="rightTableNo" *matCellDef="let row">{{ row.quantity }}</mat-cell>
+                                    <mat-cell class="rightTableNo" *matCellDef="let row">{{ row.rob }}</mat-cell>
                                   </ng-container>
                                   <ng-container class="rightTableNo" matColumnDef="availableQty">
                                     <mat-header-cell class="rightTableNo" *matHeaderCellDef>Unit</mat-header-cell>
-                                    <mat-cell class="rightTableNo" *matCellDef="let row">{{ row.shipSpares.availableQty
+                                    <mat-cell class="rightTableNo" *matCellDef="let row">{{ row.availableQty
                                       }}</mat-cell>
                                   </ng-container>
                                   <mat-header-row class="bg-300"
@@ -1258,3 +1260,5 @@
     </div>
   </div>
 </main>
+
+<script src="assets/js/SideNavi.js"></script>

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, ElementRef, OnInit, ChangeDetectorRef, NgZone, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,7 +12,7 @@ import { ViewChild } from '@angular/core';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { RightsModel } from '../../Models/page-rights';
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
 import { response } from '../../Models/response-model';
@@ -55,7 +55,7 @@ export interface componentTableItems {
   templateUrl: './requisition-new.component.html',
   styleUrls: ['./requisition-new.component.css']
 })
-export class RequisitionNewComponent implements OnInit {
+export class RequisitionNewComponent implements OnInit ,OnDestroy{
 
   RequisitionForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'enterQuantity', 'rob', 'remarks'];
@@ -132,9 +132,14 @@ export class RequisitionNewComponent implements OnInit {
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
     private authStatusService: AuthStatusService, private userService: UserManagementService, private autoSaveService: AutoSaveService,
     private vesselService: VesselManagementService, private shipmasterService: ShipmasterService, private requisitionService: RequisitionService,
-  ) { }
+  ) { this.router.events.subscribe((event)=>{
+    if(event instanceof NavigationEnd){
+      this.sideNavService.initSidenav();
+    }
+  })}
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
+    
     this.userId = this.authStatusService.userId();
     this.reqGetId = this.route.snapshot.paramMap.get('requisitionId');
 
@@ -164,7 +169,8 @@ export class RequisitionNewComponent implements OnInit {
     this.sideNavService.setActiveComponent(this.comName);
 
     this.sortItems();
-    this.generateTempNumber()
+    this.generateTempNumber();
+    this.sideNavService.setActiveComponent(true);
     // const orderTypeIdControl = this.RequisitionForm.get('header.orderTypeId');
     // if (orderTypeIdControl) {
     //   debugger
@@ -194,6 +200,9 @@ export class RequisitionNewComponent implements OnInit {
     })
   }
 
+  ngOnDestroy(): void {
+    this.sideNavService.destroySidenav();
+  }
   initForm(): void {
     this.RequisitionForm = this.fb.group({
       header: this.fb.group({
@@ -243,7 +252,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   autoSave(partName: string): void {
-
+    debugger
     if (partName == 'header') {
 
       const formPart = this.RequisitionForm.get(partName);
@@ -252,7 +261,8 @@ export class RequisitionNewComponent implements OnInit {
         this.temporaryNumber = documentHeaderElement.textContent;
       }
 
-      const orderRef = this.selectedItems.join(',');
+      const { displayValue, saveValue } = this.formatSelectedComponents();
+      formPart?.get('orderReference')?.setValue(displayValue);
 
       formPart?.patchValue({
         requisitionId: formPart?.value.requisitionId,
@@ -261,7 +271,7 @@ export class RequisitionNewComponent implements OnInit {
         vesselId: formPart?.value.vesselId,
         orderTypeId: formPart?.value.orderTypeId,
         orderTitle: formPart?.value.orderTitle,
-        orderReference: orderRef,
+        orderReference: saveValue,
         departmentId: formPart?.value.departmentId,
         priorityId: formPart?.value.priorityId,
         projectNameCodeId: formPart?.value.projectNameCodeId,
@@ -308,12 +318,12 @@ export class RequisitionNewComponent implements OnInit {
     else if (partName == 'delivery') {
 
       if (this.reqId) {
-        alert('delivery clicked');
+
       }
     }
     else if (partName == 'items') {
       if (this.reqId) {
-        alert('items clicked');
+
       }
     }
   }
@@ -410,8 +420,6 @@ export class RequisitionNewComponent implements OnInit {
         this.reqId = requisitionData.requisitionId;
         this.loadDeliveryInfo();
 
-        this.getSpareItems(requisitionData.orderReference);
-
         this.selectedVesselId = requisitionData.vesselId;
 
         this.LoadOrdertype()
@@ -468,6 +476,12 @@ export class RequisitionNewComponent implements OnInit {
     this.zone.run(() => {
       debugger
       this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
+      if (this.defaultOrderType[0] === 'Spare') {
+        this.getSpareItems('Component', requisitionData.orderReference);
+      }
+      else if (this.defaultOrderType[0] === 'Store') {
+        this.getSpareItems('Group', requisitionData.orderReference);
+      }
       this.cdr.markForCheck();
       // Update document header element
       const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -708,13 +722,43 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   //#region  PM Items
-  getSpareItems(ids: any) {
+  getSpareItems(itemType: string, ids: any) {
+    if (itemType === 'Component') {
+      this.requisitionService.getItemsInfo(ids)
+        .subscribe(res => {
+          console.log(res)
 
-    this.requisitionService.getItemsInfo(ids)
-      .subscribe(res => {
-
+          this.leftTableDataSource.data = res.map(item => ({
+            itemsId: item.shipSpares.shipSpareId,
+            itemCode: item.shipSpares.inventoryCode,
+            itemName: item.shipSpares.inventoryName,
+            part: item.partNo,
+            dwg: item.dwg,
+            make: item.make,
+            model: item.model,
+            enterQuantity: '',
+            rob: item.rob,
+            unit: item.quantity
+          }));
+        })
+    } else if (itemType === 'Group') {
+      this.requisitionService.getGroupsInfo(ids).subscribe(res => {
         this.leftTableDataSource.data = res;
+        console.log(res)
+        this.leftTableDataSource.data = res.map(item => ({
+          itemsId: item.shipStoreId,
+          itemCode: item.inventoryCode,
+          itemName: item.inventoryName,
+          part: item.partNo,
+          dwg: item.dwg,
+          make: item.makerReference,
+          model: item.model,
+          enterQuantity: '',
+          rob: item.rob,
+          unit: item.unit
+        }))
       })
+    }
   }
   getSpareItemByGroup(id: any) {
     this.requisitionService.getItemInfoByGroups(id).subscribe(res => {
@@ -743,7 +787,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   storeTableData() {
-
+    debugger;
     const itemsToAdd: {
       ItemCode: string;
       ItemName: string;
@@ -762,14 +806,14 @@ export class RequisitionNewComponent implements OnInit {
         const enterQuantity = item.userInput ? +item.userInput : 0;
 
         const newItem = {
-          ItemCode: item.shipSpares.inventoryCode,
-          ItemName: item.shipSpares.inventoryName,
-          Part: item.partNo,
-          DWG: item.drawingNo,
-          Make: item.shipSpares.makerReference,
-          Model: item.modelNo,
+          ItemCode: item.itemCode,
+          ItemName: item.itemName,
+          Part: item.part,
+          DWG: item.dwg,
+          Make: item.make,
+          Model: item.model,
           EnterQuantity: enterQuantity,
-          ROB: item.shipSpares.rob,
+          ROB: item.rob,
           Remarks: item.remarks,
           PMReqId: this.reqId
         };
@@ -895,7 +939,6 @@ export class RequisitionNewComponent implements OnInit {
   }
   //#endregion
 
-
   isAllLeftTableSelected() {
 
     const numSelected = this.leftTableSelection.selected.length;
@@ -1011,34 +1054,39 @@ export class RequisitionNewComponent implements OnInit {
     }
     this.componentsDataSourse.sort = this.sort;
   }
-  formatSelectedComponents(): string {
-
+  formatSelectedComponents(): { displayValue: string, saveValue: string } {
+    let displayValue = '';
+    let saveValue = '';
     if (this.selectedComponents.length > 0) {
-      return this.selectedComponents.map(item => item.shipComponentName).join(', ');
+      displayValue = this.selectedComponents.map(item => item.shipComponentName).join(', ');
+      saveValue = this.selectedComponents.map(item => item.shipComponentId).join(',');
     }
     else {
-      return this.selectedGroupsDropdown.map(item => item.groupName).join(', ');
+      displayValue = this.selectedGroupsDropdown.map(item => item.groupName).join(', ');
+      saveValue = this.selectedGroupsDropdown.map(item => item.pmsGroupId).join(',');
     }
+
+    return { displayValue, saveValue };
   }
   saveComponent() {
     debugger
     this.selectedComponents = this.componentsDataSourse.data.filter(row => row.checkboxState);
     this.selectedGroupsDropdown = this.groupTableDataSource.data.filter(row => this.groupSelection.isSelected(row));
-    console.log(this.selectedGroupsDropdown);
+
     if (this.selectedComponents.length > 0) {
       debugger;
       this.selectedItems = this.selectedComponents.map((x: { shipComponentId: any; }) => x.shipComponentId);
       const itemsId = this.selectedItems.join(',');
-      this.getSpareItems(itemsId);
+      this.getSpareItems('Component', itemsId);
     }
     else if (this.selectedGroupsDropdown) {
       debugger
       this.selectedItems = this.selectedGroupsDropdown.map((x: { pmsGroupId: any; }) => x.pmsGroupId);
       const itemsId = this.selectedItems.join(',');
-      console.log(itemsId);
+      this.getSpareItems('Group', itemsId);
     }
 
-
+    this.autoSave('header');
     $("#orderReference").modal('hide');
   }
 }
