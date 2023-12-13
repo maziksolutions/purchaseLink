@@ -16,6 +16,7 @@ import { VesselManagementService } from 'src/app/services/vessel-management.serv
 import { saveAs } from 'file-saver';
 import { filter, map } from 'rxjs/operators';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
+import { DatePipe } from '@angular/common';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 declare var SideNavi: any;
@@ -57,7 +58,7 @@ export class RequisitionslistComponent implements OnInit {
 
   constructor(private sideNavService: SideNavService, private route: Router,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService,
-    private fb: FormBuilder, private requisitionService: RequisitionService,private swal: SwalToastService,) { }
+    private fb: FormBuilder, private requisitionService: RequisitionService,private swal: SwalToastService,private datePipe: DatePipe) { }
 
   get fm() { return this.RequisitionForm.controls };
 
@@ -204,10 +205,12 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   downloadNotepad() {
+    let CurtDate = new Date ;
+   let  currentDate = this.datePipe.transform(CurtDate, 'yyyyMMdd');
     let stepData = `ISO-10303-21;
     HEADER;
     FILE_DESCRIPTION(('Requisition data transfer in StarIPS');
-    FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\BMY23113.RTO','20230409');
+    FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\BMY23113.RTO','${currentDate}');
     ENDSEC;
     DATA;`;
 
@@ -223,15 +226,17 @@ export class RequisitionslistComponent implements OnInit {
 
     if (this.vesselcode.length == 0) {
       this.vesselcode = this.dataSource.data;
+      stepData += `
+          #1=Requisition_ship_to_PO_step_1('','23/113','','0','${currentDate}','','','Engine','','5012100','','','','','')`;
 
-      uniqueItems.forEach(item => {
+      uniqueItems.forEach((item ,index)=> {
         
         const matchingVesselCode = this.vesselcode.find(vessel => vessel.requisitionId === item?.id);
         if (matchingVesselCode) {
           
           stepData += `
-          #${item?.id}=Items_for_ordering_mr('${matchingVesselCode.vessel.vesselCode}','23/113','${item?.id}','','${item?.name}','','','','','','','0.00','${item?.unit}','${item?.quantity}','','','','','','','','');`;
-
+          #${index + 2}=Items_for_ordering_mr('${matchingVesselCode.vessel.vesselCode}','23/113','${index + 1}','','${item?.name}','','','','','','','0.00','${item?.unit}','${item?.quantity}','','','','','','','','');`;
+           
         }
       
       });
@@ -241,14 +246,18 @@ export class RequisitionslistComponent implements OnInit {
       // Convert the content to a Blob
       const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
   
+
       // Use FileSaver.js to save the file
-      saveAs(blob, 'notepad_file.txt');
+      saveAs(blob, 'Requisition_RTO.txt');
     return;
     }
     if(this.vesselcode.length != 0 && this.dataSource.data.length != 0){
-      this.items.forEach(item => {
+      stepData += `
+           #1=Requisition_ship_to_PO_step_1('${this.vesselcode}','23/113','','0','${currentDate}','','','Engine','','5012100','','','','','')`;
+
+      this.items.forEach((item ,index) => {
         stepData += `
-            #${item.id}=Items_for_ordering_mr('${this.vesselcode}','23/113','${item.id}','','${item.name}','','','','','','','0.00','${item.unit}','${item.quantity}','','','','','','','','');`;
+           #${index + 2}=Items_for_ordering_mr('${this.vesselcode}','23/113','${index + 1}','','${item.name}','','','','','','','0.00','${item.unit}','${item.quantity}','','','','','','','','');`;
 
       });
       stepData += `
@@ -258,7 +267,7 @@ export class RequisitionslistComponent implements OnInit {
       const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
   
       // Use FileSaver.js to save the file
-      saveAs(blob, 'notepad_file.txt');
+      saveAs(blob, 'Requisition_RTO.txt');
       return
     }
 
