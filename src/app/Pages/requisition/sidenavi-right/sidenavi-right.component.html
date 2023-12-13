@@ -271,6 +271,17 @@
             </div>
             <form (ngSubmit)="onSubmit(commentsForm)" [formGroup]="commentsForm">
                 <div class="modal-footer d-flex justify-content-end align-items-center">
+                    <div class="flex-grow-1">                        
+                        <label class="m-2">
+                            <input type="radio" formControlName="commentType" value="generic" [(ngModel)]="commentType" />
+                           Generic
+                        </label>
+                    
+                        <label>
+                            <input type="radio" formControlName="commentType" value="internal" [(ngModel)]="commentType" />
+                            Internal
+                        </label>
+                    </div>
                     <div class="flex-grow-1">
                         <input type="text" formControlName="commentData" class="form-control"
                             [(ngModel)]="selectedComment" />

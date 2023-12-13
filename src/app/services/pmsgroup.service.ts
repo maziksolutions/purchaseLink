@@ -328,6 +328,11 @@ AddStoreMaster(formData): Observable<any> {
   return this.httpClient.post<any>(this.linkurl + 'addStoreMaster', formData)
   .pipe(catchError(this.handleError));
 }
+// Get Store by shipId
+GetStoreByShipId(id):Observable<any>{
+  return this.httpClient.get<any>(this.linkurl + 'StoreLinkedGroups/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
 //#endregion
 
 

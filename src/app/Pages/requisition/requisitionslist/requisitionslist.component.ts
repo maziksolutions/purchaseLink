@@ -1,7 +1,7 @@
 import { SideNavService } from '../sidenavi-right/sidenavi-service';
 import { Subscription } from 'rxjs';
-import { Router, NavigationExtras } from '@angular/router';
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Router, NavigationExtras, NavigationEnd } from '@angular/router';
+import { Component, OnInit, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { RequisitionService } from 'src/app/services/requisition.service';
@@ -34,7 +34,7 @@ interface Item {
   templateUrl: './requisitionslist.component.html',
   styleUrls: ['./requisitionslist.component.css']
 })
-export class RequisitionslistComponent implements OnInit {
+export class RequisitionslistComponent implements OnInit,OnDestroy {
   RequisitionForm: FormGroup; flag; pkey: number = 0;
   selectedIndex: any;
   dataSource = new MatTableDataSource<any>();
@@ -58,7 +58,11 @@ export class RequisitionslistComponent implements OnInit {
 
   constructor(private sideNavService: SideNavService, private route: Router,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService,
-    private fb: FormBuilder, private requisitionService: RequisitionService,private swal: SwalToastService,private datePipe: DatePipe) { }
+    private fb: FormBuilder, private requisitionService: RequisitionService,private swal: SwalToastService,private datePipe: DatePipe) { this.route.events.subscribe((event)=>{
+      if(event instanceof NavigationEnd){
+        this.sideNavService.initSidenav();
+      }
+    })}
 
   get fm() { return this.RequisitionForm.controls };
 
@@ -73,6 +77,7 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
     this.RequisitionForm = this.fb.group({
       requisitionId: [0],
       originSite: ['', [Validators.required]],
@@ -91,6 +96,20 @@ export class RequisitionslistComponent implements OnInit {
 
     this.loadData(0);
     this.LoadVessel();
+
+    this.loadScript('assets/js/SideNavi.js');
+  }
+
+  ngOnDestroy(): void {
+    this.sideNavService.destroySidenav();
+  }
+ 
+  private loadScript(scriptUrl: string): void {
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = scriptUrl;
+    script.async = true;
+    document.body.appendChild(script);
   }
 
   editRequisition(row: any): void {
@@ -179,7 +198,7 @@ export class RequisitionslistComponent implements OnInit {
       .subscribe(response => {
         debugger;
         this.flag = status;
-
+        console.log(response.data)
         this.dataSource.data = response.data;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;

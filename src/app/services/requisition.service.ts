@@ -65,6 +65,9 @@ export class RequisitionService {
     return this.httpClient.get<any>(this.linkurl + 'getRequisitionMasterById/' + id, httpOptions)
       .pipe(catchError(this.handleError));
   }
+  getTempNumber(status):Observable<any>{
+    return this.httpClient.get<any[]>(`${this.linkurl}getTempHeaderNum/${status}`, httpOptions);
+  }
 
   getDeliveryInfoByReqId(id): Observable<any> {
     return this.httpClient.get<any>(this.linkurl + 'getDeliveryInfoByReqId/' + id, httpOptions)
@@ -72,8 +75,16 @@ export class RequisitionService {
   }
 
   getItemsInfo(data:string): Observable<any> {
-    debugger;
+    
     return this.httpClient.get<any[]>(`${this.linkurl}getItems/${data}`, httpOptions);
+  }
+  getGroupsInfo(data:string): Observable<any> {
+    
+    return this.httpClient.get<any[]>(`${this.linkurl}getGroups/${data}`, httpOptions);
+  }
+  getItemInfoByGroups(data:string):Observable<any> {
+    
+    return this.httpClient.get<any[]>(`${this.linkurl}getItemsByGroups/${data}`, httpOptions);
   }
 
   getDisplayItems(status): Observable<any> {
@@ -81,7 +92,7 @@ export class RequisitionService {
   }
 
   getSpareItemsById(ids): Observable<any> {
-    debugger;
+   
     const params = new HttpParams().set('ids', ids.join(','));
     return this.httpClient.get<any>(this.linkurl + 'getItems/', {params})
       .pipe(catchError(this.handleError));
@@ -101,7 +112,7 @@ export class RequisitionService {
   }
 
   getItemsByReqId(id:number): Observable<any> {
-    debugger;
+    
     return this.httpClient.get<any[]>(`${this.linkurl}getItemsByReqId/${id}`, httpOptions);
   }
 
