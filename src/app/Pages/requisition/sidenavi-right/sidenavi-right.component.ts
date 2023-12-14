@@ -55,26 +55,28 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
     this.isActive = this.sideNaviService.getActiveComponent();
 
     this.sideNaviService.commentTypeChange$.subscribe((commentType: string) => {
-     
-      this.comments=[];
+
+      this.comments = [];
       this.loadData(0, commentType);
     })
   }
 
   ngOnDestroy(): void {
 
-    this.destroy$.next();
-    this.destroy$.complete();
+    if (!this.destroy$.isStopped) {
+      this.destroy$.next();
+      this.destroy$.complete();
+    }
     this.sideNaviService.destroySidenav();
   }
 
   onSubmit(form: any) {
-    
+
     if (form.value.commentId == null) {
       form.value.commentId = 0;
     }
     if (this.commentsForm.valid) {
-      
+
       this.reqService.addComments(form.value)
         .subscribe(data => {
 
@@ -115,7 +117,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   }
 
   loadData(status: number, commentType?: string) {
-    
+
     // if (status == 1) {
     //   this.deletetooltip ='UnArchive';
     //   if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -132,13 +134,13 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
     // }
     this.reqService.getComments(status)
       .subscribe(response => {
-        
+
         this.flag = status;
         var data = response.data;
 
         data.map(res => { this.comments.push({ commentId: res.commentId, commentData: res.commentData, commentType: res.commentType }) });
         if (commentType)
-        this.comments = this.comments.filter(res => res.commentType == commentType);
+          this.comments = this.comments.filter(res => res.commentType == commentType);
         // this.dataSource.data = response.data;
 
         // this.dataSource.sort = this.sort;

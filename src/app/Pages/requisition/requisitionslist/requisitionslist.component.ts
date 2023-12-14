@@ -34,7 +34,7 @@ interface Item {
   templateUrl: './requisitionslist.component.html',
   styleUrls: ['./requisitionslist.component.css']
 })
-export class RequisitionslistComponent implements OnInit,OnDestroy {
+export class RequisitionslistComponent implements OnInit {
   RequisitionForm: FormGroup; flag; pkey: number = 0;
   selectedIndex: any;
   dataSource = new MatTableDataSource<any>();
@@ -58,16 +58,18 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
 
   constructor(private sideNavService: SideNavService, private route: Router,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService,
-    private fb: FormBuilder, private requisitionService: RequisitionService,private swal: SwalToastService,private datePipe: DatePipe) { this.route.events.subscribe((event)=>{
-      if(event instanceof NavigationEnd){
-        this.sideNavService.initSidenav();
-      }
-    })}
+    private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe) {
+    // this.route.events.subscribe((event) => {
+    //   if (event instanceof NavigationEnd) {
+    //     this.sideNavService.initSidenav();
+    //   }
+    // });
+  }
 
   get fm() { return this.RequisitionForm.controls };
-
+  
   navigateToNewReq() {
-    debugger;
+    
     this.sideNavService.destroySidenav();
 
     const navigationExtras: NavigationExtras = {
@@ -77,7 +79,8 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    
+    this.sideNavService.setActiveComponent(false);
+    this.sideNavService.initSidenav();
     this.RequisitionForm = this.fb.group({
       requisitionId: [0],
       originSite: ['', [Validators.required]],
@@ -100,10 +103,6 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
     this.loadScript('assets/js/SideNavi.js');
   }
 
-  ngOnDestroy(): void {
-    this.sideNavService.destroySidenav();
-  }
- 
   private loadScript(scriptUrl: string): void {
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -113,6 +112,7 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
   }
 
   editRequisition(row: any): void {
+    
     this.route.navigate(['/Requisition/RequisitionsNew', row.requisitionId]);
   }
 
@@ -208,6 +208,7 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
   }
 
   clear() {
+   
     this.RequisitionForm.reset();
     this.RequisitionForm.controls.requisitionId.setValue(0);
     this.RequisitionForm.controls.originSite.setValue('');
@@ -217,15 +218,13 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
     this.RequisitionForm.controls.orderReference.setValue('');
     this.RequisitionForm.controls.departmentId.setValue('');
     this.RequisitionForm.controls.priorityId.setValue('');
-    this.RequisitionForm.controls.projectNameCodeId.setValue('');
+    this.RequisitionForm.controls.projectNameCodeId.setValue('');    
     this.route.navigate(['/Requisition/RequisitionsNew'])
-
-
   }
 
   downloadNotepad() {
-    let CurtDate = new Date ;
-   let  currentDate = this.datePipe.transform(CurtDate, 'yyyyMMdd');
+    let CurtDate = new Date;
+    let currentDate = this.datePipe.transform(CurtDate, 'yyyyMMdd');
     let stepData = `ISO-10303-21;
     HEADER;
     FILE_DESCRIPTION(('Requisition data transfer in StarIPS');
@@ -233,14 +232,14 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
     ENDSEC;
     DATA;`;
 
-    
+
     this.vesselcode = this.Vessels.filter(x => x.vesselId == this.selectedVesselId).map(x => x.vesselCode);
 
     // Ensure that the items array is unique based on some identifier
     const uniqueItems = Array.from(new Set(this.items.map(item => item.id)))
       .map(id => this.items.find(item => item.id === id));
     console.log(uniqueItems)
-   
+
     // Generate dynamic data based on the items array
 
     if (this.vesselcode.length == 0) {
@@ -248,53 +247,53 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
       stepData += `
           #1=Requisition_ship_to_PO_step_1('','23/113','','0','${currentDate}','','','Engine','','5012100','','','','','')`;
 
-      uniqueItems.forEach((item ,index)=> {
-        
+      uniqueItems.forEach((item, index) => {
+
         const matchingVesselCode = this.vesselcode.find(vessel => vessel.requisitionId === item?.id);
         if (matchingVesselCode) {
-          
+
           stepData += `
           #${index + 2}=Items_for_ordering_mr('${matchingVesselCode.vessel.vesselCode}','23/113','${index + 1}','','${item?.name}','','','','','','','0.00','${item?.unit}','${item?.quantity}','','','','','','','','');`;
-           
+
         }
-      
+
       });
       stepData += `
       ENDSEC;`;
-  
+
       // Convert the content to a Blob
       const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
-  
+
 
       // Use FileSaver.js to save the file
       saveAs(blob, 'Requisition_RTO.txt');
-    return;
+      return;
     }
-    if(this.vesselcode.length != 0 && this.dataSource.data.length != 0){
+    if (this.vesselcode.length != 0 && this.dataSource.data.length != 0) {
       stepData += `
            #1=Requisition_ship_to_PO_step_1('${this.vesselcode}','23/113','','0','${currentDate}','','','Engine','','5012100','','','','','')`;
 
-      this.items.forEach((item ,index) => {
+      this.items.forEach((item, index) => {
         stepData += `
            #${index + 2}=Items_for_ordering_mr('${this.vesselcode}','23/113','${index + 1}','','${item.name}','','','','','','','0.00','${item.unit}','${item.quantity}','','','','','','','','');`;
 
       });
       stepData += `
       ENDSEC;`;
-  
+
       // Convert the content to a Blob
       const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
-  
+
       // Use FileSaver.js to save the file
       saveAs(blob, 'Requisition_RTO.txt');
       return
     }
 
-    else{
+    else {
       this.swal.error('This selected vessel has no Requisition Data.');
 
     }
-   
+
   }
 
 }

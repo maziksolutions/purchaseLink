@@ -21,17 +21,11 @@ export class SideNavService {
   commentTypeChange$ = this.commentTypeChangeSource.asObservable();
 
   constructor(private route: Router,private rendererFactory: RendererFactory2) {
-    this.renderer = rendererFactory.createRenderer(null, null);
-
-    this.route.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.initSidenav();
-    });
+    this.renderer = rendererFactory.createRenderer(null, null);    
   }
 
   initSidenav() {
-
+    
     if (!this.sideNavInitialized) {
       this.loadExternalScript('assets/js/SideNavi.js').then(()=>{
         SideNavi.init('right', {
@@ -51,8 +45,8 @@ export class SideNavService {
   }
 
   destroySidenav() {
-    if (this.sideNavInitialized) {
-      SideNavi.destroy();
+    
+    if (this.sideNavInitialized) {      
       this.sideNavInitialized = false;
     }
   }
