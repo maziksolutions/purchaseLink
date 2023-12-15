@@ -196,9 +196,8 @@ export class RequisitionslistComponent implements OnInit {
     }
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
-        debugger;
-        this.flag = status;
-        console.log(response.data)
+        
+        this.flag = status;        
         this.dataSource.data = response.data;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;

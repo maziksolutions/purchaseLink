@@ -75,7 +75,7 @@ export class RequisitionService {
   }
 
   getItemsInfo(data:string): Observable<any> {
-    debugger
+    
     return this.httpClient.get<any[]>(`${this.linkurl}getItems/${data}`, httpOptions);
   }
   getGroupsInfo(data:string): Observable<any> {

@@ -692,7 +692,7 @@
 
                       </div>
                       <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-8">
                           <div class="table-responsive scrollbar-visible">
                             <table class="table table-hover table-striped table-sm small">
                               <thead>
@@ -716,18 +716,18 @@
                                         [checked]="leftTableSelection.isSelected(row)"
                                         [aria-label]="checkboxLeftTableLabel(row)"></mat-checkbox>
                                     </mat-cell>
-                                  </ng-container>
-                                  <ng-container matColumnDef="inventoryCode">
-                                    <mat-header-cell *matHeaderCellDef>Part Id</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.itemCode }}</mat-cell>
-                                  </ng-container>
+                                  </ng-container>                                  
                                   <ng-container matColumnDef="inventoryName">
                                     <mat-header-cell *matHeaderCellDef>Part Name</mat-header-cell>
                                     <mat-cell *matCellDef="let row">{{ row.itemName }}</mat-cell>
                                   </ng-container>
                                   <ng-container matColumnDef="partNo">
-                                    <mat-header-cell *matHeaderCellDef>Mfg Part No.</mat-header-cell>
+                                    <mat-header-cell *matHeaderCellDef>Part No.</mat-header-cell>
                                     <mat-cell *matCellDef="let row">{{ row.part }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container matColumnDef="dwg">
+                                    <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.itemCode }}</mat-cell>
                                   </ng-container>
                                   <ng-container matColumnDef="quantity">
                                     <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
@@ -735,6 +735,14 @@
                                   </ng-container>
                                   <ng-container matColumnDef="availableQty">
                                     <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.availableQty }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container matColumnDef="minRequired">
+                                    <mat-header-cell *matHeaderCellDef>Min Required</mat-header-cell>
+                                    <mat-cell *matCellDef="let row">{{ row.availableQty }}</mat-cell>
+                                  </ng-container>
+                                  <ng-container matColumnDef="reorderLevel">
+                                    <mat-header-cell *matHeaderCellDef>Reorder Level</mat-header-cell>
                                     <mat-cell *matCellDef="let row">{{ row.availableQty }}</mat-cell>
                                   </ng-container>
                                   <mat-header-row class="bg-300"
@@ -747,18 +755,18 @@
                           </div>
                         </div>
 
-                        <div class="col-md-2">
-                          <button type="button" (click)="moveItemsToRight()" id="multiselect_rightSelected"
+                        <div class="col-md-1">
+                          <button type="button" (click)="moveItemToRight()" [disabled]="leftTableDataSource.data.length === 0" id="multiselect_rightSelected"
                             class="btn w-100 btn-primary mb-1"><i class="fas fa-angle-right"></i></button>
-                          <button type="button" (click)="moveItemsToLeft()" id="multiselect_leftSelected"
+                          <button type="button" (click)="moveItemToLeft()" id="multiselect_leftSelected" [disabled]="rightTableDataSource.data.length === 0"
                             class="btn w-100 btn-primary mb-1"><i class="fas fa-angle-left"></i></button>
-                          <button type="button" id="multiselect_rightAll" class="btn w-100 btn-primary mb-1"><i
+                          <button type="button" id="multiselect_rightAll" [disabled]="leftTableDataSource.data.length === 0" (click)="moveAllItemToRight()" class="btn w-100 btn-primary mb-1"><i
                               class="fas fa-angle-double-right"></i></button>
-                          <button type="button" id="multiselect_leftAll" class="btn w-100 btn-primary"><i
+                          <button type="button" id="multiselect_leftAll" [disabled]="rightTableDataSource.data.length === 0" (click)="moveAllItemToLeft()" class="btn w-100 btn-primary"><i
                               class="fas fa-angle-double-left"></i></button>
                         </div>
 
-                        <div class="col-md-5">
+                        <div class="col-md-3">
                           <div class="table-responsive scrollbar-visible">
                             <table class="table table-hover table-striped table-sm small">
                               <thead>
@@ -791,30 +799,15 @@
                                       *matCellDef="let row">
                                       <input matInput placeholder="Enter data" [(ngModel)]="row.userInput">
                                     </mat-cell>
-                                  </ng-container>
-                                  <ng-container class="rightTableCode" matColumnDef="inventoryCode">
-                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part Id</mat-header-cell>
-                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{ row.itemCode }}</mat-cell>
-                                  </ng-container>
-                                  <ng-container class="rightTableCode" matColumnDef="inventoryName">
-                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part
-                                      Name</mat-header-cell>
-                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{row.itemName }}</mat-cell>
-                                  </ng-container>
+                                  </ng-container> 
                                   <ng-container class="rightTableCode" matColumnDef="partNo">
-                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Mfg
-                                      PartNo.</mat-header-cell>
+                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>PartNo.</mat-header-cell>
                                     <mat-cell class="rightTableCode" *matCellDef="let row">{{ row.part }}</mat-cell>
-                                  </ng-container>
-                                  <ng-container class="rightTableNo" matColumnDef="quantity">
-                                    <mat-header-cell class="rightTableNo" *matHeaderCellDef>ROB</mat-header-cell>
-                                    <mat-cell class="rightTableNo" *matCellDef="let row">{{ row.rob }}</mat-cell>
-                                  </ng-container>
-                                  <ng-container class="rightTableNo" matColumnDef="availableQty">
-                                    <mat-header-cell class="rightTableNo" *matHeaderCellDef>Unit</mat-header-cell>
-                                    <mat-cell class="rightTableNo" *matCellDef="let row">{{ row.availableQty
-                                      }}</mat-cell>
-                                  </ng-container>
+                                  </ng-container>                                 
+                                  <ng-container class="rightTableCode" matColumnDef="inventoryName">
+                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part Name</mat-header-cell>
+                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{row.itemName }}</mat-cell>
+                                  </ng-container>                                  
                                   <mat-header-row class="bg-300"
                                     *matHeaderRowDef="rightTableColumn; sticky:true"></mat-header-row>
                                   <mat-row *matRowDef="let row; columns: rightTableColumn; let i = index"

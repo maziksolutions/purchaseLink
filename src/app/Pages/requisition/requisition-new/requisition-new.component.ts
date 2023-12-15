@@ -59,8 +59,8 @@ export class RequisitionNewComponent implements OnInit {
 
   RequisitionForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'enterQuantity', 'rob', 'remarks'];
-  leftTableColumn: string[] = ['checkbox', 'inventoryCode', 'inventoryName', 'partNo', 'quantity', 'availableQty'];
-  rightTableColumn: string[] = ['checkbox', 'userInput', 'inventoryCode', 'inventoryName', 'partNo', 'quantity', 'availableQty'];
+  leftTableColumn: string[] = ['checkbox', 'inventoryName', 'partNo', 'dwg', 'quantity', 'availableQty', 'minRequired', 'reorderLevel'];
+  rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];
   componentTableColumn: string[] = ['checkbox', 'shipComponentName'];
   groupTableColumn: string[] = ['checkbox', 'groupName'];
   dataSource = new MatTableDataSource<any>();
@@ -379,7 +379,7 @@ export class RequisitionNewComponent implements OnInit {
   getReqData() {
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
-        debugger;
+
         const requisitionData = response.data;
         const formPart = this.RequisitionForm.get('header');
 
@@ -416,12 +416,12 @@ export class RequisitionNewComponent implements OnInit {
         this.selectedVesselId = requisitionData.vesselId;
 
         this.loadOrderTypeInEdit().subscribe(res => {
-          debugger
+
           this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(requisitionData.orderTypeId)).map(x => x.defaultOrderType);
           const objProcR = requisitionData.orderReference ? requisitionData.orderReference.split(',') : [];
           if (this.defaultOrderType[0] === 'Spare')
             this.LoadShipCompnentList().subscribe(res => {
-              debugger
+
               const selectedItems = this.componentsDataSourse.data.filter(item => objProcR.includes(item.shipComponentId.toString()));
               this.RequisitionForm.get('header')?.patchValue({
                 orderReference: selectedItems.map(item => item.shipComponentName).join(', ')
@@ -432,7 +432,7 @@ export class RequisitionNewComponent implements OnInit {
             })
           else if (this.defaultOrderType[0] === 'Store')
             this.loadGroupList().subscribe(res => {
-              debugger
+
               const selectedItems = this.groupTableDataSource.data.filter(item => objProcR.includes(item.pmsGroupId.toString()));
               this.RequisitionForm.get('header')?.patchValue({
                 orderReference: selectedItems.map(item => item.groupName).join(', ')
@@ -461,7 +461,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   updateDocumentHeader(requisitionData: any) {
-    debugger
+
     this.headsite = requisitionData.originSite === 'Office' ? 'O' : 'V';
     this.headCode = requisitionData.originSite === 'Office' ? 'OFF' : this.headCode[0];
 
@@ -472,7 +472,7 @@ export class RequisitionNewComponent implements OnInit {
       this.headserialNumber = headerSerialNumber;
     }
     this.zone.run(() => {
-      debugger
+
       this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
       if (this.defaultOrderType[0] === 'Spare') {
         this.getSpareItems('Component', requisitionData.orderReference);
@@ -524,7 +524,6 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   loadGroupList() {
-    debugger
     if (this.selectedVesselId)
       debugger
     return this.pmsService.GetStoreByShipId(this.selectedVesselId).pipe(map(res => {
@@ -540,7 +539,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   LoadOrdertype() {
-    debugger
+
     this.purchaseService.getOrderTypes(0)
       .subscribe(response => {
         this.orderTypes = response.data;
@@ -651,7 +650,6 @@ export class RequisitionNewComponent implements OnInit {
     this.vesselService.getVessels(0)
       .subscribe(response => {
         this.Vessels = response.data;
-        console.log(this.Vessels);
       })
   }
   LoadDepartment() {
@@ -704,7 +702,7 @@ export class RequisitionNewComponent implements OnInit {
 
   LoadheadorderType() {
     this.zone.run(() => {
-      debugger
+
       this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
       this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
 
@@ -737,8 +735,6 @@ export class RequisitionNewComponent implements OnInit {
     if (itemType === 'Component') {
       this.requisitionService.getItemsInfo(ids)
         .subscribe(res => {
-          console.log(res)
-
           this.leftTableDataSource.data = res.map(item => ({
             itemsId: item.shipSpares.shipSpareId,
             itemCode: item.shipSpares.inventoryCode,
@@ -755,7 +751,6 @@ export class RequisitionNewComponent implements OnInit {
     } else if (itemType === 'Group') {
       this.requisitionService.getGroupsInfo(ids).subscribe(res => {
         this.leftTableDataSource.data = res;
-        console.log(res)
         this.leftTableDataSource.data = res.map(item => ({
           itemsId: item.shipStoreId,
           itemCode: item.inventoryCode,
@@ -776,29 +771,48 @@ export class RequisitionNewComponent implements OnInit {
 
     })
   }
-  moveItemsToRight() {
+  moveItemToRight(): void {
 
-    const selectedItems = this.leftTableDataSource.data.filter(item => this.leftTableSelection.isSelected(item));
+    const selectedItems = this.leftTableSelection.selected.length > 0
+      ? this.leftTableSelection.selected
+      : [this.leftTableDataSource.data[0]];
 
-    this.rightTableDataSource.data = [...this.rightTableDataSource.data, ...selectedItems];
-
-    this.leftTableDataSource.data = this.leftTableDataSource.data.filter(item => !this.leftTableSelection.isSelected(item));
-
-    this.leftTableSelection.clear();
+    if (selectedItems[0] != undefined) {
+      this.rightTableDataSource.data = this.rightTableDataSource.data.concat(selectedItems);
+      this.leftTableDataSource.data = this.leftTableDataSource.data.filter(item => !selectedItems.includes(item));
+      this.leftTableSelection.clear();
+    }
+  }
+  moveAllItemToRight():void{
+    debugger
+    const newData = this.rightTableDataSource.data.concat(this.leftTableDataSource.data);
+    this.rightTableDataSource.data = newData;
+    this.leftTableDataSource.data = [];
+    this.leftTableDataSource._updateChangeSubscription();
   }
 
-  moveItemsToLeft() {
-    const selectedItems = this.rightTableDataSource.data.filter(item => this.rightTableSelection.isSelected(item));
+  moveItemToLeft(): void {
+    debugger
+    const selectedItems = this.rightTableSelection.selected.length > 0
+      ? this.rightTableSelection.selected
+      : [this.rightTableDataSource.data[0]];
 
-    this.leftTableDataSource.data = [...this.leftTableDataSource.data, ...selectedItems];
-
-    this.rightTableDataSource.data = this.rightTableDataSource.data.filter(item => !this.rightTableSelection.isSelected(item));
-
-    this.rightTableSelection.clear();
+    if (selectedItems[0] != undefined) {
+      this.leftTableDataSource.data = this.leftTableDataSource.data.concat(selectedItems);
+      this.rightTableDataSource.data = this.rightTableDataSource.data.filter(item => !selectedItems.includes(item));
+      this.rightTableSelection.clear();
+    }
+  }
+  moveAllItemToLeft():void{
+    debugger
+    const newData = this.leftTableDataSource.data.concat(this.rightTableDataSource.data);
+    this.leftTableDataSource.data = newData;
+    this.rightTableDataSource.data = [];
+    this.rightTableDataSource._updateChangeSubscription();   
   }
 
   storeTableData() {
-    debugger;
+    debugger
     const itemsToAdd: {
       ItemCode: string;
       ItemName: string;
@@ -812,31 +826,28 @@ export class RequisitionNewComponent implements OnInit {
       PMReqId: number;
     }[] = [];
     this.rightTableDataSource.data.forEach((item, index) => {
-      if (this.rightTableSelection.isSelected(item)) {
 
-        const enterQuantity = item.userInput ? +item.userInput : 0;
+      const enterQuantity = item.userInput ? +item.userInput : 0;
 
-        const newItem = {
-          ItemCode: item.itemCode,
-          ItemName: item.itemName,
-          Part: item.part,
-          DWG: item.dwg,
-          Make: item.make,
-          Model: item.model,
-          EnterQuantity: enterQuantity,
-          ROB: item.rob,
-          Remarks: item.remarks,
-          PMReqId: this.reqId
-        };
+      const newItem = {
+        ItemCode: item.itemCode,
+        ItemName: item.itemName,
+        Part: item.part,
+        DWG: item.dwg,
+        Make: item.make,
+        Model: item.model,
+        EnterQuantity: enterQuantity,
+        ROB: item.rob,
+        Remarks: item.remarks,
+        PMReqId: this.reqId
+      };
 
-        itemsToAdd.push(newItem);
-      }
+      itemsToAdd.push(newItem);
+
     });
 
-    this.rightTableDataSource.data = this.rightTableDataSource.data.filter(item => !this.rightTableSelection.isSelected(item));
+    this.rightTableDataSource.data = [];
     this.rightTableDataSource._updateChangeSubscription();
-
-    this.rightTableSelection.clear();
 
     if (itemsToAdd.length > 0) {
       this.requisitionService.addItemsInfo(itemsToAdd).subscribe(res => {
@@ -910,7 +921,7 @@ export class RequisitionNewComponent implements OnInit {
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
           // this.clear();
-          (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+          // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
         });
   }
 
