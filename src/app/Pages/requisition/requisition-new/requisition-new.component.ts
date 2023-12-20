@@ -55,12 +55,12 @@ export interface componentTableItems {
   templateUrl: './requisition-new.component.html',
   styleUrls: ['./requisition-new.component.css']
 })
-export class RequisitionNewComponent implements OnInit ,OnDestroy{
+export class RequisitionNewComponent implements OnInit {
 
   RequisitionForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'enterQuantity', 'rob', 'remarks'];
-  leftTableColumn: string[] = ['checkbox', 'inventoryCode', 'inventoryName', 'partNo', 'quantity', 'availableQty'];
-  rightTableColumn: string[] = ['checkbox', 'userInput', 'inventoryCode', 'inventoryName', 'partNo', 'quantity', 'availableQty'];
+  leftTableColumn: string[] = ['checkbox', 'inventoryName', 'partNo', 'dwg', 'quantity', 'availableQty', 'minRequired', 'reorderLevel'];
+  rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];
   componentTableColumn: string[] = ['checkbox', 'shipComponentName'];
   groupTableColumn: string[] = ['checkbox', 'groupName'];
   dataSource = new MatTableDataSource<any>();
@@ -90,7 +90,7 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
   Departments: any;
   selectedVesselId: any = '0';
   selectedOrderTypeId: any = '0';
-  Shipcomponent: any;
+  // Shipcomponent: any;
   portList: any;
   deliveryForm: FormGroup;
   genericCheckbox: boolean = false;
@@ -122,8 +122,6 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
 
   isHeaderCheckboxChecked = false;
 
-  comName = true;
-
   defaultOrderType = '';
 
   selectedComponents: componentTableItems[] = [];
@@ -132,14 +130,10 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
     private authStatusService: AuthStatusService, private userService: UserManagementService, private autoSaveService: AutoSaveService,
     private vesselService: VesselManagementService, private shipmasterService: ShipmasterService, private requisitionService: RequisitionService,
-  ) { this.router.events.subscribe((event)=>{
-    if(event instanceof NavigationEnd){
-      this.sideNavService.initSidenav();
-    }
-  })}
+  ) { }
 
-  ngOnInit(): void {    
-    
+  ngOnInit(): void {
+    this.sideNavService.initSidenav();
     this.userId = this.authStatusService.userId();
     this.reqGetId = this.route.snapshot.paramMap.get('requisitionId');
 
@@ -166,8 +160,6 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
 
     this.loadData(0);
 
-    this.sideNavService.setActiveComponent(this.comName);
-
     this.sortItems();
     this.generateTempNumber();
     this.sideNavService.setActiveComponent(true);
@@ -190,19 +182,15 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
 
   generateTempNumber() {
     this.requisitionService.getTempNumber(0).subscribe(res => {
-      debugger
-      console.log(res.data);
       if (!this.reqGetId) {
-        var formattedNumber = parseInt(res.data.documentHeader[2])
+
+        var formattedNumber = parseInt(res.data.documentHeader)
         formattedNumber++;
         this.temporaryNumber = formattedNumber.toString().padStart(3, '0');
       }
     })
   }
 
-  ngOnDestroy(): void {
-    this.sideNavService.destroySidenav();
-  }
   initForm(): void {
     this.RequisitionForm = this.fb.group({
       header: this.fb.group({
@@ -252,7 +240,7 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
   }
 
   autoSave(partName: string): void {
-    debugger
+
     if (partName == 'header') {
 
       const formPart = this.RequisitionForm.get(partName);
@@ -262,7 +250,7 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
       }
 
       const { displayValue, saveValue } = this.formatSelectedComponents();
-      formPart?.get('orderReference')?.setValue(displayValue);
+      // formPart?.get('orderReference')?.setValue(displayValue);
 
       formPart?.patchValue({
         requisitionId: formPart?.value.requisitionId,
@@ -279,12 +267,11 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
         genericComment: this.commetType == 'generic' ? true : false,
         internalComment: this.commetType == 'internal' ? true : false
       });
-
-      if (partName == 'header' && formPart != null && formPart.valid) {
+      if (partName == 'header' && formPart != null && formPart.valid && (formPart.value.genericComment || formPart.value.internalComment)) {
 
         const formData = new FormData();
         formData.append('data', JSON.stringify(formPart.value))
-
+        formPart?.get('orderReference')?.setValue(displayValue);
         this.requisitionService.addRequisitionMaster(formData)
           .subscribe(data => {
             if (data.message == "data added") {
@@ -314,6 +301,7 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
               this.swal.error('An error occurred. Please try again.');
             })
       }
+      formPart?.get('orderReference')?.setValue(displayValue);
     }
     else if (partName == 'delivery') {
 
@@ -391,7 +379,7 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
   getReqData() {
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
-        debugger;
+
         const requisitionData = response.data;
         const formPart = this.RequisitionForm.get('header');
 
@@ -417,53 +405,63 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
         this.genericCheckbox = requisitionData.genericComment === true;
         this.internalCheckbox = requisitionData.internalComment === true;
 
+        if (this.genericCheckbox)
+          this.sideNavService.setCommetType('generic');
+        else if (this.internalCheckbox)
+          this.sideNavService.setCommetType('internal');
+
         this.reqId = requisitionData.requisitionId;
         this.loadDeliveryInfo();
 
         this.selectedVesselId = requisitionData.vesselId;
 
-        this.LoadOrdertype()
+        this.loadOrderTypeInEdit().subscribe(res => {
 
-        // Load ship components and then process orderReference
-        this.LoadShipCompnentList().subscribe(shipComponentResponse => {
-          debugger;
-          const shipComponentData = shipComponentResponse.data;
-
+          this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(requisitionData.orderTypeId)).map(x => x.defaultOrderType);
           const objProcR = requisitionData.orderReference ? requisitionData.orderReference.split(',') : [];
-          const selectedItems = this.componentsDataSourse.data.filter(item => objProcR.includes(item.shipComponentId.toString()));
-          if (selectedItems.length > 0) {
-            debugger
-            this.RequisitionForm.get('header')?.patchValue({
-              orderReference: selectedItems.map(item => item.shipComponentName).join(', ')
-            });
-          } else {
-            this.loadGroupList().subscribe(groupItems => {
-              debugger
-              const groupData = groupItems.data;
+          if (this.defaultOrderType[0] === 'Spare')
+            this.LoadShipCompnentList().subscribe(res => {
+
+              const selectedItems = this.componentsDataSourse.data.filter(item => objProcR.includes(item.shipComponentId.toString()));
+              this.RequisitionForm.get('header')?.patchValue({
+                orderReference: selectedItems.map(item => item.shipComponentName).join(', ')
+              });
+              const componentIds = selectedItems.map(item => item.shipComponentId);
+              const id = componentIds.join(', ');
+              this.getSpareItems('Component', id)
+            })
+          else if (this.defaultOrderType[0] === 'Store')
+            this.loadGroupList().subscribe(res => {
+
               const selectedItems = this.groupTableDataSource.data.filter(item => objProcR.includes(item.pmsGroupId.toString()));
               this.RequisitionForm.get('header')?.patchValue({
                 orderReference: selectedItems.map(item => item.groupName).join(', ')
               });
-            });
-          }
+              const groupIds = selectedItems.map(item => item.pmsGroupId);
+              const id = groupIds.join(', ');
+              this.getSpareItems('Group', id)
+            })
 
           this.RequisitionForm.get('header')?.patchValue({ orderTypeId: requisitionData.orderTypeId });
+          this.cdr.detectChanges();
+        })
+
+        //   this.RequisitionForm.get('header')?.patchValue({ orderTypeId: requisitionData.orderTypeId });
+
+        //   debugger
+        //   this.headCode = this.Vessels.filter(x => x.vesselId === parseInt(this.selectedVesselId)).map(x => x.vesselCode);
 
 
-          debugger
-          this.headCode = this.Vessels.filter(x => x.vesselId === parseInt(this.selectedVesselId)).map(x => x.vesselCode);
+        //   this.updateDocumentHeader(requisitionData);
+
+        //   //  this.LoadheadorderType();
 
 
-          this.updateDocumentHeader(requisitionData);
-
-          //  this.LoadheadorderType();
-
-        });
       });
   }
 
   updateDocumentHeader(requisitionData: any) {
-    debugger
+
     this.headsite = requisitionData.originSite === 'Office' ? 'O' : 'V';
     this.headCode = requisitionData.originSite === 'Office' ? 'OFF' : this.headCode[0];
 
@@ -474,7 +472,7 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
       this.headserialNumber = headerSerialNumber;
     }
     this.zone.run(() => {
-      debugger
+
       this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
       if (this.defaultOrderType[0] === 'Spare') {
         this.getSpareItems('Component', requisitionData.orderReference);
@@ -526,7 +524,6 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
   }
 
   loadGroupList() {
-    debugger
     if (this.selectedVesselId)
       debugger
     return this.pmsService.GetStoreByShipId(this.selectedVesselId).pipe(map(res => {
@@ -534,8 +531,15 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
       return { data: this.groupTableDataSource.data };
     }));
   }
+  loadOrderTypeInEdit() {
+    return this.purchaseService.getOrderTypes(0).pipe(map(res => {
+      this.orderTypes = res.data;
+      return { data: this.orderTypes }
+    }))
+  }
 
   LoadOrdertype() {
+
     this.purchaseService.getOrderTypes(0)
       .subscribe(response => {
         this.orderTypes = response.data;
@@ -544,7 +548,13 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
           this.LoadShipCompnent();
         else if (this.defaultOrderType[0] === 'Store')
           this.loadGroupsComponent()
-      })
+
+        this.cdr.detectChanges();
+      },
+        error => {
+          console.error('Error loading order types:', error);
+        }
+      )
   }
 
   LoadProjectnameAndcode() {
@@ -614,8 +624,8 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
           this.LoadVessel();
           this.loadPortList();
           this.getReqData();
-          this.LoadShipCompnent();
-          this.LoadOrdertype();
+          // this.LoadShipCompnent();
+          // this.LoadOrdertype();
           this.LoadProjectnameAndcode();
           this.LoadPriority();
           this.LoadDepartment();
@@ -640,7 +650,6 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
     this.vesselService.getVessels(0)
       .subscribe(response => {
         this.Vessels = response.data;
-        console.log(this.Vessels);
       })
   }
   LoadDepartment() {
@@ -664,11 +673,11 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
       .subscribe(response => {
         this.componentsDataSourse.data = response.data;
 
-        this.Shipcomponent = response.data.map(item => ({
-          accountCode: item.accountCode,
-          shipComponentId: item.shipComponentId,
-          shipComponentName: item.shipComponentName
-        }));
+        // this.Shipcomponent = response.data.map(item => ({
+        //   accountCode: item.accountCode,
+        //   shipComponentId: item.shipComponentId,
+        //   shipComponentName: item.shipComponentName
+        // }));
         if (this.headsite == 'V') {
           this.headCode = this.Vessels.filter(x => x.vesselId === parseInt(this.selectedVesselId)).map(x => x.vesselCode);
         }
@@ -693,7 +702,7 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
 
   LoadheadorderType() {
     this.zone.run(() => {
-      debugger
+
       this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
       this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
 
@@ -726,8 +735,6 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
     if (itemType === 'Component') {
       this.requisitionService.getItemsInfo(ids)
         .subscribe(res => {
-          console.log(res)
-
           this.leftTableDataSource.data = res.map(item => ({
             itemsId: item.shipSpares.shipSpareId,
             itemCode: item.shipSpares.inventoryCode,
@@ -744,7 +751,6 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
     } else if (itemType === 'Group') {
       this.requisitionService.getGroupsInfo(ids).subscribe(res => {
         this.leftTableDataSource.data = res;
-        console.log(res)
         this.leftTableDataSource.data = res.map(item => ({
           itemsId: item.shipStoreId,
           itemCode: item.inventoryCode,
@@ -765,29 +771,48 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
 
     })
   }
-  moveItemsToRight() {
+  moveItemToRight(): void {
 
-    const selectedItems = this.leftTableDataSource.data.filter(item => this.leftTableSelection.isSelected(item));
+    const selectedItems = this.leftTableSelection.selected.length > 0
+      ? this.leftTableSelection.selected
+      : [this.leftTableDataSource.data[0]];
 
-    this.rightTableDataSource.data = [...this.rightTableDataSource.data, ...selectedItems];
-
-    this.leftTableDataSource.data = this.leftTableDataSource.data.filter(item => !this.leftTableSelection.isSelected(item));
-
-    this.leftTableSelection.clear();
+    if (selectedItems[0] != undefined) {
+      this.rightTableDataSource.data = this.rightTableDataSource.data.concat(selectedItems);
+      this.leftTableDataSource.data = this.leftTableDataSource.data.filter(item => !selectedItems.includes(item));
+      this.leftTableSelection.clear();
+    }
+  }
+  moveAllItemToRight():void{
+    debugger
+    const newData = this.rightTableDataSource.data.concat(this.leftTableDataSource.data);
+    this.rightTableDataSource.data = newData;
+    this.leftTableDataSource.data = [];
+    this.leftTableDataSource._updateChangeSubscription();
   }
 
-  moveItemsToLeft() {
-    const selectedItems = this.rightTableDataSource.data.filter(item => this.rightTableSelection.isSelected(item));
+  moveItemToLeft(): void {
+    debugger
+    const selectedItems = this.rightTableSelection.selected.length > 0
+      ? this.rightTableSelection.selected
+      : [this.rightTableDataSource.data[0]];
 
-    this.leftTableDataSource.data = [...this.leftTableDataSource.data, ...selectedItems];
-
-    this.rightTableDataSource.data = this.rightTableDataSource.data.filter(item => !this.rightTableSelection.isSelected(item));
-
-    this.rightTableSelection.clear();
+    if (selectedItems[0] != undefined) {
+      this.leftTableDataSource.data = this.leftTableDataSource.data.concat(selectedItems);
+      this.rightTableDataSource.data = this.rightTableDataSource.data.filter(item => !selectedItems.includes(item));
+      this.rightTableSelection.clear();
+    }
+  }
+  moveAllItemToLeft():void{
+    debugger
+    const newData = this.leftTableDataSource.data.concat(this.rightTableDataSource.data);
+    this.leftTableDataSource.data = newData;
+    this.rightTableDataSource.data = [];
+    this.rightTableDataSource._updateChangeSubscription();   
   }
 
   storeTableData() {
-    debugger;
+    debugger
     const itemsToAdd: {
       ItemCode: string;
       ItemName: string;
@@ -801,31 +826,28 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
       PMReqId: number;
     }[] = [];
     this.rightTableDataSource.data.forEach((item, index) => {
-      if (this.rightTableSelection.isSelected(item)) {
 
-        const enterQuantity = item.userInput ? +item.userInput : 0;
+      const enterQuantity = item.userInput ? +item.userInput : 0;
 
-        const newItem = {
-          ItemCode: item.itemCode,
-          ItemName: item.itemName,
-          Part: item.part,
-          DWG: item.dwg,
-          Make: item.make,
-          Model: item.model,
-          EnterQuantity: enterQuantity,
-          ROB: item.rob,
-          Remarks: item.remarks,
-          PMReqId: this.reqId
-        };
+      const newItem = {
+        ItemCode: item.itemCode,
+        ItemName: item.itemName,
+        Part: item.part,
+        DWG: item.dwg,
+        Make: item.make,
+        Model: item.model,
+        EnterQuantity: enterQuantity,
+        ROB: item.rob,
+        Remarks: item.remarks,
+        PMReqId: this.reqId
+      };
 
-        itemsToAdd.push(newItem);
-      }
+      itemsToAdd.push(newItem);
+
     });
 
-    this.rightTableDataSource.data = this.rightTableDataSource.data.filter(item => !this.rightTableSelection.isSelected(item));
+    this.rightTableDataSource.data = [];
     this.rightTableDataSource._updateChangeSubscription();
-
-    this.rightTableSelection.clear();
 
     if (itemsToAdd.length > 0) {
       this.requisitionService.addItemsInfo(itemsToAdd).subscribe(res => {
@@ -899,7 +921,7 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
           // this.clear();
-          (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+          // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
         });
   }
 
@@ -921,7 +943,7 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
 
   //#region this is for GroupItems Table Checkbox handling code 
   isAllGroupSelected() {
-    debugger
+
     const numSelected = this.groupSelection.selected.length;
     const numRows = !!this.groupTableDataSource && this.groupTableDataSource.data.length;
     return numSelected === numRows;
@@ -989,7 +1011,7 @@ export class RequisitionNewComponent implements OnInit ,OnDestroy{
   }
 
   isAllCompSelected() {
-    debugger
+
     const numSelected = this.componentSelection.selected.length;
     const numRows = this.getItemsWithSameAccountCode();
     return numSelected === numRows.length;

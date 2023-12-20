@@ -35,7 +35,7 @@ interface Item {
   templateUrl: './requisitionslist.component.html',
   styleUrls: ['./requisitionslist.component.css']
 })
-export class RequisitionslistComponent implements OnInit,OnDestroy {
+export class RequisitionslistComponent implements OnInit {
   RequisitionForm: FormGroup; flag; pkey: number = 0;
   selectedIndex: any;
   dataSource = new MatTableDataSource<any>();
@@ -69,9 +69,9 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
     })}
 
   get fm() { return this.RequisitionForm.controls };
-
+  
   navigateToNewReq() {
-    debugger;
+    
     this.sideNavService.destroySidenav();
 
     const navigationExtras: NavigationExtras = {
@@ -81,7 +81,8 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    
+    this.sideNavService.setActiveComponent(false);
+    this.sideNavService.initSidenav();
     this.RequisitionForm = this.fb.group({
       requisitionId: [0],
       originSite: ['', [Validators.required]],
@@ -106,10 +107,6 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
     this.loadScript('assets/js/SideNavi.js');
   }
 
-  ngOnDestroy(): void {
-    this.sideNavService.destroySidenav();
-  }
- 
   private loadScript(scriptUrl: string): void {
     const script = document.createElement('script');
     script.type = 'text/javascript';
@@ -119,6 +116,7 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
   }
 
   editRequisition(row: any): void {
+    
     this.route.navigate(['/Requisition/RequisitionsNew', row.requisitionId]);
   }
 
@@ -202,9 +200,8 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
     }
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
-        debugger;
-        this.flag = status;
-        console.log(response.data)
+        
+        this.flag = status;        
         this.dataSource.data = response.data;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -214,6 +211,7 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
   }
 
   clear() {
+   
     this.RequisitionForm.reset();
     this.RequisitionForm.controls.requisitionId.setValue(0);
     this.RequisitionForm.controls.originSite.setValue('');
@@ -223,10 +221,8 @@ export class RequisitionslistComponent implements OnInit,OnDestroy {
     this.RequisitionForm.controls.orderReference.setValue('');
     this.RequisitionForm.controls.departmentId.setValue('');
     this.RequisitionForm.controls.priorityId.setValue('');
-    this.RequisitionForm.controls.projectNameCodeId.setValue('');
+    this.RequisitionForm.controls.projectNameCodeId.setValue('');    
     this.route.navigate(['/Requisition/RequisitionsNew'])
-
-
   }
 
   Loadshipcomp() {
