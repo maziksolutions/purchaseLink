@@ -125,6 +125,7 @@ export class RequisitionNewComponent implements OnInit {
   defaultOrderType = '';
 
   selectedComponents: componentTableItems[] = [];
+  temporaryNODataBase: string;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -181,12 +182,39 @@ export class RequisitionNewComponent implements OnInit {
   get fmd() { return this.deliveryForm.controls }
 
   generateTempNumber() {
+   
     this.requisitionService.getTempNumber(0).subscribe(res => {
-      if (!this.reqGetId) {
+      debugger
+      if (res.data != null) {
 
         var formattedNumber = parseInt(res.data.documentHeader)
         formattedNumber++;
-        this.temporaryNumber = formattedNumber.toString().padStart(3, '0');
+
+        let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let text ='';
+        length =3;
+        for ( var i = 0; i < length; i++ ) {
+         text+= possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+
+        this.temporaryNumber = formattedNumber.toString().padStart(3, '0')+' - '+ text;
+        this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0')+' - '+ text;
+
+      }
+      if(res.data == null){
+        var formattedNumber = parseInt('000');
+        formattedNumber++;
+
+        let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let text ='';
+        length =3;
+        for ( var i = 0; i < length; i++ ) {
+         text+= possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+
+        this.temporaryNumber = formattedNumber.toString().padStart(3, '0')+' - '+ text;
+        this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0')+' - '+ text;
+
       }
     })
   }
@@ -254,7 +282,7 @@ export class RequisitionNewComponent implements OnInit {
 
       formPart?.patchValue({
         requisitionId: formPart?.value.requisitionId,
-        documentHeader: this.temporaryNumber,
+        documentHeader: this.temporaryNODataBase,
         originSite: this.userDetail.site,
         vesselId: formPart?.value.vesselId,
         orderTypeId: formPart?.value.orderTypeId,
@@ -342,8 +370,6 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   onSubmit(form: any) {
-    console.log('Form validity:', this.deliveryForm.valid);
-    console.log('Form value:', this.deliveryForm.value);
 
     form.value.reqIds = this.reqId;
 
@@ -399,9 +425,15 @@ export class RequisitionNewComponent implements OnInit {
         });
 
         if (!this.isRequisitionApproved) (
-          this.temporaryNumber = requisitionData.documentHeader
+          this.temporaryNumber = requisitionData.documentHeader 
         )
+        if(requisitionData.originSite == 'Office'){
+          this.headsite = 'O'
+        }
+        else{
+          this.headsite = 'V'
 
+        }
         this.genericCheckbox = requisitionData.genericComment === true;
         this.internalCheckbox = requisitionData.internalComment === true;
 
@@ -583,16 +615,16 @@ export class RequisitionNewComponent implements OnInit {
           this.headsite = 'O';
           this.headCode = 'OFF';
           this.headabb = '___';
-          let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Office').length;
-          this.headserialNumber = `${requisitionValues + 1}`.padStart(4, '0');
+          // let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Office').length;
+          // this.headserialNumber = `${requisitionValues + 1}`.padStart(4, '0');
         }
         else if (this.userDetail.site == 'Vessel') {
           this.headsite = 'V';
           this.headCode = '___ ';
           this.headabb = '___';
 
-          let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Vessel');
-          this.headserialNumber = `${requisitionValues.length + 1}`.padStart(4, '0');
+          // let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Vessel');
+          // this.headserialNumber = `${requisitionValues.length + 1}`.padStart(4, '0');
         }
 
       })
@@ -726,7 +758,7 @@ export class RequisitionNewComponent implements OnInit {
       // Update document header element
       const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
       // documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
-      documentHeaderElement.innerHTML = ` REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
+      documentHeaderElement.innerHTML = ` REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.temporaryNumber}`;
     })
   }
 
@@ -839,6 +871,7 @@ export class RequisitionNewComponent implements OnInit {
         EnterQuantity: enterQuantity,
         ROB: item.rob,
         Remarks: item.remarks,
+        unit:item.unit,
         PMReqId: this.reqId
       };
 
@@ -853,8 +886,6 @@ export class RequisitionNewComponent implements OnInit {
       this.requisitionService.addItemsInfo(itemsToAdd).subscribe(res => {
 
         this.loadItemsData(0);
-        console.log('Server response:', res);
-
         // Close the modal
         $("#ship-items").modal('hide');
       });

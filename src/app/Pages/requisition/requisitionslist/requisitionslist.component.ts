@@ -200,8 +200,10 @@ export class RequisitionslistComponent implements OnInit {
     }
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
+        debugger
+        this.flag = status;      
+        // this.documentHeaderList =response.data.map(x=>x.documentHeader.replace(/\D/g, '')) 
         
-        this.flag = status;        
         this.dataSource.data = response.data;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -241,7 +243,6 @@ export class RequisitionslistComponent implements OnInit {
     })
   }
   downloadNotepad(id) {
-    alert(id)
   //   let CurtDate = new Date ;
   //  let  currentDate = this.datePipe.transform(CurtDate, 'yyyyMMdd');
 
@@ -249,26 +250,28 @@ export class RequisitionslistComponent implements OnInit {
    let shipcompId = this.ReqData[0].orderReference.split(',')[0];
    let accountcode =this.GetAccountcode.filter(x=>x.shipComponentId == shipcompId)[0];
    let Dates =  this.datePipe.transform(this.ReqData[0].recDate, 'yyyyMMdd');
+   let year =  this.datePipe.transform(this.ReqData[0].recDate, 'yy');
+
+
+  let documentHeader =this.ReqData[0].documentHeader.replace(/\D/g, '')
 
    const uniqueItems = this.itemdata.filter(x=>x.pmReqId == id);
-
- console.log(uniqueItems)
 
     let stepData = `ISO-10303-21;
     HEADER;
     FILE_DESCRIPTION(('Requisition data transfer in StarIPS');
-    FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData[0].vessel.vesselCode}23113.RTO','${Dates}');
+    FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData[0].vessel.vesselCode}${year+''+documentHeader}.RTO','${Dates}');
     ENDSEC;
     DATA;`;
 
 debugger
        stepData += `
   
-             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vessel.vesselCode}','${this.ReqData[0].documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].pmPreference.description}','${Dates}','','','${this.ReqData[0].departments.departmentName}','','${accountcode.accountCode}','','','','','${this.ReqData[0].orderTitle}')`;
+             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vessel.vesselCode}','${year+'/'+documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].pmPreference.description}','${Dates}','','','${this.ReqData[0].departments.departmentName}','','${accountcode.accountCode}','','','','','${this.ReqData[0].orderTitle}')`;
        
              uniqueItems.forEach((item ,index)=> {
           stepData += `
-             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${this.ReqData[0].documentHeader}','${index + 1}','${item.itemCode}','${item.itemName}','${item.dwg}','','','${item.make}','','','${item.rob}','unit','${item.enterQuantity}','','','${item.model}','exactOrderRef','','','','','MakerRef','','','','','');`;
+             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year+'/'+documentHeader}','${index + 1}','${item.itemCode}','${item.itemName}','${item.dwg}','','','${item.make}','','','${item.rob}','${item.unit}','${item.enterQuantity}','','','${item.model}','exactOrderRef','','','','','MakerRef','','','','','');`;
              });
        stepData += `
        ENDSEC;`;
@@ -281,80 +284,6 @@ debugger
       saveAs(blob, 'Requisition_RTO.txt');
      return;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    // this.vesselcode = this.Vessels.filter(x => x.vesselId == this.selectedVesselId).map(x => x.vesselCode);
-
-    // // Ensure that the items array is unique based on some identifier
-    // const uniqueItems = Array.from(new Set(this.items.map(item => item.id)))
-    //   .map(id => this.items.find(item => item.id === id));
-    // console.log(uniqueItems)
-   
-    // // Generate dynamic data based on the items array
-
-    // if (this.vesselcode.length == 0) {
-    //   this.vesselcode = this.dataSource.data;
-    //   stepData += `
-    //       #1=Requisition_ship_to_PO_step_1('','23/113','','0','${currentDate}','','','Engine','','5012100','','','','','')`;
-
-    //   uniqueItems.forEach((item ,index)=> {
-        
-    //     const matchingVesselCode = this.vesselcode.find(vessel => vessel.requisitionId === item?.id);
-    //     if (matchingVesselCode) {
-          
-    //       stepData += `
-    //       #${index + 2}=Items_for_ordering_mr('${matchingVesselCode.vessel.vesselCode}','23/113','${index + 1}','','${item?.name}','','','','','','','0.00','${item?.unit}','${item?.quantity}','','','','','','','','');`;
-           
-    //     }
-      
-    //   });
-    //   stepData += `
-    //   ENDSEC;`;
-  
-    //   // Convert the content to a Blob
-    //   const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
-  
-
-    //   // Use FileSaver.js to save the file
-    //   saveAs(blob, 'Requisition_RTO.txt');
-    // return;
-    // }
-    // if(this.vesselcode.length != 0 && this.dataSource.data.length != 0){
-    //   stepData += `
-    //        #1=Requisition_ship_to_PO_step_1('${this.vesselcode}','23/113','','0','${currentDate}','','','Engine','','5012100','','','','','')`;
-
-    //   this.items.forEach((item ,index) => {
-    //     stepData += `
-    //        #${index + 2}=Items_for_ordering_mr('${this.vesselcode}','23/113','${index + 1}','','${item.name}','','','','','','','0.00','${item.unit}','${item.quantity}','','','','','','','','');`;
-
-    //   });
-    //   stepData += `
-    //   ENDSEC;`;
-  
-    //   // Convert the content to a Blob
-    //   const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
-  
-    //   // Use FileSaver.js to save the file
-    //   saveAs(blob, 'Requisition_RTO.txt');
-    //   return
-    // }
-
-    // else{
-    //   this.swal.error('This selected vessel has no Requisition Data.');
-
-    // }
    
   }
 
