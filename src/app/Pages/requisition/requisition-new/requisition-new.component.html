@@ -31,13 +31,14 @@
                 <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse"
                   data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
                   <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2">
-                    </span>Document Header <small class="ms-5" id="documentHeader" *ngIf="isRequisitionApproved">
+                    </span>Document Header 
+                    <small class="ms-5" id="documentHeader" *ngIf="isRequisitionApproved">
 
-                      REQ – {{headsite}} – {{headCode}} – {{headabb}} – {{currentyear}} – {{headserialNumber}}
+                      REQ – {{headsite}} – {{headCode}} – {{headabb}} – {{currentyear}} – {{temporaryNumber}}
                     </small>
                     <small class="ms-5" *ngIf="!isRequisitionApproved">
                       <!-- Show temporary number for unapproved requisitions -->
-                      Temp - {{temporaryNumber}}
+                      Temp – {{headsite}} – {{temporaryNumber}}
                     </small>
                   </h5>
                 </div>
