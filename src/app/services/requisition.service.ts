@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { response } from '../Pages/Models/response-model';
+import { TemplateTree, response } from '../Pages/Models/response-model';
+import { MatTableDataSource } from '@angular/material/table';
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type': 'application/json'
@@ -14,8 +15,13 @@ const httpOptions = {
 })
 export class RequisitionService {
 
+  private selectedItemsSubject = new BehaviorSubject<{ displayValue: string; saveValue: string, orderReferenceType: string, cartItems?: any[] }>
+    ({ displayValue: '', saveValue: '', orderReferenceType: '', cartItems: [] });
+  selectedItems$ = this.selectedItemsSubject.asObservable();
+
   baseUrl = environment.apiurl;
   private linkurl = this.baseUrl + 'PMRequisitionMaster/';
+  private hierarchyurl = this.baseUrl + 'PMSHierarchy/';
   constructor(private httpClient: HttpClient) { }
 
   //Get Maintenance Type data
@@ -65,7 +71,7 @@ export class RequisitionService {
     return this.httpClient.get<any>(this.linkurl + 'getRequisitionMasterById/' + id, httpOptions)
       .pipe(catchError(this.handleError));
   }
-  getTempNumber(status):Observable<any>{
+  getTempNumber(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}getTempHeaderNum/${status}`, httpOptions);
   }
 
@@ -74,16 +80,16 @@ export class RequisitionService {
       .pipe(catchError(this.handleError));
   }
 
-  getItemsInfo(data:string): Observable<any> {
-    
+  getItemsInfo(data: string): Observable<any> {
+
     return this.httpClient.get<any[]>(`${this.linkurl}getItems/${data}`, httpOptions);
   }
-  getGroupsInfo(data:string): Observable<any> {
-    
+  getGroupsInfo(data: string): Observable<any> {
+
     return this.httpClient.get<any[]>(`${this.linkurl}getGroups/${data}`, httpOptions);
   }
-  getItemInfoByGroups(data:string):Observable<any> {
-    
+  getItemInfoByGroups(data: string): Observable<any> {
+
     return this.httpClient.get<any[]>(`${this.linkurl}getItemsByGroups/${data}`, httpOptions);
   }
 
@@ -92,18 +98,18 @@ export class RequisitionService {
   }
 
   getSpareItemsById(ids): Observable<any> {
-   
+
     const params = new HttpParams().set('ids', ids.join(','));
-    return this.httpClient.get<any>(this.linkurl + 'getItems/', {params})
+    return this.httpClient.get<any>(this.linkurl + 'getItems/', { params })
       .pipe(catchError(this.handleError));
-  }  
+  }
 
   getAllSpareitems(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterItemsInfo/${status}`, httpOptions);
   }
 
-  addItemsInfo(items: any[]): Observable<any> {
-    return this.httpClient.post<any>(this.linkurl + 'addItemsInfo', items)
+  addItemsDataList(data: any): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addItemsDataList', data)
       .pipe(catchError(this.handleError));
   }
 
@@ -111,10 +117,19 @@ export class RequisitionService {
     return this.httpClient.post<string>(`${this.linkurl}archivePMItemsMaster/`, jobType, httpOptions);
   }
 
-  getItemsByReqId(id:number): Observable<any> {
-    
+  getItemsByReqId(id: number): Observable<any> {
+
     return this.httpClient.get<any[]>(`${this.linkurl}getItemsByReqId/${id}`, httpOptions);
   }
+
+  updateSelectedItems(data: { displayValue: string; saveValue: string; orderReferenceType: string; cartItems?: any[] }): void {
+    this.selectedItemsSubject.next(data);
+  }
+  getTemplateTree(): Observable<TemplateTree[]> {
+    return this.httpClient.get<TemplateTree[]>(this.hierarchyurl + 'templateTree');
+  }
+
+
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

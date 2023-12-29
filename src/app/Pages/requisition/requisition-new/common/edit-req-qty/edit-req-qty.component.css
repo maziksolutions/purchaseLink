@@ -1,0 +1,13 @@
+.mat-dialog-content .row span {
+    display: inline-block;
+    margin-right: 20px; /* Adjust the margin as needed */
+    font-weight: bold;
+}
+.mat-dialog-actions {
+    padding: 4px;
+  }
+  .mat-dialog-actions {    
+    height: 20px! important; 
+    min-height: 20px! important; 
+    max-height: 30px! important; 
+  }
