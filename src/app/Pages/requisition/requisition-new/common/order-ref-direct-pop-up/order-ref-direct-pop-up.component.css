@@ -1,0 +1,36 @@
+.mat-dialog-content {
+  height: calc(100% - 80px); /* Adjust the height based on your header and footer height */
+}
+
+/* Make the mat-table scrollable */
+.mat-table {
+  height: 380px;
+  overflow-y: auto;
+  margin-bottom: 30px;
+}
+
+.mat-tree {
+  height: 320px;
+  overflow-y: auto;
+  margin-bottom: 30px;
+}
+
+/* Optional: Adjust the height of the mat-header-row if needed */
+.mat-header-row {
+  min-height: 40px;
+}
+
+/* Optional: Ensure the footer stays at the bottom */
+.mat-dialog-actions {
+  height: 40px;
+  position: sticky;
+  bottom: 0;
+  background-color: #fff; /* Adjust the background color as needed */
+  z-index: 1; /* Ensure the footer is above the mat-table */
+}
+
+.checkbox {
+  min-width: 30px;
+  max-width: 40px;
+  width: 30px;
+}

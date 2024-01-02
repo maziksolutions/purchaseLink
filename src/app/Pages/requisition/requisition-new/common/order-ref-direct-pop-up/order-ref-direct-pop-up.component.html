@@ -1,0 +1,215 @@
+<h2 mat-dialog-title class="d-flex justify-content-between align-items-center">
+    <span>{{ data.modalTitle }}</span>
+    <div class="form-inline float-start" style="margin-bottom: 0.5rem;">
+        <input type="text" class="form-control form-small" (keyup)="applyFilter($any($event.target).value)"
+            placeholder="Search" style="border-top-right-radius: 0; border-bottom-right-radius: 0px" #searchInput>
+        <button class="btn btn-primary form-small m-r-5"
+            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button" data-bs-toggle="tooltip"
+            data-bs-placement="top" title="" data-bs-original-title="Search" aria-label=""><i class="fa fa-search"
+                aria-hidden="true"></i></button>
+    </div>
+    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal"
+        (click)="closeModal()" aria-label="Close"></button>
+</h2>
+
+<!--  Component Table Data Start Here-->
+<!-- <mat-table *ngIf="ComponentType==='Component'" mat-dialog-content #table [dataSource]="componentsDataSourse"
+    class="table table-hover table-striped table-sm small table-bordered">
+
+    <ng-container matColumnDef="checkbox">
+        <mat-header-cell *matHeaderCellDef class="checkbox">
+            <mat-checkbox *ngIf="componentSelection.hasValue()"
+                [checked]="componentSelection.hasValue() && isAllCompSelected()"
+                [indeterminate]="componentSelection.hasValue() && !isAllCompSelected()"
+                (change)="onCheckAllChange($event.checked)">
+            </mat-checkbox>
+
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" class="checkbox">
+            <mat-checkbox [checked]="row.checkboxState" [disabled]="row.checkboxDisabled"
+                (change)="onCheckboxChange($event.checked, row)"></mat-checkbox>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="componentName">
+        <mat-header-cell *matHeaderCellDef>Ship Component Name</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.componentName }}</mat-cell>
+    </ng-container>
+
+    <mat-header-row class="bg-300" *matHeaderRowDef="componentTableColumn; sticky:true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: componentTableColumn; let i = index"
+        [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.componentId==selectedIndex))}">
+    </mat-row>
+
+</mat-table> -->
+
+
+<mat-tree *ngIf="ComponentType==='Component'" [dataSource]="dataSourceTree" [treeControl]="treeControl" class="wrapper">
+    <mat-tree-node *matTreeNodeDef="let node; when: hasChild" >
+      <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.groupName">
+        <mat-icon class="mat-icon-rtl-mirror"
+          [ngClass]="{ 'redColor': !treeControl.isExpanded(node),'blueColor': treeControl.isExpanded(node)}">
+          {{treeControl.isExpanded(node) ? 'close' : 'add'}}
+        </mat-icon>
+      </button>
+      <span><a ><span style="cursor: pointer;"
+            *ngIf="node.type=='Group'" matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+            <i class="fa fa-folder m-r-5" aria-hidden="true"></i>
+            {{node.groupName}}</span></a></span>
+
+      <a style="cursor: pointer; " *ngIf="node.type=='Component'"
+        matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+        <i class="fa fa-bars m-r-5 " style="color: #6279a5;"  aria-hidden="true"></i>
+        {{node.groupName}}</a>
+    </mat-tree-node>
+    <mat-tree-node *matTreeNodeDef="let node;" class="expand-tree">
+      <!-- use a disabled button to provide padding for tree leaf -->
+      <span> <a style="cursor: pointer; padding-left: 25px;" 
+          *ngIf="node.type=='Group'" matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+          <i class="far fa-folder m-r-5" aria-hidden="true"></i>
+          {{node.groupName}}
+        </a></span>
+      <a style="cursor: pointer; padding-left: 25px;" 
+        *ngIf="node.type=='Component'" matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+       <input type="checkbox" [checked]="node.selected" (change)="handleCheckboxChange($event, node)">
+        {{node.groupName}}
+      </a>
+    </mat-tree-node>
+  </mat-tree>
+
+
+
+<!-- End Here-->
+
+<!--  Group Table Data Start Here-->
+<mat-table *ngIf="ComponentType==='Group'" mat-dialog-content #table [dataSource]="groupTableDataSource"
+    class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+
+    <ng-container matColumnDef="checkbox">
+        <mat-header-cell *matHeaderCellDef class="checkbox">
+            <mat-checkbox (change)="$event ? groupToggle() : null"
+                [checked]="groupSelection.hasValue() && isAllGroupSelected()"
+                [indeterminate]="groupSelection.hasValue() && !isAllGroupSelected()">
+            </mat-checkbox>
+
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" class="checkbox">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? groupSelection.toggle(row) : null"
+                [checked]="groupSelection.isSelected(row)" [aria-label]="groupLabel(row)"></mat-checkbox>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="groupName">
+        <mat-header-cell *matHeaderCellDef>Group Name</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.groupName }}</mat-cell>
+    </ng-container>
+
+    <mat-header-row class="bg-300" *matHeaderRowDef="groupTableColumn; sticky:true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: groupTableColumn; let i = index"
+        [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.pmsGroupId==selectedIndex))}"></mat-row>
+
+</mat-table>
+<!-- End Here-->
+
+<!--  Spare Cart Item Table Data Start Here-->
+<mat-table *ngIf="ComponentType==='Spare'" mat-dialog-content #table [dataSource]="spareItemDataSource"
+    class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+
+    <ng-container matColumnDef="checkbox">
+        <mat-header-cell *matHeaderCellDef class="checkbox">
+            <mat-checkbox *ngIf="spareItemSelection.hasValue()"
+                [checked]="spareItemSelection.hasValue() && isAllSpareItemSelected()"
+                [indeterminate]="spareItemSelection.hasValue() && !isAllSpareItemSelected()"
+                (change)="onCheckAllSpareItemChange($event.checked)">
+            </mat-checkbox>
+
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" class="checkbox">
+            <mat-checkbox [checked]="row.checkboxState" [disabled]="row.checkboxDisabled"
+                (change)="onCheckboxSpareItemChange($event.checked, row)"></mat-checkbox>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="inventoryName">
+        <mat-header-cell *matHeaderCellDef>Cart Item Name</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.inventoryName }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="componentName">
+        <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.componentName }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="itemCode">
+        <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.inventoryCode }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="reqQty">
+        <mat-header-cell *matHeaderCellDef>Required Qty</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.requiredQuantity }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="minReq">
+        <mat-header-cell *matHeaderCellDef>Min Required</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.minimumLevel }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="dwg">
+        <mat-header-cell *matHeaderCellDef>Drawing No</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
+    </ng-container>
+
+    <mat-header-row class="bg-300" *matHeaderRowDef="spareItemsTableColumn; sticky:true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: spareItemsTableColumn; let i = index"
+        [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row[cartItemId]==selectedIndex))}"></mat-row>
+
+</mat-table>
+<!-- End Here-->
+
+<!--  Store Cart Item Table Data Start Here-->
+<mat-table *ngIf="ComponentType==='Store'" mat-dialog-content #table [dataSource]="storeItemDataSource"
+    class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+
+    <ng-container matColumnDef="checkbox">
+        <mat-header-cell *matHeaderCellDef class="checkbox">
+            <mat-checkbox *ngIf="storeItemSelection.hasValue()"
+                [checked]="storeItemSelection.hasValue() && isAllStoreItemSelected()"
+                [indeterminate]="storeItemSelection.hasValue() && !isAllStoreItemSelected()"
+                (change)="onCheckAllStoreItemChange($event.checked)">
+            </mat-checkbox>
+
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" class="checkbox">
+            <mat-checkbox [checked]="row.checkboxState" [disabled]="row.checkboxDisabled"
+                (change)="onCheckboxStoreItemChange($event.checked, row)"></mat-checkbox>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="inventoryName">
+        <mat-header-cell *matHeaderCellDef>Cart Item Name</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.inventoryName }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="componentName">
+        <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.componentName }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="itemCode">
+        <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.inventoryCode }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="reqQty">
+        <mat-header-cell *matHeaderCellDef>Required Qty</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.requiredQuantity }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="minReq">
+        <mat-header-cell *matHeaderCellDef>Min Required</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.minimumLevel }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="dwg">
+        <mat-header-cell *matHeaderCellDef>Drawing No</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
+    </ng-container>
+
+    <mat-header-row class="bg-300" *matHeaderRowDef="storeItemsTableColumn; sticky:true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: storeItemsTableColumn; let i = index"
+        [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row[cartItemId]==selectedIndex))}"></mat-row>
+
+</mat-table>
+<!-- End Here-->
+
+<div mat-dialog-actions class="modal-footer">
+    <a class="btn btn-primary" type="button" (click)="saveComponent()">Ok</a> <button type="button"
+        class="btn btn-danger me-1" aria-label="">Cancel</button>
+</div>

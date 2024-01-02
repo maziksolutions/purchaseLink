@@ -34,4 +34,5 @@ export interface ExampleGroupFlatNode {
   type:string;
   expandable: boolean;
   level: number;
+  selected?: boolean;
 }

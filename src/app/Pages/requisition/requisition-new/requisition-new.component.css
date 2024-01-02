@@ -67,3 +67,14 @@
   max-width: 40px;
   width: 30px;
 }
+.ellipsis-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;  
+  max-width: 100%;
+}
+.ellipsis-text:hover {
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: unset;
+}

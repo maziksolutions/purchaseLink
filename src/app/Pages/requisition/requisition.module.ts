@@ -13,7 +13,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppMaterialModule } from 'src/app/app.material.module';
 import { RfqlistComponent } from './rfqlist/rfqlist.component';
 import { RequisitionTrackingComponent } from './requisition-tracking/requisition-tracking.component';
-
+import { OrderRefPopUpViewComponent } from './requisition-new/common/order-ref-pop-up-view/order-ref-pop-up-view.component';
+import { OrderRefDirectPopUpComponent } from './requisition-new/common/order-ref-direct-pop-up/order-ref-direct-pop-up.component';
+import { EditReqQtyComponent } from './requisition-new/common/edit-req-qty/edit-req-qty.component';
+import { MatTreeModule } from '@angular/material/tree';
 
 @NgModule({
   declarations: [
@@ -21,17 +24,21 @@ import { RequisitionTrackingComponent } from './requisition-tracking/requisition
     RequisitionNewComponent,
     SidenaviRightComponent,
     RfqlistComponent,
-    RequisitionTrackingComponent
+    RequisitionTrackingComponent,
+    OrderRefPopUpViewComponent,
+    OrderRefDirectPopUpComponent,
+    EditReqQtyComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     RequisitionRoutingModule,
-    FormsModule,ReactiveFormsModule,DirectivesModule,HttpClientModule,AppMaterialModule,
-    NgMultiSelectDropDownModule.forRoot() 
+    MatTreeModule,
+    FormsModule, ReactiveFormsModule, DirectivesModule, HttpClientModule, AppMaterialModule,
+    NgMultiSelectDropDownModule.forRoot()
   ],
-  providers:[
-    SideNavService    
+  providers: [
+    SideNavService
   ]
 })
 export class RequisitionModule { }

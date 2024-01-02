@@ -150,6 +150,10 @@ GetComponent(status): Observable<any> {
   return this.httpClient.get<any[]>(`${this.linkurl}getComponents/${status}`, httpOptions);
 }
 
+GetComponentByList(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}getComponentList/${status}`, httpOptions);
+}
+
 //Get PMS by id
 GetComponentyId(id):Observable<any>{  
   return  this.httpClient.get<any>(this.linkurl + 'getComponentId/' + id,httpOptions)
