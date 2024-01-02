@@ -70,11 +70,14 @@
 .ellipsis-text {
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;  
-  max-width: 100%;
+  text-overflow: ellipsis;    
 }
 .ellipsis-text:hover {
   white-space: nowrap;
   overflow: visible;
   text-overflow: unset;
+}
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

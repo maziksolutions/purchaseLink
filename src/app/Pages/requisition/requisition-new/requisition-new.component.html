@@ -31,7 +31,7 @@
                 <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse"
                   data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
                   <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2">
-                    </span>Document Header 
+                    </span>Document Header
                     <small class="ms-5" id="documentHeader" *ngIf="isRequisitionApproved">
 
                       REQ – {{headsite}} – {{headCode}} – {{headabb}} – {{currentyear}} – {{temporaryNumber}}
@@ -43,7 +43,9 @@
                   </h5>
                 </div>
                 <div class="col-auto ms-auto">
-                  <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#transit" aria-label="">
+                  <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#transit" aria-label=""
+                    [class.disabled]="!isRequisitionApproved"
+                    [style.pointer-events]="isRequisitionApproved ? 'auto' : 'none'">
                     <img src="assets/img/transition.png" width="25px"></a>
                   <div class="modal fade" id="transit" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg mt-6" role="document">
@@ -86,7 +88,7 @@
                     </div>
                   </div>
                   <a class="px-1 m-r-5" id="navbarDropdownNotification" href="#" role="button" data-bs-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
+                    aria-haspopup="true" aria-expanded="false" [class.disabled]="!isRequisitionApproved" [style.pointer-events]="isRequisitionApproved ? 'auto' : 'none'">
                     <i class="far fa-calendar-alt text-primary"></i></a>
                   <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification"
                     aria-labelledby="navbarDropdownNotification">
@@ -662,9 +664,9 @@
                                       *matCellDef="let row; let i = index"
                                       [ngClass]="{'highlight': isHighlighted(row)}">
                                       <span *ngIf="!row.editMode" (click)="toggleEditModeItem(row)"
-                                        style="cursor: pointer">{{ row.userInput }}</span>
+                                        style="cursor: pointer">{{ row.reqQty }}</span>
                                       <input #reqQtyElements *ngIf="row.editMode" matInput placeholder="Enter data"
-                                        [(ngModel)]="row.userInput" (blur)="saveChanges(row)"
+                                        [(ngModel)]="row.reqQty" (blur)="saveChanges(row)"
                                         (keydown)="handleKeyDown($event, row)"
                                         [id]="'reqQty_' + i + '_' + row.shipComponentSpareId" />
                                     </mat-cell>
@@ -690,7 +692,7 @@
                       </div>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-primary me-1" aria-label=""
+                      <button type="button" class="btn btn-primary me-1" aria-label="" [disabled]="!reqId"
                         (click)="storeTableData()">Ok</button>
                       <button type="button" data-bs-dismiss="modal" class="btn btn-danger me-1"
                         aria-label="">Cancel</button>

@@ -7,7 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { RequisitionService } from 'src/app/services/requisition.service';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { ExampleGroupFlatNode, TemplateTree } from 'src/app/Pages/Models/response-model';
+import { ExampleGroupFlatNode, GroupFlatNode, TemplateTree } from 'src/app/Pages/Models/response-model';
 
 
 @Component({
@@ -34,6 +34,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   dataSource = new MatTableDataSource<any>();
 
   public dataSourceTree: any;
+  public groupTableSourceTree: any;
   hasChild = (_: number, node: ExampleGroupFlatNode) => node.expandable;
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -48,6 +49,9 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   selectedComponentIds: number[] = [];
   selectedComponentName: string[] = [];
 
+  selectedGroupIds: number[] = [];
+  selectedGroupName: string[] = [];
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefDirectPopUpComponent>,
     public requisitionService: RequisitionService, public dialog: MatDialog) { }
 
@@ -57,11 +61,15 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     this.orderType = this.data.orderType;
     this.ComponentType = this.data.componentType;
     this.dataSourceTree = this.data.dataSourceTree
-    this.groupTableDataSource.data = this.data.groupTableData
+    this.groupTableSourceTree = this.data.groupTableData
     this.spareItemDataSource.data = this.data.spareTableData
     this.storeItemDataSource.data = this.data.storeTableData
     if (this.dataSourceTree)
       this.bindData(this.dataSourceTree);
+    if(this.groupTableSourceTree){
+      console.log(this.groupTableSourceTree)
+      this.bindGroup(this.groupTableSourceTree)      
+    }
   }
 
   closeModal(): void {
@@ -239,13 +247,11 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         }
         break;
       case 'Group':
-        this.selectedGroupsDropdown = this.groupTableDataSource.data.filter(row => this.groupSelection.isSelected(row));
-        if (this.selectedGroupsDropdown.length > 0) {
-          const selectedGroupName = this.selectedGroupsDropdown.map(item => item.groupName).join(', ');
-          const selectedGroupId = this.selectedGroupsDropdown.map(item => item.pmsGroupId).join(',');
-
-          this.displayValue = selectedGroupName
-          this.saveValue = selectedGroupId
+        if (this.selectedGroupIds.length > 0 && this.selectedGroupName.length > 0) {
+          const selectedCom = this.selectedGroupName.map(item => item).join(', ');
+          const selectedComId = this.selectedGroupIds.map(item => item).join(',');
+          this.displayValue = selectedCom
+          this.saveValue = selectedComId
 
           const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType }
 
@@ -302,8 +308,9 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
 
 
-  //#region PMS Hierarchy
+  //#region Component Hierarchy
   private transformer = (node: TemplateTree, level: number) => {
+    debugger
     return {
       expandable: !!node.subGroup && node.subGroup.length > 0,
       groupName: node.groupName,
@@ -340,4 +347,47 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     }
   }
   //#endregion
+
+  //#region Group Hierarchy
+  private transformerGroup = (node: TemplateTree, level: number) => {
+    debugger
+    return {
+      expandable: !!node.subGroup && node.subGroup.length > 0,
+      groupName: node.groupName,
+      groupId: node.groupId,
+      type: node.type,
+      level,
+    };
+  }
+
+  bindGroup(data: any) {
+    debugger
+    this.groupTableSourceTree = new MatTreeFlatDataSource(this.treeGroupControl, this.treeGroupFlattener);
+    this.groupTableSourceTree.data = data;
+  }
+  treeGroupControl = new FlatTreeControl<GroupFlatNode>(    
+    node => node.level, node => node.expandable
+  );
+  treeGroupFlattener = new MatTreeFlattener(
+    this.transformerGroup, node => node.level, node => node.expandable, node => node.subGroup
+  );
+  handleGroupCheckboxChange(event: Event, node: GroupFlatNode) {
+    debugger
+    const checkbox = event.target as HTMLInputElement;
+    node.selected = checkbox.checked;
+    if (node.selected) {
+      this.selectedGroupIds.push(node.groupId);
+      this.selectedGroupName.push(node.groupName);
+    } else {
+      const index = this.selectedGroupIds.indexOf(node.groupId);
+      if (index !== -1) {
+        this.selectedGroupIds.splice(index, 1);
+        this.selectedGroupName.splice(index, 1);
+      }
+    }
+  }
+  isLeaf(node: GroupFlatNode): boolean {
+    return node.expandable ? node.subGroup?.length === 0 : true;
+  }
+  //#endregion  Group Hierarchy
 }

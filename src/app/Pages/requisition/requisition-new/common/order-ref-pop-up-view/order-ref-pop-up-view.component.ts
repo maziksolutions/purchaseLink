@@ -13,6 +13,7 @@ import { MatTableDataSource } from '@angular/material/table';
 export class OrderRefPopUpViewComponent implements OnInit {
 
   public dataSourceTree: any;
+  public groupTableSourceTree: any;
   groupTableDataSource = new MatTableDataSource<any>();
   spareItemDataSource = new MatTableDataSource<any>();
   storeItemDataSource = new MatTableDataSource<any>();
@@ -28,7 +29,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
     this.orderType = this.data.orderType;
     this.componentType = this.data.componentType
     this.dataSourceTree = this.data.dataSourceTree;
-    this.groupTableDataSource.data=this.data.groupTableData
+    this.groupTableSourceTree=this.data.groupTableData
     this.spareItemDataSource.data=this.data.spareTableData
     this.storeItemDataSource.data=this.data.storeTableData
   }
@@ -55,7 +56,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
         width: '1000px',
         data: {
           modalTitle: "Order Reference", componentType: type,
-          groupTableData: this.groupTableDataSource.data
+          groupTableData: this.groupTableSourceTree
         }
       });
       dialogRef.afterClosed().subscribe(result => {
