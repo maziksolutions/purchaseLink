@@ -7,17 +7,31 @@
       <div class="card px-3 py-2 mb-3">
         <div class="position-relative">
           <div class="row flex-between-center">
-            <div class="col-auto align-self-center">
+            <div class="col-auto align-self-center"  *ngIf="approvestatus != 'Waiting For Approval' && approvestatus != 'Approved'">
               <h5 class="mb-0">Purchasing / New Requisition</h5>
               <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
                   class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">New
                 Requisition</span>
             </div>
+            <div class="col-auto align-self-center"  *ngIf="approvestatus == 'Waiting For Approval'">
+              <h5 class="mb-0">Requisition Approval</h5>
+      <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span 
+        class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Requisition Approval</span>
+            </div>
+            <div class="col-auto align-self-center"  *ngIf="approvestatus == 'Approved'">
+              <h5 class="mb-0">Approved Requisition</h5>
+      <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span 
+        class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Approved Requisition</span>
+            </div>
+
+
+
             <div class="col-auto ms-auto">
               <a routerLink="/Requisition/Requisitionslist" class="btn btn-pms-primary" type="button" data-index="0"
                 data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Back"
-                aria-label="Back"><i class="fas fa-angle-double-left back-btn"></i></a>
+                aria-label="Back"><i class="fas fa-arrow-left"></i></a>
             </div>
+
           </div>
         </div>
       </div>
@@ -31,12 +45,12 @@
                 <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse"
                   data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
                   <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2">
-                    </span>Document Header
-                    <small class="ms-5" id="documentHeader" *ngIf="isRequisitionApproved">
+                    </span>Document Header 
+                    <small class="ms-5" id="documentHeader" *ngIf="approvestatus == 'Approved'">
 
-                      REQ – {{headsite}} – {{headCode}} – {{headabb}} – {{currentyear}} – {{temporaryNumber}}
+                      {{finallyHeader}}
                     </small>
-                    <small class="ms-5" *ngIf="!isRequisitionApproved">
+                    <small class="ms-5" *ngIf="approvestatus != 'Approved'">
                       <!-- Show temporary number for unapproved requisitions -->
                       Temp – {{headsite}} – {{temporaryNumber}}
                     </small>
@@ -150,11 +164,23 @@
                     </div>
                   </div>
 
-                  <a class="px-1 m-r-5" href="purchase-link-new-requisition-approval.html" type="button"
-                    data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Send for Approval"
-                    aria-label=""> <i class="fas fa-share-square text-primary"></i></a>
+                   <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
+                   *ngIf="approvestatus != 'Waiting For Approval' && approvestatus != 'Approved'"
+                   title="" data-bs-original-title="Send for Approval" aria-label="" (click)="sendApprove()"> 
+                   <i class="fas fa-share-square text-primary"></i></a>
 
-                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+
+                   <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" 
+                   *ngIf="approvestatus == 'Waiting For Approval'"
+                   data-bs-placement="top" title="" data-bs-original-title="Approved" aria-label="" (click)="FinalApprove('Approved')"> 
+                    <i class="fas fa-check text-primary"></i></a>
+						  
+                   <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" 
+                   *ngIf="approvestatus == 'Waiting For Approval'"
+                   data-bs-original-title="Reject" aria-label="" (click)="FinalApprove('Reject')"> <i class="fas fa-times text-danger"></i></a>
+
+
+                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" (click)="openAttachmentPopup()"
                     data-bs-original-title="Add Attachment" aria-label=""><i
                       class="fas fa-paperclip text-primary"></i></a>
 
@@ -165,12 +191,16 @@
                   <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban text-danger"></i></a>
 
-                  <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Export PDF" aria-label=""><i class="fas fa-file-pdf text-danger"></i></a>
 
                   <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Export Excel" aria-label=""><i
                       class="fas fa-file-excel text-success"></i></a>
+
+                      <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" *ngIf="approvestatus == 'Approved'"
+                      data-bs-placement="top" matTooltip="RTO" (click)="downloadNotepad()"
+                      data-bs-original-title="List" aria-label=""><i class="fas fa-file-alt"></i></a>    
                 </div>
               </div>
             </div>
@@ -383,6 +413,10 @@
                 <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                   data-bs-original-title="Send Delivery Instructions" aria-label=""><i
                     class="fas fa-share-square text-primary"></i></a> -->
+                    <a class="px-1" type="button" data-bs-toggle="modal" data-bs-target="#additional-cost" 
+                     *ngIf="approvestatus == 'Waiting For Approval' || approvestatus == 'Approved'">
+                      <button class="btn btn-secondary form-small" type="button">Manage Additional Cost</button> </a>
+
               </div>
             </div>
           </div>
@@ -506,12 +540,78 @@
               </div>
             </div>
           </div>
+
+          <!-- Additional-cost -->
+
+          <div class="modal fade" id="additional-cost" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl mt-6" role="document">
+              <div class="modal-content border-0">
+                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                  <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+                </div>
+                <div class="modal-header">
+                  <h5 class="modal-title" id="">Manage Additional Cost</h5>
+                </div>
+                <div class="modal-body mt-0 scrollbar-visible">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="float-end">
+                        <a class="form-small text-primary px-1 m-r-5" type="button" data-bs-toggle="tooltip"
+                          data-bs-placement="top" title="" data-bs-original-title="Add" aria-label=""><i
+                            class="fas fa-plus"></i></a> <a class="form-small text-primary px-1 m-r-5" type="button"
+                          data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Remove"
+                          aria-label=""><i class="fas fa-minus"></i></a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="table-responsive scrollbar">
+                    <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                      <thead>
+                        <tr>
+                          <th width="5%"></th>
+                          <th width="5%">No.</th>
+                          <th width="15%">Description</th>
+                          <th>Cost</th>
+                          <th>Discount</th>
+                          <th>Currency</th>
+                          <th>Amount</th>
+                          <th>Remark</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><input type="checkbox"></td>
+                          <td>1</td>
+                          <td><select class="form-control form-small form-select" id="">
+                              <option>-----</option>
+                            </select></td>
+                          <td>-----</td>
+                          <td>-----</td>
+                          <td>-----</td>
+                          <td>-----</td>
+                          <td>-----</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+          
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary me-1" aria-label="">Ok</button> <button type="button"
+                    class="btn btn-danger me-1" aria-label="">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
         </form>
       </div>
       <!--Delivery Form End Here -->
 
       <!--Items Form Start Here -->
-      <div class="card mb-3">
+      <div class="card mb-3" >
         <div class="card-header bg-light">
           <div class="row flex-between-end">
             <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#items"
@@ -529,6 +629,10 @@
               <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                 data-bs-original-title="Approve Items" aria-label=""><i
                   class="far fa-check-circle text-primary"></i></a>
+
+                  <button class="btn btn-primary form-small m-r-5" type="button" data-bs-toggle="tooltip"  *ngIf="this.approvestatus == 'Waiting For Approval' || approvestatus == 'Approved'"
+                  data-bs-placement="top" title="" data-bs-original-title="Copy Requisition Quantity to Approved Quantity" aria-label="">
+                  <i class="fas fa-copy"></i></button>   
 
               <!--Strat here Items Pop Up View-->
               <div class="modal fade" id="ship-items" tabindex="-1" aria-hidden="true" role="dialog"
@@ -1139,9 +1243,214 @@
         </div>
       </div>
       <!--Items Form End Here -->
+
+
       <!-- </form> -->
     </div>
   </div>
 </main>
+
+<!-- Attachment popup -->
+
+<div class="modal fade" id="openAttachmentModal" tabindex="-1" role="dialog" aria-labelledby="authentication-modal-label"
+aria-hidden="true">
+<div class="modal-dialog mt-6  modal-xl" role="document">
+  <div class="modal-content border-0">
+    <div class="modal-header">
+      <div class="col-xl-6 col-lg-12" >
+        <h5 class="modal-title">Requisition Attachments
+        </h5>
+        </div>
+        <div class="col-xl-6 col-lg-12">
+          <div class="float-end">  
+            <button type="button" (click)="CloseAttachment()" class="btn btn-danger form-small m-r-5" data-mdb-dismiss="modal">
+              <i class="fas fa-ban"></i>
+            </button>
+
+          </div>
+        </div>
+
+    </div>
+
+    <div class="modal-body" style="font-weight: 400;">
+      <div class="form">
+        <div class="row">
+          <div class="col-xl-6 col-lg-12">
+            <h5 class="card-title proper-case">Attachments
+            </h5>
+          </div>
+
+          <div class="col-xl-6 col-lg-12">
+            <div class="form-inline float-end">
+              <select class="form-control form-small form-select" #docStatus
+              (change)="loadattachment($any($event.target).value)">
+              <option selected="" value="0">Active Data</option>
+              <option value="1">Archive Data</option>
+            </select>
+            <span class="p-l-10 p-r-10 mm-t-3">|</span>
+
+            <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add"  data-bs-toggle="collapse"
+             data-bs-target="#collapse9" aria-expanded="true" aria-controls="collapse9"><i class="fas fa-plus text-primary"></i></a>               
+
+              <a  class="px-2 m-r-5"  type="button" data-bs-toggle="tooltip" data-bs-placement="top" 
+              matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label="" (click)="Deleteattachment()"><i class="fas fa-trash text-danger"></i></a>
+
+            </div>
+          </div>
+        </div>
+        <hr class="mb-3">
+        <div class="accordion-collapse collapse mb-3" id="collapse9" aria-labelledby="heading1"
+        data-bs-parent="#accordionExample">
+        <form (ngSubmit)="submitattachmentfrm(attachmentfrm)" [formGroup]="attachmentfrm">
+          <div class="row mb-3">
+            <div class="col">
+              <fieldset class="form-group mb-0">
+                <select class="form-control form-small form-select" formControlName="attachmentTypeId">
+                  <option value="" disabled>Select Attachment Type</option>
+                  <option *ngFor="let item of attachmenttypelist" value="{{item.attachmentTypeId}}">
+                    {{item.attachmentTypeName | titlecase}}
+                  </option>
+                </select>
+              </fieldset>
+            </div>
+            <div class="col">
+              <fieldset class="form-group mb-0">
+                  <textarea class="form-control form-small" id="" rows="2" placeholder="Description" maxlength="200" formControlName="description"></textarea>
+              </fieldset>
+            </div>
+            <div class="col-xl-6 col-lg-12">
+              <a class="btn btn-primary form-small" (click)="fileInput.click()"> <i class="fas fa-paperclip"></i>
+                Select File</a>
+
+              <input style="display: none" #attachments type="file" (change)="FileSelect($event)" #fileInput
+                multiple="true" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-primary form-small m-r-5"
+                data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save"
+                aria-label=""><i class="fas fa-save"></i></button>
+              <button type="button" (click)="clearattachmentfrm()" (click)="CloseAttachmentFrm()"class="btn btn-danger form-small"
+                data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Cancel"
+                aria-label=""><i class="fas fa-ban"></i></button>
+            </div>
+          </div> 
+        </form>
+        <hr class="mb-3">
+          <div id="" class="table-responsive scrollbar">
+            <table class="table table-hover table-striped scrollbar-visible table-sm small table-bordered">
+              <thead class="bg-primary text-white">
+                <tr>
+                  <th>File</th>
+                  <th>File Size (KB)</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let selected of listOfFiles; let index = index">
+                  <td>{{ selected.name }}</td>
+                  <td>{{ selected.size/1024 | number:'1.0-0' }}</td>
+                  <td>
+                    <a class="px-2 m-r-1" type="button" (click)="removeSelectedFile(index)" data-bs-toggle="tooltip"
+                      data-bs-placement="top" title="" data-bs-original-title="Delete" aria-label=""><i
+                        class="fas fa-trash text-danger"></i></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <br>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-12 col-lg-12">
+            <div id="" class="table-responsive scrollbar">
+              <mat-table #table [dataSource]="attachmentdataSource" matSort
+                  class="table table-hover table-striped scrollbar-visible table-sm small table-bordered">
+                  <ng-container matColumnDef="checkbox">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <mat-checkbox (change)="$event ? attachmentToggle() : null"
+                        [checked]="selectionattachment.hasValue() && isattachmentAllSelected()"
+                        [indeterminate]="selectionattachment.hasValue() && !isattachmentAllSelected()">
+                      </mat-checkbox>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? selectionattachment.toggle(row) : null"
+                        [checked]="selectionattachment.isSelected(row)"
+                        [aria-label]="attachmentcheckboxLabel(row)"></mat-checkbox>
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="attachmenttype">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Attachment Type</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <a (click)="Updatesttachment(row.attachmentId)" class="accordion-btn show px-2 m-r-5"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="true"
+                        aria-controls="collapse3">
+                        {{row.attachmentTypeName}}</a>
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="filename">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>File Name</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.filename}}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="description">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.description}}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="filesize">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Size</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.fileSize}} KB</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="uploadeddatetime">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span *ngIf="docStatus.value=='0'"> Upload Date </span>
+                      <span *ngIf="docStatus.value=='1'"> Removed on </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <span *ngIf="docStatus.value=='0'"> {{row.recDate |date:'dd-MMM-yyyy'}}
+                      </span>
+                      <span *ngIf="docStatus.value=='1'"> {{row.modifiedDate |date:'dd-MMM-yyyy'}}
+                      </span>
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="Uploadedby">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span *ngIf="docStatus.value=='0'"> Uploaded by </span>
+                      <span *ngIf="docStatus.value=='1'">Removed by </span>
+
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <span *ngIf="docStatus.value=='0'"> {{row.createdBy}}</span>
+                      <span *ngIf="docStatus.value=='1'"> {{row.modifiedBy}}</span>
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="file">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <a href="javascript:void(0)" (click)="showAttachment(row.filePath)"> <i class="fas fa-paperclip"></i></a>
+                    </mat-cell>
+                  </ng-container>
+                  <mat-header-row *matHeaderRowDef="attachmentColumns; sticky:true"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: attachmentColumns;"></mat-row>
+                </mat-table>
+               
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+</div>
+
+
+</div>
+
+
+<!-- END -->
 
 <script src="assets/js/SideNavi.js"></script>

@@ -64,9 +64,9 @@
                 <a class="font-medium-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                   data-bs-original-title="Export Excel" aria-label=""><i class="fas fa-file-excel text-success"></i></a>
 
-                  <!-- <a class="px-2 m-r-1 font-medium-5" type="button" data-bs-toggle="tooltip"
+                  <a class="px-2 m-r-1 font-medium-5" type="button" data-bs-toggle="tooltip"
                         data-bs-placement="top" matTooltip="RTO" (click)="downloadNotepad()"
-                        data-bs-original-title="List" aria-label=""><i class="fas fa-file-alt"></i></a> -->
+                        data-bs-original-title="List" aria-label=""><i class="fas fa-file-alt"></i></a>
 
               </div>
             </div>
@@ -155,20 +155,15 @@
                   <span> {{row.pmProjectNameCode.projectName}}{{row.pmProjectNameCode.projectCode}} </span>
                 </mat-cell>
               </ng-container>
+             
               <!-- <ng-container matColumnDef="RTO">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>RTO</mat-header-cell>
-                <a class="px-2 m-r-1 font-medium-5" type="button" data-bs-toggle="tooltip"
-                data-bs-placement="top" matTooltip="RTO" 
-                data-bs-original-title="List" aria-label=""><i class="fas fa-file-alt"></i></a>
-              </ng-container> -->
-              <ng-container matColumnDef="RTO">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>RTO</mat-header-cell>
                 <mat-cell *matCellDef="let row" (click)="downloadNotepad(row.requisitionId)">
                   <a class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse"
                     data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1"><i class="fas fa-file-alt"></i></a>
 
                 </mat-cell>
-              </ng-container>
+              </ng-container> -->
 
               <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
               <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
