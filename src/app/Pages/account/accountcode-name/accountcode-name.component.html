@@ -1,336 +1,417 @@
 <div class="card px-3 py-2 mb-1">
-<div class="position-relative">
+  <div class="position-relative">
     <div class="row flex-between-center">
       <div class="col-auto align-self-center">
         <h5 class="mb-0">Account Code / Name</h5>
-          <span class="btn-sm ps-0 text-primary fw-bold">Accounts Link<span class="fas fa-chevron-right ms-1 fs--2"></span></span> <span class="btn-sm p-0">Account Code / Name</span>
+        <span class="btn-sm ps-0 text-primary fw-bold">Accounts Link<span
+            class="fas fa-chevron-right ms-1 fs--2"></span></span> <span class="btn-sm p-0">Account Code / Name</span>
       </div>
-        <div class="col-auto ms-auto">
-            <button class="btn btn-secondary dropdown-toggle pe-1 me-1" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="pe-1"><i class="fas fa-plus"></i></span></button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#add-cat" aria-label="">Add Category</a>
-              <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#add-sub-cat" aria-label="">Add Sub Category</a>
-              <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#add-acc-head" aria-label="">Add Account Head</a>
-              <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#add-acc-code" aria-label="">Add Account Code</a>
-            </div>
-            <div class="modal fade" id="add-cat" tabindex="-1" aria-hidden="true">
+      <div class="col-auto ms-auto form-inline float-end mt-2">
+        
+        <select class="form-control form-small form-select" #docStatus
+            (change)="AccCodeLoadData($any($event.target).value)">
+            <option selected="" value="0">Active Data</option>
+            <option value="1">Archive Data</option>
+        </select>
+        <span class="p-l-10 p-r-10 mm-t-3">|</span>
+        <input type="text" class="form-control form-small" (keyup)="applyFilter($any($event.target).value)"
+            placeholder="Search" style="border-top-right-radius: 0; border-bottom-right-radius: 0px"
+            #searchInput>
+
+        <button class="btn btn-primary form-small m-r-5"
+            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+            data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Search"
+            aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
+
+        <button class="btn btn-primary form-small m-r-5"
+            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+            data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Clear Search Input"
+            (click)="clearSearchInput()" data-bs-original-title="Search" aria-label=""><i
+                class="fa fa-solid fa-eraser"></i></button>
+
+        <span class="p-l-10 p-r-10 mm-t-3">|</span>
+
+
+
+        <button class="btn btn-secondary dropdown-toggle pe-1 me-1" type="button" data-bs-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false"><span class="pe-1"><i class="fas fa-plus"></i></span></button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" type="button" data-bs-toggle="modal" (click)="addCat()" data-bs-target="#add-cat"
+            aria-label="">Add Category</a>
+          <a class="dropdown-item" type="button" data-bs-toggle="modal" (click)="addsubcat()"
+            data-bs-target="#add-sub-cat" aria-label="">Add Sub Category</a>
+          <a class="dropdown-item" type="button" data-bs-toggle="modal" (click)="addacchead()"
+            data-bs-target="#add-acc-head" aria-label="">Add Account Head</a>
+          <a class="dropdown-item" type="button" data-bs-toggle="modal" (click)="addAccCode()"
+            data-bs-target="#add-acc-code" aria-controls="add-acc-code" aria-label="">Add Account Code</a>
+        </div>
+        <div class="modal fade" id="add-cat" tabindex="-1" aria-hidden="true">
           <div class="modal-dialog modal-xl mt-6" role="document">
+
+
             <div class="modal-content border-0">
+
               <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                  data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-                <div class="modal-header">
+              <div class="modal-header">
                 <h5 class="modal-title" id="">Add Category</h5>
-                
+
               </div>
-              <div class="modal-body mt-0">
+
+              <form (ngSubmit)="onSubmit(accountCategoryForm)" [formGroup]="accountCategoryForm">
+                <div class="modal-body mt-0">
                   <div class="row g-3">
-                      <div class="col-lg">
+                    <div class="col-lg">
                       <div class="form-floating mb-2">
-          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
-            <option selected="">---</option>
-              <option>Assets</option>
-              <option>Liabilities</option>
-              <option>Income</option>
-              <option>Expense</option>
-              <option>Capital</option>
-          </select>
-          <label for="" class="px-0" style="line-height: 0.625rem;">Select Accounts Type</label>
-        </div>
+                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                          formControlName="accountType" required>
+                          <option value="Assets">Assets</option>
+                          <option value="Liabilities">Liabilities</option>
+                          <option value="Income">Income</option>
+                          <option value="Expense">Expense</option>
+                          <option value="Capital">Capital</option>
+                        </select>
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Select Accounts Type</label>
                       </div>
-                      <div class="col-lg">
-          <div class="form-floating mb-3">
-          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Account Category" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
-          <label for="" class="px-0" style="line-height: 0.625rem;">Category Name</label>
-        </div>	
-                      </div>
-                      <div class="col-lg">
-          <div class="form-floating mb-3">
-          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Category Code" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
-          <label for="" class="px-0" style="line-height: 0.625rem;">Category Code (3 Digit)</label>
-        </div>	
-                      </div>
-                      </div>					
-              </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-primary me-1" aria-label="">Add</button> <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-              </div>
-            </div>
-          </div>
-        </div>
-            <div class="modal fade" id="add-sub-cat" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-xl mt-6" role="document">
-            <div class="modal-content border-0">
-              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-                <div class="modal-header">
-                <h5 class="modal-title" id="">Add Sub Category</h5>
-                
-              </div>
-              <div class="modal-body mt-0">
-                  
-                  <div class="row g-3">							
-                      
-                      <div class="col-lg">
-                          <div class="form-floating mb-2">
-          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
-            <option selected="">---</option>
-          </select>
-          <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
-        </div>									
-                      </div>
-                      <div class="col-lg">
-                          <div class="form-floating mb-2">
-          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Sub Category" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
-          <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category Name</label>
-        </div>									
-                      </div>
-                      <div class="col-lg">
-          <div class="form-floating mb-3">
-          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Category Code" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
-          <label for="" class="px-0" style="line-height: 0.625rem;">Category Code (3 Digit)</label>
-        </div>
-                  </div>
-                      
-                      </div>
-              </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-primary me-1" aria-label="">Add</button> <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-              </div>
-            </div>
-          </div>
-        </div>
-            <div class="modal fade" id="add-acc-head" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-xl mt-6" role="document">
-            <div class="modal-content border-0">
-              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-                <div class="modal-header">
-                <h5 class="modal-title" id="">Add Account Head</h5>
-                
-              </div>
-              <div class="modal-body mt-0">
-                  <div class="row g-3">
-                      <div class="col-lg">
-          <div class="form-floating mb-2">
-          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
-            <option selected="">---</option>
-          </select>
-          <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
-        </div>	
-                      </div>
-                      <div class="col-lg">
-          <div class="form-floating mb-3">
-          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
-            <option selected="">---</option>
-          </select>
-          <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category</label>
-        </div>	
-                      </div>
-                      <div class="col-lg">
-          <div class="form-floating mb-3">
-          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Warehouse Info" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
-          <label for="" class="px-0" style="line-height: 0.625rem;">Account Head</label>
-        </div>	
-                      </div>
-                      <div class="col-lg">
-          <div class="form-floating mb-3">
-          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Warehouse Info" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
-          <label for="" class="px-0" style="line-height: 0.625rem;">Head Code (1 Digit)</label>
-        </div>	
-                      </div>
-                      </div>
-                  
-              </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-primary me-1" aria-label="">Add</button> <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-              </div>
-            </div>
-          </div>
-        </div>
-            <div class="modal fade" id="add-acc-code" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-xl mt-6" role="document">
-            <div class="modal-content border-0">
-              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-                <div class="modal-header">
-                <h5 class="modal-title" id="">Add Account Code</h5>
-                
-              </div>
-              <div class="modal-body mt-0">
-                  
-                  <div class="row g-3">
-                      <div class="col-lg">
+                    </div>
+                    <div class="col-lg">
                       <div class="form-floating mb-3">
-          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Account Category" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
-          <label for="" class="px-0" style="line-height: 0.625rem;">Department Name</label>
+                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                          type="text" placeholder="Account Category"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                          formControlName="categoryname" />
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Category Name</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-3">
+                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                          type="text" placeholder="Category Code"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                          formControlName="categorycode" />
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Category Code (3 Digit)</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary me-1" aria-label=""
+                      [disabled]="accountCategoryForm.invalid  || !accountCategoryForm.dirty">Add</button>
+                    <button type="button" class="btn btn-danger me-1" aria-label="" (click)="close()">Clear</button>
+                  </div>
+                </div>
+              </form>
+
+            </div>
+
+          </div>
         </div>
-                          </div>								
-                      <div class="col-lg">
-          <div class="form-floating mb-2">
-          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
-            <option selected="">---</option>
-          </select>
-          <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
-        </div>	
-                      </div>
-                      <div class="col-lg">
-          <div class="form-floating mb-3">
-          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
-            <option selected="">---</option>
-          </select>
-          <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category</label>
-        </div>	
-                      </div>
-                      <div class="col-lg">
-          <div class="form-floating mb-3">
-          <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;">
-            <option selected="">---</option>
-          </select>
-          <label for="" class="px-0" style="line-height: 0.625rem;">Account Head</label>
-        </div>	
-                      </div>
-                      <div class="col-lg">
-          <div class="form-floating mb-3">
-          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Warehouse Info" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
-          <label for="" class="px-0" style="line-height: 0.625rem;">Account Name</label>
-        </div>	
-                      </div>
-                      <div class="col-lg">
-          <div class="form-floating mb-3">
-          <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id="" type="text" placeholder="Warehouse Info" style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" />
-          <label for="" class="px-0" style="line-height: 0.625rem;">Account Code (3 Digit)</label>
-        </div>	
-                      </div>
-                      </div>
+        <div class="modal fade" id="add-sub-cat" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl mt-6" role="document">
+            <div class="modal-content border-0">
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                  data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-primary me-1" aria-label="">Add</button> <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
+              <div class="modal-header">
+                <h5 class="modal-title" id="">Add Sub Category</h5>
+
               </div>
+              <form (ngSubmit)="onSubmitSubCat(subCategoryForm)" [formGroup]="subCategoryForm">
+                <div class="modal-body mt-0">
+
+                  <div class="row g-3">
+
+                    <div class="col-lg">
+                      <div class="form-floating mb-2">
+                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                          formControlName="categoryId">
+                          <option *ngFor="let acc of  this.dataSource.data" value="{{acc.categoryId}}">
+                            {{acc.categoryname | titlecase}}
+                          </option>
+                        </select>
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-2">
+                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                          type="text" placeholder="Sub Category"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                          formControlName="subCategoryName" />
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category Name</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-3">
+                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                          type="text" placeholder="Category Code"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                          formControlName="subCategoryCode" />
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Category Code (3 Digit)</label>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary me-1" aria-label=""
+                        [disabled]="subCategoryForm.invalid  || !subCategoryForm.dirty">Add</button>
+                      <button type="button" class="btn btn-danger me-1" aria-label=""
+                        (click)="subCatClose()">Clear</button>
+                    </div>
+
+                  </div>
+                </div>
+              </form>
+
             </div>
           </div>
         </div>
-             <a class="px-1 m-r-5 text-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit"></i></a> 
-         <a class="px-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Delete" aria-label=""><i class="fas fa-trash text-danger"></i></a> 
+        <div class="modal fade" id="add-acc-head" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl mt-6" role="document">
+            <div class="modal-content border-0">
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                  data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-header">
+                <h5 class="modal-title" id="">Add Account Head</h5>
+
+              </div>
+              <form (ngSubmit)="onSubmitAccHead(accountHeadForm)" [formGroup]="accountHeadForm">
+                <div class="modal-body mt-0">
+                  <div class="row g-3">
+                    <div class="col-lg">
+                      <div class="form-floating mb-2">
+                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                          formControlName="categoryId">
+                          <option *ngFor="let acc of  this.dataSource.data" value="{{acc.categoryId}}">
+                            {{acc.categoryname | titlecase}}
+                          </option>
+                        </select>
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-3">
+                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                          formControlName="subCategoryId">
+                          <option *ngFor="let subcat of  this.subCatDataSource.data" value="{{subcat.subCategoryId}}">
+                            {{subcat.subCategoryName | titlecase}}
+                          </option>
+                        </select>
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-3">
+                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                          type="text" placeholder="Warehouse Info"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                          formControlName="accountHead" />
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Account Head</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-3">
+                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                          type="text" placeholder="Warehouse Info"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                          formControlName="headCode" />
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Head Code (1 Digit)</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary me-1" aria-label=""
+                      [disabled]="accountHeadForm.invalid  || !accountHeadForm.dirty">Add</button>
+                    <button type="button" class="btn btn-danger me-1" aria-label=""
+                      (click)="accheadClose()">Clear</button>
+                  </div>
+
+                </div>
+              </form>
+
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="add-acc-code" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl mt-6" role="document">
+            <div class="modal-content border-0">
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                  data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-header">
+                <h5 class="modal-title" id="">
+                  {{Idheaderfoot==0?'Add Account Code':'Edit Account Code'}}
+                </h5>
+
+              </div>
+              <form (ngSubmit)="onSubmitAccCode(accountCodeForm)" [formGroup]="accountCodeForm">
+                <div class="modal-body mt-0">
+
+                  <div class="row g-3">
+                    <div class="col-lg">
+                      <div class="form-floating mb-3">
+                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                          type="text" placeholder="Account Category"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                          formControlName="departmentName" />
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Department Name</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-2">
+                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                          formControlName="categoryId">
+                          <option *ngFor="let acc of  this.dataSource.data" value="{{acc.categoryId}}">
+                            {{acc.categoryname | titlecase}}
+                          </option>
+                        </select>
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-3">
+                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                          formControlName="subCategoryId">
+                          <option *ngFor="let subcat of  this.subCatDataSource.data" value="{{subcat.subCategoryId}}">
+                            {{subcat.subCategoryName | titlecase}}
+                          </option>
+                        </select>
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-3">
+                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                          formControlName="accountHeadId">
+                          <option *ngFor="let acchead of  this.accHeadDataSource.data"
+                            value="{{acchead.accountHeadId}}">
+                            {{acchead.accountHead | titlecase}}
+                          </option>
+                        </select>
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Account Head</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-3">
+                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                          type="text" placeholder="Warehouse Info"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                          formControlName="accountName" />
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Account Name</label>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="form-floating mb-3">
+                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                          type="text" placeholder="Warehouse Info"
+                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                          formControlName="accountcode" />
+                        <label for="" class="px-0" style="line-height: 0.625rem;">Account Code (3 Digit)</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary me-1" aria-label=""
+                      [disabled]="accountCodeForm.invalid  || !accountCodeForm.dirty">
+                      {{Idheaderfoot==0?'Add':'Update'}}
+                    </button>
+                    <button type="button" class="btn btn-danger me-1" aria-label=""
+                      (click)="accCodeClose()">Clear</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <span class="p-l-10 p-r-10 mm-t-3">|</span>
+
+        <!-- <a class="px-1 m-r-5 text-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+          data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit"></i></a> -->
+        <a class="px-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" (click)="DeleteData()"
+          data-bs-original-title="Delete" aria-label=""><i class="fas fa-trash text-danger"></i></a>
       </div>
     </div>
   </div>
-      
+
 </div>
 
+
 <div class="card mb-3">
-            
-    <div class="card-body">
-        <div class="table-responsive scrollbar">
-      <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
-          <thead class="bg-200">
-            <tr>
-                <th></th>
-                <th>Department</th>
-              <th>Category</th>
-                <th>Sub Category</th>
-              <th>Account Head</th>
-              <th>Account Codes</th>
-                <th>Account Name</th>
-                <th>Description</th>
-              </tr>
-          </thead>
-          <tbody>
-            <tr>
-                <td><input type="checkbox"></td>
-              <td>-----</td>
-              <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-              </tr>
-              <tr>
-                  <td><input type="checkbox"></td>
-              <td>-----</td>
-              <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                  <td>-----</td>
-              </tr>
-              <tr>
-                  <td><input type="checkbox"></td>
-              <td>-----</td>
-              <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                  <td>-----</td>
-              </tr>
-              <tr>
-                  <td><input type="checkbox"></td>
-              <td>-----</td>
-              <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                  <td>-----</td>
-              </tr>
-              <tr>
-                  <td><input type="checkbox"></td>
-              <td>-----</td>
-              <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                  <td>-----</td>
-              </tr>
-              <tr>
-                  <td><input type="checkbox"></td>
-              <td>-----</td>
-              <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                  <td>-----</td>
-              </tr>
-              <tr>
-                  <td><input type="checkbox"></td>
-              <td>-----</td>
-              <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                  <td>-----</td>
-              </tr>
-              <tr>
-                  <td><input type="checkbox"></td>
-              <td>-----</td>
-              <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                  <td>-----</td>
-              </tr>
-              <tr>
-                  <td><input type="checkbox"></td>
-              <td>-----</td>
-              <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                <td>-----</td>
-                  <td>-----</td>
-              </tr>
-              </tbody>
-        </table>
-            </div>				
+
+  <div class="card-body">
+    <div class="table-responsive scrollbar">
+      <mat-table #table [dataSource]="accCodeDataSource" matSort
+        class="table table-hover table-striped table-sm small table-bordered">
+        <ng-container matColumnDef="checkbox">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+              [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="department">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Department</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <a (click)="UpdateAccountCodedata(row.accountCodeId)" class="accordion-btn show px-2 m-r-5" type="button"
+              data-bs-target="#add-acc-code" aria-expanded="true" aria-controls="add-acc-code"
+              title={{row.departmentName}}> <span>{{row.departmentName}}</span>
+            </a>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="category">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Category</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span> {{row.accountCategory.categoryname}} </span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="subCategory">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Sub Category</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span> {{row.subAccCategory.subCategoryName}} </span>
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="accountHead">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Account Head</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.accountHead.accountHead}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="accountCodes">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Account Codes</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.accountcode}}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="accountName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Account Name</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.accountName}}
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
+          [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.accountCodeId==selectedIndex))}"></mat-row>
+      </mat-table>
+      <mat-paginator #paginator [length]="accCodeDataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
+        [pageSizeOptions]="[20, 40, 60, 100]">
+      </mat-paginator>
     </div>
   </div>
+</div>

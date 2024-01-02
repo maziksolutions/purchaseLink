@@ -40,7 +40,7 @@ export class RequisitionslistComponent implements OnInit {
   selectedIndex: any;
   dataSource = new MatTableDataSource<any>();
   displayedColumns: string[] = ['checkbox', 'Requisition_No', 'Delivery_Site', 'OriginSite', 'RequestOrderType', 'OrderTitle',
-    'OrderReference', 'Department', 'Priority', 'ProjectName_Code','RTO'];
+    'OrderReference', 'Department', 'Priority', 'ProjectName_Code'];
   selection = new SelectionModel<any>(true, []);
   rights: RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
@@ -50,11 +50,7 @@ export class RequisitionslistComponent implements OnInit {
   Vessels: any;
   selectedVesselId: number = 0;
 
-  items: Item[] = [
-    { id: 1, name: 'ENVIROCLEAN', quantity: 200, unit: 'LTR' },
-    { id: 2, name: 'NATURAL HAND CLEANER', quantity: 50, unit: 'LTR' },
-    // Add more items as needed
-  ];
+
   vesselcode: any;
   ReqData: any[];
   GetAccountcode: any;
@@ -171,15 +167,19 @@ export class RequisitionslistComponent implements OnInit {
     return numSelected === numRows;
   }
   masterToggle() {
+    
     this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
+    
   }
   /** The label for the checkbox on the passed row */
   checkboxLabel(row: any): string {
-    //console.log(row);
+    
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
+ 
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.UserId + 1}`;
+    
   }
 
   loadData(status: number) {
@@ -242,36 +242,40 @@ export class RequisitionslistComponent implements OnInit {
       
     })
   }
-  downloadNotepad(id) {
-  //   let CurtDate = new Date ;
-  //  let  currentDate = this.datePipe.transform(CurtDate, 'yyyyMMdd');
+  downloadNotepad() {
+debugger
 
-   this.ReqData = this.dataSource.data.filter(x=>x.requisitionId == id);
+  const id = this.selection.selected.filter(x=>x.approvedReq == "Approved");
+
+    for (let i = 0; i < id.length; i++){
+   this.ReqData = this.dataSource.data.filter(x=>x.requisitionId == id[i].requisitionId && x.approvedReq == "Approved");
    let shipcompId = this.ReqData[0].orderReference.split(',')[0];
    let accountcode =this.GetAccountcode.filter(x=>x.shipComponentId == shipcompId)[0];
    let Dates =  this.datePipe.transform(this.ReqData[0].recDate, 'yyyyMMdd');
    let year =  this.datePipe.transform(this.ReqData[0].recDate, 'yy');
 
+  // let documentHeader =this.ReqData[0].documentHeader.replace(/\D/g, '')
+  let documentHeader =this.ReqData[0].documentHeader.slice(-4).trim()
 
-  let documentHeader =this.ReqData[0].documentHeader.replace(/\D/g, '')
+   const uniqueItems = this.itemdata.filter(x=>x.pmReqId == id[i].requisitionId);
 
-   const uniqueItems = this.itemdata.filter(x=>x.pmReqId == id);
+   let fileDes =this.ReqData[0].pmOrderType.defaultOrderType == "Spare" ? "TmMASTER" : "StarIPS";
+
 
     let stepData = `ISO-10303-21;
     HEADER;
-    FILE_DESCRIPTION(('Requisition data transfer in StarIPS');
+    FILE_DESCRIPTION(('Requisition data transfer in ${fileDes}');
     FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData[0].vessel.vesselCode}${year+''+documentHeader}.RTO','${Dates}');
     ENDSEC;
     DATA;`;
 
-debugger
        stepData += `
   
              #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vessel.vesselCode}','${year+'/'+documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].pmPreference.description}','${Dates}','','','${this.ReqData[0].departments.departmentName}','','${accountcode.accountCode}','','','','','${this.ReqData[0].orderTitle}')`;
        
              uniqueItems.forEach((item ,index)=> {
           stepData += `
-             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year+'/'+documentHeader}','${index + 1}','${item.itemCode}','${item.itemName}','${item.dwg}','','','${item.make}','','','${item.rob}','${item.unit}','${item.enterQuantity}','','','${item.model}','exactOrderRef','','','','','MakerRef','','','','','');`;
+             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year+'/'+documentHeader}','${index + 1}','${item.part}','${item.itemName}','${item.dwg}','','','${item.make}','','','${item.rob}','fix Pcs','${item.enterQuantity}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
              });
        stepData += `
        ENDSEC;`;
@@ -279,12 +283,14 @@ debugger
        // Convert the content to a Blob
       const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
   
-
+   let filesaveName =this.ReqData[0].vessel.vesselCode+year+documentHeader+'.RTO';
       // Use FileSaver.js to save the file
-      saveAs(blob, 'Requisition_RTO.txt');
-     return;
+      saveAs(blob, filesaveName);
 
-   
-  }
+            }
 
+            if(id.length == 0){
+              this.swal.error('Please Select Approved Requisition. ')
+            }
+}
 }

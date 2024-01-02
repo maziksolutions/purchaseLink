@@ -116,6 +116,26 @@ export class RequisitionService {
     return this.httpClient.get<any[]>(`${this.linkurl}getItemsByReqId/${id}`, httpOptions);
   }
 
+  sendApprove(header:any): Observable<any> {
+    
+    return this.httpClient.post<any>(`${this.linkurl}sendapprove/${header}`, httpOptions);
+  }
+
+  Finalapprove(ApprovelStatus:any,header:any,finalHeader:any): Observable<any> {
+    
+     return this.httpClient.post<any>(`${this.linkurl}Finalapprove/${ApprovelStatus}/${header}/${finalHeader}`, httpOptions);
+  }
+
+  // DownloadReqAttach(filepath): Observable<any> {
+  //   return this.httpClient.get<any>(this.linkurl + 'DownloadReqAttach/' + filepath, httpOptions)
+  //     .pipe(catchError(this.handleError));
+  // }
+  DownloadReqAttach(fileName:any):Observable<any>{  
+    debugger
+    return  this.httpClient.get<any>(`${this.linkurl}downloadReqAttach/${fileName}`,{ responseType: 'blob' as 'json'})
+    .pipe(catchError(this.handleError));
+  }  
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('An error occurred:', error.error.message);
