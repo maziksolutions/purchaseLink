@@ -44,295 +44,7 @@
             data-bs-target="#add-acc-head" aria-label="">Add Account Head</a>
           <a class="dropdown-item" type="button" data-bs-toggle="modal" (click)="addAccCode()"
             data-bs-target="#add-acc-code" aria-controls="add-acc-code" aria-label="">Add Account Code</a>
-        </div>
-        <div class="modal fade" id="add-cat" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-xl mt-6" role="document">
-
-
-            <div class="modal-content border-0">
-
-              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                  data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-header">
-                <h5 class="modal-title" id="">Add Category</h5>
-
-              </div>
-
-              <form (ngSubmit)="onSubmit(accountCategoryForm)" [formGroup]="accountCategoryForm">
-                <div class="modal-body mt-0">
-                  <div class="row g-3">
-                    <div class="col-lg">
-                      <div class="form-floating mb-2">
-                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
-                          formControlName="accountType" required>
-                          <option value="Assets">Assets</option>
-                          <option value="Liabilities">Liabilities</option>
-                          <option value="Income">Income</option>
-                          <option value="Expense">Expense</option>
-                          <option value="Capital">Capital</option>
-                        </select>
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Select Accounts Type</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
-                          type="text" placeholder="Account Category"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
-                          formControlName="categoryname" />
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Category Name</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
-                          type="text" placeholder="Category Code"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
-                          formControlName="categorycode" />
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Category Code (3 Digit)</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary me-1" aria-label=""
-                      [disabled]="accountCategoryForm.invalid  || !accountCategoryForm.dirty">Add</button>
-                    <button type="button" class="btn btn-danger me-1" aria-label="" (click)="close()">Clear</button>
-                  </div>
-                </div>
-              </form>
-
-            </div>
-
-          </div>
-        </div>
-        <div class="modal fade" id="add-sub-cat" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-xl mt-6" role="document">
-            <div class="modal-content border-0">
-              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                  data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-header">
-                <h5 class="modal-title" id="">Add Sub Category</h5>
-
-              </div>
-              <form (ngSubmit)="onSubmitSubCat(subCategoryForm)" [formGroup]="subCategoryForm">
-                <div class="modal-body mt-0">
-
-                  <div class="row g-3">
-
-                    <div class="col-lg">
-                      <div class="form-floating mb-2">
-                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
-                          formControlName="categoryId">
-                          <option *ngFor="let acc of  this.dataSource.data" value="{{acc.categoryId}}">
-                            {{acc.categoryname | titlecase}}
-                          </option>
-                        </select>
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-2">
-                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
-                          type="text" placeholder="Sub Category"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
-                          formControlName="subCategoryName" />
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category Name</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
-                          type="text" placeholder="Category Code"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
-                          formControlName="subCategoryCode" />
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Category Code (3 Digit)</label>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="submit" class="btn btn-primary me-1" aria-label=""
-                        [disabled]="subCategoryForm.invalid  || !subCategoryForm.dirty">Add</button>
-                      <button type="button" class="btn btn-danger me-1" aria-label=""
-                        (click)="subCatClose()">Clear</button>
-                    </div>
-
-                  </div>
-                </div>
-              </form>
-
-            </div>
-          </div>
-        </div>
-        <div class="modal fade" id="add-acc-head" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-xl mt-6" role="document">
-            <div class="modal-content border-0">
-              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                  data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-header">
-                <h5 class="modal-title" id="">Add Account Head</h5>
-
-              </div>
-              <form (ngSubmit)="onSubmitAccHead(accountHeadForm)" [formGroup]="accountHeadForm">
-                <div class="modal-body mt-0">
-                  <div class="row g-3">
-                    <div class="col-lg">
-                      <div class="form-floating mb-2">
-                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
-                          formControlName="categoryId">
-                          <option *ngFor="let acc of  this.dataSource.data" value="{{acc.categoryId}}">
-                            {{acc.categoryname | titlecase}}
-                          </option>
-                        </select>
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
-                          formControlName="subCategoryId">
-                          <option *ngFor="let subcat of  this.subCatDataSource.data" value="{{subcat.subCategoryId}}">
-                            {{subcat.subCategoryName | titlecase}}
-                          </option>
-                        </select>
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
-                          type="text" placeholder="Warehouse Info"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
-                          formControlName="accountHead" />
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Account Head</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
-                          type="text" placeholder="Warehouse Info"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
-                          formControlName="headCode" />
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Head Code (1 Digit)</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary me-1" aria-label=""
-                      [disabled]="accountHeadForm.invalid  || !accountHeadForm.dirty">Add</button>
-                    <button type="button" class="btn btn-danger me-1" aria-label=""
-                      (click)="accheadClose()">Clear</button>
-                  </div>
-
-                </div>
-              </form>
-
-            </div>
-          </div>
-        </div>
-        <div class="modal fade" id="add-acc-code" tabindex="-1" aria-hidden="true">
-          <div class="modal-dialog modal-xl mt-6" role="document">
-            <div class="modal-content border-0">
-              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                  data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-header">
-                <h5 class="modal-title" id="">
-                  {{Idheaderfoot==0?'Add Account Code':'Edit Account Code'}}
-                </h5>
-
-              </div>
-              <form (ngSubmit)="onSubmitAccCode(accountCodeForm)" [formGroup]="accountCodeForm">
-                <div class="modal-body mt-0">
-
-                  <div class="row g-3">
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
-                          type="text" placeholder="Account Category"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
-                          formControlName="departmentName" />
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Department Name</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-2">
-                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
-                          formControlName="categoryId">
-                          <option *ngFor="let acc of  this.dataSource.data" value="{{acc.categoryId}}">
-                            {{acc.categoryname | titlecase}}
-                          </option>
-                        </select>
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
-                          formControlName="subCategoryId">
-                          <option *ngFor="let subcat of  this.subCatDataSource.data" value="{{subcat.subCategoryId}}">
-                            {{subcat.subCategoryName | titlecase}}
-                          </option>
-                        </select>
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
-                          formControlName="accountHeadId">
-                          <option *ngFor="let acchead of  this.accHeadDataSource.data"
-                            value="{{acchead.accountHeadId}}">
-                            {{acchead.accountHead | titlecase}}
-                          </option>
-                        </select>
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Account Head</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
-                          type="text" placeholder="Warehouse Info"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
-                          formControlName="accountName" />
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Account Name</label>
-                      </div>
-                    </div>
-                    <div class="col-lg">
-                      <div class="form-floating mb-3">
-                        <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
-                          type="text" placeholder="Warehouse Info"
-                          style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
-                          formControlName="accountcode" />
-                        <label for="" class="px-0" style="line-height: 0.625rem;">Account Code (3 Digit)</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary me-1" aria-label=""
-                      [disabled]="accountCodeForm.invalid  || !accountCodeForm.dirty">
-                      {{Idheaderfoot==0?'Add':'Update'}}
-                    </button>
-                    <button type="button" class="btn btn-danger me-1" aria-label=""
-                      (click)="accCodeClose()">Clear</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+        </div>        
         <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
         <!-- <a class="px-1 m-r-5 text-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
@@ -344,7 +56,294 @@
   </div>
 
 </div>
+<div class="modal fade" id="add-cat" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl mt-6" role="document">
 
+
+    <div class="modal-content border-0">
+
+      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+          data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-header">
+        <h5 class="modal-title" id="">Add Category</h5>
+
+      </div>
+
+      <form (ngSubmit)="onSubmit(accountCategoryForm)" [formGroup]="accountCategoryForm">
+        <div class="modal-body mt-0">
+          <div class="row g-3">
+            <div class="col-lg">
+              <div class="form-floating mb-2">
+                <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                  formControlName="accountType" required>
+                  <option value="Assets">Assets</option>
+                  <option value="Liabilities">Liabilities</option>
+                  <option value="Income">Income</option>
+                  <option value="Expense">Expense</option>
+                  <option value="Capital">Capital</option>
+                </select>
+                <label for="" class="px-0" style="line-height: 0.625rem;">Select Accounts Type</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                  type="text" placeholder="Account Category"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                  formControlName="categoryname" />
+                <label for="" class="px-0" style="line-height: 0.625rem;">Category Name</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                  type="text" placeholder="Category Code"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                  formControlName="categorycode" />
+                <label for="" class="px-0" style="line-height: 0.625rem;">Category Code (3 Digit)</label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary me-1" aria-label=""
+              [disabled]="accountCategoryForm.invalid  || !accountCategoryForm.dirty">Add</button>
+            <button type="button" class="btn btn-danger me-1" aria-label="" (click)="close()">Clear</button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+
+  </div>
+</div>
+<div class="modal fade" id="add-sub-cat" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl mt-6" role="document">
+    <div class="modal-content border-0">
+      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+          data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-header">
+        <h5 class="modal-title" id="">Add Sub Category</h5>
+
+      </div>
+      <form (ngSubmit)="onSubmitSubCat(subCategoryForm)" [formGroup]="subCategoryForm">
+        <div class="modal-body mt-0">
+
+          <div class="row g-3">
+
+            <div class="col-lg">
+              <div class="form-floating mb-2">
+                <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                  formControlName="categoryId">
+                  <option *ngFor="let acc of  this.dataSource.data" value="{{acc.categoryId}}">
+                    {{acc.categoryname | titlecase}}
+                  </option>
+                </select>
+                <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-2">
+                <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                  type="text" placeholder="Sub Category"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                  formControlName="subCategoryName" />
+                <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category Name</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                  type="text" placeholder="Category Code"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                  formControlName="subCategoryCode" />
+                <label for="" class="px-0" style="line-height: 0.625rem;">Category Code (3 Digit)</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary me-1" aria-label=""
+                [disabled]="subCategoryForm.invalid  || !subCategoryForm.dirty">Add</button>
+              <button type="button" class="btn btn-danger me-1" aria-label=""
+                (click)="subCatClose()">Clear</button>
+            </div>
+
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="add-acc-head" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl mt-6" role="document">
+    <div class="modal-content border-0">
+      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+          data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-header">
+        <h5 class="modal-title" id="">Add Account Head</h5>
+
+      </div>
+      <form (ngSubmit)="onSubmitAccHead(accountHeadForm)" [formGroup]="accountHeadForm">
+        <div class="modal-body mt-0">
+          <div class="row g-3">
+            <div class="col-lg">
+              <div class="form-floating mb-2">
+                <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                  formControlName="categoryId">
+                  <option *ngFor="let acc of  this.dataSource.data" value="{{acc.categoryId}}">
+                    {{acc.categoryname | titlecase}}
+                  </option>
+                </select>
+                <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                  formControlName="subCategoryId">
+                  <option *ngFor="let subcat of  this.subCatDataSource.data" value="{{subcat.subCategoryId}}">
+                    {{subcat.subCategoryName | titlecase}}
+                  </option>
+                </select>
+                <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                  type="text" placeholder="Warehouse Info"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                  formControlName="accountHead" />
+                <label for="" class="px-0" style="line-height: 0.625rem;">Account Head</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                  type="text" placeholder="Warehouse Info"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                  formControlName="headCode" />
+                <label for="" class="px-0" style="line-height: 0.625rem;">Head Code (1 Digit)</label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary me-1" aria-label=""
+              [disabled]="accountHeadForm.invalid  || !accountHeadForm.dirty">Add</button>
+            <button type="button" class="btn btn-danger me-1" aria-label=""
+              (click)="accheadClose()">Clear</button>
+          </div>
+
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="add-acc-code" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl mt-6" role="document">
+    <div class="modal-content border-0">
+      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+          data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-header">
+        <h5 class="modal-title" id="">
+          {{Idheaderfoot==0?'Add Account Code':'Edit Account Code'}}
+        </h5>
+
+      </div>
+      <form (ngSubmit)="onSubmitAccCode(accountCodeForm)" [formGroup]="accountCodeForm">
+        <div class="modal-body mt-0">
+
+          <div class="row g-3">
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                  type="text" placeholder="Account Category"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                  formControlName="departmentName" />
+                <label for="" class="px-0" style="line-height: 0.625rem;">Department Name</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-2">
+                <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                  formControlName="categoryId">
+                  <option *ngFor="let acc of  this.dataSource.data" value="{{acc.categoryId}}">
+                    {{acc.categoryname | titlecase}}
+                  </option>
+                </select>
+                <label for="" class="px-0" style="line-height: 0.625rem;">Accounts Category</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                  formControlName="subCategoryId">
+                  <option *ngFor="let subcat of  this.subCatDataSource.data" value="{{subcat.subCategoryId}}">
+                    {{subcat.subCategoryName | titlecase}}
+                  </option>
+                </select>
+                <label for="" class="px-0" style="line-height: 0.625rem;">Sub Category</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
+                  formControlName="accountHeadId">
+                  <option *ngFor="let acchead of  this.accHeadDataSource.data"
+                    value="{{acchead.accountHeadId}}">
+                    {{acchead.accountHead | titlecase}}
+                  </option>
+                </select>
+                <label for="" class="px-0" style="line-height: 0.625rem;">Account Head</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                  type="text" placeholder="Warehouse Info"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                  formControlName="accountName" />
+                <label for="" class="px-0" style="line-height: 0.625rem;">Account Name</label>
+              </div>
+            </div>
+            <div class="col-lg">
+              <div class="form-floating mb-3">
+                <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
+                  type="text" placeholder="Warehouse Info"
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
+                  formControlName="accountcode" />
+                <label for="" class="px-0" style="line-height: 0.625rem;">Account Code (7 Digit)</label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary me-1" aria-label=""
+              [disabled]="accountCodeForm.invalid  || !accountCodeForm.dirty">
+              {{Idheaderfoot==0?'Add':'Update'}}
+            </button>
+            <button type="button" class="btn btn-danger me-1" aria-label=""
+              (click)="accCodeClose()">Clear</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <div class="card mb-3">
 
