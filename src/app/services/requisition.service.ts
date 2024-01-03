@@ -148,7 +148,9 @@ export class RequisitionService {
     return this.httpClient.get<TemplateTree[]>(this.hierarchyurl + 'templateTree');
   }
 
-
+  getGroupTemplateTree(): Observable<TemplateTree[]> {
+    return this.httpClient.get<TemplateTree[]>(this.linkurl + 'groupTemplateTree');
+  }
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

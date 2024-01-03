@@ -81,7 +81,7 @@
 <!-- End Here-->
 
 <!--  Group Table Data Start Here-->
-<mat-table *ngIf="ComponentType==='Group'" mat-dialog-content #table [dataSource]="groupTableDataSource"
+<!-- <mat-table *ngIf="ComponentType==='Group'" mat-dialog-content #table [dataSource]="groupTableDataSource"
     class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
 
     <ng-container matColumnDef="checkbox">
@@ -106,7 +106,30 @@
     <mat-row *matRowDef="let row; columns: groupTableColumn; let i = index"
         [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.pmsGroupId==selectedIndex))}"></mat-row>
 
-</mat-table>
+</mat-table> -->
+
+<mat-tree *ngIf="ComponentType==='Group'" [dataSource]="groupTableSourceTree" [treeControl]="treeGroupControl" class="wrapper">
+    <mat-tree-node *matTreeNodeDef="let node; when: hasChild" >
+      <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.groupName">
+        <mat-icon class="mat-icon-rtl-mirror"
+          [ngClass]="{ 'redColor': !treeGroupControl.isExpanded(node),'blueColor': treeGroupControl.isExpanded(node)}">
+          {{treeControl.isExpanded(node) ? 'close' : 'add'}}
+        </mat-icon>
+      </button>
+      <span><a ><span style="cursor: pointer;"
+            *ngIf="node.type=='Group'" matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+            <i class="fa fa-folder m-r-5" aria-hidden="true"></i>
+            {{node.groupName}}</span></a></span>
+    </mat-tree-node>
+    <mat-tree-node *matTreeNodeDef="let node;" class="expand-tree">
+      <!-- use a disabled button to provide padding for tree leaf -->     
+      <a style="cursor: pointer; padding-left: 25px;" 
+        *ngIf="node.type=='Group'" matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+       <input type="checkbox" [checked]="node.selected" (change)="handleGroupCheckboxChange($event, node)">
+        {{node.groupName}}
+      </a>
+    </mat-tree-node>
+  </mat-tree>
 <!-- End Here-->
 
 <!--  Spare Cart Item Table Data Start Here-->

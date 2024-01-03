@@ -36,3 +36,13 @@ export interface ExampleGroupFlatNode {
   level: number;
   selected?: boolean;
 }
+
+export interface GroupFlatNode {
+  groupName: string;
+  groupId: number; 
+  type:string;
+  expandable: boolean;
+  level: number;
+  subGroup?: ExampleGroupFlatNode[];
+  selected?: boolean;
+}
