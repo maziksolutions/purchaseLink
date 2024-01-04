@@ -152,6 +152,11 @@ export class RequisitionService {
     return this.httpClient.get<TemplateTree[]>(this.linkurl + 'groupTemplateTree');
   }
 
+  editRobData(data: any): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'editRobData', data)
+      .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('An error occurred:', error.error.message);

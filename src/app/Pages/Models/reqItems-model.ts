@@ -1,5 +1,7 @@
 export class ReqItemsModel {
     itemsId: number;
+    spareId: number;
+    storeId: number;
     itemCode: string;
     itemName: string;
     partNo: string;
@@ -37,5 +39,5 @@ export class ReqItemsModel {
     additionalRemarks: string;
     storageLocation: string;
     attachments: string;
-    pmReqId:number
+    pmReqId: number
 }

@@ -58,16 +58,18 @@ export class RequisitionslistComponent implements OnInit {
 
   constructor(private sideNavService: SideNavService, private route: Router,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService,
-    private fb: FormBuilder, private requisitionService: RequisitionService,private swal: SwalToastService,private datePipe: DatePipe,private shipmasterService:ShipmasterService) { this.route.events.subscribe((event)=>{
-      if(event instanceof NavigationEnd){
-        this.sideNavService.initSidenav();
-      }
-    })}
+    private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe, private shipmasterService: ShipmasterService) {
+      this.route.events.subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          this.sideNavService.initSidenav();
+        }
+      })
+  }
 
   get fm() { return this.RequisitionForm.controls };
-  
+
   navigateToNewReq() {
-    
+
     this.sideNavService.destroySidenav();
 
     const navigationExtras: NavigationExtras = {
@@ -98,7 +100,7 @@ export class RequisitionslistComponent implements OnInit {
     this.loadData(0);
     this.LoadVessel();
     this.Loadshipcomp();
-    this. loadItem();
+    this.loadItem();
 
     this.loadScript('assets/js/SideNavi.js');
   }
@@ -112,7 +114,7 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   editRequisition(row: any): void {
-    
+
     this.route.navigate(['/Requisition/RequisitionsNew', row.requisitionId]);
   }
 
@@ -167,19 +169,19 @@ export class RequisitionslistComponent implements OnInit {
     return numSelected === numRows;
   }
   masterToggle() {
-    
+
     this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
-    
+
   }
   /** The label for the checkbox on the passed row */
   checkboxLabel(row: any): string {
-    
+
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
- 
+
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.UserId + 1}`;
-    
+
   }
 
   loadData(status: number) {
@@ -201,9 +203,9 @@ export class RequisitionslistComponent implements OnInit {
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
         debugger
-        this.flag = status;      
+        this.flag = status;
         // this.documentHeaderList =response.data.map(x=>x.documentHeader.replace(/\D/g, '')) 
-        
+
         this.dataSource.data = response.data;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -213,7 +215,7 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   clear() {
-   
+
     this.RequisitionForm.reset();
     this.RequisitionForm.controls.requisitionId.setValue(0);
     this.RequisitionForm.controls.originSite.setValue('');
@@ -223,74 +225,75 @@ export class RequisitionslistComponent implements OnInit {
     this.RequisitionForm.controls.orderReference.setValue('');
     this.RequisitionForm.controls.departmentId.setValue('');
     this.RequisitionForm.controls.priorityId.setValue('');
-    this.RequisitionForm.controls.projectNameCodeId.setValue('');    
+    this.RequisitionForm.controls.projectNameCodeId.setValue('');
     this.route.navigate(['/Requisition/RequisitionsNew'])
   }
 
   Loadshipcomp() {
     this.shipmasterService.GetComponentList(0)
       .subscribe(response => {
+        debugger
         this.GetAccountcode = response.data;
-        
+
       })
   }
 
-  loadItem(){
+  loadItem() {
     this.requisitionService.getDisplayItems(0)
-    .subscribe(response => {
-      this.itemdata = response.data;
-      
-    })
+      .subscribe(response => {
+        this.itemdata = response.data;
+
+      })
   }
   downloadNotepad() {
-debugger
+    debugger
 
-  const id = this.selection.selected.filter(x=>x.approvedReq == "Approved");
+    const id = this.selection.selected.filter(x => x.approvedReq == "Approved");
 
-    for (let i = 0; i < id.length; i++){
-   this.ReqData = this.dataSource.data.filter(x=>x.requisitionId == id[i].requisitionId && x.approvedReq == "Approved");
-   let shipcompId = this.ReqData[0].orderReference.split(',')[0];
-   let accountcode =this.GetAccountcode.filter(x=>x.shipComponentId == shipcompId)[0];
-   let Dates =  this.datePipe.transform(this.ReqData[0].recDate, 'yyyyMMdd');
-   let year =  this.datePipe.transform(this.ReqData[0].recDate, 'yy');
+    for (let i = 0; i < id.length; i++) {
+      this.ReqData = this.dataSource.data.filter(x => x.requisitionId == id[i].requisitionId && x.approvedReq == "Approved");
+      let shipcompId = this.ReqData[0].orderReference.split(',')[0];
+      let accountcode = this.GetAccountcode.filter(x => x.shipComponentId == shipcompId)[0];
+      let Dates = this.datePipe.transform(this.ReqData[0].recDate, 'yyyyMMdd');
+      let year = this.datePipe.transform(this.ReqData[0].recDate, 'yy');
 
-  // let documentHeader =this.ReqData[0].documentHeader.replace(/\D/g, '')
-  let documentHeader =this.ReqData[0].documentHeader.slice(-4).trim()
+      // let documentHeader =this.ReqData[0].documentHeader.replace(/\D/g, '')
+      let documentHeader = this.ReqData[0].documentHeader.slice(-4).trim()
 
-   const uniqueItems = this.itemdata.filter(x=>x.pmReqId == id[i].requisitionId);
+      const uniqueItems = this.itemdata.filter(x => x.pmReqId == id[i].requisitionId);
 
-   let fileDes =this.ReqData[0].pmOrderType.defaultOrderType == "Spare" ? "TmMASTER" : "StarIPS";
+      let fileDes = this.ReqData[0].pmOrderType.defaultOrderType == "Spare" ? "TmMASTER" : "StarIPS";
 
 
-    let stepData = `ISO-10303-21;
+      let stepData = `ISO-10303-21;
     HEADER;
     FILE_DESCRIPTION(('Requisition data transfer in ${fileDes}');
-    FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData[0].vessel.vesselCode}${year+''+documentHeader}.RTO','${Dates}');
+    FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData[0].vessel.vesselCode}${year + '' + documentHeader}.RTO','${Dates}');
     ENDSEC;
     DATA;`;
 
-       stepData += `
+      stepData += `
   
-             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vessel.vesselCode}','${year+'/'+documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].pmPreference.description}','${Dates}','','','${this.ReqData[0].departments.departmentName}','','${accountcode.accountCode}','','','','','${this.ReqData[0].orderTitle}')`;
-       
-             uniqueItems.forEach((item ,index)=> {
-          stepData += `
-             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year+'/'+documentHeader}','${index + 1}','${item.part}','${item.itemName}','${item.dwg}','','','${item.make}','','','${item.rob}','fix Pcs','${item.enterQuantity}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
-             });
-       stepData += `
+             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].pmPreference.description}','${Dates}','','','${this.ReqData[0].departments.departmentName}','','${accountcode.accountCode}','','','','','${this.ReqData[0].orderTitle}')`;
+
+      uniqueItems.forEach((item, index) => {
+        stepData += `
+             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.part}','${item.itemName}','${item.dwg}','','','${item.make}','','','${item.rob}','fix Pcs','${item.enterQuantity}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
+      });
+      stepData += `
        ENDSEC;`;
-  
-       // Convert the content to a Blob
+
+      // Convert the content to a Blob
       const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
-  
-   let filesaveName =this.ReqData[0].vessel.vesselCode+year+documentHeader+'.RTO';
+
+      let filesaveName = this.ReqData[0].vessel.vesselCode + year + documentHeader + '.RTO';
       // Use FileSaver.js to save the file
       saveAs(blob, filesaveName);
 
-            }
+    }
 
-            if(id.length == 0){
-              this.swal.error('Please Select Approved Requisition. ')
-            }
-}
+    if (id.length == 0) {
+      this.swal.error('Please Select Approved Requisition. ')
+    }
+  }
 }

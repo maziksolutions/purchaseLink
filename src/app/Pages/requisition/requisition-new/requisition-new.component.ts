@@ -76,7 +76,7 @@ export class RequisitionNewComponent implements OnInit {
   rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];
   componentTableColumn: string[] = ['checkbox', 'componentName'];
   groupTableColumn: string[] = ['checkbox', 'groupName'];
-  attachmentColumns: string[] = ['checkbox', 'attachmenttype', 'filename', 'description', 'filesize', 'uploadeddatetime', 'Uploadedby','file'];
+  attachmentColumns: string[] = ['checkbox', 'attachmenttype', 'filename', 'description', 'filesize', 'uploadeddatetime', 'Uploadedby', 'file'];
   dataSource = new MatTableDataSource<any>();
   leftTableDataSource = new MatTableDataSource<any>();
   rightTableDataSource = new MatTableDataSource<any>();
@@ -177,7 +177,7 @@ export class RequisitionNewComponent implements OnInit {
   ReqData: any;
   itemdata: any;
   selectionattachment = new SelectionModel<any>(true, []);
-  attachmentdataSource = new MatTableDataSource<any>(); 
+  attachmentdataSource = new MatTableDataSource<any>();
   fileToUpload: File; fileUrl;
   myFiles: string[] = [];
   listOfFiles: any[] = [];
@@ -187,14 +187,15 @@ export class RequisitionNewComponent implements OnInit {
   requisitionWithIDAutoSave: any;
   attachmenttypelist: any;
   targetLoc: any;
-  fileUrlss:any;
+  fileUrlss: any;
   filenamecut: string;
+  private subscription: Subscription;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
     private authStatusService: AuthStatusService, private userService: UserManagementService, private autoSaveService: AutoSaveService, public dialog: MatDialog,
     private vesselService: VesselManagementService, private shipmasterService: ShipmasterService, private requisitionService: RequisitionService,
-    private datePipe: DatePipe, private typemasterService: TypemasterService,private sanitizer: DomSanitizer,private http: HttpClient
+    private datePipe: DatePipe, private typemasterService: TypemasterService, private sanitizer: DomSanitizer, private http: HttpClient
   ) { }
 
   ngOnInit(): void {
@@ -264,6 +265,8 @@ export class RequisitionNewComponent implements OnInit {
       this.requisitionService.selectedItems$.subscribe(data => {
         debugger
         if (data) {
+          this.displayValue = ''
+          this.saveValue = ''
           this.displayValue = data.displayValue;
           this.saveValue = data.saveValue;
           this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
@@ -279,12 +282,12 @@ export class RequisitionNewComponent implements OnInit {
             debugger
             this.leftTableDataSource.data = []
             this.dataSource.data = [];
-            this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
+            this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];            
           }
           else if (data.orderReferenceType === 'Store') {
             this.leftTableDataSource.data = []
             this.dataSource.data = [];
-            this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
+            this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];           
           }
         }
       });
@@ -402,6 +405,8 @@ export class RequisitionNewComponent implements OnInit {
         asset: [''],
         additionalRemarks: [''],
         storageLocation: [''],
+        spareId:[],
+        storeId:[],
         pmReqId: [0, [Validators.required]]
       }),
     });
@@ -448,6 +453,8 @@ export class RequisitionNewComponent implements OnInit {
                 this.dataSource.data.map(item => {
                   const newItem = {
                     itemsId: 0,
+                    spareId:item.spareId || null,
+                    storeId:item.storeId || null,
                     itemCode: item.itemCode || '',
                     itemName: item.itemName || '',
                     partNo: item.partNo || '',
@@ -618,7 +625,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   getReqData() {
-    debugger
+
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
         debugger
@@ -627,7 +634,7 @@ export class RequisitionNewComponent implements OnInit {
         this.approvestatus = response.data.approvedReq;
         this.finallyHeader = response.data.documentHeader;
         this.requisitionFullData = response.data;
-      
+
 
         // Populate the form controls with the data for editing
         formPart?.patchValue({
@@ -671,8 +678,7 @@ export class RequisitionNewComponent implements OnInit {
           if (requisitionData.orderReferenceType === 'Component' || requisitionData.orderReferenceType === 'Spare') {
             this.getSpareItems('Component', objProcR);
             this.LoadShipCompnent(0)
-            this.getCartItemsInEditReq(0).subscribe(res => {
-              console.log('spareItemsList:-', this.spareItemDataSource.data);
+            this.getCartItemsInEditReq(0).subscribe(res => {             
               const transformedData: any[] = [];
               this.spareItemDataSource.data.forEach((item: any) => {
 
@@ -753,6 +759,8 @@ export class RequisitionNewComponent implements OnInit {
       additionalRemarks: item.additionalRemarks || '',
       storageLocation: item.storageLocation || '',
       attachments: item.attachments || '',
+      spareId: item.shipSpareId || null,
+      storeId: item.shipStoreId || null,
       pmReqId: this.reqId,
     }
   }
@@ -796,6 +804,8 @@ export class RequisitionNewComponent implements OnInit {
       additionalRemarks: item.additionalRemarks || '',
       storageLocation: item.storageLocation || '',
       attachments: item.attachments || '',
+      spareId: item.shipSpareId || null,
+      storeId: item.shipStoreId || null,
       pmReqId: this.reqId,
     }
   }
@@ -1023,18 +1033,18 @@ export class RequisitionNewComponent implements OnInit {
     this.requisitionService.getGroupTemplateTree().subscribe(res => {
       this.groupTableSourceTree = res
     })
-    // if (this.selectedVesselId)
-    //   this.pmsService.GetStoreByShipId(this.selectedVesselId).subscribe(res => {
+    if (this.selectedVesselId)
+      this.pmsService.GetStoreByShipId(this.selectedVesselId).subscribe(res => {
 
-    //     this.groupTableDataSource.data = res.data.map(item => {
-    //       return {
-    //         pmsGroupId: item.pmsGroupId,
-    //         groupName: item.groupName,
-    //         accountCode: item.accountCode,
-    //         // Add other properties as needed
-    //       };
-    //     });
-    //   })
+        this.groupTableDataSource.data = res.data.map(item => {
+          return {
+            pmsGroupId: item.pmsGroupId,
+            groupName: item.groupName,
+            accountCode: item.accountCode,
+            // Add other properties as needed
+          };
+        });
+      })
   }
 
   getCartItems(status) {
@@ -1096,6 +1106,8 @@ export class RequisitionNewComponent implements OnInit {
           debugger
           const data = res.map(item => ({
             itemsId: item.shipComponentSpareId,
+            spareId: item.shipSpareId || null,
+            storeId: item.shipStoreId || null,
             itemCode: item.shipSpares.inventoryCode || '',
             itemName: item.shipSpares.inventoryName || '',
             partNo: item.shipSpares.partNo || '',
@@ -1150,13 +1162,16 @@ export class RequisitionNewComponent implements OnInit {
               this.leftTableDataSource.data = data;
             })
           } else
-            this.leftTableDataSource.data = data;
+            this.leftTableDataSource.data = data;            
         });
     } else if (itemType === 'Group') {
+      debugger
       this.requisitionService.getGroupsInfo(ids).subscribe(res => {
         debugger
         const data = res.map(item => ({
           itemsId: item.shipStoreId,
+          spareId: item.shipSpareId || null,
+          storeId: item.shipStoreId || null,
           itemCode: item.inventoryCode || '',
           itemName: item.inventoryName || '',
           partNo: item.partNo || '',
@@ -1210,7 +1225,7 @@ export class RequisitionNewComponent implements OnInit {
             this.leftTableDataSource.data = data;
           })
         } else
-          this.leftTableDataSource.data = data;
+          this.leftTableDataSource.data = data;      
       })
     }
   }
@@ -1264,6 +1279,8 @@ export class RequisitionNewComponent implements OnInit {
     this.rightTableDataSource.data.forEach((item, index) => {
       const newItem = {
         itemsId: 0,
+        spareId:item.spareId || null,
+        storeId:item.storeId || null,
         pmReqId: this.reqId,
         itemCode: item.itemCode || '',
         itemName: item.itemName || '',
@@ -1387,17 +1404,15 @@ export class RequisitionNewComponent implements OnInit {
               }
             });
             this.cdr.detectChanges();
-          })
-          console.log(this.leftTableDataSource.data);
+          })         
           this.dataSource.data = response.map(item => ({
             editMode: false,
             ...item
-          }));
-          console.log('dataSourcedata :- ', this.dataSource.data)
+          }));       
 
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
-          this.itemdata =response;
+          this.itemdata = response;
           // this.clear();
           // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
         });
@@ -1583,7 +1598,6 @@ export class RequisitionNewComponent implements OnInit {
   }
   formatSelectedComponents(type: string) {
 
-
     if (type === 'Component') {
       if (this.selectedComponents.length > 0) {
         this.displayValue = '';
@@ -1634,7 +1648,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
 
- // Approvel Requisition Start
+  // Approvel Requisition Start
   sendApprove() {
 
     this.requisitionService.sendApprove(this.temporaryNumber)
@@ -1654,7 +1668,7 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   FinalApprove(final) {
-    
+
 
     if (final == 'Approved') {
 
@@ -1663,7 +1677,7 @@ export class RequisitionNewComponent implements OnInit {
         this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
 
         let DocumentHeadValue = this.requisitiondata.filter(x => x.approvedReq == 'Approved' && x.originSite == 'Office').map(x => x.documentHeader);
-       
+
         if (DocumentHeadValue.length == 0) {
           this.documentHeader = '001'
         }
@@ -1672,9 +1686,9 @@ export class RequisitionNewComponent implements OnInit {
           let matches = item.match(/\d+$/);
           return matches ? parseInt(matches[0], 10) : NaN;
         });
-           
+
         if (DocumentHeadValue.length != 0) {
-          const GetMaxNumber = largeNumbers.reduce((a, b) => Math.max(a, b)); 
+          const GetMaxNumber = largeNumbers.reduce((a, b) => Math.max(a, b));
           let incrementedValue = GetMaxNumber + 1;
           this.documentHeader = incrementedValue.toString().padStart(3, '0');
         }
@@ -1695,9 +1709,9 @@ export class RequisitionNewComponent implements OnInit {
           let matches = item.match(/\d+$/);
           return matches ? parseInt(matches[0], 10) : NaN;
         });
-      
+
         if (DocumentHeadValue.length != 0) {
-          const GetMaxNumber = largeNumbers.reduce((a, b) => Math.max(a, b));  
+          const GetMaxNumber = largeNumbers.reduce((a, b) => Math.max(a, b));
           let incrementedValue = GetMaxNumber + 1;
           this.documentHeader = incrementedValue.toString().padStart(3, '0');
         }
@@ -1755,51 +1769,51 @@ export class RequisitionNewComponent implements OnInit {
 
   }
 
-  downloadNotepad(){
+  downloadNotepad() {
     debugger
 
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
-    this.ReqData =  this.requisitionFullData;
-    if(this.ReqData ==undefined){
-       this.swal.error('Please save your data before downloading the RTO file.')
+    this.ReqData = this.requisitionFullData;
+    if (this.ReqData == undefined) {
+      this.swal.error('Please save your data before downloading the RTO file.')
     }
     let shipcompId = this.ReqData.orderReference.split(',')[0];
-    let accountcode =this.dataSourceTree.filter(x=>x.shipComponentId == shipcompId)[0];
-    let Dates =  this.datePipe.transform(this.ReqData.recDate, 'yyyyMMdd');
-    let year =  this.datePipe.transform(this.ReqData.recDate, 'yy');
- 
-  //  let documentHeader =this.ReqData.documentHeader.replace(/\D/g, '')
-   let documentHeader =this.ReqData.documentHeader.slice(-4).trim()
- 
-    const uniqueItems = this.itemdata.filter(x=>x.pmReqId == this.ReqData.requisitionId);
- 
-    let fileDes =this.ReqData.pmOrderType.defaultOrderType == "Spare" ? "TmMASTER" : "StarIPS";
- 
- 
-     let stepData = `ISO-10303-21;
+    let accountcode = this.dataSourceTree.filter(x => x.shipComponentId == shipcompId)[0];
+    let Dates = this.datePipe.transform(this.ReqData.recDate, 'yyyyMMdd');
+    let year = this.datePipe.transform(this.ReqData.recDate, 'yy');
+
+    //  let documentHeader =this.ReqData.documentHeader.replace(/\D/g, '')
+    let documentHeader = this.ReqData.documentHeader.slice(-4).trim()
+
+    const uniqueItems = this.itemdata.filter(x => x.pmReqId == this.ReqData.requisitionId);
+
+    let fileDes = this.ReqData.pmOrderType.defaultOrderType == "Spare" ? "TmMASTER" : "StarIPS";
+
+
+    let stepData = `ISO-10303-21;
      HEADER;
      FILE_DESCRIPTION(('Requisition data transfer in ${fileDes}');
-     FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData.vessel.vesselCode}${year+''+documentHeader}.RTO','${Dates}');
+     FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData.vessel.vesselCode}${year + '' + documentHeader}.RTO','${Dates}');
      ENDSEC;
      DATA;`;
- 
-        stepData += `
+
+    stepData += `
    
-              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year+'/'+documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${accountcode.accountCode}','','','','','${this.ReqData.orderTitle}')`;
-        
-              uniqueItems.forEach((item ,index)=> {
-           stepData += `
-              #${index + 2}=Items_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year+'/'+documentHeader}','${index + 1}','${item.part}','${item.itemName}','${item.dwg}','','','${item.make}','','','${item.rob}','fix Pcs','${item.enterQuantity}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
-              });
-        stepData += `
+              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${accountcode.accountCode}','','','','','${this.ReqData.orderTitle}')`;
+
+    uniqueItems.forEach((item, index) => {
+      stepData += `
+              #${index + 2}=Items_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.part}','${item.itemName}','${item.dwg}','','','${item.make}','','','${item.rob}','fix Pcs','${item.enterQuantity}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
+    });
+    stepData += `
         ENDSEC;`;
-   
-        // Convert the content to a Blob
-       const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
-   
-    let filesaveName =this.ReqData.vessel.vesselCode+year+documentHeader+'.RTO';
-       // Use FileSaver.js to save the file
-       saveAs(blob, filesaveName+'.RTO');
+
+    // Convert the content to a Blob
+    const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
+
+    let filesaveName = this.ReqData.vessel.vesselCode + year + documentHeader + '.RTO';
+    // Use FileSaver.js to save the file
+    saveAs(blob, filesaveName + '.RTO');
 
   }
 
@@ -1809,261 +1823,258 @@ export class RequisitionNewComponent implements OnInit {
   openAttachmentPopup() {
     $("#openAttachmentModal").modal('show');
     this.loadattachment(0);
-}
+  }
 
-CloseAttachment() {
-  $("#openAttachmentModal").modal('hide');
-}
+  CloseAttachment() {
+    $("#openAttachmentModal").modal('hide');
+  }
 
-loadattachment(status: number) {
-  debugger
-  if (status == 1) {
-    this.deletetooltip ='UnArchive';
-    if (((document.getElementById("collapse9")as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
-      ((document.getElementById("collapse9")as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
-      ((document.getElementById("collapse9")as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
+  loadattachment(status: number) {
+    debugger
+    if (status == 1) {
+      this.deletetooltip = 'UnArchive';
+      if (((document.getElementById("collapse9") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
+        ((document.getElementById("collapse9") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
+        ((document.getElementById("collapse9") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
+      }
     }
-  }
-  else {
-    this.deletetooltip='Archive';
-    if (((document.getElementById("collapse9")as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement) != null) {
-      ((document.getElementById("collapse9")as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
-      ((document.getElementById("collapse9")as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
+    else {
+      this.deletetooltip = 'Archive';
+      if (((document.getElementById("collapse9") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement) != null) {
+        ((document.getElementById("collapse9") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
+        ((document.getElementById("collapse9") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
+      }
     }
-  }
-  this.pmsService.getmattachment(status, 'Purchase Requisition', this.reqId)
-    .subscribe(response => {
-      this.flag = status;
-      this.attachmentdataSource.data = response.data;
-      console.log(this.attachmentdataSource.data)
-      this.attachmentdataSource.sort = this.sort;
-      this.attachmentdataSource.paginator = this.paginator;
-    });
-}
-
-submitattachmentfrm(form: any) {
-  debugger
-  this.reqId
-  
-  if ( this.reqId == 0) {
-    this.swal.error('Firstly please add (select) the maintenance ');
-    return;
-  }
-  if (this.myFiles.length === 0){
-    this.swal.error('Firstly please add attachment ');
-    return;
+    this.pmsService.getmattachment(status, 'Purchase Requisition', this.reqId)
+      .subscribe(response => {
+        this.flag = status;
+        this.attachmentdataSource.data = response.data;       
+        this.attachmentdataSource.sort = this.sort;
+        this.attachmentdataSource.paginator = this.paginator;
+      });
   }
 
+  submitattachmentfrm(form: any) {
+    debugger
+    this.reqId
 
-this.getDataReqwithId(this.reqId);
+    if (this.reqId == 0) {
+      this.swal.error('Firstly please add (select) the maintenance ');
+      return;
+    }
+    if (this.myFiles.length === 0) {
+      this.swal.error('Firstly please add attachment ');
+      return;
+    }
 
-  this.atfm.shipAttachmentId.setValue(0);
-  this.atfm.tablePkeyId.setValue(this.reqId);
-  this.atfm.tableName.setValue('tblPMRequisitions');
-  this.atfm.pageName.setValue('Purchase Requisition');
-  this.atfm.vesselId.setValue(this.requisitionWithIDAutoSave.vesselId);
-  let formValues = form.value;
 
-  const fmdata = new FormData();
-  fmdata.append('data', JSON.stringify(formValues));
-  if (this.fileToUpload != null) {
-    this.myFiles.forEach((f) => fmdata.append('attachment', f));
-    //fmdata.append('attachment', this.myFiles);
+    this.getDataReqwithId(this.reqId);
+
+    this.atfm.shipAttachmentId.setValue(0);
+    this.atfm.tablePkeyId.setValue(this.reqId);
+    this.atfm.tableName.setValue('tblPMRequisitions');
+    this.atfm.pageName.setValue('Purchase Requisition');
+    this.atfm.vesselId.setValue(this.requisitionWithIDAutoSave.vesselId);
+    let formValues = form.value;
+
+    const fmdata = new FormData();
+    fmdata.append('data', JSON.stringify(formValues));
+    if (this.fileToUpload != null) {
+      this.myFiles.forEach((f) => fmdata.append('attachment', f));
+      //fmdata.append('attachment', this.myFiles);
+    }
+
+    this.pmsService.addattachment(fmdata)
+      .subscribe(res => {
+        if (res.message == "data added") {
+          this.swal.success('Added successfully.'); this.CloseAttachmentFrm();
+          (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
+          this.loadattachment(0);
+          this.myFiles.length === 0;
+        }
+        else if (res.message == "updated") {
+          this.swal.success('Data has been updated successfully.');
+          // this.clearattachmentfrm(); 
+          (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
+          this.CloseAttachmentFrm(); this.loadattachment(0);
+          this.myFiles.length === 0;
+        }
+        else if (res.message == "duplicate") {
+          this.swal.info('Data already exist. Please enter new data');
+        }
+        else if (res.message == "not found") {
+          this.swal.info('Data exist not exist');
+        }
+        else {
+
+        }
+      });
   }
- 
-  this.pmsService.addattachment(fmdata)
-    .subscribe(res => {
-      if (res.message == "data added") {
-        this.swal.success('Added successfully.'); this.CloseAttachmentFrm();
-        (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
-        this.loadattachment(0);
-        this.myFiles.length === 0; 
-      }
-      else if (res.message == "updated") {
-        this.swal.success('Data has been updated successfully.'); 
-        // this.clearattachmentfrm(); 
-        (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
-        this.CloseAttachmentFrm(); this.loadattachment(0);
-        this.myFiles.length === 0; 
-      }
-      else if (res.message == "duplicate") {
-        this.swal.info('Data already exist. Please enter new data');
-      }
-      else if (res.message == "not found") {
-        this.swal.info('Data exist not exist');
-      }
-      else {
-
-      }
-    });
- }
 
 
- getDataReqwithId(reqId){
-  this.requisitionService.getRequisitionById(reqId)
+  getDataReqwithId(reqId) {
+    this.requisitionService.getRequisitionById(reqId)
       .subscribe(response => {
         debugger
         this.requisitionWithIDAutoSave = response.data;
-      
-      });
- }
-
- fillattachmenttype() {
-  this.typemasterService.getAttachmentTypes(0)
-    .subscribe(response => {
-      if (response.status) {
-        this.attachmenttypelist = response.data;
-      } else {
-        this.attachmenttypelist = [];
-      }
-    },
-      (error) => {
-        console.log(error);
-      })
-}
-
- FileSelect(event) {
-  if (event.target.files.length > 0) {
-    const file = event.target.files[0];
-    this.fileToUpload = file;
-    this.FileName = file.name;
-    for (var i = 0; i <= event.target.files.length - 1; i++) {
-      this.myFiles.push(event.target.files[i]);
-      var selectedFile = event.target.files[i];
-      if (this.listOfFiles.indexOf(selectedFile.name) === -1) {
-        this.fileList.push(selectedFile);
-        this.listOfFiles.push(selectedFile);
-      }
-    }
-  } else {
-    this.FileName = "Choose file";
-  }
-}
-
-clearattachmentfrm() {
-  this.myFiles = []; this.listOfFiles = [];
-  this.attachmentfrm.controls.attachmentTypeId.setValue('');
-  this.attachmentfrm.controls.description.setValue('');
-  (document.getElementById('collapse9') as HTMLElement).classList.add("collapse");
-  (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
-}
-
-CloseAttachmentFrm(){
-  this.myFiles = []; this.listOfFiles = [];
-  this.attachmentfrm.reset();
-  // this.atfm.attachmentLinkingId.setValue(0);
-  this.atfm.attachmentTypeId.setValue('');
-  this.atfm.description.setValue('');
-  this.atfm.attachment.setValue('');
-  // (document.getElementById('collapse9') as HTMLElement).classList.add("collapse");
- (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
- }
-
- removeSelectedFile(index) {
-  // Delete the item from fileNames list
-  this.listOfFiles.splice(index, 1);
-  // delete file from FileList
-  this.fileList.splice(index, 1);
-}
-
-Updatesttachment(id) {
-  debugger
-  (document.getElementById('collapse9') as HTMLElement).classList.remove("collapse");
-  (document.getElementById('collapse9') as HTMLElement).classList.add("show");
-  this.pmsService.GetattachmentById(id)
-    .subscribe((response) => {
-      if (response.status) {
-         this.attachmentfrm.patchValue(response.data);
-        this.fileUrl = response.data.filePath;
-        this.pkey = response.data.attachmentId;
-      }
-    },
-      (error) => {
 
       });
-}
-
-showAttachment(filePath) { 
-  debugger
-  let parts: string[] = filePath.split('\\');
-  let filename: string | undefined = parts.pop();
-
-  if (filePath.indexOf(".") !== -1) {
-
-  this.requisitionService.DownloadReqAttach(filename)
-  .subscribe((response) => {
-     debugger
-     console.log(response)
-      var bolb=new Blob([response],{type:response.type});
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(bolb);
-      a.download = filename || 'defaultFilename.txt';;
-      a.click();
- 
-})
-}
-else {
-  this.swal.info('No attachment found');
-}
-  $('.tooltip').remove();
-}
-
-Deleteattachment() {
-  var message = ""
-  var title = "";
-
-  if (this.flag == 1) {
-    message = "Un-archived successfully.";
-    title = "you want to un-archive data."
   }
-  else {
-    message = "Archived successfully.";
-    title = "you want to archive data."
 
-  }
-  const numSelected = this.selectionattachment.selected;
-  if (numSelected.length > 0) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: title,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
-    }).then((result) => {
-      if (result.value) {
-        this.pmsService.archiveattachments(numSelected).subscribe(result => {
-          this.selectionattachment.clear();
-          this.swal.success(message);
-          this.loadattachment(this.flag);
+  fillattachmenttype() {
+    this.typemasterService.getAttachmentTypes(0)
+      .subscribe(response => {
+        if (response.status) {
+          this.attachmenttypelist = response.data;
+        } else {
+          this.attachmenttypelist = [];
+        }
+      },
+        (error) => {
+          console.log(error);
         })
+  }
+
+  FileSelect(event) {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.fileToUpload = file;
+      this.FileName = file.name;
+      for (var i = 0; i <= event.target.files.length - 1; i++) {
+        this.myFiles.push(event.target.files[i]);
+        var selectedFile = event.target.files[i];
+        if (this.listOfFiles.indexOf(selectedFile.name) === -1) {
+          this.fileList.push(selectedFile);
+          this.listOfFiles.push(selectedFile);
+        }
       }
-    })
-  } else {
-    this.swal.info('Select at least one row');
+    } else {
+      this.FileName = "Choose file";
+    }
   }
-}
 
-
-
-attachmentcheckboxLabel(row: any): string {
-  if (!row) {
-    return `${this.isattachmentAllSelected() ? 'select' : 'deselect'} all`;
+  clearattachmentfrm() {
+    this.myFiles = []; this.listOfFiles = [];
+    this.attachmentfrm.controls.attachmentTypeId.setValue('');
+    this.attachmentfrm.controls.description.setValue('');
+    (document.getElementById('collapse9') as HTMLElement).classList.add("collapse");
+    (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
   }
-  return `${this.selectionattachment.isSelected(row) ? 'deselect' : 'select'} row ${row.UserId + 1}`;
-}
 
-isattachmentAllSelected() {
-  const numSelected = this.selectionattachment.selected.length;
-  const numRows = !!this.attachmentdataSource && this.attachmentdataSource.data.length;
-  return numSelected === numRows;
-}
+  CloseAttachmentFrm() {
+    this.myFiles = []; this.listOfFiles = [];
+    this.attachmentfrm.reset();
+    // this.atfm.attachmentLinkingId.setValue(0);
+    this.atfm.attachmentTypeId.setValue('');
+    this.atfm.description.setValue('');
+    this.atfm.attachment.setValue('');
+    // (document.getElementById('collapse9') as HTMLElement).classList.add("collapse");
+    (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
+  }
 
-attachmentToggle() {
-  this.isattachmentAllSelected() ? this.selectionattachment.clear() : this.attachmentdataSource.data.forEach(r => this.selectionattachment.select(r));
-}
+  removeSelectedFile(index) {
+    // Delete the item from fileNames list
+    this.listOfFiles.splice(index, 1);
+    // delete file from FileList
+    this.fileList.splice(index, 1);
+  }
 
-// Attachment End
+  Updatesttachment(id) {
+    debugger
+    (document.getElementById('collapse9') as HTMLElement).classList.remove("collapse");
+    (document.getElementById('collapse9') as HTMLElement).classList.add("show");
+    this.pmsService.GetattachmentById(id)
+      .subscribe((response) => {
+        if (response.status) {
+          this.attachmentfrm.patchValue(response.data);
+          this.fileUrl = response.data.filePath;
+          this.pkey = response.data.attachmentId;
+        }
+      },
+        (error) => {
+
+        });
+  }
+
+  showAttachment(filePath) {
+    debugger
+    let parts: string[] = filePath.split('\\');
+    let filename: string | undefined = parts.pop();
+
+    if (filePath.indexOf(".") !== -1) {
+
+      this.requisitionService.DownloadReqAttach(filename)
+        .subscribe((response) => {               
+          var bolb = new Blob([response], { type: response.type });
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(bolb);
+          a.download = filename || 'defaultFilename.txt';;
+          a.click();
+
+        })
+    }
+    else {
+      this.swal.info('No attachment found');
+    }
+    $('.tooltip').remove();
+  }
+
+  Deleteattachment() {
+    var message = ""
+    var title = "";
+
+    if (this.flag == 1) {
+      message = "Un-archived successfully.";
+      title = "you want to un-archive data."
+    }
+    else {
+      message = "Archived successfully.";
+      title = "you want to archive data."
+
+    }
+    const numSelected = this.selectionattachment.selected;
+    if (numSelected.length > 0) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: title,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+      }).then((result) => {
+        if (result.value) {
+          this.pmsService.archiveattachments(numSelected).subscribe(result => {
+            this.selectionattachment.clear();
+            this.swal.success(message);
+            this.loadattachment(this.flag);
+          })
+        }
+      })
+    } else {
+      this.swal.info('Select at least one row');
+    }
+  }
+
+
+
+  attachmentcheckboxLabel(row: any): string {
+    if (!row) {
+      return `${this.isattachmentAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selectionattachment.isSelected(row) ? 'deselect' : 'select'} row ${row.UserId + 1}`;
+  }
+
+  isattachmentAllSelected() {
+    const numSelected = this.selectionattachment.selected.length;
+    const numRows = !!this.attachmentdataSource && this.attachmentdataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  attachmentToggle() {
+    this.isattachmentAllSelected() ? this.selectionattachment.clear() : this.attachmentdataSource.data.forEach(r => this.selectionattachment.select(r));
+  }
+
+  // Attachment End
   openModal() {
     const orderType = this.defaultOrderType[0]
     const dialogConfig = new MatDialogConfig();
@@ -2132,23 +2143,23 @@ attachmentToggle() {
   }
 
   openEditModal(row) {
+    debugger
     const dialogConfig = new MatDialogConfig();
     dialogConfig.position = { top: '70px' };
     const dialogRef = this.dialog.open(EditReqQtyComponent, {
-      width: '350px',
-      height: '260px',
+      width: '700px',
+      height: '200px',
       data: {
-        modalTitle: "Edit Quantity",
-        itemName: row.itemName,
-        itemCode: row.itemCode,
-        partNo: row.partNo,
-        reqQty: row.reqQty
+        modalTitle: "Stock Reconciliation",
+        data: row,
       }
     });
     dialogRef.afterClosed().subscribe(result => {
 
       if (result && result.result === 'success') {
-        row.reqQty = result.editedQuantity
+        row.rob = result.data.newRob
+        this.autoSave('items')
+        console.log(row.rob);
       }
     })
   }

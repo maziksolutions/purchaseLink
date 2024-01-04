@@ -1,19 +1,63 @@
 <h2 mat-dialog-title class="d-flex justify-content-between align-items-center">
-    <span>{{ data.modalTitle }}</span>      
-    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal"
-        (click)="closeModal()" aria-label="Close"></button>
+    <span>{{ data.modalTitle }}</span>
+    <div class="col-xl-6 col-lg-12">
+        <div class="float-end">
+            <button class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top"
+                data-bs-original-title="Save" aria-label="" (click)="SubmitStockReconciliation()"><i
+                    class="fas fa-save"></i></button>
+
+            <button class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                data-bs-original-title="Cancel" aria-label="" (click)="CloseStockReconciliationModal()"><i
+                    class="fas fa-ban"></i></button>   
+                    <button class="btn-close btn btn-sm btn-circle form-small m-r-5 flex-center transition-base" data-bs-dismiss="modal"
+                (click)="closeModal()" aria-label="Close"></button>         
+        </div>
+        
+    </div>
 </h2>
 <mat-dialog-content>
-    <div class="row">
-        <span><strong>Item Name:</strong> {{ data.itemName }}</span>
-        <span><strong>Item Code:</strong> {{ data.itemCode }}</span>
-        <span><strong>Part No:</strong> {{ data.partNo }}</span>
-    </div>
-    <mat-form-field>
-        <input matInput placeholder="Edit Quantity" [(ngModel)]="editedQuantity">
-    </mat-form-field>
-</mat-dialog-content>
+    <form >
+        <table id="tblStockReconciliation"
+            class="table table-hover table-striped scrollbar-visible table-sm small table-bordered overflow-hidden table-striped">
+            <thead>
+                <tr style="background-color: #1C3451; color: #fff;">
+                    <th>Item Number</th>
+                    <th>Item Name</th>
+                    <th>Part No.</th>
+                    <!-- <th>Vessel Name</th>
+                                    <th>Position</th> -->
+                    <th>Previous ROB</th>
+                    <th>New ROB</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <label id="{{dataStockReconciliation.itemsId}}"
+                            class="m-l-5">{{dataStockReconciliation.itemCode}}</label>
+                        <!-- <span hidden>{{postpone.shipMaintenanceId}}</span> -->
 
-<mat-dialog-actions align="end">
-    <button mat-button (click)="onClose()">OK</button>
-</mat-dialog-actions>
+                    </td>
+                    <td>
+                        <label class="m-l-5">{{dataStockReconciliation.itemName}}</label>
+                    </td>
+                    <td>
+                        <label class="m-l-5">{{dataStockReconciliation.partNo}}</label>
+                    </td>
+                    <!-- <td>
+                                        <label class="m-l-5">{{dataStockReconciliation.vesselName}}</label>
+                                    </td>
+                                    <td>
+                                        <label class="m-l-5">{{dataStockReconciliation.position}}</label>
+                                    </td> -->
+                    <td>
+                        <label class="m-l-5">{{dataStockReconciliation.rob}}</label>
+                    </td>
+                    <td>
+                        <input class="m-l-5" [(ngModel)]="editedROB" name='editedROB' (change)="handleROBChange(editedROB)">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>   
+</mat-dialog-content>
