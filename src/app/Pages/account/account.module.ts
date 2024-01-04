@@ -7,6 +7,8 @@ import { AccountTypeComponent } from './account-type/account-type.component';
 import { CurrencyMasterComponent } from './currency-master/currency-master.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppMaterialModule } from 'src/app/app.material.module';
+import { PMExceptionComponent } from './pmexception/pmexception.component';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 
 
@@ -14,12 +16,14 @@ import { AppMaterialModule } from 'src/app/app.material.module';
   declarations: [
     AccountcodeNameComponent,
     AccountTypeComponent,
-    CurrencyMasterComponent
+    CurrencyMasterComponent,
+    PMExceptionComponent
   ],
   imports: [
     CommonModule,
     AccountRoutingModule,AppMaterialModule,
-    FormsModule,ReactiveFormsModule,
+    FormsModule,ReactiveFormsModule,    NgMultiSelectDropDownModule.forRoot() 
+
   ]
 })
 export class AccountModule { }

@@ -4,6 +4,7 @@ import { SiteLayoutComponent } from 'src/app/_layout/site-layout/site-layout.com
 import { AccountcodeNameComponent } from './accountcode-name/accountcode-name.component';
 import { AccountTypeComponent } from './account-type/account-type.component';
 import { CurrencyMasterComponent } from './currency-master/currency-master.component';
+import { PMExceptionComponent } from './pmexception/pmexception.component';
 
 const routes: Routes = [
   {
@@ -12,7 +13,7 @@ const routes: Routes = [
  {path: 'accountcode-name',component: AccountcodeNameComponent,pathMatch:'full'},
  {path: 'accountType',component: AccountTypeComponent,pathMatch:'full'}, 
  {path: 'currencyMaster',component: CurrencyMasterComponent,pathMatch:'full'}, 
- 
+ {path: 'pmexception',component: PMExceptionComponent,pathMatch:'full'}, 
  
 ]}
 ];

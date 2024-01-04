@@ -1,3 +1,8 @@
 .mat-column-checkbox {
     flex: 0 0 50px;
   }
+  .modal .btn{padding: inherit !important;}
+
+  .modal h5 {
+    font-size: 1.2rem !important;
+}

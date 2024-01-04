@@ -99,13 +99,15 @@ export class AccountcodeNameComponent implements OnInit {
 
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
-          this.addCat();
           this.loadData(0);
+          this.close();
+          this.addCat();
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
-          this.addCat();
           this.loadData(0);
+          this.close();
+          this.addCat();
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -182,13 +184,15 @@ export class AccountcodeNameComponent implements OnInit {
 
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
-          this.addCat();
           this.subCatLoadData(0);
+          this.subCatClose();
+          this.addsubcat();
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
-          this.addCat();
           this.subCatLoadData(0);
+          this.subCatClose();
+          this.addsubcat();
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -268,13 +272,17 @@ export class AccountcodeNameComponent implements OnInit {
 
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
-          this.addacchead();
           this.accHeadLoadData(0);
+          this.accheadClose();
+          this.addacchead();
+          
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
-          this.addacchead();
           this.accHeadLoadData(0);
+          this.accheadClose();
+          this.addacchead();
+         
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -370,13 +378,15 @@ export class AccountcodeNameComponent implements OnInit {
 
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
-          this.addAccCode();
           this.AccCodeLoadData(0);
+          this.accCodeClose();
+          this.addAccCode();
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
-          this.addAccCode();
           this.AccCodeLoadData(0);
+          this.accCodeClose();
+          this.addAccCode();
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
