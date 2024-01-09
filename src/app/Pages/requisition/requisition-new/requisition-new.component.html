@@ -913,7 +913,7 @@
                   <ng-container matColumnDef="attachments">
                     <mat-header-cell *matHeaderCellDef>Attachments</mat-header-cell>
                     <mat-cell class="text-center" *matCellDef="let row"><a class="px-1 m-r-5 text-center" type="button"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="" (click)="openAttachmentPopup()"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="" (click)="openAttachmentItem(row.itemsId)"
                         data-bs-original-title="Add Attachment" aria-label=""><i
                           class="fas fa-paperclip text-primary"></i></a></mat-cell>
                   </ng-container>
@@ -1470,5 +1470,216 @@
 
 
 <!-- END -->
+
+
+
+<!-- Attachment Item -->
+
+<div class="modal fade" id="openAttachmentItem" tabindex="-1" role="dialog"
+  aria-labelledby="authentication-modal-label" aria-hidden="true">
+  <div class="modal-dialog mt-6  modal-xl" role="document">
+    <div class="modal-content border-0">
+      <div class="modal-header">
+        <div class="col-xl-6 col-lg-12">
+          <h5 class="modal-title">Item Attachments
+          </h5>
+        </div>
+        <div class="col-xl-6 col-lg-12">
+          <div class="float-end">
+            <button type="button" (click)="CloseAttachmentItem()" class="btn btn-danger form-small m-r-5"
+              data-mdb-dismiss="modal">
+              <i class="fas fa-ban"></i>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-body" style="font-weight: 400;">
+        <div class="form">
+          <div class="row">
+            <div class="col-xl-6 col-lg-12">
+              <h5 class="card-title proper-case">Attachments
+              </h5>
+            </div>
+
+            <div class="col-xl-6 col-lg-12">
+              <div class="form-inline float-end">
+                <select class="form-control form-small form-select" #docStatus
+                  (change)="loadItemAttachment($any($event.target).value)">
+                  <option selected="" value="0">Active Data</option>
+                  <option value="1">Archive Data</option>
+                </select>
+                <span class="p-l-10 p-r-10 mm-t-3">|</span>
+
+                <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse"
+                  data-bs-target="#collapse10" aria-expanded="true" aria-controls="collapse10"><i
+                    class="fas fa-plus text-primary"></i></a>
+
+                <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                  matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""
+                  (click)="DeleteItemAttachment()"><i class="fas fa-trash text-danger"></i></a>
+
+              </div>
+            </div>
+          </div>
+          <hr class="mb-3">
+          <div class="accordion-collapse collapse mb-3" id="collapse10" aria-labelledby="heading1"
+            data-bs-parent="#accordionExample">
+            <form (ngSubmit)="submitItemAttachmentfrm(attachmentItemfrm)" [formGroup]="attachmentItemfrm">
+              <div class="row mb-3">
+                <div class="col">
+                  <fieldset class="form-group mb-0">
+                    <select class="form-control form-small form-select" formControlName="attachmentTypeId">
+                      <option value="" disabled>Select Attachment Type</option>
+                      <option *ngFor="let item of attachmenttypelist" value="{{item.attachmentTypeId}}">
+                        {{item.attachmentTypeName | titlecase}}
+                      </option>
+                    </select>
+                  </fieldset>
+                </div>
+                <div class="col">
+                  <fieldset class="form-group mb-0">
+                    <textarea class="form-control form-small" id="" rows="2" placeholder="Description" maxlength="200"
+                      formControlName="description"></textarea>
+                  </fieldset>
+                </div>
+                <div class="col-xl-6 col-lg-12">
+                  <a class="btn btn-primary form-small" (click)="fileInputs.click()"> <i class="fas fa-paperclip"></i>
+                    Select File</a>
+
+                  <input style="display: none" #attachments type="file" (change)="FileItemSelect($event)" #fileInputs
+                    multiple="true" />
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-2">
+                  <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
+                    data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
+                      class="fas fa-save"></i></button>
+                  <button type="button" (click)="clearItemAttachmentfrm()" (click)="CloseAttachmentItemFrm()"
+                    class="btn btn-danger form-small" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban"></i></button>
+                </div>
+              </div>
+            </form>
+            <hr class="mb-3">
+            <div id="" class="table-responsive scrollbar">
+              <table class="table table-hover table-striped scrollbar-visible table-sm small table-bordered">
+                <thead class="bg-primary text-white">
+                  <tr>
+                    <th>File</th>
+                    <th>File Size (KB)</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let selected of listItemOfFiles; let index = index">
+                    <td>{{ selected.name }}</td>
+                    <td>{{ selected.size/1024 | number:'1.0-0' }}</td>
+                    <td>
+                      <a class="px-2 m-r-1" type="button" (click)="removeItemSelectedFile(index)" data-bs-toggle="tooltip"
+                        data-bs-placement="top" title="" data-bs-original-title="Delete" aria-label=""><i
+                          class="fas fa-trash text-danger"></i></a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-12 col-lg-12">
+              <div id="" class="table-responsive scrollbar">
+                <mat-table #table [dataSource]="attachmentItemdataSource" matSort
+                  class="table table-hover table-striped scrollbar-visible table-sm small table-bordered">
+                  <ng-container matColumnDef="checkbox">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <mat-checkbox (change)="$event ? attachmentItemToggle() : null"
+                        [checked]="selectionItemAttachment.hasValue() && isItemattachmentAllSelected()"
+                        [indeterminate]="selectionItemAttachment.hasValue() && !isItemattachmentAllSelected()">
+                      </mat-checkbox>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? selectionItemAttachment.toggle(row) : null"
+                        [checked]="selectionItemAttachment.isSelected(row)"
+                        [aria-label]="ItemattachmentcheckboxLabel(row)"></mat-checkbox>
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="attachmenttype">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Attachment Type</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <a (click)="UpdateItemAttach(row.attachmentId)" class="accordion-btn show px-2 m-r-5"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="true"
+                        aria-controls="collapse3">
+                        {{row.attachmentTypeName}}</a>
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="filename">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>File Name</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.filename}}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="description">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.description}}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="filesize">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Size</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.fileSize}} KB</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="uploadeddatetime">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span *ngIf="docStatus.value=='0'"> Upload Date </span>
+                      <span *ngIf="docStatus.value=='1'"> Removed on </span>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <span *ngIf="docStatus.value=='0'"> {{row.recDate |date:'dd-MMM-yyyy'}}
+                      </span>
+                      <span *ngIf="docStatus.value=='1'"> {{row.modifiedDate |date:'dd-MMM-yyyy'}}
+                      </span>
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="Uploadedby">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <span *ngIf="docStatus.value=='0'"> Uploaded by </span>
+                      <span *ngIf="docStatus.value=='1'">Removed by </span>
+
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <span *ngIf="docStatus.value=='0'"> {{row.createdBy}}</span>
+                      <span *ngIf="docStatus.value=='1'"> {{row.modifiedBy}}</span>
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="file">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <a href="javascript:void(0)" (click)="showItemAttachment(row.filePath)"> <i
+                          class="fas fa-paperclip"></i></a>
+                    </mat-cell>
+                  </ng-container>
+                  <mat-header-row *matHeaderRowDef="attachmentColumns; sticky:true"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: attachmentColumns;"></mat-row>
+                </mat-table>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+
+
+</div>
+
+
+<!-- END -->
+
 
 <script src="assets/js/SideNavi.js"></script>
