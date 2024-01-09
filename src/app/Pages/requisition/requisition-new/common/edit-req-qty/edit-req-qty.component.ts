@@ -61,7 +61,7 @@ export class EditReqQtyComponent implements OnInit {
     }
     else {
       const dataToSend = {
-        spareId: this.dataStockReconciliation.spareId,
+        spareId: this.dataStockReconciliation.storeId,
         newRob: this.editedROB,
         type: this.type
       }

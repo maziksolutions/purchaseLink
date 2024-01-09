@@ -21,81 +21,83 @@ export class OrderRefPopUpViewComponent implements OnInit {
   modalTitle: string;
   orderType: string;
   componentType: string;
+  orderTypeId: number
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefPopUpViewComponent>, public dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.modalTitle = this.data.modalTitle;   
+    this.modalTitle = this.data.modalTitle;
     this.orderType = this.data.orderType;
     this.componentType = this.data.componentType
     this.dataSourceTree = this.data.dataSourceTree;
-    this.groupTableSourceTree=this.data.groupTableData
-    this.spareItemDataSource.data=this.data.spareTableData
-    this.storeItemDataSource.data=this.data.storeTableData
+    this.groupTableSourceTree = this.data.groupTableData
+    this.spareItemDataSource.data = this.data.spareTableData
+    this.storeItemDataSource.data = this.data.storeTableData
+    this.orderTypeId = this.data.orderTypeId
   }
 
   openModal(type: string) {
-   
-    if(type==='Component'){
-      
+
+    if (type === 'Component') {
+
       const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
         width: '1000px',
         data: {
           modalTitle: "Order Reference", componentType: type,
-          dataSourceTree: this.dataSourceTree
+          dataSourceTree: this.dataSourceTree, orderTypeId: this.orderTypeId
         }
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result === 'success') {
-  
+
         }
       })
-    }else if(type==='Group'){
-     
+    } else if (type === 'Group') {
+
       const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
         width: '1000px',
         data: {
           modalTitle: "Order Reference", componentType: type,
-          groupTableData: this.groupTableSourceTree
+          groupTableData: this.groupTableSourceTree, orderTypeId: this.orderTypeId
         }
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result === 'success') {
-  
+
         }
       })
-    }else if(type==='Spare'){
-      
+    } else if (type === 'Spare') {
+
       const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
         width: '1000px',
         data: {
           modalTitle: "Order Reference", componentType: type,
-          spareTableData:this.spareItemDataSource.data
+          spareTableData: this.spareItemDataSource.data, orderTypeId: this.orderTypeId
         }
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result === 'success') {
-  
+
         }
       })
-    }else if(type==='Store'){
-      
+    } else if (type === 'Store') {
+
       const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
         width: '1000px',
         data: {
           modalTitle: "Order Reference", componentType: type,
-          storeTableData:this.storeItemDataSource.data
+          storeTableData: this.storeItemDataSource.data, orderTypeId: this.orderTypeId
         }
       });
       dialogRef.afterClosed().subscribe(result => {
         if (result === 'success') {
-  
+
         }
       })
     }
-    
+
     this.dialogRef.close();
-    
+
   }
 
   closeModal(): void {

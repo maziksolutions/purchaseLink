@@ -12,75 +12,42 @@
         (click)="closeModal()" aria-label="Close"></button>
 </h2>
 
-<!--  Component Table Data Start Here-->
-<!-- <mat-table *ngIf="ComponentType==='Component'" mat-dialog-content #table [dataSource]="componentsDataSourse"
-    class="table table-hover table-striped table-sm small table-bordered">
-
-    <ng-container matColumnDef="checkbox">
-        <mat-header-cell *matHeaderCellDef class="checkbox">
-            <mat-checkbox *ngIf="componentSelection.hasValue()"
-                [checked]="componentSelection.hasValue() && isAllCompSelected()"
-                [indeterminate]="componentSelection.hasValue() && !isAllCompSelected()"
-                (change)="onCheckAllChange($event.checked)">
-            </mat-checkbox>
-
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row" class="checkbox">
-            <mat-checkbox [checked]="row.checkboxState" [disabled]="row.checkboxDisabled"
-                (change)="onCheckboxChange($event.checked, row)"></mat-checkbox>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="componentName">
-        <mat-header-cell *matHeaderCellDef>Ship Component Name</mat-header-cell>
-        <mat-cell *matCellDef="let row">{{ row.componentName }}</mat-cell>
-    </ng-container>
-
-    <mat-header-row class="bg-300" *matHeaderRowDef="componentTableColumn; sticky:true"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: componentTableColumn; let i = index"
-        [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.componentId==selectedIndex))}">
-    </mat-row>
-
-</mat-table> -->
-
-
+<!--  Component Tree Data Start Here-->
 <mat-tree *ngIf="ComponentType==='Component'" [dataSource]="dataSourceTree" [treeControl]="treeControl" class="wrapper">
-    <mat-tree-node *matTreeNodeDef="let node; when: hasChild" >
-      <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.groupName">
-        <mat-icon class="mat-icon-rtl-mirror"
-          [ngClass]="{ 'redColor': !treeControl.isExpanded(node),'blueColor': treeControl.isExpanded(node)}">
-          {{treeControl.isExpanded(node) ? 'close' : 'add'}}
-        </mat-icon>
-      </button>
-      <span><a ><span style="cursor: pointer;"
-            *ngIf="node.type=='Group'" matTooltip="{{node.groupName.length>40?node.groupName:''}}">
-            <i class="fa fa-folder m-r-5" aria-hidden="true"></i>
-            {{node.groupName}}</span></a></span>
+    <mat-tree-node *matTreeNodeDef="let node; when: hasChild">
+        <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.groupName">
+            <mat-icon class="mat-icon-rtl-mirror"
+                [ngClass]="{ 'redColor': !treeControl.isExpanded(node),'blueColor': treeControl.isExpanded(node)}">
+                {{treeControl.isExpanded(node) ? 'close' : 'add'}}
+            </mat-icon>
+        </button>
+        <span><a><span style="cursor: pointer;" *ngIf="node.type=='Group'"
+                    matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+                    <i class="fa fa-folder m-r-5" aria-hidden="true"></i>
+                    {{node.groupName}}</span></a></span>
 
-      <a style="cursor: pointer; " *ngIf="node.type=='Component'"
-        matTooltip="{{node.groupName.length>40?node.groupName:''}}">
-        <i class="fa fa-bars m-r-5 " style="color: #6279a5;"  aria-hidden="true"></i>
-        {{node.groupName}}</a>
+        <a style="cursor: pointer; " *ngIf="node.type=='Component'"
+            matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+            <i class="fa fa-bars m-r-5 " style="color: #6279a5;" aria-hidden="true"></i>
+            {{node.groupName}}</a>
     </mat-tree-node>
     <mat-tree-node *matTreeNodeDef="let node;" class="expand-tree">
-      <!-- use a disabled button to provide padding for tree leaf -->
-      <span> <a style="cursor: pointer; padding-left: 25px;" 
-          *ngIf="node.type=='Group'" matTooltip="{{node.groupName.length>40?node.groupName:''}}">
-          <i class="far fa-folder m-r-5" aria-hidden="true"></i>
-          {{node.groupName}}
-        </a></span>
-      <a style="cursor: pointer; padding-left: 25px;" 
-        *ngIf="node.type=='Component'" matTooltip="{{node.groupName.length>40?node.groupName:''}}">
-       <input type="checkbox" [checked]="node.selected" (change)="handleCheckboxChange($event, node)">
-        {{node.groupName}}
-      </a>
+        <!-- use a disabled button to provide padding for tree leaf -->
+        <span> <a style="cursor: pointer; padding-left: 25px;" *ngIf="node.type=='Group'"
+                matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+                <i class="far fa-folder m-r-5" aria-hidden="true"></i>
+                {{node.groupName}}
+            </a></span>
+        <a style="cursor: pointer; padding-left: 25px;" *ngIf="node.type=='Component'"
+            matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+            <input type="checkbox" [checked]="node.selected" (change)="handleCheckboxChange($event, node)">
+            {{node.groupName}}
+        </a>
     </mat-tree-node>
-  </mat-tree>
-
-
-
+</mat-tree>
 <!-- End Here-->
 
-<!--  Group Table Data Start Here-->
+<!--  Group Tree Data Start Here-->
 <!-- <mat-table *ngIf="ComponentType==='Group'" mat-dialog-content #table [dataSource]="groupTableDataSource"
     class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
 
@@ -108,28 +75,30 @@
 
 </mat-table> -->
 
-<mat-tree *ngIf="ComponentType==='Group'" [dataSource]="groupTableSourceTree" [treeControl]="treeGroupControl" class="wrapper">
-    <mat-tree-node *matTreeNodeDef="let node; when: hasChild" >
-      <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.groupName">
-        <mat-icon class="mat-icon-rtl-mirror"
-          [ngClass]="{ 'redColor': !treeGroupControl.isExpanded(node),'blueColor': treeGroupControl.isExpanded(node)}">
-          {{treeControl.isExpanded(node) ? 'close' : 'add'}}
-        </mat-icon>
-      </button>
-      <span><a ><span style="cursor: pointer;"
-            *ngIf="node.type=='Group'" matTooltip="{{node.groupName.length>40?node.groupName:''}}">
-            <i class="fa fa-folder m-r-5" aria-hidden="true"></i>
-            {{node.groupName}}</span></a></span>
+<mat-tree *ngIf="ComponentType==='Group'" [dataSource]="groupTableSourceTree" [treeControl]="treeGroupControl"
+    class="wrapper">
+    <mat-tree-node *matTreeNodeDef="let node; when: hasChild">
+        <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.groupName">
+            <mat-icon class="mat-icon-rtl-mirror"
+                [ngClass]="{ 'redColor': !treeGroupControl.isExpanded(node),'blueColor': treeGroupControl.isExpanded(node)}">
+                {{treeGroupControl.isExpanded(node) ? 'close' : 'add'}}
+            </mat-icon>
+        </button>
+        <span><a><span style="cursor: pointer;" *ngIf="node.type=='Group'"
+                    matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+                    <i class="fa fa-folder m-r-5" aria-hidden="true"></i>
+                    {{node.groupName}}</span></a></span>
+       
     </mat-tree-node>
     <mat-tree-node *matTreeNodeDef="let node;" class="expand-tree">
-      <!-- use a disabled button to provide padding for tree leaf -->     
-      <a style="cursor: pointer; padding-left: 25px;" 
-        *ngIf="node.type=='Group'" matTooltip="{{node.groupName.length>40?node.groupName:''}}">
-       <input type="checkbox" [checked]="node.selected" (change)="handleGroupCheckboxChange($event, node)">
-        {{node.groupName}}
-      </a>
+        <!-- use a disabled button to provide padding for tree leaf -->
+        <a style="cursor: pointer; padding-left: 25px;" *ngIf="node.type=='Group'"
+            matTooltip="{{node.groupName.length>40?node.groupName:''}}">
+            <input type="checkbox" [checked]="node.selected" (change)="handleGroupCheckboxChange($event, node)">
+            {{node.groupName}}
+        </a>
     </mat-tree-node>
-  </mat-tree>
+</mat-tree>
 <!-- End Here-->
 
 <!--  Spare Cart Item Table Data Start Here-->

@@ -145,7 +145,7 @@ export class RequisitionService {
     this.selectedItemsSubject.next(data);
   }
   getTemplateTree(): Observable<TemplateTree[]> {
-    return this.httpClient.get<TemplateTree[]>(this.hierarchyurl + 'templateTree');
+    return this.httpClient.get<TemplateTree[]>(this.linkurl + 'componentTemplateTree');
   }
 
   getGroupTemplateTree(): Observable<TemplateTree[]> {
@@ -156,6 +156,23 @@ export class RequisitionService {
     return this.httpClient.post<any>(this.linkurl + 'editRobData', data)
       .pipe(catchError(this.handleError));
   }
+
+  checkAccountCode(accountCode:number,orderTypeId:number): Observable<any> {
+    
+    return this.httpClient.post<any>(`${this.linkurl}checkAccountCode/${accountCode}/${orderTypeId}`, httpOptions);
+ }
+
+ //#region  Service Type
+ addServiceType(formData): Observable<any> {
+  return this.httpClient.post<any>(this.linkurl + 'AddServiceType', formData)
+    .pipe(catchError(this.handleError));
+}
+
+getServiceType(reqId): Observable<any> {  
+  return this.httpClient.get<any>(this.linkurl + 'GetServiceTypeById/' + reqId, httpOptions)
+    .pipe(catchError(this.handleError));
+}
+ //#endregion
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

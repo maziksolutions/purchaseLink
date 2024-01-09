@@ -41,3 +41,13 @@ export class ReqItemsModel {
     attachments: string;
     pmReqId: number
 }
+
+export interface ServiceTypeData {
+    serviceReqId: number;
+    serviceName: string;
+    serviceDesc: string;
+    remarks: string;
+    jobList: any[];   
+    pmReqId: number;
+    isExpanded: boolean; 
+  }

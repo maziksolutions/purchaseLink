@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ChangeDetectorRef, NgZone, QueryList, ViewChildren, AfterViewInit, OnDestroy, AfterViewChecked } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -25,7 +25,7 @@ import { VesselManagementService } from 'src/app/services/vessel-management.serv
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
 import { RequisitionService } from 'src/app/services/requisition.service';
 import { parse } from 'path';
-import { map, filter, debounce, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { map, filter, debounce, debounceTime, distinctUntilChanged, isEmpty } from 'rxjs/operators';
 import { isNull } from '@angular/compiler/src/output/output_ast';
 import { AutoSaveService } from 'src/app/services/auto-save.service';
 import { PmsgroupService } from 'src/app/services/pmsgroup.service';
@@ -39,7 +39,7 @@ import { OrderRefPopUpViewComponent } from './common/order-ref-pop-up-view/order
 import { OrderRefDirectPopUpComponent } from './common/order-ref-direct-pop-up/order-ref-direct-pop-up.component';
 import { EditReqQtyComponent } from './common/edit-req-qty/edit-req-qty.component';
 import { HostListener } from '@angular/core';
-import { ReqItemsModel } from '../../Models/reqItems-model';
+import { ReqItemsModel, ServiceTypeData } from '../../Models/reqItems-model';
 
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
@@ -68,10 +68,12 @@ export interface componentTableItems {
   templateUrl: './requisition-new.component.html',
   styleUrls: ['./requisition-new.component.css'],
 })
-export class RequisitionNewComponent implements OnInit {
+export class RequisitionNewComponent implements OnInit, OnDestroy {
 
-  RequisitionForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
+  RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
+  serviceObject: any = {}; isEditMode = false;
   displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'lastDlDt', 'lastDlQty', 'rob', 'enterQuantity', 'unit', 'remarks', 'attachments'];
+  serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
   leftTableColumn: string[] = ['checkbox', 'inventoryName', 'partNo', 'dwg', 'quantity', 'availableQty', 'minRequired', 'reorderLevel'];
   rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];
   componentTableColumn: string[] = ['checkbox', 'componentName'];
@@ -84,6 +86,9 @@ export class RequisitionNewComponent implements OnInit {
   groupTableDataSource = new MatTableDataSource<any>();
   spareItemDataSource = new MatTableDataSource<any>();
   storeItemDataSource = new MatTableDataSource<any>();
+  // serviceTypeDataSource = new MatTableDataSource<any>();
+  serviceTypeDataSource: any
+  jobListDataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   leftTableSelection = new SelectionModel<any>(true, []);
   rightTableSelection = new SelectionModel<RightTableItem>(true, []);
@@ -149,8 +154,6 @@ export class RequisitionNewComponent implements OnInit {
   defaultOrderType = '';
 
   ComponentType: string = '';
-  refModalTarget: string = '';
-  refModal: string = '';
   modalTarget: string = '';
   modal: string = '';
   displayValue: string = '';
@@ -190,6 +193,8 @@ export class RequisitionNewComponent implements OnInit {
   fileUrlss: any;
   filenamecut: string;
   private subscription: Subscription;
+  expandedElement: any;
+  isJobListRow = (_: number, row: any) => row === this.expandedElement;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -216,12 +221,21 @@ export class RequisitionNewComponent implements OnInit {
         this.autoSave('delivery');
     });
 
-    this.RequisitionForm.valueChanges
-      .pipe(debounceTime(1000), distinctUntilChanged())
-      .subscribe(() => {
-        // Trigger auto-save here
-        this.autoSave('items'); // Assuming 'items' is the group you want to save
-      });
+    this.serviceTypeForm = this.fb.group({
+      serviceReqId: [0],
+      serviceName: ['', Validators.required],
+      serviceDesc: ['', Validators.required],
+      remarks: ['', Validators.required],
+      jobList: this.fb.array([]),
+      pmReqId: [],
+    }),
+
+      this.RequisitionForm.valueChanges
+        .pipe(debounceTime(1000), distinctUntilChanged())
+        .subscribe(() => {
+          // Trigger auto-save here
+          this.autoSave('items'); // Assuming 'items' is the group you want to save
+        });
 
     this.deliveryForm = this.fb.group({
       delInfoId: [0],
@@ -261,46 +275,54 @@ export class RequisitionNewComponent implements OnInit {
     //   });
     // }
     debugger
-    if (this.reqId == undefined) {
-      this.requisitionService.selectedItems$.subscribe(data => {
-        debugger
-        if (data) {
+    this.requisitionService.selectedItems$.subscribe(data => {
+      debugger
+      if (data != null && data.displayValue !== '' && data.saveValue !== '') {
+        this.zone.run(() => {
           this.displayValue = ''
           this.saveValue = ''
           this.displayValue = data.displayValue;
           this.saveValue = data.saveValue;
-          this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
-          if (data.orderReferenceType === 'Component') {
-            this.dataSource.data = [];
-            this.getSpareItems(data.orderReferenceType, data.saveValue);
-          }
-          else if (data.orderReferenceType === 'Group') {
-            this.dataSource.data = [];
-            this.getSpareItems(data.orderReferenceType, data.saveValue);
-          }
-          else if (data.orderReferenceType === 'Spare') {
-            debugger
-            this.leftTableDataSource.data = []
-            this.dataSource.data = [];
-            this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];            
-          }
-          else if (data.orderReferenceType === 'Store') {
-            this.leftTableDataSource.data = []
-            this.dataSource.data = [];
-            this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];           
-          }
+        })
+
+        this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
+        if (data.orderReferenceType === 'Component') {
+          this.dataSource.data = [];
+          this.getSpareItems(data.orderReferenceType, data.saveValue);
         }
-      });
-    }
+        else if (data.orderReferenceType === 'Group') {
+          this.dataSource.data = [];
+          this.getSpareItems(data.orderReferenceType, data.saveValue);
+        }
+        else if (data.orderReferenceType === 'Spare') {
+          debugger
+          this.leftTableDataSource.data = []
+          this.dataSource.data = [];
+          this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
+        }
+        else if (data.orderReferenceType === 'Store') {
+          this.leftTableDataSource.data = []
+          this.dataSource.data = [];
+          this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
+        }
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.displayValue = ''
+    this.saveValue = ''
   }
 
   get fm() { return this.RequisitionForm.controls };
   get fmd() { return this.deliveryForm.controls };
   get atfm() { return this.attachmentfrm.controls };
+  get serviceType() { return this.serviceTypeForm.controls }
 
   generateTempNumber() {
 
     this.requisitionService.getTempNumber(0).subscribe(res => {
+      debugger
       if (res.data != null) {
 
         var formattedNumber = parseInt(res.data.documentHeader)
@@ -335,6 +357,24 @@ export class RequisitionNewComponent implements OnInit {
     })
   }
 
+  get jobListControls() {
+    return (this.serviceTypeForm.get('jobList') as FormArray).controls;
+  }
+  addJob() {
+    debugger
+    const job = this.fb.group({
+      jobId: [0],
+      jobDescription: ['', Validators.required],
+      qty: [0, Validators.required],
+      unit: [0, Validators.required],
+      remarks: ['', Validators.required],
+      attachment: ['',],
+    });
+
+    const jobListFormArray = this.serviceTypeForm.get('jobList') as FormArray;
+    jobListFormArray.push(job);
+  }
+
   initForm(): void {
     this.RequisitionForm = this.fb.group({
       header: this.fb.group({
@@ -364,6 +404,16 @@ export class RequisitionNewComponent implements OnInit {
         vesselETB: ['', Validators.required],
         deliveryAddress: ['vessel'],
         reqIds: []
+      }),
+
+      serviceInfo: this.fb.group({
+        serviceInfoId: [0],
+        expectedPort: ['', Validators.required],
+        expectedDate: ['', Validators.required],
+        vesselETA: ['', Validators.required],
+        vesselETB: ['', Validators.required],
+        serviceLocation: ['vessel'],
+        pmReqId: []
       }),
 
       items: this.fb.group({
@@ -405,8 +455,8 @@ export class RequisitionNewComponent implements OnInit {
         asset: [''],
         additionalRemarks: [''],
         storageLocation: [''],
-        spareId:[],
-        storeId:[],
+        spareId: [],
+        storeId: [],
         pmReqId: [0, [Validators.required]]
       }),
     });
@@ -437,7 +487,7 @@ export class RequisitionNewComponent implements OnInit {
         remarks: formPart?.value.remarks,
       });
       if (partName == 'header' && formPart != null && formPart.valid) {
-
+        debugger
         const formData = new FormData();
         formData.append('data', JSON.stringify(formPart.value))
         // formPart?.get('orderReference')?.setValue(displayValue);
@@ -453,8 +503,8 @@ export class RequisitionNewComponent implements OnInit {
                 this.dataSource.data.map(item => {
                   const newItem = {
                     itemsId: 0,
-                    spareId:item.spareId || null,
-                    storeId:item.storeId || null,
+                    spareId: item.spareId || null,
+                    storeId: item.storeId || null,
                     itemCode: item.itemCode || '',
                     itemName: item.itemName || '',
                     partNo: item.partNo || '',
@@ -616,12 +666,118 @@ export class RequisitionNewComponent implements OnInit {
   // }
 
   onSubmit(form: any) {
+    debugger
+    this.serviceTypeForm.patchValue({ pmReqId: this.reqId })
+    if (this.serviceTypeForm.valid) {
+      this.requisitionService.addServiceType(form.value).subscribe(data => {
+        if (data.message == "data added") {
+          this.swal.success('Added successfully.');
+          if (this.reqId)
+            this.loadServiceType(this.reqId);
+        } else if (data.message == "updated") {
+          this.swal.success('Data has been updated successfully.');
 
-    form.value.reqIds = this.reqId;
+        }
+        else if (data.message == "duplicate") {
+          this.swal.info('Data already exist. Please enter new data');
+          if (this.reqId)
+            this.loadServiceType(this.reqId);
+        }
+        else if (data.message == "not found") {
+          this.swal.info('Data exist not exist');
 
-    if (this.deliveryForm.valid) {
+        }
+        else {
 
+        }
+        $("#add-service").modal('hide');
+      })
     }
+  }
+  loadServiceType(id: any) {
+
+    this.requisitionService.getServiceType(id).subscribe(res => {
+      debugger
+      if (res.status === true) {
+        debugger
+        const dataWithExpansion = res.data.map((item) => {
+          // Ensure each item in jobList has the isExpanded property
+          item.jobList = item.jobList.map(job => ({ ...job, isExpanded: false }));
+          return { ...item, isExpanded: false };
+        });
+        this.serviceTypeDataSource = dataWithExpansion
+        console.log(this.serviceTypeDataSource);
+        this.displayJobListsColumn();
+      }
+    })
+  }
+  // method to open the modal in add mode
+  openAddServiceModal() {
+    debugger
+    this.isEditMode = false;
+    this.modal = 'modal'
+    this.modalTarget = 'add-service'
+    this.resetForm();
+    this.openServiceTypeModal();
+
+  }
+  setDataBsToggle(value: string): void {
+    // Dynamically set data-bs-toggle
+    const addButton = document.getElementById('add-service-button');
+    if (addButton) {
+      addButton.setAttribute('data-bs-toggle', value);
+    }
+  }
+  setDataBsTarget(value: string): void {
+    // Dynamically set data-bs-target
+    const addButton = document.getElementById('add-service-button');
+    if (addButton) {
+      addButton.setAttribute('data-bs-target', value);
+    }
+  }
+  // method to open the modal in edit mode
+  openEditServiceModal(service: any) {
+    debugger
+    this.isEditMode = true;
+    this.serviceObject = { ...service }; // copy data from the selected service
+    this.populateForm();
+    this.populateJobListForm();
+    this.openServiceTypeModal();
+  }
+  populateJobListForm() {
+    const jobListFormArray = this.serviceTypeForm.get('jobList') as FormArray;
+    jobListFormArray.clear(); // Clear existing form array
+  
+    // Iterate through jobList and add form group for each job
+    for (const job of this.serviceObject.jobList) {
+      jobListFormArray.push(this.createJobFormGroup(job));
+    }
+  }
+  createJobFormGroup(job: any): FormGroup {
+    return this.fb.group({
+      jobDescription: [job.jobDescription],
+      qty: [job.qty],
+      unit: [job.unit],
+      remarks: [job.remarks],
+      attachment: [job.attachment],
+    });
+  }
+  // method to reset the form
+  resetForm() {
+    this.serviceTypeForm.reset();
+  }
+  // method to populate the form with data from the service object
+  populateForm() {
+    this.serviceTypeForm.patchValue(this.serviceObject);
+  }
+  // method to open the modal
+  openServiceTypeModal() {
+    $("#add-service").modal('show');
+  }
+  displayJobListsColumn(): boolean {
+    debugger
+    // Check if any row is expanded
+    return this.serviceTypeDataSource.data.some(row => row.isExpanded);
   }
 
   getReqData() {
@@ -678,7 +834,7 @@ export class RequisitionNewComponent implements OnInit {
           if (requisitionData.orderReferenceType === 'Component' || requisitionData.orderReferenceType === 'Spare') {
             this.getSpareItems('Component', objProcR);
             this.LoadShipCompnent(0)
-            this.getCartItemsInEditReq(0).subscribe(res => {             
+            this.getCartItemsInEditReq(0).subscribe(res => {
               const transformedData: any[] = [];
               this.spareItemDataSource.data.forEach((item: any) => {
 
@@ -710,6 +866,8 @@ export class RequisitionNewComponent implements OnInit {
             })
           }
         })
+
+        this.loadServiceType(this.reqId);
       });
   }
 
@@ -891,16 +1049,10 @@ export class RequisitionNewComponent implements OnInit {
       }));
   }
 
-  loadOrderTypeInEdit() {
-    return this.purchaseService.getOrderTypes(0).pipe(map(res => {
-      this.orderTypes = res.data;
-      return { data: this.orderTypes }
-    }))
-  }
-
   LoadOrdertype() {
     this.purchaseService.getOrderTypes(0)
       .subscribe(response => {
+        debugger
         this.orderTypes = response.data;
         this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
         if (this.defaultOrderType[0] === 'Spare' || this.defaultOrderType[0] === 'Service')
@@ -930,9 +1082,12 @@ export class RequisitionNewComponent implements OnInit {
   }
 
   LoadUserDetails() {
+    debugger
     this.userService.getUserById(this.userId)
       .subscribe(response => {
+        debugger
         this.userDetail = response.data;
+        console.log(this.userDetail)
         this.currentyear = new Date().getFullYear();
 
         if (this.userDetail.site == 'Office') {
@@ -976,13 +1131,14 @@ export class RequisitionNewComponent implements OnInit {
         this.requisitiondata = response.data;
 
         if (this.reqGetId) {
-
+          debugger
           // this.loadItemByReqId(this.reqGetId);
           this.LoadVessel();
           this.LoadProjectnameAndcode();
           this.LoadPriority();
           this.LoadDepartment();
           this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
+          this.LoadUserDetails();
           this.getReqData();
         } else {
           this.LoadUserDetails();
@@ -1079,7 +1235,7 @@ export class RequisitionNewComponent implements OnInit {
 
   LoadheadorderType() {
     this.zone.run(() => {
-
+      debugger
       this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
       this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
       if (this.defaultOrderType[0] === 'Service' || this.defaultOrderType[0] === 'Spare') {
@@ -1162,7 +1318,7 @@ export class RequisitionNewComponent implements OnInit {
               this.leftTableDataSource.data = data;
             })
           } else
-            this.leftTableDataSource.data = data;            
+            this.leftTableDataSource.data = data;
         });
     } else if (itemType === 'Group') {
       debugger
@@ -1225,7 +1381,7 @@ export class RequisitionNewComponent implements OnInit {
             this.leftTableDataSource.data = data;
           })
         } else
-          this.leftTableDataSource.data = data;      
+          this.leftTableDataSource.data = data;
       })
     }
   }
@@ -1279,8 +1435,8 @@ export class RequisitionNewComponent implements OnInit {
     this.rightTableDataSource.data.forEach((item, index) => {
       const newItem = {
         itemsId: 0,
-        spareId:item.spareId || null,
-        storeId:item.storeId || null,
+        spareId: item.spareId || null,
+        storeId: item.storeId || null,
         pmReqId: this.reqId,
         itemCode: item.itemCode || '',
         itemName: item.itemName || '',
@@ -1404,11 +1560,11 @@ export class RequisitionNewComponent implements OnInit {
               }
             });
             this.cdr.detectChanges();
-          })         
+          })
           this.dataSource.data = response.map(item => ({
             editMode: false,
             ...item
-          }));       
+          }));
 
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
@@ -1848,7 +2004,7 @@ export class RequisitionNewComponent implements OnInit {
     this.pmsService.getmattachment(status, 'Purchase Requisition', this.reqId)
       .subscribe(response => {
         this.flag = status;
-        this.attachmentdataSource.data = response.data;       
+        this.attachmentdataSource.data = response.data;
         this.attachmentdataSource.sort = this.sort;
         this.attachmentdataSource.paginator = this.paginator;
       });
@@ -2004,7 +2160,7 @@ export class RequisitionNewComponent implements OnInit {
     if (filePath.indexOf(".") !== -1) {
 
       this.requisitionService.DownloadReqAttach(filename)
-        .subscribe((response) => {               
+        .subscribe((response) => {
           var bolb = new Blob([response], { type: response.type });
           var a = document.createElement("a");
           a.href = URL.createObjectURL(bolb);
@@ -2087,7 +2243,7 @@ export class RequisitionNewComponent implements OnInit {
           height: '70vh',
           data: {
             modalTitle: "Order Reference", componentType: 'Component',
-            dataSourceTree: this.dataSourceTree
+            dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
           }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -2100,7 +2256,7 @@ export class RequisitionNewComponent implements OnInit {
           width: '500px',
           data: {
             modalTitle: "Order Reference", orderType: this.defaultOrderType[0], spareTableData: this.spareItemDataSource.data,
-            componentType: 'Component', dataSourceTree: this.dataSourceTree
+            componentType: 'Component', dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
           }
         });
 
@@ -2116,7 +2272,7 @@ export class RequisitionNewComponent implements OnInit {
       if (isStoreDataEmpty) {
         const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
           width: '1000px',
-          data: { modalTitle: "Order Reference", componentType: 'Group', groupTableData: this.groupTableSourceTree }
+          data: { modalTitle: "Order Reference", componentType: 'Group', groupTableData: this.groupTableSourceTree, orderTypeId: this.selectedOrderTypeId }
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result === 'success') {
@@ -2129,7 +2285,7 @@ export class RequisitionNewComponent implements OnInit {
           width: '500px',
           data: {
             modalTitle: "Order Reference", orderType: this.defaultOrderType[0], groupTableData: this.groupTableSourceTree,
-            storeTableData: this.storeItemDataSource.data
+            storeTableData: this.storeItemDataSource.data, orderTypeId: this.selectedOrderTypeId
           }
         });
 
@@ -2194,66 +2350,70 @@ export class RequisitionNewComponent implements OnInit {
   }
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent, row: any): void {
+    debugger
     if (event.defaultPrevented) {
       return;
     }
     const target = event.target as HTMLElement;
-    const isWithinItemTable = target.closest('.itemTable');
-    const isWithinRightTable = this.rightTable.nativeElement.contains(target);
-    if (row) {
-      if (isWithinItemTable || isWithinRightTable) {
-        // Check for numeric keys (0 to 9) and handle accordingly
-        if (/^\d$/.test(event.key)) {
-          // Handle numeric input, you can replace this with your logic
-          // For example, concatenate the digit to the existing value
-          this.handleNumericInput(row, event.key);
-        } else if (isWithinItemTable) {
-          switch (event.key) {
-            case 'Backspace':
-              this.handleBackspace(row);
-              break;
-            case 'ArrowUp':
-              event.preventDefault();
-              this.moveFocus(row, -1);
-              break;
-            case 'ArrowDown':
-              event.preventDefault();
-              this.moveFocus(row, 1);
-              break;
-            case 'ArrowLeft':
-              this.moveCursorLeft(row);
-              break;
-            case 'ArrowRight':
-              this.moveCursorRight(row);
-              break;
-            default:
-              this.toggleEditMode(row);
-              this.saveChanges(row);
-              break;
+    if (this.defaultOrderType[0] === 'Spare' || this.defaultOrderType[0] === 'Store') {
+      const isWithinItemTable = target.closest('.itemTable');
+      const isWithinRightTable = this.rightTable.nativeElement.contains(target);
+
+      if (row) {
+        if (isWithinItemTable || isWithinRightTable) {
+          // Check for numeric keys (0 to 9) and handle accordingly
+          if (/^\d$/.test(event.key)) {
+            // Handle numeric input, you can replace this with your logic
+            // For example, concatenate the digit to the existing value
+            this.handleNumericInput(row, event.key);
+          } else if (isWithinItemTable) {
+            switch (event.key) {
+              case 'Backspace':
+                this.handleBackspace(row);
+                break;
+              case 'ArrowUp':
+                event.preventDefault();
+                this.moveFocus(row, -1);
+                break;
+              case 'ArrowDown':
+                event.preventDefault();
+                this.moveFocus(row, 1);
+                break;
+              case 'ArrowLeft':
+                this.moveCursorLeft(row);
+                break;
+              case 'ArrowRight':
+                this.moveCursorRight(row);
+                break;
+              default:
+                this.toggleEditMode(row);
+                this.saveChanges(row);
+                break;
+            }
           }
-        }
-        else if (isWithinRightTable) {
-          switch (event.key) {
-            case 'Backspace':
-              this.handleBackspace(row);
-              break;
-            case 'ArrowUp':
-              event.preventDefault();
-              this.moveFocusItem(row, -1);
-              break;
-            case 'ArrowDown':
-              event.preventDefault();
-              this.moveFocusItem(row, 1);
-              break;
-            case 'ArrowLeft':
-              this.moveCursorLeft(row);
-              break;
-            case 'ArrowRight':
-              this.moveCursorRight(row);
-              break;
-            default:
-              this.toggleEditMode(row);
-              break;
+          else if (isWithinRightTable) {
+            switch (event.key) {
+              case 'Backspace':
+                this.handleBackspace(row);
+                break;
+              case 'ArrowUp':
+                event.preventDefault();
+                this.moveFocusItem(row, -1);
+                break;
+              case 'ArrowDown':
+                event.preventDefault();
+                this.moveFocusItem(row, 1);
+                break;
+              case 'ArrowLeft':
+                this.moveCursorLeft(row);
+                break;
+              case 'ArrowRight':
+                this.moveCursorRight(row);
+                break;
+              default:
+                this.toggleEditMode(row);
+                break;
+            }
           }
         }
       }

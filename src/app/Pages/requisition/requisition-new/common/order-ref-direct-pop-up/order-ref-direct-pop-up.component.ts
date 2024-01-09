@@ -7,7 +7,9 @@ import { MatSort } from '@angular/material/sort';
 import { RequisitionService } from 'src/app/services/requisition.service';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { ExampleGroupFlatNode, GroupFlatNode, TemplateTree } from 'src/app/Pages/Models/response-model';
+import { ComponentFlatNode, ComponentTemplateTree, ExampleGroupFlatNode, GroupFlatNode, GroupTemplateTree, TemplateTree } from 'src/app/Pages/Models/response-model';
+import { SwalToastService } from 'src/app/services/swal-toast.service';
+import { EMPTY } from 'rxjs';
 
 
 @Component({
@@ -52,7 +54,11 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   selectedGroupIds: number[] = [];
   selectedGroupName: string[] = [];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefDirectPopUpComponent>,
+  orderTypeId: number
+  private apiCalled = false;
+  matchingAccountCodes: string[] = [];
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefDirectPopUpComponent>, private swal: SwalToastService,
     public requisitionService: RequisitionService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
@@ -64,11 +70,11 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     this.groupTableSourceTree = this.data.groupTableData
     this.spareItemDataSource.data = this.data.spareTableData
     this.storeItemDataSource.data = this.data.storeTableData
+    this.orderTypeId = this.data.orderTypeId
     if (this.dataSourceTree)
       this.bindData(this.dataSourceTree);
-    if(this.groupTableSourceTree){
-      console.log(this.groupTableSourceTree)
-      this.bindGroup(this.groupTableSourceTree)      
+    if (this.groupTableSourceTree) {
+      this.bindGroup(this.groupTableSourceTree)
     }
   }
 
@@ -309,12 +315,14 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
 
   //#region Component Hierarchy
-  private transformer = (node: TemplateTree, level: number) => {
+  private transformer = (node: ComponentTemplateTree, level: number) => {
     debugger
     return {
       expandable: !!node.subGroup && node.subGroup.length > 0,
       groupName: node.groupName,
       groupId: node.groupId,
+      groupAccountCode: node.groupAccountCode,
+      componentAccountCode: node.componentAccountCode,
       type: node.type,
       level,
     };
@@ -324,37 +332,76 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     debugger
     this.dataSourceTree = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
     this.dataSourceTree.data = data;
+    console.log(this.dataSourceTree.data)
   }
-  treeControl = new FlatTreeControl<ExampleGroupFlatNode>(
+  treeControl = new FlatTreeControl<ComponentFlatNode>(
     node => node.level, node => node.expandable
   );
   treeFlattener = new MatTreeFlattener(
     this.transformer, node => node.level, node => node.expandable, node => node.subGroup
   );
-  handleCheckboxChange(event: Event, node: ExampleGroupFlatNode) {
+  handleCheckboxChange(event: Event, node: ComponentFlatNode) {
     debugger
+    if (this.selectedComponentIds.length === 0 && this.selectedComponentName.length === 0) {
+      this.matchingAccountCodes= [];
+      this.apiCalled = false;
+    }
     const checkbox = event.target as HTMLInputElement;
     node.selected = checkbox.checked;
-    if (node.selected) {
-      this.selectedComponentIds.push(node.groupId);
-      this.selectedComponentName.push(node.groupName);
-    } else {
-      const index = this.selectedComponentIds.indexOf(node.groupId);
-      if (index !== -1) {
-        this.selectedComponentIds.splice(index, 1);
-        this.selectedComponentName.splice(index, 1);
+    const accountCodeToCheck = node.groupAccountCode !== null ? node.groupAccountCode : node.componentAccountCode;
+    if (accountCodeToCheck) {
+      if (node.selected && !this.apiCalled) {
+        this.requisitionService.checkAccountCode(accountCodeToCheck, this.orderTypeId).subscribe(res => {
+          debugger
+          if (res.status === true) {
+            this.matchingAccountCodes.push(res.accounts)
+            if (this.matchingAccountCodes[0].length > 0) {
+              this.apiCalled = true
+              if (node.selected) {
+                this.selectedComponentIds.push(node.groupId);
+                this.selectedComponentName.push(node.groupName);
+              } else {
+                const index = this.selectedComponentIds.indexOf(node.groupId);
+                if (index !== -1) {
+                  this.selectedComponentIds.splice(index, 1);
+                  this.selectedComponentName.splice(index, 1);
+                }
+              }
+            }
+          }
+        })
+      } else {
+        debugger
+        const isInMatchingList = this.matchingAccountCodes[0].includes(accountCodeToCheck.toString());
+        node.selected = isInMatchingList;
+        if (!node.selected) {
+          // Uncheck the checkbox if the account code doesn't match
+          checkbox.checked = false;
+        }
+        if (node.selected) {
+          this.selectedComponentIds.push(node.groupId);
+          this.selectedComponentName.push(node.groupName);
+        } else {
+          const index = this.selectedComponentIds.indexOf(node.groupId);
+          if (index !== -1) {
+            this.selectedComponentIds.splice(index, 1);
+            this.selectedComponentName.splice(index, 1);
+          }
+          this.swal.info('Account Code not match. Please select another data');
+        }
       }
     }
   }
   //#endregion
 
   //#region Group Hierarchy
-  private transformerGroup = (node: TemplateTree, level: number) => {
+  private transformerGroup = (node: GroupTemplateTree, level: number) => {
     debugger
     return {
       expandable: !!node.subGroup && node.subGroup.length > 0,
       groupName: node.groupName,
       groupId: node.groupId,
+      groupAccountCode: node.groupAccountCode,
       type: node.type,
       level,
     };
@@ -364,30 +411,65 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     debugger
     this.groupTableSourceTree = new MatTreeFlatDataSource(this.treeGroupControl, this.treeGroupFlattener);
     this.groupTableSourceTree.data = data;
+    console.log(this.groupTableSourceTree.data)
   }
-  treeGroupControl = new FlatTreeControl<GroupFlatNode>(    
+  treeGroupControl = new FlatTreeControl<GroupFlatNode>(
     node => node.level, node => node.expandable
   );
   treeGroupFlattener = new MatTreeFlattener(
     this.transformerGroup, node => node.level, node => node.expandable, node => node.subGroup
   );
+
   handleGroupCheckboxChange(event: Event, node: GroupFlatNode) {
     debugger
     const checkbox = event.target as HTMLInputElement;
     node.selected = checkbox.checked;
-    if (node.selected) {
-      this.selectedGroupIds.push(node.groupId);
-      this.selectedGroupName.push(node.groupName);
-    } else {
-      const index = this.selectedGroupIds.indexOf(node.groupId);
-      if (index !== -1) {
-        this.selectedGroupIds.splice(index, 1);
-        this.selectedGroupName.splice(index, 1);
+    if (node.groupAccountCode) {
+      if (node.selected && !this.apiCalled) {
+        this.requisitionService.checkAccountCode(node.groupAccountCode, this.orderTypeId).subscribe(res => {
+          if (res.status === true) {
+            this.matchingAccountCodes.push(res.accounts)
+            if (this.matchingAccountCodes[0].length > 0){
+              this.apiCalled = true
+              if (node.selected) {
+                this.selectedGroupIds.push(node.groupId);
+                this.selectedGroupName.push(node.groupName);
+              } else {
+                const index = this.selectedGroupIds.indexOf(node.groupId);
+                if (index !== -1) {
+                  this.selectedGroupIds.splice(index, 1);
+                  this.selectedGroupName.splice(index, 1);
+                }
+                this.swal.info('Account Code not match. Please select another data');
+              }
+            }             
+          }
+        })
+      } else {
+        debugger
+        const isInMatchingList = this.matchingAccountCodes[0].includes(node.groupAccountCode.toString());
+        node.selected = isInMatchingList;
+        if (!node.selected) {
+          // Uncheck the checkbox if the account code doesn't match
+          checkbox.checked = false;
+        }
+        if (node.selected) {
+          this.selectedGroupIds.push(node.groupId);
+          this.selectedGroupName.push(node.groupName);
+        } else {
+          const index = this.selectedGroupIds.indexOf(node.groupId);
+          if (index !== -1) {
+            this.selectedGroupIds.splice(index, 1);
+            this.selectedGroupName.splice(index, 1);
+          }
+          this.swal.info('Account Code not match. Please select another data');
+        }
       }
     }
   }
-  isLeaf(node: GroupFlatNode): boolean {
-    return node.expandable ? node.subGroup?.length === 0 : true;
+
+  checkAccountCode(accountCode: number, orderTypeId: number) {
+    // alert(accountCode);
   }
   //#endregion  Group Hierarchy
 }

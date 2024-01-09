@@ -1,83 +1,103 @@
-.mat-column-checkbox {
-  flex: 0 0 40px;
+ .mat-column-checkbox {
+   flex: 0 0 40px;
+ }
+
+ ::ng-deep multiselect-item-checkbox {
+   width: 11px !important;
+   height: 11px !important;
+ }
+
+ ::ng-deep .dropdown-multiselect__caret {
+   line-height: 13px !important;
+ }
+
+ ::ng-deep .ng-multiselect-dropdown span {
+   font-size: 13px !important;
+ }
+
+ ::ng-deep .dropdown-btn {
+   padding: 3px 15px !important;
+   border: 1px solid var(--pms-input-border-color) !important;
+   /* background: #fff !important; */
+ }
+
+ ::ng-deep span {
+   font-size: 13px !important;
+ }
+
+ ::ng-deep .selected-item {
+   max-width: 250px !important;
+ }
+
+ .ng-invalid {
+   border-color: #d8e2ef;
+
+ }
+
+ .mat-column-index {
+   flex: 0 0 40px;
+ }
+
+ .leftTableCheckbox {
+   flex: 0 0 40px;
+ }
+
+ .leftTableCode,
+ .leftTablePartNo,
+ .leftTableName {
+   flex: 0 0 300px;
+ }
+
+ .leftTableQty,
+ .leftTableUnit {
+   flex: 0 0 30px;
+ }
+
+ .rightTableCode {
+   min-width: 80px;
+   max-width: 80px;
+   width: 80px;
+ }
+
+ .rightTableNo {
+   min-width: 50px;
+   max-width: 60px;
+   width: 50px;
+ }
+
+ .listTableNo {
+   min-width: 30px;
+   max-width: 40px;
+   width: 30px;
+ }
+
+ .ellipsis-text {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+ }
+
+ .ellipsis-text:hover {
+   white-space: nowrap;
+   overflow: visible;
+   text-overflow: unset;
+ }
+
+ .disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+ }
+
+ .nested-table-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.table-nested {
+  width: 100%;
 }
 
-::ng-deep multiselect-item-checkbox {
-  width: 11px !important;
-  height: 11px !important;
+.nested-table-container mat-table {
+  width: 100%;
 }
 
-::ng-deep .dropdown-multiselect__caret {
-  line-height: 13px !important;
-}
-
-::ng-deep .ng-multiselect-dropdown span {
-  font-size: 13px !important;
-}
-
-::ng-deep .dropdown-btn {
-  padding: 3px 15px !important;
-  border: 1px solid var(--pms-input-border-color) !important;
-  /* background: #fff !important; */
-}
-
-::ng-deep span {
-  font-size: 13px !important;
-}
-
-::ng-deep .selected-item {
-  max-width: 250px !important;
-}
-
-.ng-invalid {
-  border-color: #d8e2ef;
-
-}
-
-.mat-column-index {
-  flex: 0 0 40px;
-}
-
-.leftTableCheckbox {
-  flex: 0 0 40px;
-}
-
-.leftTableCode,
-.leftTablePartNo,
-.leftTableName {
-  flex: 0 0 300px;
-}
-.leftTableQty,
-.leftTableUnit{
-  flex: 0 0 30px;
-}
-
-.rightTableCode{
-  min-width: 80px;
-  max-width: 80px;
-  width: 80px;
-}
-.rightTableNo{
-  min-width: 50px;
-  max-width: 60px;
-  width: 50px;
-}
-.listTableNo{
-  min-width: 30px;
-  max-width: 40px;
-  width: 30px;
-}
-.ellipsis-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;    
-}
-.ellipsis-text:hover {
-  white-space: nowrap;
-  overflow: visible;
-  text-overflow: unset;
-}
-.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
