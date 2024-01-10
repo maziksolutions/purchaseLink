@@ -88,7 +88,7 @@
                     matTooltip="{{node.groupName.length>40?node.groupName:''}}">
                     <i class="fa fa-folder m-r-5" aria-hidden="true"></i>
                     {{node.groupName}}</span></a></span>
-       
+
     </mat-tree-node>
     <mat-tree-node *matTreeNodeDef="let node;" class="expand-tree">
         <!-- use a disabled button to provide padding for tree leaf -->
@@ -106,17 +106,10 @@
     class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
 
     <ng-container matColumnDef="checkbox">
-        <mat-header-cell *matHeaderCellDef class="checkbox">
-            <mat-checkbox *ngIf="spareItemSelection.hasValue()"
-                [checked]="spareItemSelection.hasValue() && isAllSpareItemSelected()"
-                [indeterminate]="spareItemSelection.hasValue() && !isAllSpareItemSelected()"
-                (change)="onCheckAllSpareItemChange($event.checked)">
-            </mat-checkbox>
-
-        </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef class="checkbox"></mat-header-cell>
         <mat-cell *matCellDef="let row" class="checkbox">
-            <mat-checkbox [checked]="row.checkboxState" [disabled]="row.checkboxDisabled"
-                (change)="onCheckboxSpareItemChange($event.checked, row)"></mat-checkbox>
+            <mat-checkbox (click)="$event.stopPropagation()" [checked]="spareItemSelection.isSelected(row)"
+                (change)="onCheckboxChange($event, $event.checked, row)"></mat-checkbox>
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="inventoryName">
@@ -156,17 +149,10 @@
     class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
 
     <ng-container matColumnDef="checkbox">
-        <mat-header-cell *matHeaderCellDef class="checkbox">
-            <mat-checkbox *ngIf="storeItemSelection.hasValue()"
-                [checked]="storeItemSelection.hasValue() && isAllStoreItemSelected()"
-                [indeterminate]="storeItemSelection.hasValue() && !isAllStoreItemSelected()"
-                (change)="onCheckAllStoreItemChange($event.checked)">
-            </mat-checkbox>
-
-        </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef class="checkbox"></mat-header-cell>
         <mat-cell *matCellDef="let row" class="checkbox">
-            <mat-checkbox [checked]="row.checkboxState" [disabled]="row.checkboxDisabled"
-                (change)="onCheckboxStoreItemChange($event.checked, row)"></mat-checkbox>
+            <mat-checkbox (click)="$event.stopPropagation()" [checked]="storeItemSelection.isSelected(row)"
+                (change)="onCheckboxStoreItemChange($event, $event.checked, row)"></mat-checkbox>
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="inventoryName">
@@ -203,5 +189,5 @@
 
 <div mat-dialog-actions class="modal-footer">
     <a class="btn btn-primary" type="button" (click)="saveComponent()">Ok</a> <button type="button"
-        class="btn btn-danger me-1" aria-label="">Cancel</button>
+        class="btn btn-danger me-1" aria-label="" (click)="closeModal()">Cancel</button>
 </div>

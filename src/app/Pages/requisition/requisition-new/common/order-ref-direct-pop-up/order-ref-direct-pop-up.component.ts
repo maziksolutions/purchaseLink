@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
@@ -10,6 +10,7 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { ComponentFlatNode, ComponentTemplateTree, ExampleGroupFlatNode, GroupFlatNode, GroupTemplateTree, TemplateTree } from 'src/app/Pages/Models/response-model';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { EMPTY } from 'rxjs';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 
 @Component({
@@ -59,7 +60,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   matchingAccountCodes: string[] = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefDirectPopUpComponent>, private swal: SwalToastService,
-    public requisitionService: RequisitionService, public dialog: MatDialog) { }
+    public requisitionService: RequisitionService, public dialog: MatDialog,private cdr: ChangeDetectorRef,private zone: NgZone) { }
 
   ngOnInit(): void {
     debugger
@@ -102,118 +103,115 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   }
   //#endregion
 
-  //#region  this is for SpareItems Table Chekcbox handling code
-  isAllSpareItemSelected() {
-
-    const numSelected = this.spareItemSelection.selected.length;
-    const numRows = this.getSpareItemsWithSameAccountCode();
-    return numSelected === numRows.length;
-  }
-  onCheckAllSpareItemChange(checked: boolean): void {
-
-    if (checked) {
-
-      const itemsToCheck = this.getSpareItemsWithSameAccountCode();
-      itemsToCheck.forEach(item => {
-
-        item.checkboxState = true;
-        this.spareItemSelection.select(item);
-      });
-    } else {
-      this.spareItemDataSource.data.forEach(item => (item.checkboxState = false));
-      this.spareItemSelection.clear();
-      this.spareItemDataSource.data.forEach(item => item.checkboxDisabled = false);
-    }
-
-    // this.sortItems();
-  }
-  getSpareItemsWithSameAccountCode(): any[] {
-
-    const selectedAccountCode = this.spareItemSelection.selected.length > 0 ? this.spareItemSelection.selected[0].accountCode : null;
-    return selectedAccountCode ? this.spareItemDataSource.data.filter(item => item.accountCode === selectedAccountCode) : [];
-  }
-  onCheckboxSpareItemChange(checked: boolean, item: any): void {
-
-    item.checkboxState = checked;
-
-    const selectedItemsWithDifferentAccountCode = this.spareItemSelection.selected.filter(
-      selectedItem => selectedItem.accountCode !== item.accountCode
-    );
-
-    if (selectedItemsWithDifferentAccountCode.length > 0) {
-      // Display an alert for different account codes
-      alert('Selected item(s) have different account codes.');
-    }
-
-    if (checked) {
-      this.spareItemSelection.select(item);
-    } else {
-      this.spareItemSelection.deselect(item);
-    }
+  //#region  this is for SpareItems Table Chekcbox handling code  
+  onCheckboxChange(event: MatCheckboxChange, checked: boolean, item: any): void {
+    debugger
     if (this.spareItemSelection.selected.length === 0) {
-
-      this.spareItemDataSource.data.forEach(item => item.checkboxDisabled = false);
+      this.matchingAccountCodes = [];
+      this.apiCalled = false;
     }
-
-    // this.sortItems();
+    const accountCode = item.accountCode
+    if (accountCode !== null && accountCode !== undefined) {
+      if (checked && !this.apiCalled) {
+        this.requisitionService.checkAccountCode(accountCode, this.orderTypeId).subscribe(async res => {
+          debugger
+          if (res.status === true) {
+            await this.matchingAccountCodes.push(res.accounts)
+            if (this.matchingAccountCodes[0].length > 0) {
+              this.apiCalled = true
+              if (checked) {
+                this.spareItemSelection.select(item);
+              } else {
+                this.spareItemSelection.deselect(item);
+              }
+            }
+          }
+        })
+      }
+      else {
+        debugger
+        const isInMatchingList = this.matchingAccountCodes[0].includes(accountCode.toString());
+        if (isInMatchingList) {
+          if (checked) {
+            this.spareItemSelection.select(item);
+          } else {
+            this.spareItemSelection.deselect(item);
+          }
+        } else {
+          this.zone.run(()=>{
+            this.cdr.detectChanges();
+            event.source.checked = false;
+            this.swal.info('Account Code not match. Please select another data');
+          })         
+        }
+      }
+    } else {
+      if (checked) {
+        this.spareItemSelection.select(item);
+      } else {
+        this.spareItemSelection.deselect(item);
+      }
+    }
   }
   //#endregion
 
-  //#region  this is for StoreItems Table Chekcbox handling code
-  isAllStoreItemSelected() {
-
-    const numSelected = this.storeItemSelection.selected.length;
-    const numRows = this.getStoreItemsWithSameAccountCode();
-    return numSelected === numRows.length;
-  }
-  onCheckAllStoreItemChange(checked: boolean): void {
-
-    if (checked) {
-
-      const itemsToCheck = this.getStoreItemsWithSameAccountCode();
-      itemsToCheck.forEach(item => {
-
-        item.checkboxState = true;
-        this.storeItemSelection.select(item);
-      });
-    } else {
-      this.storeItemDataSource.data.forEach(item => (item.checkboxState = false));
-      this.storeItemSelection.clear();
-      this.storeItemDataSource.data.forEach(item => item.checkboxDisabled = false);
-    }
-
-    // this.sortItems();
-  }
-  getStoreItemsWithSameAccountCode(): any[] {
-
-    const selectedAccountCode = this.storeItemSelection.selected.length > 0 ? this.storeItemSelection.selected[0].accountCode : null;
-    return selectedAccountCode ? this.storeItemDataSource.data.filter(item => item.accountCode === selectedAccountCode) : [];
-  }
-  onCheckboxStoreItemChange(checked: boolean, item: any): void {
-
-    item.checkboxState = checked;
-
-    const selectedItemsWithDifferentAccountCode = this.storeItemSelection.selected.filter(
-      selectedItem => selectedItem.accountCode !== item.accountCode
-    );
-
-    if (selectedItemsWithDifferentAccountCode.length > 0) {
-      // Display an alert for different account codes
-      alert('Selected item(s) have different account codes.');
-    }
-
-    if (checked) {
-      this.storeItemSelection.select(item);
-    } else {
-      this.storeItemSelection.deselect(item);
-    }
+  //#region  this is for StoreItems Table Chekcbox handling code  
+  onCheckboxStoreItemChange(event: MatCheckboxChange, checked: boolean, item: any): void {
+    debugger
     if (this.storeItemSelection.selected.length === 0) {
-
-      this.storeItemDataSource.data.forEach(item => item.checkboxDisabled = false);
+      this.matchingAccountCodes = [];
+      this.apiCalled = false;
     }
-
-    // this.sortItems();
+    const accountCode = item.accountCode
+    if (accountCode !== null && accountCode !== undefined) {
+      if (checked && !this.apiCalled) {
+        this.requisitionService.checkAccountCode(accountCode, this.orderTypeId).subscribe(async res => {
+          debugger
+          if (res.status === true) {
+            await this.matchingAccountCodes.push(res.accounts)
+            if (this.matchingAccountCodes[0].length > 0) {
+              this.apiCalled = true
+              if (checked) {
+                this.storeItemSelection.select(item);
+              } else {
+                this.storeItemSelection.deselect(item);
+              }
+            }else{
+              if (checked) {
+                this.storeItemSelection.select(item);
+              } else {
+                this.storeItemSelection.deselect(item);
+              }
+            }
+          }
+        })
+      }
+      else {
+        debugger
+        const isInMatchingList = this.matchingAccountCodes[0].includes(accountCode.toString());
+        if (isInMatchingList) {
+          if (checked) {
+            this.storeItemSelection.select(item);
+          } else {
+            this.storeItemSelection.deselect(item);
+          }
+        } else {
+          this.zone.run(()=>{
+            this.cdr.detectChanges();
+            event.source.checked = false;
+            this.swal.info('Account Code not match. Please select another data');
+          })         
+        }
+      }
+    } else {
+      if (checked) {
+        this.storeItemSelection.select(item);
+      } else {
+        this.storeItemSelection.deselect(item);
+      }
+    }
   }
+
   applyFilter(filterValue: string) {
 
     if (this.ComponentType === 'Group') {
@@ -340,16 +338,17 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   treeFlattener = new MatTreeFlattener(
     this.transformer, node => node.level, node => node.expandable, node => node.subGroup
   );
+
   handleCheckboxChange(event: Event, node: ComponentFlatNode) {
     debugger
     if (this.selectedComponentIds.length === 0 && this.selectedComponentName.length === 0) {
-      this.matchingAccountCodes= [];
+      this.matchingAccountCodes = [];
       this.apiCalled = false;
     }
     const checkbox = event.target as HTMLInputElement;
     node.selected = checkbox.checked;
     const accountCodeToCheck = node.groupAccountCode !== null ? node.groupAccountCode : node.componentAccountCode;
-    if (accountCodeToCheck) {
+    if (accountCodeToCheck != null && accountCodeToCheck !== undefined) {
       if (node.selected && !this.apiCalled) {
         this.requisitionService.checkAccountCode(accountCodeToCheck, this.orderTypeId).subscribe(res => {
           debugger
@@ -391,6 +390,18 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         }
       }
     }
+    else {
+      if (node.selected) {
+        this.selectedComponentIds.push(node.groupId);
+        this.selectedComponentName.push(node.groupName);
+      } else {
+        const index = this.selectedComponentIds.indexOf(node.groupId);
+        if (index !== -1) {
+          this.selectedComponentIds.splice(index, 1);
+          this.selectedComponentName.splice(index, 1);
+        }
+      }
+    }
   }
   //#endregion
 
@@ -422,14 +433,18 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
   handleGroupCheckboxChange(event: Event, node: GroupFlatNode) {
     debugger
+    if (this.selectedGroupIds.length === 0 && this.selectedGroupName.length === 0) {
+      this.matchingAccountCodes = [];
+      this.apiCalled = false;
+    }
     const checkbox = event.target as HTMLInputElement;
     node.selected = checkbox.checked;
-    if (node.groupAccountCode) {
+    if (node.groupAccountCode != null && node.groupAccountCode !== undefined) {
       if (node.selected && !this.apiCalled) {
         this.requisitionService.checkAccountCode(node.groupAccountCode, this.orderTypeId).subscribe(res => {
           if (res.status === true) {
             this.matchingAccountCodes.push(res.accounts)
-            if (this.matchingAccountCodes[0].length > 0){
+            if (this.matchingAccountCodes[0].length > 0) {
               this.apiCalled = true
               if (node.selected) {
                 this.selectedGroupIds.push(node.groupId);
@@ -442,7 +457,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
                 }
                 this.swal.info('Account Code not match. Please select another data');
               }
-            }             
+            }
           }
         })
       } else {
@@ -465,11 +480,19 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           this.swal.info('Account Code not match. Please select another data');
         }
       }
+    } else {
+      if (node.selected) {
+        this.selectedGroupIds.push(node.groupId);
+        this.selectedGroupName.push(node.groupName);
+      } else {
+        const index = this.selectedGroupIds.indexOf(node.groupId);
+        if (index !== -1) {
+          this.selectedGroupIds.splice(index, 1);
+          this.selectedGroupName.splice(index, 1);
+        }
+        this.swal.info('Account Code not match. Please select another data');
+      }
     }
-  }
-
-  checkAccountCode(accountCode: number, orderTypeId: number) {
-    // alert(accountCode);
   }
   //#endregion  Group Hierarchy
 }
