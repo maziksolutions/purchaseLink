@@ -10,6 +10,7 @@ import { ProjectnameComponent } from './projectname/projectname.component';
 import { EmailComponent } from './email/email.component';
 
 import { PriorityComponent } from './priority/priority.component';
+import { AttachmentTypeComponent } from './attachment-type/attachment-type.component';
 const routes: Routes = [
   {
      path: '', component: SiteLayoutComponent,
@@ -22,6 +23,7 @@ const routes: Routes = [
   {path: 'project-name',component: ProjectnameComponent,pathMatch:'full'}, 
   {path: 'priority',component: PriorityComponent,pathMatch:'full'},
   { path: 'email', component: EmailComponent, pathMatch: 'full' },
+  { path: 'attachmentType', component: AttachmentTypeComponent, pathMatch: 'full' },
 ]}
 ];
 

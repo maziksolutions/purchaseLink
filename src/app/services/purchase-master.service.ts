@@ -150,6 +150,24 @@ export class PurchaseMasterService {
     return this.httpClient.get<any[]>(`${this.linkurl}filterEmail/${status}`, httpOptions);
   }
 
+    //Get Attachment Type data
+    getAttachmentTypes(status): Observable<any> {
+      return this.httpClient.get<any[]>(`${this.linkurl}filterPMAttachmentType/${status}`, httpOptions);
+    }
+    getPMAttachmentTypeById(id): Observable<any> {
+      return this.httpClient.get<any>(this.linkurl + 'getPMAttachmentTypeById/' + id, httpOptions)
+        .pipe(catchError(this.handleError));
+    }
+    // Add New unit
+    addAttachmentTypes(formData): Observable<any> {
+      return this.httpClient.post<any>(this.linkurl + 'addPMAttachmentType', formData)
+        .pipe(catchError(this.handleError));
+    }
+    archiveAttachmentType(attachmentType: any[]): Observable<string> {
+      return this.httpClient.post<string>(`${this.linkurl}archivePMAttachmentType/`, attachmentType, httpOptions);
+    }
+    //#endregion
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('An error occurred:', error.error.message);
