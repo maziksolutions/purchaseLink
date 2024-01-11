@@ -13,6 +13,7 @@ import { ProjectnameComponent } from './projectname/projectname.component';
 import { PriorityComponent } from './priority/priority.component';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { EmailComponent } from './email/email.component';
+import { AttachmentTypeComponent } from './attachment-type/attachment-type.component';
 
 
 
@@ -25,7 +26,7 @@ import { EmailComponent } from './email/email.component';
      ServiceCategoryComponent,
      PriorityComponent,
      ServiceCategoryComponent,MaterialQualityComponent,
-     ProjectnameComponent,EmailComponent
+     ProjectnameComponent,EmailComponent, AttachmentTypeComponent
   ],
   imports: [
     CommonModule,  FormsModule,HttpClientModule,AppMaterialModule,

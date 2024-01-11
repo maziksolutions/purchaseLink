@@ -2082,7 +2082,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   fillattachmenttype() {
-    this.typemasterService.getAttachmentTypes(0)
+    this.purchaseService.getAttachmentTypes(0)
       .subscribe(response => {
         if (response.status) {
           this.attachmenttypelist = response.data;

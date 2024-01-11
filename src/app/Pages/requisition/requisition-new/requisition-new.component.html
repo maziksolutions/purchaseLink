@@ -196,10 +196,10 @@
                     data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban text-danger"></i></a>
 
                   <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Export PDF" aria-label=""><i class="fas fa-file-pdf text-danger"></i></a>
+                    data-bs-original-title="Export PDF" aria-label="" [class.disabled]="!isRequisitionApproved"><i class="fas fa-file-pdf text-danger"></i></a>
 
                   <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Export Excel" aria-label=""><i
+                    data-bs-original-title="Export Excel" aria-label="" [class.disabled]="!isRequisitionApproved"><i
                       class="fas fa-file-excel text-success"></i></a>
 
                   <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" *ngIf="approvestatus == 'Approved'"
@@ -421,9 +421,9 @@
                 <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                   data-bs-original-title="Send Delivery Instructions" aria-label=""><i
                     class="fas fa-share-square text-primary"></i></a> -->
-                <a class="px-1" type="button" data-bs-toggle="modal" data-bs-target="#additional-cost"
+                <!-- <a class="px-1" type="button" data-bs-toggle="modal" data-bs-target="#additional-cost"
                   *ngIf="approvestatus == 'Waiting For Approval' || approvestatus == 'Approved'">
-                  <button class="btn btn-secondary form-small" type="button">Manage Additional Cost</button> </a>
+                  <button class="btn btn-secondary form-small" type="button">Manage Additional Cost</button> </a> -->
 
               </div>
             </div>
@@ -554,7 +554,7 @@
 
           <!-- Additional-cost -->
 
-          <div class="modal fade" id="additional-cost" tabindex="-1" aria-hidden="true">
+          <!-- <div class="modal fade" id="additional-cost" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl mt-6" role="document">
               <div class="modal-content border-0">
                 <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
@@ -614,7 +614,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
 
 
         </form>
