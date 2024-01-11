@@ -23,15 +23,15 @@ declare let Swal, PerfectScrollbar: any;
 export class PMExceptionComponent implements OnInit {
   ExceptionForm: FormGroup; flag; pkey: number = 0;
   selectorderType: string[] = [];
-  selectprojectNC:string[] = [];
+  selectprojectNC: string[] = [];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('searchInput') searchInput: ElementRef;
   displayedColumns: string[] = ['checkbox', 'orderTypeId', 'projectCode', 'accountCode'];
-  dropdownAccountcodeSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean;  tooltipField:string;};
-  dropdownprojectNCSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean;  tooltipField:string;};
+  dropdownAccountcodeSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; tooltipField: string; };
+  dropdownprojectNCSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; tooltipField: string; };
   selectedaccountCode: string[] = [];
   selectedprojectNC: string[] = [];
   accountcode: any;
@@ -45,14 +45,12 @@ export class PMExceptionComponent implements OnInit {
   projectList: { projectNameId: number, fullNameCode: string }[] = [];
   projectCodeFullData: any;
 
-  constructor(private fb: FormBuilder, 
-    public dialog: MatDialog, 
+  constructor(private fb: FormBuilder,
+    public dialog: MatDialog,
     private exportExcelService: ExportExcelService,
     private purchaseService: PurchaseMasterService,
     private swal: SwalToastService,
-    private router:Router,
-    private userManagementService: UserManagementService,
-    private accountMasterService :AccountMasterService,
+    private accountMasterService: AccountMasterService,
     private exceptionService: ExceptionService,) { }
 
   ngOnInit(): void {
@@ -63,7 +61,7 @@ export class PMExceptionComponent implements OnInit {
       projectCode: ['', [Validators.required]],
       accountCode: ['', [Validators.required]]
     });
-   
+
     this.dropdownAccountcodeSetting = {
       singleSelection: false,
       idField: 'accountCodeId',
@@ -74,7 +72,7 @@ export class PMExceptionComponent implements OnInit {
       allowSearchFilter: true,
       tooltipField: 'description',
     };
-    this.dropdownprojectNCSetting ={
+    this.dropdownprojectNCSetting = {
       singleSelection: false,
       idField: 'projectNameId',
       textField: 'fullNameCode',
@@ -88,21 +86,21 @@ export class PMExceptionComponent implements OnInit {
     this.loadData(0);
     this.LoadAccountcode();
     this.LoadOrderType();
-    this.LoadProjectnameAndcode(); 
-    
-   
+    this.LoadProjectnameAndcode();
+
+
   }
 
   LoadAccountcode() {
     this.accountMasterService.getAccountCode(0)
       .subscribe(response => {
-        
-       this.accountcodeFullData = response.data;
-       this.accountcode = response.data.map(item => ({
-        accountCodeId: item.accountCodeId,
-        fullName: `${item.accountcode} ${item.accountName}`,
-        
-      }));
+
+        this.accountcodeFullData = response.data;
+        this.accountcode = response.data.map(item => ({
+          accountCodeId: item.accountCodeId,
+          fullName: `${item.accountcode} ${item.accountName}`,
+
+        }));
 
       })
   }
@@ -114,7 +112,7 @@ export class PMExceptionComponent implements OnInit {
         this.projectnameAndcode = response.data.map(item => ({
           projectNameId: item.projectNameId,
           fullNameCode: `${item.projectName} ${item.projectCode}`,
-          
+
         }));;
 
       })
@@ -123,19 +121,20 @@ export class PMExceptionComponent implements OnInit {
   LoadOrderType() {
     this.purchaseService.getOrderTypes(0)
       .subscribe(response => {
-        
+
         this.orderTypes = response.data;
-       
+
       })
   }
 
   onAccountcodeSelect(event: any) {
+  
     event.fullName = event.fullName.replace(/\D/g, '');
 
     let isSelect = event.fullName;
     if (isSelect) {
       this.selectedaccountCode.push(event.fullName);
-       
+
     }
   }
 
@@ -145,7 +144,7 @@ export class PMExceptionComponent implements OnInit {
   }
 
   onAccountcodeDeSelect(event: any) {
-    debugger
+
     event.fullName = event.fullName.replace(/\D/g, '');
     let rindex = this.selectedaccountCode.findIndex(fullName => fullName == event.fullName);
     if (rindex !== -1) {
@@ -160,11 +159,12 @@ export class PMExceptionComponent implements OnInit {
 
 
   onprojectNCSelect(event: any) {
+   
     event.fullNameCode = event.fullNameCode.replace(/\D/g, '');
     let isSelect = event.fullNameCode;
     if (isSelect) {
       this.selectedprojectNC.push(event.fullNameCode);
-       
+
     }
   }
 
@@ -174,7 +174,7 @@ export class PMExceptionComponent implements OnInit {
   }
 
   onprojectNCDeSelect(event: any) {
-    
+
     event.fullNameCode = event.fullNameCode.replace(/\D/g, '');
     let rindex = this.selectedprojectNC.findIndex(fullNameCode => fullNameCode == event.fullNameCode);
     if (rindex !== -1) {
@@ -187,9 +187,9 @@ export class PMExceptionComponent implements OnInit {
   }
 
   onSubmit(form: any) {
-  debugger
+    
     form.value.accountCode = this.selectedaccountCode.join(',');
-    form.value.projectCode = this.selectedprojectNC.join(',');  
+    form.value.projectCode = this.selectedprojectNC.join(',');
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
 
@@ -197,13 +197,17 @@ export class PMExceptionComponent implements OnInit {
       .subscribe(data => {
 
         if (data.message == "data added") {
-          this.swal.success('Added successfully.');    
+          this.selectedaccountCode = []
+          this.selectedprojectNC = []
+          this.swal.success('Added successfully.');
           this.loadData(0);
           this.clear();
         }
         else if (data.message == "updated") {
+          this.selectedaccountCode = []
+          this.selectedprojectNC = []
           this.swal.success('Data has been updated successfully.');
-          this.loadData(0); 
+          this.loadData(0);
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -249,7 +253,7 @@ export class PMExceptionComponent implements OnInit {
   }
   /** The label for the checkbox on the passed row */
   checkboxLabel(row: any): string {
-    //console.log(row);
+    
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
@@ -313,11 +317,10 @@ export class PMExceptionComponent implements OnInit {
 
     this.exceptionService.getException(status)
       .subscribe(response => {
-       
+
         this.flag = status;
 
-        this.dataSource.data = response.data;
-        console.log(this.dataSource.data)
+        this.dataSource.data = response.data;       
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.clear();
@@ -327,68 +330,68 @@ export class PMExceptionComponent implements OnInit {
 
 
   Updatedata(id) {
-    
+
     this.selectedIndex = id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
     this.exceptionService.getExceptionById(id)
       .subscribe((response) => {
-        debugger
+        
         if (response.status) {
-       
+
           var objProcR = [];
           var objProcRS = [];
           var objJoin = [];
           this.dropdownList = [];
           if (response.data.accountCode != '' && response.data.accountCode != null) {
-            
-            const objProcR = response.data.accountCode.split(',');
-              
-            const objJoin = objProcR.map(item => ({
-            
-              acountnames : this.accountcodeFullData.filter(x=>x.accountcode == item).map(x=>x.accountName)[0].toString(),
-              accountcode: `${item}`,
-              
-            })); 
-            
-            const objProcRS = objJoin.map(item =>({
 
-              fullname:`${item.accountcode} ${item.acountnames}`
-           
+            const objProcR = response.data.accountCode.split(',');
+
+            const objJoin = objProcR.map(item => ({
+
+              acountnames: this.accountcodeFullData.filter(x => x.accountcode == item).map(x => x.accountName)[0].toString(),
+              accountcode: `${item}`,
+
+            }));
+
+            const objProcRS = objJoin.map(item => ({
+
+              fullname: `${item.accountcode} ${item.acountnames}`
+
             }));
 
             this.dropdownList = objProcRS.map(item => {
               return this.accountcode.find(x => x.fullName == item.fullname);
             });
             const merge4 = this.dropdownList.flat(1);
-            this.dropdownList = merge4;  
-            this.selectedaccountCode.length=0; 
-           objJoin.map(item=>{
+            this.dropdownList = merge4;
+            this.selectedaccountCode.length = 0;
+            objJoin.map(item => {
               this.selectedaccountCode.push(item.accountcode.toString());
-            })       
+            })
           }
 
           response.data.accountCode = this.dropdownList;
 
           var getObj = [];
           var joinObj = [];
-          var finalObj =[];
+          var finalObj = [];
           this.projectList = [];
           if (response.data.projectCode != '' && response.data.projectCode != null) {
 
             const getObj = response.data.projectCode.split(',');
 
             const joinObj = getObj.map(item => ({
-            
-              projectname : this.projectCodeFullData.filter(x=>x.projectCode == item).map(x=>x.projectName)[0].toString(),
+
+              projectname: this.projectCodeFullData.filter(x => x.projectCode == item).map(x => x.projectName)[0].toString(),
               projectcode: `${item}`,
-              
-            })); 
 
-            const finalObj = joinObj.map(item =>({
+            }));
 
-              fullname:`${item.projectname} ${item.projectcode}`
-           
+            const finalObj = joinObj.map(item => ({
+
+              fullname: `${item.projectname} ${item.projectcode}`
+
             }));
 
             this.projectList = finalObj.map(item => {
@@ -396,12 +399,12 @@ export class PMExceptionComponent implements OnInit {
             });
 
             const merge4 = this.projectList.flat(1);
-            this.projectList = merge4;  
-            this.selectedprojectNC.length=0; 
+            this.projectList = merge4;
+            this.selectedprojectNC.length = 0;
 
-            joinObj.map(item=>{
+            joinObj.map(item => {
               this.selectedprojectNC.push(item.projectcode.toString());
-            })    
+            })
           }
           response.data.projectCode = this.projectList;
 

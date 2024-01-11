@@ -43,7 +43,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
       const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
         width: '1000px',
         data: {
-          modalTitle: "Order Reference", componentType: type,
+          modalTitle: "Order Reference", componentType: type, orderType: this.orderType,
           dataSourceTree: this.dataSourceTree, orderTypeId: this.orderTypeId
         }
       });
@@ -71,7 +71,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
       const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
         width: '1000px',
         data: {
-          modalTitle: "Order Reference", componentType: type,
+          modalTitle: "Order Reference", componentType: type, orderType: this.orderType,
           spareTableData: this.spareItemDataSource.data, orderTypeId: this.orderTypeId
         }
       });
