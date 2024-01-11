@@ -382,6 +382,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   get jobListControls() {
     return (this.serviceTypeForm.get('jobList') as FormArray).controls;
   }
+
   addJob() {
     debugger
     const job = this.fb.group({
@@ -427,17 +428,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         deliveryAddress: ['vessel'],
         reqIds: []
       }),
-
-      serviceInfo: this.fb.group({
-        serviceInfoId: [0],
-        expectedPort: ['', Validators.required],
-        expectedDate: ['', Validators.required],
-        vesselETA: ['', Validators.required],
-        vesselETB: ['', Validators.required],
-        serviceLocation: ['vessel'],
-        pmReqId: []
-      }),
-
+      
       items: this.fb.group({
         itemsId: [0],
         itemCode: ['', [Validators.required]],
@@ -638,7 +629,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               });
         }
       }
-    }
+    }    
     else if (partName == 'items') {
       if (this.reqId) {
         const itemList = this.dataSource.data.map(item => {
@@ -692,6 +683,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.serviceTypeForm.patchValue({ pmReqId: this.reqId })
     if (this.serviceTypeForm.valid) {
       this.requisitionService.addServiceType(form.value).subscribe(data => {
+        debugger
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
           if (this.reqId)
@@ -713,7 +705,13 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
         }
         $("#add-service").modal('hide');
-      })
+
+        setTimeout(() => {
+          if (this.reqId) {
+            this.loadServiceType(this.reqId);
+          }
+        }, 500); // Adjust the delay as needed
+      });
     }
   }
   loadServiceType(id: any) {
@@ -769,7 +767,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   populateJobListForm() {
     const jobListFormArray = this.serviceTypeForm.get('jobList') as FormArray;
     jobListFormArray.clear(); // Clear existing form array
-  
+
     // Iterate through jobList and add form group for each job
     for (const job of this.serviceObject.jobList) {
       jobListFormArray.push(this.createJobFormGroup(job));
@@ -777,6 +775,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   createJobFormGroup(job: any): FormGroup {
     return this.fb.group({
+      jobId: [job.jobId],
       jobDescription: [job.jobDescription],
       qty: [job.qty],
       unit: [job.unit],
@@ -786,7 +785,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   // method to reset the form
   resetForm() {
-    this.serviceTypeForm.reset();
+    this.serviceTypeForm.reset({
+      serviceReqId: 0,
+      serviceName: '',
+      serviceDesc: '',
+      remarks: '',
+      jobList: this.fb.array([]),
+      pmReqId: 0,
+    })
   }
   // method to populate the form with data from the service object
   populateForm() {
@@ -825,7 +831,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           priorityId: requisitionData.priorityId,
           projectNameCodeId: requisitionData.projectNameCodeId,
           remarks: requisitionData.remarks,
-          orderReference: requisitionData.orderReferenceNames.join(', ')
+          orderReference: requisitionData.orderReferenceNames
         });
 
         if (!this.isRequisitionApproved) (
@@ -2599,239 +2605,239 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
   }
 
-//#region AttachmentItem
+  //#region AttachmentItem
 
-openAttachmentItem(id) {
-  this.GetItemId = id;
-  
-  $("#openAttachmentItem").modal('show');
-  this.loadItemAttachment(0);
-}
+  openAttachmentItem(id) {
+    this.GetItemId = id;
 
-CloseAttachmentItem() {
-  $("#openAttachmentItem").modal('hide');
-}
-
-loadItemAttachment(status: number) {
-  debugger
-  if (status == 1) {
-    this.deletetooltip = 'UnArchive';
-    if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
-      ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
-      ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
-    }
-  }
-  else {
-    this.deletetooltip = 'Archive';
-    if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement) != null) {
-      ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
-      ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
-    }
-  }
-  this.pmsService.getmattachment(status, 'Purchase Requisition Item', this.GetItemId)
-    .subscribe(response => {
-      this.flag = status;
-      this.attachmentItemdataSource.data = response.data;       
-      this.attachmentItemdataSource.sort = this.sort;
-      this.attachmentItemdataSource.paginator = this.paginator;
-    });
-}
-
-DeleteItemAttachment() {
-  var message = ""
-  var title = "";
-
-  if (this.flag == 1) {
-    message = "Un-archived successfully.";
-    title = "you want to un-archive data."
-  }
-  else {
-    message = "Archived successfully.";
-    title = "you want to archive data."
-
-  }
-  const numSelected = this.selectionItemAttachment.selected;
-  if (numSelected.length > 0) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: title,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
-    }).then((result) => {
-      if (result.value) {
-        this.pmsService.archiveattachments(numSelected).subscribe(result => {
-          this.selectionItemAttachment.clear();
-          this.swal.success(message);
-          this.loadItemAttachment(this.flag);
-        })
-      }
-    })
-  } else {
-    this.swal.info('Select at least one row');
-  }
-}
-
-
-submitItemAttachmentfrm(form: any) {
-  debugger
-  this.GetItemId
-
-  if (this.GetItemId == 0) {
-    this.swal.error('Firstly please add (select) the maintenance ');
-    return;
-  }
-  if (this.myItemFiles.length === 0) {
-    this.swal.error('Firstly please add attachment ');
-    return;
+    $("#openAttachmentItem").modal('show');
+    this.loadItemAttachment(0);
   }
 
-
-  this.getDataReqwithId(this.reqId);
-
-  this.atIfm.shipAttachmentId.setValue(0);
-  this.atIfm.tablePkeyId.setValue(this.GetItemId);
-  this.atIfm.tableName.setValue('tblPmReqItems');
-  this.atIfm.pageName.setValue('Purchase Requisition Item');
-  this.atIfm.vesselId.setValue(this.requisitionWithIDAutoSave.vesselId);
-  let formValues = form.value;
-
-  const fmdata = new FormData();
-  fmdata.append('data', JSON.stringify(formValues));
-  if (this.fileItemToUpload != null) {
-    this.myItemFiles.forEach((f) => fmdata.append('attachment', f));
-   
+  CloseAttachmentItem() {
+    $("#openAttachmentItem").modal('hide');
   }
 
-  this.pmsService.addattachment(fmdata)
-    .subscribe(res => {
-      if (res.message == "data added") {
-        this.swal.success('Added successfully.'); this.CloseAttachmentItemFrm();
-        (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
-        this.loadItemAttachment(0);
-        this.myItemFiles.length === 0;
-      }
-      else if (res.message == "updated") {
-        this.swal.success('Data has been updated successfully.');
-        // this.clearattachmentfrm(); 
-        (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
-        this.CloseAttachmentItemFrm(); this.loadItemAttachment(0);
-        this.myItemFiles.length === 0;
-      }
-      else if (res.message == "duplicate") {
-        this.swal.info('Data already exist. Please enter new data');
-      }
-      else if (res.message == "not found") {
-        this.swal.info('Data exist not exist');
-      }
-      else {
-
-      }
-    });
-}
-
-FileItemSelect(event) {
-  debugger
-  if (event.target.files.length > 0) {
-    const file = event.target.files[0];
-    this.fileItemToUpload = file;
-    this.FileName = file.name;
-    for (var i = 0; i <= event.target.files.length - 1; i++) {
-      this.myItemFiles.push(event.target.files[i]);
-      var selectedFile = event.target.files[i];
-      if (this.listItemOfFiles.indexOf(selectedFile.name) === -1) {
-        this.fileItemList.push(selectedFile);
-        this.listItemOfFiles.push(selectedFile);
+  loadItemAttachment(status: number) {
+    debugger
+    if (status == 1) {
+      this.deletetooltip = 'UnArchive';
+      if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
+        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
+        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
       }
     }
-  } else {
-    this.FileName = "Choose file";
-  }
-}
-
-clearItemAttachmentfrm() {
-  this.myItemFiles = []; this.listItemOfFiles = [];
-  this.attachmentItemfrm.controls.attachmentTypeId.setValue('');
-  this.attachmentItemfrm.controls.description.setValue('');
-  (document.getElementById('collapse10') as HTMLElement).classList.add("collapse");
-  (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
-}
-
-CloseAttachmentItemFrm() {
-  this.myItemFiles = []; this.listItemOfFiles = [];
-  this.attachmentItemfrm.reset();
- 
-  this.atIfm.attachmentTypeId.setValue('');
-  this.atIfm.description.setValue('');
-  this.atIfm.attachment.setValue('');
-  (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
-}
-
-removeItemSelectedFile(index) {
-  // Delete the item from fileNames list
-  this.listItemOfFiles.splice(index, 1);
-  // delete file from FileList
-  this.fileItemList.splice(index, 1);
-}
-
-
-ItemattachmentcheckboxLabel(row: any): string {
-  if (!row) {
-    return `${this.isItemattachmentAllSelected() ? 'select' : 'deselect'} all`;
-  }
-  return `${this.selectionItemAttachment.isSelected(row) ? 'deselect' : 'select'} row ${row.UserId + 1}`;
-}
-
-isItemattachmentAllSelected() {
-  const numSelected = this.selectionItemAttachment.selected.length;
-  const numRows = !!this.attachmentItemdataSource && this.attachmentItemdataSource.data.length;
-  return numSelected === numRows;
-}
-
-attachmentItemToggle() {
-  this.isItemattachmentAllSelected() ? this.selectionItemAttachment.clear() : this.attachmentItemdataSource.data.forEach(r => this.selectionItemAttachment.select(r));
-}
-
-UpdateItemAttach(id) {
-  debugger
-  (document.getElementById('collapse10') as HTMLElement).classList.remove("collapse");
-  (document.getElementById('collapse10') as HTMLElement).classList.add("show");
-  this.pmsService.GetattachmentById(id)
-    .subscribe((response) => {
-      if (response.status) {
-        this.attachmentItemfrm.patchValue(response.data);
-        this.fileItemUrl = response.data.filePath;
-        this.pkey = response.data.attachmentId;
+    else {
+      this.deletetooltip = 'Archive';
+      if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement) != null) {
+        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
+        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
-    },
-      (error) => {
-
+    }
+    this.pmsService.getmattachment(status, 'Purchase Requisition Item', this.GetItemId)
+      .subscribe(response => {
+        this.flag = status;
+        this.attachmentItemdataSource.data = response.data;
+        this.attachmentItemdataSource.sort = this.sort;
+        this.attachmentItemdataSource.paginator = this.paginator;
       });
-}
+  }
 
-showItemAttachment(filePath) {
-  debugger
-  let parts: string[] = filePath.split('\\');
-  let filename: string | undefined = parts.pop();
+  DeleteItemAttachment() {
+    var message = ""
+    var title = "";
 
-  if (filePath.indexOf(".") !== -1) {
+    if (this.flag == 1) {
+      message = "Un-archived successfully.";
+      title = "you want to un-archive data."
+    }
+    else {
+      message = "Archived successfully.";
+      title = "you want to archive data."
 
-    this.requisitionService.DownloadReqAttach(filename)
-      .subscribe((response) => {               
-        var bolb = new Blob([response], { type: response.type });
-        var a = document.createElement("a");
-        a.href = URL.createObjectURL(bolb);
-        a.download = filename || 'defaultFilename.txt';;
-        a.click();
-
+    }
+    const numSelected = this.selectionItemAttachment.selected;
+    if (numSelected.length > 0) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: title,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+      }).then((result) => {
+        if (result.value) {
+          this.pmsService.archiveattachments(numSelected).subscribe(result => {
+            this.selectionItemAttachment.clear();
+            this.swal.success(message);
+            this.loadItemAttachment(this.flag);
+          })
+        }
       })
+    } else {
+      this.swal.info('Select at least one row');
+    }
   }
-  else {
-    this.swal.info('No attachment found');
+
+
+  submitItemAttachmentfrm(form: any) {
+    debugger
+    this.GetItemId
+
+    if (this.GetItemId == 0) {
+      this.swal.error('Firstly please add (select) the maintenance ');
+      return;
+    }
+    if (this.myItemFiles.length === 0) {
+      this.swal.error('Firstly please add attachment ');
+      return;
+    }
+
+
+    this.getDataReqwithId(this.reqId);
+
+    this.atIfm.shipAttachmentId.setValue(0);
+    this.atIfm.tablePkeyId.setValue(this.GetItemId);
+    this.atIfm.tableName.setValue('tblPmReqItems');
+    this.atIfm.pageName.setValue('Purchase Requisition Item');
+    this.atIfm.vesselId.setValue(this.requisitionWithIDAutoSave.vesselId);
+    let formValues = form.value;
+
+    const fmdata = new FormData();
+    fmdata.append('data', JSON.stringify(formValues));
+    if (this.fileItemToUpload != null) {
+      this.myItemFiles.forEach((f) => fmdata.append('attachment', f));
+
+    }
+
+    this.pmsService.addattachment(fmdata)
+      .subscribe(res => {
+        if (res.message == "data added") {
+          this.swal.success('Added successfully.'); this.CloseAttachmentItemFrm();
+          (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
+          this.loadItemAttachment(0);
+          this.myItemFiles.length === 0;
+        }
+        else if (res.message == "updated") {
+          this.swal.success('Data has been updated successfully.');
+          // this.clearattachmentfrm(); 
+          (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
+          this.CloseAttachmentItemFrm(); this.loadItemAttachment(0);
+          this.myItemFiles.length === 0;
+        }
+        else if (res.message == "duplicate") {
+          this.swal.info('Data already exist. Please enter new data');
+        }
+        else if (res.message == "not found") {
+          this.swal.info('Data exist not exist');
+        }
+        else {
+
+        }
+      });
   }
-  $('.tooltip').remove();
-}
+
+  FileItemSelect(event) {
+    debugger
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.fileItemToUpload = file;
+      this.FileName = file.name;
+      for (var i = 0; i <= event.target.files.length - 1; i++) {
+        this.myItemFiles.push(event.target.files[i]);
+        var selectedFile = event.target.files[i];
+        if (this.listItemOfFiles.indexOf(selectedFile.name) === -1) {
+          this.fileItemList.push(selectedFile);
+          this.listItemOfFiles.push(selectedFile);
+        }
+      }
+    } else {
+      this.FileName = "Choose file";
+    }
+  }
+
+  clearItemAttachmentfrm() {
+    this.myItemFiles = []; this.listItemOfFiles = [];
+    this.attachmentItemfrm.controls.attachmentTypeId.setValue('');
+    this.attachmentItemfrm.controls.description.setValue('');
+    (document.getElementById('collapse10') as HTMLElement).classList.add("collapse");
+    (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
+  }
+
+  CloseAttachmentItemFrm() {
+    this.myItemFiles = []; this.listItemOfFiles = [];
+    this.attachmentItemfrm.reset();
+
+    this.atIfm.attachmentTypeId.setValue('');
+    this.atIfm.description.setValue('');
+    this.atIfm.attachment.setValue('');
+    (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
+  }
+
+  removeItemSelectedFile(index) {
+    // Delete the item from fileNames list
+    this.listItemOfFiles.splice(index, 1);
+    // delete file from FileList
+    this.fileItemList.splice(index, 1);
+  }
+
+
+  ItemattachmentcheckboxLabel(row: any): string {
+    if (!row) {
+      return `${this.isItemattachmentAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selectionItemAttachment.isSelected(row) ? 'deselect' : 'select'} row ${row.UserId + 1}`;
+  }
+
+  isItemattachmentAllSelected() {
+    const numSelected = this.selectionItemAttachment.selected.length;
+    const numRows = !!this.attachmentItemdataSource && this.attachmentItemdataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  attachmentItemToggle() {
+    this.isItemattachmentAllSelected() ? this.selectionItemAttachment.clear() : this.attachmentItemdataSource.data.forEach(r => this.selectionItemAttachment.select(r));
+  }
+
+  UpdateItemAttach(id) {
+    debugger
+    (document.getElementById('collapse10') as HTMLElement).classList.remove("collapse");
+    (document.getElementById('collapse10') as HTMLElement).classList.add("show");
+    this.pmsService.GetattachmentById(id)
+      .subscribe((response) => {
+        if (response.status) {
+          this.attachmentItemfrm.patchValue(response.data);
+          this.fileItemUrl = response.data.filePath;
+          this.pkey = response.data.attachmentId;
+        }
+      },
+        (error) => {
+
+        });
+  }
+
+  showItemAttachment(filePath) {
+    debugger
+    let parts: string[] = filePath.split('\\');
+    let filename: string | undefined = parts.pop();
+
+    if (filePath.indexOf(".") !== -1) {
+
+      this.requisitionService.DownloadReqAttach(filename)
+        .subscribe((response) => {
+          var bolb = new Blob([response], { type: response.type });
+          var a = document.createElement("a");
+          a.href = URL.createObjectURL(bolb);
+          a.download = filename || 'defaultFilename.txt';;
+          a.click();
+
+        })
+    }
+    else {
+      this.swal.info('No attachment found');
+    }
+    $('.tooltip').remove();
+  }
 
 }
 
