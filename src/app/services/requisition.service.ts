@@ -15,8 +15,11 @@ const httpOptions = {
 })
 export class RequisitionService {
 
-  private selectedItemsSubject = new BehaviorSubject<{ displayValue: string; saveValue: string, orderReferenceType: string, cartItems?: any[] }>
-    ({ displayValue: '', saveValue: '', orderReferenceType: '', cartItems: [] });
+  private selectedItemsSubject = new BehaviorSubject<{
+    displayValue: string; saveValue: string, orderReferenceType: string,
+    cartItems?: any[], defaultOrderType?: string
+  }>
+    ({ displayValue: '', saveValue: '', orderReferenceType: '', cartItems: [], defaultOrderType: '' });
   selectedItems$ = this.selectedItemsSubject.asObservable();
 
   baseUrl = environment.apiurl;
@@ -122,26 +125,25 @@ export class RequisitionService {
     return this.httpClient.get<any[]>(`${this.linkurl}getItemsByReqId/${id}`, httpOptions);
   }
 
-  sendApprove(header:any): Observable<any> {
-    
+  sendApprove(header: any): Observable<any> {
+
     return this.httpClient.post<any>(`${this.linkurl}sendapprove/${header}`, httpOptions);
   }
 
-  Finalapprove(ApprovelStatus:any,header:any,finalHeader:any): Observable<any> {
-    
-     return this.httpClient.post<any>(`${this.linkurl}Finalapprove/${ApprovelStatus}/${header}/${finalHeader}`, httpOptions);
+  Finalapprove(ApprovelStatus: any, header: any, finalHeader: any): Observable<any> {
+
+    return this.httpClient.post<any>(`${this.linkurl}Finalapprove/${ApprovelStatus}/${header}/${finalHeader}`, httpOptions);
   }
 
   // DownloadReqAttach(filepath): Observable<any> {
   //   return this.httpClient.get<any>(this.linkurl + 'DownloadReqAttach/' + filepath, httpOptions)
   //     .pipe(catchError(this.handleError));
   // }
-  DownloadReqAttach(fileName:any):Observable<any>{  
-    debugger
-    return  this.httpClient.get<any>(`${this.linkurl}downloadReqAttach/${fileName}`,{ responseType: 'blob' as 'json'})
-    .pipe(catchError(this.handleError));
-  }  
-  updateSelectedItems(data: { displayValue: string; saveValue: string; orderReferenceType: string; cartItems?: any[] }): void {
+  DownloadReqAttach(fileName: any): Observable<any> {    
+    return this.httpClient.get<any>(`${this.linkurl}downloadReqAttach/${fileName}`, { responseType: 'blob' as 'json' })
+      .pipe(catchError(this.handleError));
+  }
+  updateSelectedItems(data: { displayValue: string; saveValue: string; orderReferenceType: string; cartItems?: any[]; defaultOrderType?: string }): void {
     this.selectedItemsSubject.next(data);
   }
   getTemplateTree(): Observable<TemplateTree[]> {
@@ -157,22 +159,22 @@ export class RequisitionService {
       .pipe(catchError(this.handleError));
   }
 
-  checkAccountCode(accountCode:number,orderTypeId:number): Observable<any> {
-    
+  checkAccountCode(accountCode: number, orderTypeId: number): Observable<any> {
+
     return this.httpClient.post<any>(`${this.linkurl}checkAccountCode/${accountCode}/${orderTypeId}`, httpOptions);
- }
+  }
 
- //#region  Service Type
- addServiceType(formData): Observable<any> {
-  return this.httpClient.post<any>(this.linkurl + 'AddServiceType', formData)
-    .pipe(catchError(this.handleError));
-}
+  //#region  Service Type
+  addServiceType(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'AddServiceType', formData)
+      .pipe(catchError(this.handleError));
+  }
 
-getServiceType(reqId): Observable<any> {  
-  return this.httpClient.get<any>(this.linkurl + 'GetServiceTypeById/' + reqId, httpOptions)
-    .pipe(catchError(this.handleError));
-}
- //#endregion
+  getServiceType(reqId): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'GetServiceTypeById/' + reqId, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  //#endregion
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

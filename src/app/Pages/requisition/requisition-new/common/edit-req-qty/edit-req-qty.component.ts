@@ -17,8 +17,7 @@ export class EditReqQtyComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<EditReqQtyComponent>, private service: RequisitionService,
     public dialog: MatDialog) { }
 
-  ngOnInit(): void {
-    debugger
+  ngOnInit(): void {   
     this.modalTitle = this.data.modalTitle;
     this.dataStockReconciliation = this.data.data
     this.type = this.data.data.spareId != null ? 'Spare' : this.data.data.storeId != null ? 'Store' : '';
@@ -29,12 +28,12 @@ export class EditReqQtyComponent implements OnInit {
   }
 
   handleROBChange(newValue: string) {
-    debugger
+
     this.editedROB = newValue;
   }
 
   onClose(): void {
-    debugger
+   
     this.dialogRef.close({
       result: 'success',
       // editedQuantity: this.editedQuantity,      
@@ -42,7 +41,7 @@ export class EditReqQtyComponent implements OnInit {
   }
 
   SubmitStockReconciliation() {
-    debugger
+  
     if (this.type === 'Spare') {
       const dataToSend = {
         spareId: this.dataStockReconciliation.spareId,
@@ -50,7 +49,7 @@ export class EditReqQtyComponent implements OnInit {
         type: this.type
       }
       this.service.editRobData(dataToSend).subscribe(res => {
-        debugger
+       
         if (res.status == true) {
           this.dialogRef.close({
             result: 'success',
@@ -66,7 +65,7 @@ export class EditReqQtyComponent implements OnInit {
         type: this.type
       }
       this.service.editRobData(dataToSend).subscribe(res => {
-        debugger
+       
         if (res.status == true) {
           this.dialogRef.close({
             result: 'success',

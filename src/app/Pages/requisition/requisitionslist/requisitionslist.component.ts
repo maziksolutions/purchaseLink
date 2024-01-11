@@ -202,7 +202,7 @@ export class RequisitionslistComponent implements OnInit {
     }
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
-        debugger
+       
         this.flag = status;
         // this.documentHeaderList =response.data.map(x=>x.documentHeader.replace(/\D/g, '')) 
 
@@ -232,7 +232,7 @@ export class RequisitionslistComponent implements OnInit {
   Loadshipcomp() {
     this.shipmasterService.GetComponentList(0)
       .subscribe(response => {
-        debugger
+      
         this.GetAccountcode = response.data;
 
       })
@@ -246,7 +246,6 @@ export class RequisitionslistComponent implements OnInit {
       })
   }
   downloadNotepad() {
-    debugger
 
     const id = this.selection.selected.filter(x => x.approvedReq == "Approved");
 
