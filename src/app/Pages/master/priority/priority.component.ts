@@ -321,6 +321,8 @@ fmdata.append('data', JSON.stringify(form.value));
       delete item.prefenceId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy,
         delete item.orderTypeId
+
+        item.orderTypeNames = item.orderTypeNames.join(', ');
     })
     this.exportExcelService.exportAsExcelFile(data, 'Priority', 'Priority');
   }
@@ -334,6 +336,8 @@ fmdata.append('data', JSON.stringify(form.value));
         delete item.prefenceId,
           delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy,
           delete item.orderTypeId
+
+          item.orderTypeNames = item.orderTypeNames.join(', ');
       })
     }
     else

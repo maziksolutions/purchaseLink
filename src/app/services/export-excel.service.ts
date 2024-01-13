@@ -1,3 +1,4 @@
+import { FormArray } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import * as FileSaver from 'file-saver';
 import { Workbook } from 'exceljs';
@@ -29,6 +30,7 @@ export class ExportExcelService {
     header.push("Srno");
     for (let item of Object.keys(json[0])) {
       header.push(item);
+     
     }
 
     let workbook = new Workbook();
@@ -408,10 +410,20 @@ export class ExportExcelService {
     let headerRow = worksheet.addRow(header);
     headerRow.height = 18;
     headerRow.eachCell((cell, number) => {
+
+
+     
+      const contentWidth = cell.value ? cell.value.toString().length * 1.5 : 0;
+
+//       // Set the width of the column
+    worksheet.getColumn(number).width = contentWidth;
+    worksheet
+
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: '253b5b' }
+        
       }
       cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } }
       cell.font = {
@@ -419,13 +431,16 @@ export class ExportExcelService {
         family: 2,
         bold: false,
         size: 12,
-        color: { argb: 'FFFFFF' }
+        color: { argb: 'FFFFFF' },
+        
       }
       cell.alignment = {
         vertical: 'middle', horizontal: 'centerContinuous'
       }
 
     })
+
+    
     for (var i = 0; i < json.length; i++) {
       let x2 = Object.keys(json[i]);
       let temp:any = [];

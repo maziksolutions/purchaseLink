@@ -520,5 +520,23 @@ export class AccountcodeNameComponent implements OnInit {
     }
   }
 
+  generateExcel() {
+    if (this.accCodeDataSource.data.length == 0)
+      this.swal.info('No data to Export');
+    else
+      this.exportAsXLSX(JSON.parse(JSON.stringify(this.accCodeDataSource.data)));
+  }
+  exportAsXLSX(data: any[]): void {
+    data.forEach((item) => {
+      delete item.accountCodeId,
+        delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
+        , delete item.categoryId , delete item.subCategoryId, delete item.accountHeadId
+        item.subAccCategory = item.subAccCategory.subCategoryName;
+        item.accountCategory = item.accountCategory.categoryname;
+        item.accountHead = item.accountHead.accountHead;
+    })
+    this.exportExcelService.exportAsExcelFile(data, 'Account Code/Name', 'Account Code/Name');
+  }
+
   //#endregion
 }

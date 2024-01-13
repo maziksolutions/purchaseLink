@@ -285,7 +285,9 @@ console.log(form.value)
   exportAsXLSX(data: any[]): void {
     data.forEach((item) => {
       delete item.projectNameId,
-        delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
+        delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy, delete item.serviceTypeId
+
+        item.serviceTypeNames = item.serviceTypeNames.join(', ');
     })
     this.exportExcelService.exportAsExcelFile(data, 'Project Name/Code', 'Project Name / Code');
   }
@@ -297,12 +299,14 @@ console.log(form.value)
       data = numSelected;
       data.forEach((item) => {
         delete item.projectNameId,
-          delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
+          delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy, delete item.serviceTypeId
+
+          item.serviceTypeNames = item.serviceTypeNames.join(', ');
       })
     }
     else
       data = [{ jobGroup: '', directCompletion : '' }];
-    this.exportExcelService.LoadSheet(data, 'JobGroupLoadSheet', 'Maintenance Group Load Sheet',2);
+    this.exportExcelService.LoadSheet(data, 'JProject Name/Code Sheet', 'Project Name/Code Load Sheet',2);
   }
 
   close() {

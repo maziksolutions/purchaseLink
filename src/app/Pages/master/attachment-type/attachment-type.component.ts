@@ -11,6 +11,8 @@ import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
 import { ImportDataComponent } from '../../common/import-data/import-data.component';
 import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
+import { TypemasterService } from 'src/app/services/typemaster.service';
+import { filter } from 'rxjs/operators';
 
 declare let Swal, PerfectScrollbar: any; declare let $: any;
 @Component({
@@ -32,7 +34,7 @@ export class AttachmentTypeComponent implements OnInit {
   constructor(private fb: FormBuilder, public dialog: MatDialog,
     private swal: SwalToastService,private exportExcelService: ExportExcelService, 
     private router: Router, private userManagementService: UserManagementService, 
-    private purchaseService: PurchaseMasterService, ) { }
+    private typemasterService:TypemasterService ) { }
 
   ngOnInit(): void {
     this.attachmentTypeForm = this.fb.group({
@@ -62,10 +64,10 @@ export class AttachmentTypeComponent implements OnInit {
       }
     }
 
-    this.purchaseService.getAttachmentTypes(status)
+    this.typemasterService.getAttachmentTypes(status)
       .subscribe(response => {
         this.flag = status;
-        this.dataSource.data = response.data;
+        this.dataSource.data = response.data.filter(x=>x.module == 'Purchase');
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.clear();
@@ -74,10 +76,9 @@ export class AttachmentTypeComponent implements OnInit {
   }
 
   onSubmit(form: any) {
+    debugger
     form.value.module ='Purchase';
-    const fmdata = new FormData();
-    fmdata.append('data', JSON.stringify(form.value));
-    this.purchaseService.addAttachmentTypes(fmdata)
+    this.typemasterService.addAttachmentTypes(form.value)
       .subscribe(data => {
 
         if (data.message == "data added") {
@@ -143,7 +144,7 @@ export class AttachmentTypeComponent implements OnInit {
     this.selectedIndex = id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
-    this.purchaseService.getPMAttachmentTypeById(id)
+    this.typemasterService.getAttachmentTypeById(id)
       .subscribe((response) => {
         if (response.status) {
           this.attachmentTypeForm.patchValue(response.data);
@@ -181,7 +182,7 @@ export class AttachmentTypeComponent implements OnInit {
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value) {
-          this.purchaseService.archiveAttachmentType(numSelected).subscribe(result => {
+          this.typemasterService.archiveAttachmentType(numSelected).subscribe(result => {
             this.selection.clear();
             this.swal.success(message);
             this.loadData(this.flag);

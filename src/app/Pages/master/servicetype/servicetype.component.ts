@@ -219,7 +219,7 @@ console.log(error);
       delete item.serviceTypeId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
     })
-    this.exportExcelService.exportAsExcelFile(data, 'Maintenance Group', 'Maintenance Group');
+    this.exportExcelService.exportAsExcelFile(data, 'ServiceType', 'Service Type');
   }
 
   exportLoadSheet() {
@@ -234,7 +234,7 @@ console.log(error);
     }
     else
       data = [{ jobGroup: '', directCompletion : '' }];
-    this.exportExcelService.LoadSheet(data, 'JobGroupLoadSheet', 'Maintenance Group Load Sheet',2);
+    this.exportExcelService.LoadSheet(data, 'Service Type Sheet', 'Service Type Load Sheet',2);
   }
 
   close() {

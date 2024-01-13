@@ -310,7 +310,10 @@ export class OrdertypeComponent implements OnInit {
   exportAsXLSX(data: any[]): void {
     data.forEach((item) => {
       delete item.orderTypeId,
-        delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
+        delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy ,delete item.serviceTypeId
+
+        item.serviceTypeNames = item.serviceTypeNames.join(', ');
+
     })
     this.exportExcelService.exportAsExcelFile(data, 'Order Type', 'Order Type');
   }

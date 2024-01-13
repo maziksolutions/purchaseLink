@@ -424,7 +424,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         vesselETA: ['', Validators.required],
         vesselETB: ['', Validators.required],
         deliveryAddress: ['vessel'],
-        reqIds: []
+        reqIds: [],
+        vesselId:[]
       }),
 
       items: this.fb.group({
@@ -468,7 +469,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         storageLocation: [''],
         spareId: [],
         storeId: [],
-        pmReqId: [0, [Validators.required]]
+        pmReqId: [0, [Validators.required]],
+        vesselId:[]
       }),
     });
   }
@@ -506,6 +508,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           .subscribe(data => {           
             if (data.message == "data added") {
               this.reqId = data.data;
+              
               this.swal.success('Added successfully.');         
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
@@ -553,7 +556,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                       additionalRemarks: item.additionalRemarks || '',
                       storageLocation: item.storageLocation || '',
                       attachments: item.attachments || '',
-                      pmReqId: this.reqId
+                      pmReqId: this.reqId,
+                      vesselId: this.requisitionFullData.vesselId
                     };
                     this.items.push(newItem);
                   });
@@ -594,12 +598,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     else if (partName == 'delivery') {
 
       if (this.reqId) {
+        debugger
         const formPart = this.RequisitionForm.get(partName);
         formPart?.patchValue({
           reqIds: this.reqId,
+          vesselId: this.requisitionFullData.vesselId
         })
         if (partName == 'delivery' && formPart != null && formPart.valid) {
-
+         this.requisitionFullData.vesselId
           this.requisitionService.addDeliveryAddress(formPart.value)
             .subscribe(data => {
 
@@ -630,15 +636,20 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
     else if (partName == 'items') {
       if (this.reqId) {
+        debugger
         const itemList = this.dataSource.data.map(item => {
           
           if (item.itemsId != 0) {
+            debugger
             const { editMode, ...rest } = item;
+            rest.vesselId =this.requisitionFullData.vesselId
             return rest;
           } else {
             const { editMode, ...rest } = item;
+            rest.vesselId =this.requisitionFullData.vesselId
             return rest;
           }
+          
         })
         this.requisitionService.addItemsDataList(itemList).subscribe(res => {
           
@@ -805,7 +816,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   getReqData() {
 
     this.requisitionService.getRequisitionById(this.reqGetId)
-      .subscribe(response => {        
+      .subscribe(response => { 
+        debugger       
         const requisitionData = response.data;
         const formPart = this.RequisitionForm.get('header');
         this.approvestatus = response.data.approvedReq;
@@ -2082,10 +2094,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   fillattachmenttype() {
-    this.purchaseService.getAttachmentTypes(0)
+    this.typemasterService.getAttachmentTypes(0)
       .subscribe(response => {
         if (response.status) {
-          this.attachmenttypelist = response.data;
+          this.attachmenttypelist = response.data.filter(x=>x.module =='Purchase');
         } else {
           this.attachmenttypelist = [];
         }

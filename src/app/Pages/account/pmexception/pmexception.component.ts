@@ -429,6 +429,8 @@ export class PMExceptionComponent implements OnInit {
     data.forEach((item) => {
       delete item.exceptionId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
+        , delete item.orderTypeId
+        item.pmOrderType = item.pmOrderType.orderTypes;
     })
     this.exportExcelService.exportAsExcelFile(data, 'Exception', 'Exception');
   }
