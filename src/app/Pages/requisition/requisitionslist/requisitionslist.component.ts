@@ -18,6 +18,7 @@ import { filter, map } from 'rxjs/operators';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { DatePipe } from '@angular/common';
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
+import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { environment } from 'src/environments/environment';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
@@ -59,7 +60,8 @@ export class RequisitionslistComponent implements OnInit {
 
   constructor(private sideNavService: SideNavService, private route: Router,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService,
-    private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe, private shipmasterService: ShipmasterService) {
+    private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe, private shipmasterService: ShipmasterService,
+    private exportExcelService: ExportExcelService,) {
       this.route.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           this.sideNavService.initSidenav();
@@ -236,6 +238,30 @@ export class RequisitionslistComponent implements OnInit {
     this.RequisitionForm.controls.priorityId.setValue('');
     this.RequisitionForm.controls.projectNameCodeId.setValue('');
     this.route.navigate(['/Requisition/RequisitionsNew'])
+  }
+
+  generateExcel() {
+    if (this.dataSource.data.length == 0)
+      this.swal.info('No data to Export');
+    else
+      this.exportAsXLSX(JSON.parse(JSON.stringify(this.dataSource.data)));
+  }
+  exportAsXLSX(data: any[]): void {
+    data.forEach((item) => {
+      delete item.requisitionId,
+        delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy,
+        delete item.vesselId, delete item.orderTypeId, delete item.orderReference, delete item.orderReferenceType, delete item.departmentId,
+        delete item.priorityId, delete item.projectNameCodeId, delete item.remarks, delete item.genericComment, delete item.internalComment,
+        delete item.approvedReq, delete item.shipRecordId, delete item.officeRecordId, delete item.vessel,
+
+        item.pmOrderType = item.pmOrderType.orderTypes;
+        item.pmPreference = item.pmPreference.description;
+        item.pmProjectNameCode = item.pmProjectNameCode.projectName +item.pmProjectNameCode.projectCode;
+        item.departments = item.departments.departmentName;
+
+
+    })
+    this.exportExcelService.exportAsExcelFile(data, 'Requisition', 'Requisition');
   }
 
   Loadshipcomp() {
