@@ -18,6 +18,7 @@ import { filter, map } from 'rxjs/operators';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { DatePipe } from '@angular/common';
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
+import { environment } from 'src/environments/environment';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 declare var SideNavi: any;
@@ -49,8 +50,8 @@ export class RequisitionslistComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   Vessels: any;
   selectedVesselId: number = 0;
-
-
+  targetLoc: string;
+  VesselId: any;
   vesselcode: any;
   ReqData: any[];
   GetAccountcode: any;
@@ -79,6 +80,7 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.targetLoc = environment.location;
     this.sideNavService.setActiveComponent(false);
     this.sideNavService.initSidenav();
     this.RequisitionForm = this.fb.group({
@@ -96,7 +98,9 @@ export class RequisitionslistComponent implements OnInit {
       internalComment: ['', [Validators.required]],
 
     });
-
+    if (this.targetLoc == 'Vessel') {
+      this.VesselId = environment.vesselId;
+    }
     this.loadData(0);
     this.LoadVessel();
     this.Loadshipcomp();
@@ -137,8 +141,13 @@ export class RequisitionslistComponent implements OnInit {
 
   LoadVessel() {
     this.vesselService.getVessels(0)
-      .subscribe(response => {
-        this.Vessels = response.data;
+      .subscribe(response => {   
+        if (this.targetLoc == 'Vessel') {  
+          this.Vessels = response.data.filter(x=>x.vesselId == environment.vesselId);
+        }
+        else{
+          this.Vessels = response.data;
+        }
       })
   }
   filterVessel() {
