@@ -281,8 +281,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.loadData(0);
     this.fillattachmenttype();
 
-    this.sortItems();
-    this.generateTempNumber();
+    this.sortItems();    
     this.sideNavService.setActiveComponent(true);
     // const orderTypeIdControl = this.RequisitionForm.get('header.orderTypeId');
     // if (orderTypeIdControl) {
@@ -294,9 +293,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     //     }
     //   });
     // }
-    
+
     this.requisitionService.selectedItems$.subscribe(data => {
-      
+
       if (data != null && data.displayValue !== '' && data.saveValue !== '') {
         this.zone.run(() => {
           this.displayValue = ''
@@ -310,20 +309,24 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           if (data.orderReferenceType === 'Component') {
             this.dataSource.data = [];
             this.getSpareItems(data.orderReferenceType, data.saveValue);
+            this.autoSave('header')
           }
           else if (data.orderReferenceType === 'Group') {
             this.dataSource.data = [];
             this.getSpareItems(data.orderReferenceType, data.saveValue);
+            this.autoSave('header')
           }
-          else if (data.orderReferenceType === 'Spare') {            
+          else if (data.orderReferenceType === 'Spare') {
             this.leftTableDataSource.data = []
             this.dataSource.data = [];
             this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
+            this.autoSave('header')
           }
           else if (data.orderReferenceType === 'Store') {
             this.leftTableDataSource.data = []
             this.dataSource.data = [];
             this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
+            this.autoSave('header')
           }
         }
       }
@@ -342,47 +345,47 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   get serviceType() { return this.serviceTypeForm.controls }
 
-  generateTempNumber() {
+  generateTempNumber() {    
+      debugger
+      this.requisitionService.getTempNumber(0).subscribe(res => {
+        if (res.data != null) {
+          var formattedNumber = parseInt(res.data.documentHeader)
+          formattedNumber++;
 
-    this.requisitionService.getTempNumber(0).subscribe(res => {      
-      if (res.data != null) {
-        var formattedNumber = parseInt(res.data.documentHeader)
-        formattedNumber++;
+          let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+          let text = '';
+          length = 3;
+          for (var i = 0; i < length; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+          }
 
-        let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let text = '';
-        length = 3;
-        for (var i = 0; i < length; i++) {
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
+          this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+          this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+
         }
+        if (res.data == null) {
+          var formattedNumber = parseInt('000');
+          formattedNumber++;
 
-        this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
-        this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+          let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+          let text = '';
+          length = 3;
+          for (var i = 0; i < length; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+          }
 
-      }
-      if (res.data == null) {
-        var formattedNumber = parseInt('000');
-        formattedNumber++;
+          this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+          this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
 
-        let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let text = '';
-        length = 3;
-        for (var i = 0; i < length; i++) {
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-
-        this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
-        this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
-
-      }
-    })
+      })    
   }
 
   get jobListControls() {
     return (this.serviceTypeForm.get('jobList') as FormArray).controls;
   }
 
-  addJob() {    
+  addJob() {
     const job = this.fb.group({
       jobId: [0],
       jobDescription: ['', Validators.required],
@@ -425,7 +428,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         vesselETB: ['', Validators.required],
         deliveryAddress: ['vessel'],
         reqIds: [],
-        vesselId:[]
+        vesselId: []
       }),
 
       items: this.fb.group({
@@ -470,7 +473,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         spareId: [],
         storeId: [],
         pmReqId: [0, [Validators.required]],
-        vesselId:[]
+        vesselId: []
       }),
     });
   }
@@ -478,7 +481,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   autoSave(partName: string): void {
 
     if (partName == 'header') {
-
+      
       const formPart = this.RequisitionForm.get(partName);
       if (this.isRequisitionApproved) {
         const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -488,7 +491,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
       formPart?.patchValue({
         requisitionId: formPart?.value.requisitionId,
-        documentHeader: this.temporaryNODataBase,
+        documentHeader: formPart?.value.documentHeader != null ? formPart.value.documentHeader : this.temporaryNODataBase,
         originSite: this.userDetail.site,
         vesselId: formPart?.value.vesselId,
         orderTypeId: formPart?.value.orderTypeId,
@@ -500,16 +503,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         remarks: formPart?.value.remarks,
       });
       if (partName == 'header' && formPart != null && formPart.valid) {
-       
+
         const formData = new FormData();
         formData.append('data', JSON.stringify(formPart.value))
         // formPart?.get('orderReference')?.setValue(displayValue);
         this.requisitionService.addRequisitionMaster(formData)
-          .subscribe(data => {           
+          .subscribe(data => {
             if (data.message == "data added") {
               this.reqId = data.data;
-              
-              this.swal.success('Added successfully.');         
+
+              this.swal.success('Added successfully.');
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
                   this.items = []
@@ -561,9 +564,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                     };
                     this.items.push(newItem);
                   });
-                  
+
                   this.requisitionService.addItemsDataList(this.items).subscribe(res => {
-                    
+
                     if (res.message == "All items added") {
                       this.swal.success('Added successfully.');
                       this.loadItemsData(0);
@@ -605,7 +608,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           vesselId: this.requisitionFullData.vesselId
         })
         if (partName == 'delivery' && formPart != null && formPart.valid) {
-         this.requisitionFullData.vesselId
+          this.requisitionFullData.vesselId
           this.requisitionService.addDeliveryAddress(formPart.value)
             .subscribe(data => {
 
@@ -638,21 +641,21 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       if (this.reqId) {
         debugger
         const itemList = this.dataSource.data.map(item => {
-          
+
           if (item.itemsId != 0) {
             debugger
             const { editMode, ...rest } = item;
-            rest.vesselId =this.requisitionFullData.vesselId
+            rest.vesselId = this.requisitionFullData.vesselId
             return rest;
           } else {
             const { editMode, ...rest } = item;
-            rest.vesselId =this.requisitionFullData.vesselId
+            rest.vesselId = this.requisitionFullData.vesselId
             return rest;
           }
-          
+
         })
         this.requisitionService.addItemsDataList(itemList).subscribe(res => {
-          
+
           if (res.message == "All items added") {
             this.swal.success('Added successfully.');
             this.loadItemsData(0);
@@ -688,11 +691,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   // }
 
   onSubmit(form: any) {
-    
+
     this.serviceTypeForm.patchValue({ pmReqId: this.reqId })
     if (this.serviceTypeForm.valid) {
       this.requisitionService.addServiceType(form.value).subscribe(data => {
-        
+
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
           if (this.reqId)
@@ -726,21 +729,21 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   loadServiceType(id: any) {
 
     this.requisitionService.getServiceType(id).subscribe(res => {
-      
+
       if (res.status === true) {
-        
+
         const dataWithExpansion = res.data.map((item) => {
           // Ensure each item in jobList has the isExpanded property
           item.jobList = item.jobList.map(job => ({ ...job, isExpanded: false }));
           return { ...item, isExpanded: false };
         });
-        this.serviceTypeDataSource = dataWithExpansion      
+        this.serviceTypeDataSource = dataWithExpansion
         this.displayJobListsColumn();
       }
     })
   }
   // method to open the modal in add mode
-  openAddServiceModal() {    
+  openAddServiceModal() {
     this.isEditMode = false;
     this.modal = 'modal'
     this.modalTarget = 'add-service'
@@ -763,7 +766,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
   }
   // method to open the modal in edit mode
-  openEditServiceModal(service: any) {    
+  openEditServiceModal(service: any) {
     this.isEditMode = true;
     this.serviceObject = { ...service }; // copy data from the selected service
     this.populateForm();
@@ -808,7 +811,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   openServiceTypeModal() {
     $("#add-service").modal('show');
   }
-  displayJobListsColumn(): boolean {    
+  displayJobListsColumn(): boolean {
     // Check if any row is expanded
     return this.serviceTypeDataSource.data.some(row => row.isExpanded);
   }
@@ -816,14 +819,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   getReqData() {
 
     this.requisitionService.getRequisitionById(this.reqGetId)
-      .subscribe(response => { 
-        debugger       
+      .subscribe(response => {
+        debugger
         const requisitionData = response.data;
         const formPart = this.RequisitionForm.get('header');
-        this.approvestatus = response.data.approvedReq;
-        this.finallyHeader = response.data.documentHeader;
+        this.approvestatus = requisitionData.approvedReq;
+        this.finallyHeader = requisitionData.documentHeader;
         this.requisitionFullData = response.data;
-
+        this.saveValue = requisitionData.orderReference
+        this.displayValue = requisitionData.orderReferenceNames
 
         // Populate the form controls with the data for editing
         formPart?.patchValue({
@@ -836,12 +840,22 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           priorityId: requisitionData.priorityId,
           projectNameCodeId: requisitionData.projectNameCodeId,
           remarks: requisitionData.remarks,
-          orderReference: requisitionData.orderReferenceNames
+          orderReference: requisitionData.orderReferenceNames,
+          documentHeader:requisitionData.documentHeader,
+          orderReferenceType:requisitionData.orderReferenceType
         });
 
-        if (!this.isRequisitionApproved) (
+        if (!this.approvestatus) {
           this.temporaryNumber = requisitionData.documentHeader
-        )
+        }else{
+          const headerStringParts=requisitionData.documentHeader.split(' – ');
+          if (headerStringParts.length === 6) {
+            const headerSerialNumber = headerStringParts[5];
+            // this.headabb = headerStringParts[3];
+            this.temporaryNumber = headerSerialNumber;
+          }
+        }
+        
         if (requisitionData.originSite == 'Office') {
           this.headsite = 'O'
         }
@@ -859,7 +873,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.loadDeliveryInfo();
         });
 
-        this.loadOrderTypeByEditReq().subscribe(res => {          
+        this.loadOrderTypeByEditReq().subscribe(res => {
           this.orderTypes = res;
           this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(requisitionData.orderTypeId)).map(x => x.defaultOrderType);
           formPart?.patchValue({ orderTypeId: requisitionData.orderTypeId })
@@ -1083,7 +1097,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   LoadOrdertype() {
     this.purchaseService.getOrderTypes(0)
-      .subscribe(response => {        
+      .subscribe(response => {
         this.orderTypes = response.data;
         this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
         if (this.defaultOrderType[0] === 'Spare' || this.defaultOrderType[0] === 'Service')
@@ -1112,9 +1126,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       })
   }
 
-  LoadUserDetails() {    
+  LoadUserDetails() {
     this.userService.getUserById(this.userId)
-      .subscribe(response => {        
+      .subscribe(response => {
         this.userDetail = response.data;
         this.currentyear = new Date().getFullYear();
 
@@ -1147,6 +1161,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     }
     else {
+      debugger
       this.deletetooltip = 'Archive';
       if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
@@ -1158,7 +1173,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         // this.flag = status;
         this.requisitiondata = response.data;
 
-        if (this.reqGetId) {          
+        if (this.reqGetId) {
           // this.loadItemByReqId(this.reqGetId);
           this.LoadVessel();
           this.LoadProjectnameAndcode();
@@ -1175,6 +1190,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.LoadVessel();
           this.LoadDepartment();
           this.loadPortList();
+          this.generateTempNumber();
         }
         // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
@@ -1261,7 +1277,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   LoadheadorderType() {
-    this.zone.run(() => {      
+    debugger
+    this.zone.run(() => {
+      debugger
       this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
       this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
       if (this.defaultOrderType[0] === 'Service' || this.defaultOrderType[0] === 'Spare') {
@@ -1273,6 +1291,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
       this.RequisitionForm.get('header')?.patchValue({ orderReference: '' });
       this.cdr.markForCheck();
+      if(this.headsite === 'V'){
+        this.headCode = this.Vessels.filter(x => x.vesselId === parseInt(this.selectedVesselId)).map(x => x.vesselCode);
+      }      
+    
       // Update document header element
       const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
       // documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
@@ -1284,7 +1306,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   getSpareItems(itemType: string, ids: any) {
     if (itemType === 'Component') {
       this.requisitionService.getItemsInfo(ids)
-        .subscribe(res => {          
+        .subscribe(res => {
           const data = res.map(item => ({
             itemsId: item.shipComponentSpareId,
             spareId: item.shipSpareId || null,
@@ -1345,8 +1367,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           } else
             this.leftTableDataSource.data = data;
         });
-    } else if (itemType === 'Group') {      
-      this.requisitionService.getGroupsInfo(ids).subscribe(res => {        
+    } else if (itemType === 'Group') {
+      this.requisitionService.getGroupsInfo(ids).subscribe(res => {
         const data = res.map(item => ({
           itemsId: item.shipStoreId,
           spareId: item.shipSpareId || null,
@@ -1502,7 +1524,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.items.push(newItem);
     });
     this.requisitionService.addItemsDataList(this.items).subscribe(res => {
-      if (res.status === true) {        
+      if (res.status === true) {
         this.requisitionService.getItemsByReqId(this.reqId).subscribe(res => {
 
           this.dataSource.data = [];
@@ -1563,10 +1585,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     // })
   }
 
-  loadItemsData(status: number) {    
+  loadItemsData(status: number) {
     if (this.reqId)
       this.requisitionService.getItemsByReqId(this.reqId)
-        .subscribe(response => {          
+        .subscribe(response => {
           this.flag = status;
           this.dataSource.data = [];
           this.zone.run(() => {
@@ -1945,7 +1967,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   }
 
-  downloadNotepad() {    
+  downloadNotepad() {
 
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
     this.ReqData = this.requisitionFullData;
@@ -2004,7 +2026,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     $("#openAttachmentModal").modal('hide');
   }
 
-  loadattachment(status: number) {    
+  loadattachment(status: number) {
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if (((document.getElementById("collapse9") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
@@ -2028,7 +2050,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       });
   }
 
-  submitattachmentfrm(form: any) {    
+  submitattachmentfrm(form: any) {
     this.reqId
 
     if (this.reqId == 0) {
@@ -2087,7 +2109,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   getDataReqwithId(reqId) {
     this.requisitionService.getRequisitionById(reqId)
-      .subscribe(response => {        
+      .subscribe(response => {
         this.requisitionWithIDAutoSave = response.data;
 
       });
@@ -2097,7 +2119,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.typemasterService.getAttachmentTypes(0)
       .subscribe(response => {
         if (response.status) {
-          this.attachmenttypelist = response.data.filter(x=>x.module =='Purchase');
+          this.attachmenttypelist = response.data.filter(x => x.module == 'Purchase');
         } else {
           this.attachmenttypelist = [];
         }
@@ -2151,7 +2173,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.fileList.splice(index, 1);
   }
 
-  Updatesttachment(id) {    
+  Updatesttachment(id) {
     (document.getElementById('collapse9') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse9') as HTMLElement).classList.add("show");
     this.pmsService.GetattachmentById(id)
@@ -2167,7 +2189,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         });
   }
 
-  showAttachment(filePath) {    
+  showAttachment(filePath) {
     let parts: string[] = filePath.split('\\');
     let filename: string | undefined = parts.pop();
 
@@ -2347,7 +2369,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
   }
 
-  openEditModal(row) {    
+  openEditModal(row) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.position = { top: '70px' };
     const dialogRef = this.dialog.open(EditReqQtyComponent, {
@@ -2361,7 +2383,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.result === 'success') {
         row.rob = result.data.newRob
-        this.autoSave('items')       
+        this.autoSave('items')
       }
     })
   }
@@ -2395,7 +2417,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.autoSave('items');
   }
   @HostListener('window:keydown', ['$event'])
-  handleKeyDown(event: KeyboardEvent, row: any): void {    
+  handleKeyDown(event: KeyboardEvent, row: any): void {
     if (event.defaultPrevented) {
       return;
     }
@@ -2635,7 +2657,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     $("#openAttachmentItem").modal('hide');
   }
 
-  loadItemAttachment(status: number) {    
+  loadItemAttachment(status: number) {
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
@@ -2696,7 +2718,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
 
-  submitItemAttachmentfrm(form: any) {    
+  submitItemAttachmentfrm(form: any) {
     this.GetItemId
 
     if (this.GetItemId == 0) {
@@ -2752,7 +2774,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       });
   }
 
-  FileItemSelect(event) {    
+  FileItemSelect(event) {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
       this.fileItemToUpload = file;
@@ -2813,7 +2835,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.isItemattachmentAllSelected() ? this.selectionItemAttachment.clear() : this.attachmentItemdataSource.data.forEach(r => this.selectionItemAttachment.select(r));
   }
 
-  UpdateItemAttach(id) {    
+  UpdateItemAttach(id) {
     (document.getElementById('collapse10') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse10') as HTMLElement).classList.add("show");
     this.pmsService.GetattachmentById(id)
@@ -2829,7 +2851,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         });
   }
 
-  showItemAttachment(filePath) {    
+  showItemAttachment(filePath) {
     let parts: string[] = filePath.split('\\');
     let filename: string | undefined = parts.pop();
 
