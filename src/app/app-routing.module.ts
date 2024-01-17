@@ -12,6 +12,7 @@ const routes: Routes = [
   { path: 'Requisition', loadChildren: () => import('./Pages/requisition/requisition.module').then(m => m.RequisitionModule) },
   { path: 'master', loadChildren: () => import('./Pages/master/master.module').then(m => m.MasterModule) },
   { path: 'Account', loadChildren: () => import('./Pages/account/account.module').then(m => m.AccountModule) },
+  { path: 'Workflow', loadChildren: () => import('./Pages/workflow/workflow.module').then(m => m.WorkflowModule) },
   { path: 'administration', loadChildren: () => import('./Pages/administration/administration.module').then(m => m.AdministrationModule) },
 { path: '**', component: PageNotFoundComponent,pathMatch: 'full' ,canActivate:[Guard]},
 ];
