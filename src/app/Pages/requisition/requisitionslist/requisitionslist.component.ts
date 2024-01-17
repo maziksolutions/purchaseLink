@@ -20,6 +20,7 @@ import { DatePipe } from '@angular/common';
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { environment } from 'src/environments/environment';
+import { PmsgroupService } from 'src/app/services/pmsgroup.service';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 declare var SideNavi: any;
@@ -57,11 +58,12 @@ export class RequisitionslistComponent implements OnInit {
   ReqData: any[];
   GetAccountcode: any;
   itemdata: any;
+  accountcode: any;
 
   constructor(private sideNavService: SideNavService, private route: Router,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService,
     private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe, private shipmasterService: ShipmasterService,
-    private exportExcelService: ExportExcelService,) {
+    private exportExcelService: ExportExcelService,private pmsgroupService:PmsgroupService) {
       this.route.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           this.sideNavService.initSidenav();
@@ -105,7 +107,7 @@ export class RequisitionslistComponent implements OnInit {
     }
     this.loadData(0);
     this.LoadVessel();
-    this.Loadshipcomp();
+    this.Loadgroup();
     this.loadItem();
 
     this.loadScript('assets/js/SideNavi.js');
@@ -264,8 +266,8 @@ export class RequisitionslistComponent implements OnInit {
     this.exportExcelService.exportAsExcelFile(data, 'Requisition', 'Requisition');
   }
 
-  Loadshipcomp() {
-    this.shipmasterService.GetComponentList(0)
+  Loadgroup() {
+    this.pmsgroupService.GetPMSGroupdata(0)
       .subscribe(response => {
       
         this.GetAccountcode = response.data;
@@ -281,13 +283,17 @@ export class RequisitionslistComponent implements OnInit {
       })
   }
   downloadNotepad() {
-
+debugger
     const id = this.selection.selected.filter(x => x.approvedReq == "Approved");
 
     for (let i = 0; i < id.length; i++) {
       this.ReqData = this.dataSource.data.filter(x => x.requisitionId == id[i].requisitionId && x.approvedReq == "Approved");
       let shipcompId = this.ReqData[0].orderReference.split(',')[0];
-      let accountcode = this.GetAccountcode.filter(x => x.shipComponentId == shipcompId)[0];
+      if(this.ReqData[0].orderReferenceType == "Group"){
+         this.accountcode = this.GetAccountcode.filter(x => x.pmsGroupId == shipcompId)[0];
+      }
+     
+
       let Dates = this.datePipe.transform(this.ReqData[0].recDate, 'yyyyMMdd');
       let year = this.datePipe.transform(this.ReqData[0].recDate, 'yy');
 
@@ -308,11 +314,11 @@ export class RequisitionslistComponent implements OnInit {
 
       stepData += `
   
-             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].pmPreference.description}','${Dates}','','','${this.ReqData[0].departments.departmentName}','','${accountcode.accountCode}','','','','','${this.ReqData[0].orderTitle}')`;
+             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].pmPreference.description}','${Dates}','','','${this.ReqData[0].departments.departmentName}','','${this.accountcode.accountCode}','','','','','${this.ReqData[0].orderTitle}')`;
 
       uniqueItems.forEach((item, index) => {
         stepData += `
-             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.part}','${item.itemName}','${item.dwg}','','','${item.make}','','','${item.rob}','fix Pcs','${item.enterQuantity}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
+             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.maker}','','','','','');`;
       });
       stepData += `
        ENDSEC;`;
