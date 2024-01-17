@@ -145,11 +145,17 @@ export class RequisitionslistComponent implements OnInit {
 
   LoadVessel() {
     this.vesselService.getVessels(0)
-      .subscribe(response => {   
-        if (this.targetLoc == 'Vessel') {  
-          this.Vessels = response.data.filter(x=>x.vesselId == environment.vesselId);
+      .subscribe(response => {
+
+        if (this.targetLoc == 'Vessel') {
+          const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
+          if (filteredVessels.length > 0) {
+            this.Vessels = filteredVessels;
+            this.selectedVesselId = filteredVessels[0].vesselId;
+            this.filterVessel()
+          }
         }
-        else{
+        else {
           this.Vessels = response.data;
         }
       })
@@ -215,7 +221,7 @@ export class RequisitionslistComponent implements OnInit {
     }
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
-       
+
         this.flag = status;
         // this.documentHeaderList =response.data.map(x=>x.documentHeader.replace(/\D/g, '')) 
 
@@ -257,9 +263,9 @@ export class RequisitionslistComponent implements OnInit {
         delete item.approvedReq, delete item.shipRecordId, delete item.officeRecordId, delete item.vessel,
 
         item.pmOrderType = item.pmOrderType.orderTypes;
-        item.pmPreference = item.pmPreference.description;
-        item.pmProjectNameCode = item.pmProjectNameCode.projectName +item.pmProjectNameCode.projectCode;
-        item.departments = item.departments.departmentName;
+      item.pmPreference = item.pmPreference.description;
+      item.pmProjectNameCode = item.pmProjectNameCode.projectName + item.pmProjectNameCode.projectCode;
+      item.departments = item.departments.departmentName;
 
 
     })
@@ -269,7 +275,7 @@ export class RequisitionslistComponent implements OnInit {
   Loadgroup() {
     this.pmsgroupService.GetPMSGroupdata(0)
       .subscribe(response => {
-      
+
         this.GetAccountcode = response.data;
 
       })

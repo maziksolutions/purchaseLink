@@ -204,6 +204,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   GetItemId: any;
   expandedElement: any;
   isJobListRow = (_: number, row: any) => row === this.expandedElement;
+  location = environment.location
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -481,7 +482,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   autoSave(partName: string): void {
 
     if (partName == 'header') {
-      
+      debugger
       const formPart = this.RequisitionForm.get(partName);
       if (this.isRequisitionApproved) {
         const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -491,8 +492,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
       formPart?.patchValue({
         requisitionId: formPart?.value.requisitionId,
-        documentHeader: formPart?.value.documentHeader != null ? formPart.value.documentHeader : this.temporaryNODataBase,
-        originSite: this.userDetail.site,
+        documentHeader: formPart?.value.documentHeader || this.temporaryNODataBase,
+        originSite: this.location,
         vesselId: formPart?.value.vesselId,
         orderTypeId: formPart?.value.orderTypeId,
         orderTitle: formPart?.value.orderTitle,
@@ -1126,30 +1127,30 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       })
   }
 
-  LoadUserDetails() {
-    this.userService.getUserById(this.userId)
-      .subscribe(response => {
-        this.userDetail = response.data;
-        this.currentyear = new Date().getFullYear();
+  // LoadUserDetails() {
+  //   this.userService.getUserById(this.userId)
+  //     .subscribe(response => {
+  //       this.userDetail = response.data;
+  //       this.currentyear = new Date().getFullYear();
 
-        if (this.userDetail.site == 'Office') {
-          this.headsite = 'O';
-          this.headCode = 'OFF';
-          this.headabb = '___';
-          // let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Office').length;
-          // this.headserialNumber = `${requisitionValues + 1}`.padStart(4, '0');
-        }
-        else if (this.userDetail.site == 'Vessel') {
-          this.headsite = 'V';
-          this.headCode = '___ ';
-          this.headabb = '___';
+  //       if (this.userDetail.site == 'Office') {
+  //         this.headsite = 'O';
+  //         this.headCode = 'OFF';
+  //         this.headabb = '___';
+  //         // let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Office').length;
+  //         // this.headserialNumber = `${requisitionValues + 1}`.padStart(4, '0');
+  //       }
+  //       else if (this.userDetail.site == 'Vessel') {
+  //         this.headsite = 'V';
+  //         this.headCode = '___ ';
+  //         this.headabb = '___';
 
-          // let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Vessel');
-          // this.headserialNumber = `${requisitionValues.length + 1}`.padStart(4, '0');
-        }
+  //         // let requisitionValues = this.requisitiondata.filter(x => x.originSite === 'Vessel');
+  //         // this.headserialNumber = `${requisitionValues.length + 1}`.padStart(4, '0');
+  //       }
 
-      })
-  }
+  //     })
+  // }
 
   loadData(status: number) {
 
@@ -1180,10 +1181,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.LoadPriority();
           this.LoadDepartment();
           this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
-          this.LoadUserDetails();
+          // this.LoadUserDetails();
           this.getReqData();
         } else {
-          this.LoadUserDetails();
+          // this.LoadUserDetails();
           this.LoadOrdertype();
           this.LoadProjectnameAndcode();
           this.LoadPriority();
