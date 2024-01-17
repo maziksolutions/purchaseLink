@@ -429,6 +429,10 @@ addPage(formData): Observable<any> {
 archivePage(Page: any[]): Observable < string > {   
   return this.httpClient.post<string> (`${this.linkurl}archivePage/`, Page, httpOptions);  
 }  
+
+getfilterPage(status): Observable<any> {
+  return this.httpClient.get<any[]>(`${this.linkurl}filterPage/${status}`, httpOptions);
+}
 //#endregion
 
 
