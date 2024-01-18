@@ -238,7 +238,7 @@
                   <h6 class="text-900 mb-1">Project Name / Code</h6>
                   <fieldset class="form-group mb-0">
                     <select class="form-control form-small form-select" formControlName="projectNameCodeId"
-                      (change)="autoSave('header')" required>
+                      (change)="autoSave('header')" (change)="selectProjectCode($event)" required>
                       <option value="" selected disabled>Select </option>
                       <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
                         {{item.projectName|titlecase }}-{{item.projectCode}}
@@ -253,7 +253,7 @@
                     <select class="form-control form-small form-select" formControlName="orderTypeId"
                       [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
                       <option value="0" selected disabled>Select OrderTypes</option>
-                      <option *ngFor="let item of orderTypes" value="{{item.orderTypeId}}">
+                      <option *ngFor="let item of filteredOrderTypes" value="{{item.orderTypeId}}">
                         {{item.orderTypes | titlecase}}
                       </option>
                     </select>

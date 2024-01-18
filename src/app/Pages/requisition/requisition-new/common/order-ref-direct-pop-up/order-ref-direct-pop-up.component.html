@@ -77,7 +77,9 @@
 
 <mat-tree *ngIf="ComponentType==='Group'" [dataSource]="groupTableSourceTree" [treeControl]="treeGroupControl"
     class="wrapper">
-    <mat-tree-node *matTreeNodeDef="let node; when: hasChild">
+    <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding [matTreeNodePaddingIndent]="10"
+        (click)="activeNode = node" id="{{node.groupId+node.type}}" [ngClass]="{ 'active-node': node==activeNode}"
+        [style.display]="filterParentNode(node) ? 'none' : ''">
         <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.groupName">
             <mat-icon class="mat-icon-rtl-mirror"
                 [ngClass]="{ 'redColor': !treeGroupControl.isExpanded(node),'blueColor': treeGroupControl.isExpanded(node)}">
