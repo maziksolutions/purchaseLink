@@ -205,6 +205,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   expandedElement: any;
   isJobListRow = (_: number, row: any) => row === this.expandedElement;
   location = environment.location
+  codeAccount: any;
+  GetGroupAccCode: any;
+  GetCompoAccCode: any;
+  GetStoreAccCode: any;
+  GetSpareAccCode: any;
   filteredOrderTypes: any
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
@@ -334,6 +339,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.Loadgroup();
+    this.LoadComponent();
+    this.LoadStore();
+    this.LoadSpare();
   }
 
   ngOnDestroy(): void {
@@ -2005,7 +2015,38 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
 
   }
+  Loadgroup() {
+    this.pmsService.GetPMSGroupdata(0)
+      .subscribe(response => {
 
+        this.GetGroupAccCode = response.data;
+
+      })
+  }
+  LoadComponent() {
+    this.pmsService.GetComponent(0)
+      .subscribe(response => {
+
+        this.GetCompoAccCode = response.data;
+
+      })
+  }
+  LoadStore() {
+    this.pmsService.getStore(0)
+      .subscribe(response => {
+
+        this.GetStoreAccCode = response.data;
+
+      })
+  }
+  LoadSpare() {
+    this.pmsService.GetSpareList(0)
+      .subscribe(response => {
+
+        this.GetSpareAccCode = response.data;
+
+      })
+  }
   downloadNotepad() {
 
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
@@ -2014,7 +2055,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.swal.error('Please save your data before downloading the RTO file.')
     }
     let shipcompId = this.ReqData.orderReference.split(',')[0];
-    let accountcode = this.dataSourceTree.filter(x => x.shipComponentId == shipcompId)[0];
+    if(this.ReqData.orderReferenceType == "Group"){
+      this.codeAccount = this.GetGroupAccCode.filter(x => x.pmsGroupId == shipcompId)[0];
+   }
+   if(this.ReqData.orderReferenceType == "Component"){
+     this.codeAccount = this.GetCompoAccCode.filter(x => x.componentId == shipcompId)[0];
+   }
+   if(this.ReqData.orderReferenceType == "Store"){
+     this.codeAccount = this.GetStoreAccCode.filter(x => x.shipStoreId == shipcompId)[0];
+   }
+   if(this.ReqData.orderReferenceType == "Spare"){
+     this.codeAccount = this.GetSpareAccCode.filter(x => x.spareId == shipcompId)[0];
+   }
     let Dates = this.datePipe.transform(this.ReqData.recDate, 'yyyyMMdd');
     let year = this.datePipe.transform(this.ReqData.recDate, 'yy');
 
@@ -2035,11 +2087,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     stepData += `
    
-              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${accountcode.accountCode}','','','','','${this.ReqData.orderTitle}')`;
+              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount.accountCode}','','','','','${this.ReqData.orderTitle}')`;
 
     uniqueItems.forEach((item, index) => {
       stepData += `
-              #${index + 2}=Items_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.part}','${item.itemName}','${item.dwg}','','','${item.make}','','','${item.rob}','fix Pcs','${item.enterQuantity}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
+            #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.maker}','','','','','');`;
     });
     stepData += `
         ENDSEC;`;
