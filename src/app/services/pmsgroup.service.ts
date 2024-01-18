@@ -337,6 +337,10 @@ GetStoreByShipId(id):Observable<any>{
   return this.httpClient.get<any>(this.linkurl + 'StoreLinkedGroups/' + id,httpOptions)
   .pipe(catchError(this.handleError));
 }
+
+getStore(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}getstore/${status}`, httpOptions);
+}
 //#endregion
 
 

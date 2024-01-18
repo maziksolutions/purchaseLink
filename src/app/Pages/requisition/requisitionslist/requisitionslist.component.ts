@@ -56,9 +56,12 @@ export class RequisitionslistComponent implements OnInit {
   VesselId: any;
   vesselcode: any;
   ReqData: any[];
-  GetAccountcode: any;
+  GetGroupAccCode: any;
   itemdata: any;
   accountcode: any;
+  GetCompoAccCode: any;
+  GetStoreAccCode: any;
+  GetSpareAccCode: any;
 
   constructor(private sideNavService: SideNavService, private route: Router,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService,
@@ -108,6 +111,9 @@ export class RequisitionslistComponent implements OnInit {
     this.loadData(0);
     this.LoadVessel();
     this.Loadgroup();
+    this.LoadComponent();
+    this.LoadStore();
+    this.LoadSpare();
     this.loadItem();
 
     this.loadScript('assets/js/SideNavi.js');
@@ -276,11 +282,34 @@ export class RequisitionslistComponent implements OnInit {
     this.pmsgroupService.GetPMSGroupdata(0)
       .subscribe(response => {
 
-        this.GetAccountcode = response.data;
+        this.GetGroupAccCode = response.data;
 
       })
   }
+  LoadComponent() {
+    this.pmsgroupService.GetComponent(0)
+      .subscribe(response => {
 
+        this.GetCompoAccCode = response.data;
+
+      })
+  }
+  LoadStore() {
+    this.pmsgroupService.getStore(0)
+      .subscribe(response => {
+
+        this.GetStoreAccCode = response.data;
+
+      })
+  }
+  LoadSpare() {
+    this.pmsgroupService.GetSpareList(0)
+      .subscribe(response => {
+
+        this.GetSpareAccCode = response.data;
+
+      })
+  }
   loadItem() {
     this.requisitionService.getDisplayItems(0)
       .subscribe(response => {
@@ -296,9 +325,17 @@ debugger
       this.ReqData = this.dataSource.data.filter(x => x.requisitionId == id[i].requisitionId && x.approvedReq == "Approved");
       let shipcompId = this.ReqData[0].orderReference.split(',')[0];
       if(this.ReqData[0].orderReferenceType == "Group"){
-         this.accountcode = this.GetAccountcode.filter(x => x.pmsGroupId == shipcompId)[0];
+         this.accountcode = this.GetGroupAccCode.filter(x => x.pmsGroupId == shipcompId)[0];
       }
-     
+      if(this.ReqData[0].orderReferenceType == "Component"){
+        this.accountcode = this.GetCompoAccCode.filter(x => x.componentId == shipcompId)[0];
+      }
+      if(this.ReqData[0].orderReferenceType == "Store"){
+        this.accountcode = this.GetStoreAccCode.filter(x => x.shipStoreId == shipcompId)[0];
+      }
+      if(this.ReqData[0].orderReferenceType == "Spare"){
+        this.accountcode = this.GetSpareAccCode.filter(x => x.spareId == shipcompId)[0];
+      }
 
       let Dates = this.datePipe.transform(this.ReqData[0].recDate, 'yyyyMMdd');
       let year = this.datePipe.transform(this.ReqData[0].recDate, 'yy');
