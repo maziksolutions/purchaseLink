@@ -1,0 +1,346 @@
+<div class="card px-3 py-2 mb-1">
+    <div class="position-relative">
+        <div class="row">
+            <div class="col-lg-3">
+                <h5 class="mb-0">Work Flow</h5>
+                <span class="btn-sm ps-0 text-primary fw-bold">Master<span
+                        class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0"><b>Work Flow</b></span>
+            </div>
+            
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-0">
+    <div class="col-lg-3 pe-lg-1 mb-3" id="div1" >
+      <div class="card">       
+        <div class="card-header bg-light">          
+          <div class="row flex-between-end">
+            <div class="col-md-8 align-self-center">
+              <div class="form-group mb-0">
+                
+                   <label class="text-bold-600 mb-0" for="">Work Queue</label>                             
+                
+              </div>
+            </div>
+            <div class="col-auto ms-auto">
+              <a  class="px-1" type="button" data-bs-toggle="modal" (click)="openModalWorkQueue()"
+              aria-expanded="false" title="" matTooltip="Add Work Queue"><i class="fas fa-plus text-primary"></i></a>  
+              <a class="px-1" type="button" data-bs-toggle="tooltip" (click)="DeleteWQData()"
+              data-bs-placement="top" data-bs-original-title="Delete" aria-label=""><i class="fas fa-trash text-danger"></i></a>
+            </div>
+          
+           
+        </div> 
+      </div> 
+      <hr class="m-0">
+      <div class="card-body">
+        <div class="table-responsive scrollbar">
+            <mat-table #table [dataSource]="dataSource" matSort
+                class="table table-hover table-striped table-sm small table-bordered">
+                <ng-container matColumnDef="checkbox">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                        <mat-checkbox (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()">
+                        </mat-checkbox>
+    
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
+                            [aria-label]="checkboxLabel(row)"></mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="workQueueName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Work Queue Name</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <a (click)="GetIdinWorkState(row.workFlowId)"  class="accordion-btn show px-2 m-r-5" type="button" 
+                      title={{row.workQueueName.toUpperCase()}}> 
+                      <span [style.color]="row.workFlowId === workqueueId ? '#c56d00' : '#4687d9'">{{row.workQueueName.toUpperCase()}}</span>
+                  </a>
+                    </mat-cell>
+                </ng-container>
+ 
+                <ng-container matColumnDef="edit">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <a (click)="UpdateWorkQueue(row.workFlowId)"  class="accordion-btn show px-2 m-r-5" type="button"
+                    data-bs-toggle="modal" data-bs-target="#addModalWQ" aria-expanded="true"
+                    aria-controls="addModalWQ"  title=''> <span>
+                        <i class="fas fa-edit"></i>
+                    </span>
+                </a>
+                  </mat-cell>
+              </ng-container> 
+    
+
+    
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
+                [pageSizeOptions]="[20, 40, 60, 100]">
+            </mat-paginator>
+        </div>
+    </div>
+  </div>
+    </div>  
+
+    <div class="col-lg pe-lg-1 mb-3" id="div2">
+      <div class="card">       
+          <div class="card-header bg-light" style="text-align: right;" style="width: 100%;"> 
+            <div class="row flex-between-end">
+              <div class="col-md-8 align-self-center">
+                <label class="text-bold-600 mb-0">Work Queue State</label> 
+            </div>
+            <div class="col-auto ms-auto">
+        <a  class="px-1" type="button" data-bs-toggle="modal" (click)="openModalWorkQueueState()"
+        aria-expanded="false" title="" matTooltip="Add Work Queue State"><i class="fas fa-plus text-primary"></i></a> 
+        <a class="px-1" type="button" data-bs-toggle="tooltip" (click)="DeleteWQSData()" *ngIf="dataSourceQueueState.filteredData?.length"
+        data-bs-placement="top" data-bs-original-title="Delete" aria-label=""><i class="fas fa-trash text-danger"></i></a>
+        </div>
+        </div>
+      </div> 
+      <hr class="m-0">
+      <div class="card-body">
+        <div class="table-responsive scrollbar"  *ngIf="dataSourceQueueState.filteredData?.length else no_content">
+            <mat-table #table [dataSource]="dataSourceQueueState" matSort
+                class="table table-hover table-striped table-sm small table-bordered">
+
+                <ng-container matColumnDef="checkbox">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>
+                      <mat-checkbox (change)="$event ? masterToggleQS() : null"
+                          [checked]="selectionQS.hasValue() && isAllSelectedQS()"
+                          [indeterminate]="selectionQS.hasValue() && !isAllSelectedQS()">
+                      </mat-checkbox>
+  
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                      <mat-checkbox (click)="$event.stopPropagation()"
+                          (change)="$event ? selectionQS.toggle(row) : null" [checked]="selectionQS.isSelected(row)"
+                          [aria-label]="checkboxLabelQS(row)"></mat-checkbox>
+                  </mat-cell>
+              </ng-container>
+
+                <ng-container matColumnDef="WorkQueueStateName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Work Queue State Name</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <a (click)="UpdateWorkQueueState(row.workQueueStateId)" class="accordion-btn show px-2 m-r-5" type="button" 
+                      data-bs-toggle="modal" data-bs-target="#addModalWQS" aria-expanded="true"
+                    aria-controls="addModalWQS"  title={{row.workQueueStateName.toUpperCase()}}> 
+                    <span>{{row.workQueueStateName.toUpperCase()}}</span>
+                  </a>
+                  <!-- <span> {{row.workQueueStateName.toUpperCase()}} </span> -->
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="SiteType">
+                  <mat-header-cell *matHeaderCellDef mat-sort-header>Site Type</mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                      <span> {{row.siteType.toUpperCase()}} </span>
+                  </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="StateType">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>State Type</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                    <span> {{row.stateType.toUpperCase()}} </span>
+                </mat-cell>
+            </ng-container>
+ 
+                <mat-header-row *matHeaderRowDef="displayedQueueStateColumns; sticky:true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedQueueStateColumns; let i = index"
+                    [ngClass]="{'highlight': (selectedIndexQueueState==0?(i==0):(row.workQueueStateId==selectedIndexQueueState))}"></mat-row>
+            </mat-table>
+            <mat-paginator #paginatorQS [length]="dataSourceQueueState.filteredData.length" [pageIndex]="0" [pageSize]="20"
+                [pageSizeOptions]="[20, 40, 60, 100]">
+            </mat-paginator>
+        </div>
+        <ng-template #no_content>
+          <p class="text-center no_record">No record found</p>
+      </ng-template>
+    </div>
+      </div>   
+    </div>   
+    <div class="col-lg pe-lg-1 mb-3" id="div3">
+        <div class="card">       
+            <div class="card-header bg-light" style="text-align: right;" style="width: 100%;"> 
+              <div class="row flex-between-end">
+                <div class="col-md-8 align-self-center">
+                  <label class="text-bold-600 mb-0">Work Queue State Role</label> 
+              </div>
+              <div class="col-auto ms-auto">
+          <a  class="px-1" type="button" data-bs-toggle="modal"
+          aria-expanded="false" title="" matTooltip="Add Work Queue State Role"><i class="fas fa-plus text-primary"></i></a> 
+          </div>
+          </div>
+        </div> 
+        <hr class="m-0">
+    
+        </div>   
+      </div> 
+
+
+
+  
+
+
+
+
+
+
+  </div>
+
+
+  
+
+
+  <!-- Work Queue -->
+
+<div class="modal fade" id="addModalWQ" tabindex="-1" role="dialog" aria-labelledby="authentication-modal-label"
+  aria-hidden="true">
+  <div class="modal-dialog mt-6" role="document">
+    <div class="modal-content border-0">
+      <form (ngSubmit)="onSubmit(WorkFlowForm)" [formGroup]="WorkFlowForm">
+        <div class="modal-header">
+
+          <div class="col-xl-4 col-lg-12" >
+            <h5 class="modal-title" id="changePassLabel" style="width: 100%;"> {{ selectedIndex == null ? 'Add Work Queue' : 'Edit Work Queue' }}
+            </h5>
+            </div>
+
+            <div class="col-xl-8 col-lg-12">
+              <div class="float-end">
+
+                <button  class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" type="submit"
+          data-bs-original-title="Save" aria-label="" [disabled]="WorkFlowForm.invalid"><i class="fas fa-save"></i></button>                               
+          
+          <button type="button" class="btn btn-danger form-small m-r-5" (click)="closeModalWorkQueue()" data-mdb-dismiss="modal">
+            <i class="fas fa-ban"></i>
+          </button>          
+              </div>
+            </div>
+
+        </div>
+    
+        <div class="modal-body" style="font-weight: 400;">
+            <div class="form">
+              <div class="row mb-3">
+                  <div class="col-sm">
+                    <fieldset class="form-group mb-0">
+                      <label>Work Queue Name</label>
+                      <input type="text" formControlName="workQueueName" maxlength="200" class="form-control form-small" id="abc"
+                        placeholder="Work Queue Name"  maxlength="100" required >
+                    </fieldset>
+                  </div>
+
+                  <div class="col-sm">
+                    <fieldset class="form-group mb-0">
+                        <label>Group Name</label>
+                        <select class="form-control form-small form-select" id="basicSelect"
+                            formControlName="groupId" required>
+                            <option value="" disabled>Select Group Name</option>
+                            <option *ngFor="let item of grouplist" value="{{item.groupId}}">{{item.groupName}}</option> 
+                        </select>
+                    </fieldset>
+                  </div>
+                
+                  
+                </div>         
+            </div>
+          </div>
+
+        <div class="modal-footer" style="background:#F5F5F5;padding:0.5rem;">
+         
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- END -->
+
+<!-- WorkQueueState -->
+
+<div class="modal fade" id="addModalWQS" tabindex="-1" role="dialog" aria-labelledby="authentication-modal-label"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg mt-6" role="document">
+    <div class="modal-content border-0">
+      <form (ngSubmit)="onSubmitFlowState(WorkFlowStateForm)" [formGroup]="WorkFlowStateForm">
+        <div class="modal-header">
+
+          <div class="col-xl-4 col-lg-12" >
+            <h5 class="modal-title" id="changePassLabel" style="width: 100%;">{{ selectedIndexQueueState == null ? 'Add Work Queue State' : 'Edit Work Queue State' }}
+            </h5>
+            </div>
+
+            <div class="col-xl-8 col-lg-12">
+              <div class="float-end">
+
+                <button  class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" type="submit"
+          data-bs-original-title="Save" aria-label="" [disabled]="WorkFlowStateForm.invalid"><i class="fas fa-save"></i></button>                               
+          
+          <button type="button" class="btn btn-danger form-small m-r-5" (click)="closeModalWorkState()" data-mdb-dismiss="modal">
+            <i class="fas fa-ban"></i>
+          </button>          
+              </div>
+            </div>
+
+        </div>
+    
+        <div class="modal-body" style="font-weight: 400;">
+          <div class="form">
+            <div class="row mb-3">
+                <div class="col-sm">
+                  <fieldset class="form-group mb-0">
+                    <label>Work Queue State Name</label>
+                    <input type="text" formControlName="workQueueStateName" maxlength="200" class="form-control form-small" id="abc"
+                      placeholder="work Queue State Name"  maxlength="100" required >
+                  </fieldset>
+                </div>
+
+                <div class="col-sm-3">
+                  <fieldset class="form-group mb-0">
+                      <label>Site Type</label><br>
+
+
+                      <input type="radio" id="ship" formControlName="siteType"  name="siteType" value="Ship">
+                        <label for="ship">Ship</label>
+                        <input type="radio" id="shore" formControlName="siteType" name="siteType" value="Shore">
+                        <label for="shore">Shore</label>
+
+
+                  </fieldset>
+                </div>
+
+                <div class="col-sm">
+                  <fieldset class="form-group mb-0">
+                      <label>State Type</label>
+                      <select class="form-control form-small form-select" id="basicSelect"
+                          formControlName="stateType" required>
+                          <option value="" disabled>Select State Type</option>
+                          <option value="Open">Open</option> 
+                          <option value="Approve">Approve</option> 
+                          <option value="Reject">Reject</option>
+                          <option value="Cancel">Cancel</option>
+
+                      </select>
+                  </fieldset>
+                </div>
+              
+                
+              </div>         
+          </div>
+        </div>
+
+        <div class="modal-footer" style="background:#F5F5F5;padding:0.5rem;">
+         
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- END -->

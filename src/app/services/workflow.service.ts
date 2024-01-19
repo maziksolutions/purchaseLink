@@ -19,71 +19,110 @@ export class WorkflowService {
   private linkurl = this.baseUrl + 'WFEvent/';
   constructor(private httpClient: HttpClient) { }
 
-    //#region WFEvent
+  //#region WFEvent
 
-    getWFEvent(status): Observable<any> {
-      return this.httpClient.get<any[]>(`${this.linkurl}filterWFEvent/${status}`, httpOptions);
+  getWFEvent(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterWFEvent/${status}`, httpOptions);
+  }
+  getWFEventById(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getWFEventId/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  addWFEvent(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addWFEvent', formData)
+      .pipe(catchError(this.handleError));
+  }
+  archiveWFEvent(jobType: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveWFEvent/`, jobType, httpOptions);
+  }
+
+  //#endregion
+
+  //#region WFGroup
+
+  getWFGroup(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterWFGroup/${status}`, httpOptions);
+  }
+  getWFGroupById(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getWFGroupId/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  addWFGroup(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addWFGroup', formData)
+      .pipe(catchError(this.handleError));
+  }
+  archiveWFGroup(jobType: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveWFGroup/`, jobType, httpOptions);
+  }
+
+  //#endregion
+
+  //#region EventGroupLinking
+
+  getEventLink(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterEventLink/${status}`, httpOptions);
+  }
+  getEventLinkById(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getEventLinkId/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  addEventLink(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addEventLink', formData)
+      .pipe(catchError(this.handleError));
+  }
+  archiveEventLink(jobType: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveEventLink/`, jobType, httpOptions);
+  }
+
+  //#endregion
+
+
+  //#region WorkFlow
+
+  getWorkFlow(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterWorkFlow/${status}`, httpOptions);
+  }
+  getWorkFlowById(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getWorkFlowId/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  addWorkFlow(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addWorkFlow', formData)
+      .pipe(catchError(this.handleError));
+  }
+  archiveWorkFlow(jobType: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveWorkFlow/`, jobType, httpOptions);
+  }
+
+  //#endregion
+
+  //#region WorkQueueState
+
+  getWorkQueueState(id): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterWorkQueueState/${id}`, httpOptions);
+  }
+  getWorkQueueStateId(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getWorkQueueStateId/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  addWorkQueueState(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addWorkQueueState', formData)
+      .pipe(catchError(this.handleError));
+  }
+  archiveWorkQueueState(jobType: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveWorkQueueState/`, jobType, httpOptions);
+  }
+
+  //#endregion
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      console.error('An error occurred:', error.error.message);
+    } else {
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${error.error}`);
     }
-    getWFEventById(id): Observable<any> {
-      return this.httpClient.get<any>(this.linkurl + 'getWFEventId/' + id, httpOptions)
-        .pipe(catchError(this.handleError));
-    }
-    addWFEvent(formData): Observable<any> {
-      return this.httpClient.post<any>(this.linkurl + 'addWFEvent', formData)
-        .pipe(catchError(this.handleError));
-    }
-    archiveWFEvent(jobType: any[]): Observable<string> {
-      return this.httpClient.post<string>(`${this.linkurl}archiveWFEvent/`, jobType, httpOptions);
-    }
-  
-    //#endregion
-
-       //#region WFGroup
-
-       getWFGroup(status): Observable<any> {
-        return this.httpClient.get<any[]>(`${this.linkurl}filterWFGroup/${status}`, httpOptions);
-      }
-      getWFGroupById(id): Observable<any> {
-        return this.httpClient.get<any>(this.linkurl + 'getWFGroupId/' + id, httpOptions)
-          .pipe(catchError(this.handleError));
-      }
-      addWFGroup(formData): Observable<any> {
-        return this.httpClient.post<any>(this.linkurl + 'addWFGroup', formData)
-          .pipe(catchError(this.handleError));
-      }
-      archiveWFGroup(jobType: any[]): Observable<string> {
-        return this.httpClient.post<string>(`${this.linkurl}archiveWFGroup/`, jobType, httpOptions);
-      }
-    
-      //#endregion
-
-             //#region EventGroupLinking
-
-             getEventLink(status): Observable<any> {
-              return this.httpClient.get<any[]>(`${this.linkurl}filterEventLink/${status}`, httpOptions);
-            }
-            getEventLinkById(id): Observable<any> {
-              return this.httpClient.get<any>(this.linkurl + 'getEventLinkId/' + id, httpOptions)
-                .pipe(catchError(this.handleError));
-            }
-            addEventLink(formData): Observable<any> {
-              return this.httpClient.post<any>(this.linkurl + 'addEventLink', formData)
-                .pipe(catchError(this.handleError));
-            }
-            archiveEventLink(jobType: any[]): Observable<string> {
-              return this.httpClient.post<string>(`${this.linkurl}archiveEventLink/`, jobType, httpOptions);
-            }
-          
-            //#endregion
-
-    private handleError(error: HttpErrorResponse) {
-      if (error.error instanceof ErrorEvent) {
-        console.error('An error occurred:', error.error.message);
-      } else {
-        console.error(
-          `Backend returned code ${error.status}, ` +
-          `body was: ${error.error}`);
-      }
-      return throwError("Some thing went wrong.Please check with administrator.");
-    }
+    return throwError("Some thing went wrong.Please check with administrator.");
+  }
 }
