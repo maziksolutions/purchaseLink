@@ -203,7 +203,7 @@
                 </div>
               </a>
               <ul class="nav collapse" id="vendor-management">
-                <li class="nav-item"><a class="nav-link" href="purchase-link-vendor-details.html" aria-expanded="false">
+                <li class="nav-item"><a class="nav-link" aria-expanded="false">
                     <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Vendor Details</span>
                     </div>
                   </a>
@@ -227,7 +227,7 @@
               </a>
               <ul class="nav collapse" id="accountmaster">
                 <li routerLinkActive="active" class="nav-item">
-                  <a class="nav-link" routerLink="/Account/currencyMaster" aria-expanded="false">
+                  <a class="nav-link" aria-expanded="false">
                     <div class="d-flex align-items-center">
                       <span class="nav-link-text ps-1">Currency Master</span>
                     </div>
@@ -241,7 +241,7 @@
                   </a>
                 </li>
                 <li routerLinkActive="active" class="nav-item">
-                  <a class="nav-link" routerLink="/Account/accountType" aria-expanded="false">
+                  <a class="nav-link" aria-expanded="false">
                     <div class="d-flex align-items-center">
                       <span class="nav-link-text ps-1">Account Type</span>
                     </div>
@@ -357,7 +357,9 @@
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#userProfileModal" data-bs-toggle="modal" aria-expanded="false">Profile
                   &amp; account</a>
-
+                  <div *ngIf="targetLoc === 'Office'" class="dropdown-divider"></div>
+                  <a *ngIf="targetLoc === 'Office'" class="dropdown-item" type="button" (click)="openFleetModal()" data-bs-toggle="modal"
+                  matTooltip="User Fleets" aria-expanded="false">Vessel Groups</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" (click)="logout()">Logout</a>
               </div>
@@ -549,5 +551,94 @@ Password is required</span> -->
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- Vessel Group Modal Start here -->
+<div class="modal fade" id="userFleetModal" tabindex="-1" role="dialog" aria-labelledby="authentication-modal-label"
+  aria-hidden="true">
+  <div class="modal-dialog modal-xl mt-6" role="document">
+    <div class="modal-content border-0">
+      <form>
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePassLabel">vessel Groups
+          </h5>
+          <div class="form-inline float-end" style="float: right;">
+            <a class="accordion-btn collapsed px-2 m-r-5" type="button" data-bs-toggle="tooltip" (click)="clear()"
+              matTooltip="Add" data-bs-toggle="collapse" data-bs-target="#collapseFleet" aria-expanded="true"
+              aria-controls="collapseFleet"><i class="fas fa-plus text-primary"></i></a>
+          </div>
+        </div>
+
+        <div class="card mb-3 bg-light">
+          <div class="accordion-collapse collapse" id="collapseFleet" aria-labelledby="heading1"
+            data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+              <form (ngSubmit)="onSubmitUserFleet(userFleetForm)" [formGroup]="userFleetForm">
+                <div class="row">
+                  <div class="col-sm">
+                    <fieldset class="form-group mb-0">
+                      <input type="text" class="form-control form-small" required formControlName="fleetName" id="abc"
+                        placeholder="Fleet Name" appUppercase maxlength="30" noWhiteSpace>
+                    </fieldset>
+                  </div>
+                  <div class="col-sm">
+                    <ng-multiselect-dropdown placeholder="Select Vessels" [(ngModel)]="selectedVessel" [data]="Vessels"
+                      [ngModelOptions]="{standalone: true}" class="multiselect-dropdown"
+                      [settings]="dropdownVesselSetting" (onSelect)="onvesselSelect($event)"
+                      (onSelectAll)="onVesselSelectAll($event)" (onDeSelect)="onVesselDeSelect($event)"
+                      (onDeSelectAll)="onVesselDeSelectAll($event)"></ng-multiselect-dropdown>
+
+                  </div>
+                  <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
+                      data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""
+                      [disabled]="userFleetForm.invalid"><i class="fas fa-save"></i></button>
+                    <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip"
+                      (click)="close()" data-bs-placement="top" title="" data-bs-original-title="Cancel"
+                      aria-label=""><i class="fas fa-ban"></i></button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-body" style="font-weight: 400;">
+          <div class="form">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="table-responsive scrollbar">
+                  <mat-table #table [dataSource]="userFleetdataSource" matSort
+                    class="table table-hover table-striped scrollbar-visible table-sm small table-bordered">
+                    <ng-container matColumnDef="fleetName">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header>Vessel Group Name</mat-header-cell>
+                      <mat-cell *matCellDef="let row">
+                        <a (click)="Updatedata(row.userFleetId)" class="accordion-btn show px-2 m-r-5" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#collapseFleet" aria-expanded="true"
+                          aria-controls="collapseFleet" *ngIf="row.fleetName!='Default Vessels'">{{row.fleetName}}</a>
+                        <span *ngIf="row.fleetName=='Default Vessels'">{{row.fleetName}}</span>
+                      </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="vessels">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header>Vessel List</mat-header-cell>
+                      <mat-cell *matCellDef="let row" title={{getvessels(row.vessels)}}>
+                        <span> {{getvessels(row.vessels)}}</span>
+
+                      </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+                  </mat-table>
+                  <mat-paginator #paginator [length]="userFleetdataSource.filteredData.length" [pageIndex]="0"
+                    [pageSize]="20" [pageSizeOptions]="[20, 40, 60, 100]">
+                  </mat-paginator>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

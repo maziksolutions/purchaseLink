@@ -23,22 +23,29 @@
       <div class="card mb-3">
         <div class="card-body">
           <div class="row">
-            <div class="col-lg-2">
+            <div class="col-lg-2" *ngIf="targetLoc === 'Office'">
               <div class="mb-2">
-
+                <select class="form-control form-small form-select mb-d3" formControlName="fleetId" (change)="filteredVessels($any($event.target).value)">
+                  <option selected="" value="" disabled>Select Vessel Group</option>
+                  <option *ngFor="let item of myFleet" value="{{item.userFleetId}}">
+                    {{item.fleetName | titlecase}}
+                  </option>
+                </select>  
+              </div>
+            </div>
+            <div class="col-lg-2">
+              <div class="mb-2">  
                 <select class="form-control form-small form-select" [(ngModel)]="selectedVesselId"
                   (change)="filterVessel()">
                   <option value="0" selected disabled>Select Vessel</option>
                   <option *ngFor="let item of  Vessels" value="{{item.vesselId}}">
                     {{item.vesselName | titlecase}}
-
                   </option>
                 </select>
-
               </div>
             </div>
 
-            <div class="col-lg-10">
+            <div [ngClass]="{'col-lg-10': targetLoc === 'Vessel', 'col-lg-8': targetLoc === 'Office'}">
               <div class="form-inline float-end mb-2">
                 <!-- <a class="form-small text-primary px-1 m-r-5" type="button" data-bs-toggle="tooltip"
                   data-bs-placement="top" title="" data-bs-original-title="Modify Column" aria-label=""><i
@@ -154,6 +161,13 @@
                 <mat-cell *matCellDef="let row"
                   title={{row.pmProjectNameCode.projectName}}{{row.pmProjectNameCode.projectCode}}>
                   <span> {{row.pmProjectNameCode.projectName}}{{row.pmProjectNameCode.projectCode}} </span>
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="Status">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+                <mat-cell *matCellDef="let row"
+                  title={{row.approvedReq}}>
+                  <span> {{row.approvedReq}} </span>
                 </mat-cell>
               </ng-container>
              

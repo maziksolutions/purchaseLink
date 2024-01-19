@@ -296,8 +296,8 @@ addUserFleet(formData): Observable<any> {
 }
 
 
-loadUserFleet(status): Observable<any> {  
-  return this.httpClient.get<any[]>(`${this.linkurl}UserFleets/${status}`, httpOptions);
+loadUserFleet(status, userId): Observable<any> { 
+  return this.httpClient.get<any[]>(`${this.linkurl}UserFleets/${status}/${userId}`, httpOptions);
 }
 getUserFleetById(id):Observable<any>{  
   return  this.httpClient.get<any>(this.linkurl + 'UserFleet/' + id,httpOptions)

@@ -359,7 +359,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   get serviceType() { return this.serviceTypeForm.controls }
 
   generateTempNumber() {
-   
+
     this.requisitionService.getTempNumber(0).subscribe(res => {
       if (res.data != null) {
         var formattedNumber = parseInt(res.data.documentHeader)
@@ -494,7 +494,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   autoSave(partName: string): void {
 
     if (partName == 'header') {
-     
+
       const formPart = this.RequisitionForm.get(partName);
       if (this.isRequisitionApproved) {
         const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -614,7 +614,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     else if (partName == 'delivery') {
 
       if (this.reqId) {
-        
+
         const formPart = this.RequisitionForm.get(partName);
         formPart?.patchValue({
           reqIds: this.reqId,
@@ -652,11 +652,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
     else if (partName == 'items') {
       if (this.reqId) {
-       
+
         const itemList = this.dataSource.data.map(item => {
 
           if (item.itemsId != 0) {
-           
+
             const { editMode, ...rest } = item;
             rest.vesselId = this.requisitionFullData.vesselId
             return rest;
@@ -858,15 +858,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           orderReferenceType: requisitionData.orderReferenceType
         });
 
-        if (!this.approvestatus) {
-          this.temporaryNumber = requisitionData.documentHeader
-        } else {
+        if (this.approvestatus ==='Approved') {
           const headerStringParts = requisitionData.documentHeader.split(' – ');
           if (headerStringParts.length === 6) {
             const headerSerialNumber = headerStringParts[5];
             // this.headabb = headerStringParts[3];
             this.temporaryNumber = headerSerialNumber;
-          }
+          }          
+        } else {
+          this.temporaryNumber = requisitionData.documentHeader
         }
 
         if (requisitionData.originSite == 'Office') {
@@ -1136,7 +1136,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       )
   }
   selectProjectCode(event: any) {
-    
+
     const selectedId = event.target.value;
     const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == selectedId).map(item => item.serviceTypeId)
     if (selectedProjectCode[0] != null) {
@@ -1200,7 +1200,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     }
     else {
-     
+
       this.deletetooltip = 'Archive';
       if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
@@ -1326,9 +1326,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   LoadheadorderType() {
-   
+
     this.zone.run(() => {
-     
+      debugger
       this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
       this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
       if (this.defaultOrderType[0] === 'Service' || this.defaultOrderType[0] === 'Spare') {
@@ -1981,17 +1981,17 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         if (result.value) {
           this.requisitionService.Finalapprove(final, this.temporaryNumber, this.finalHeader)
             .subscribe(result => {
+              this.loadData(0)
               // this.selection.clear();
               // this.swal.success('message');
               // this.loadItemsData(0);
             })
-
         }
-
       })
     }
 
     if (final == 'Reject') {
+      debugger
       var title = "";
       Swal.fire({
         title: 'Are you sure about Reject?',
@@ -2001,16 +2001,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         confirmButtonText: 'Yes',
         cancelButtonText: 'No'
       }).then((result) => {
+        debugger
         if (result.value) {
-          this.requisitionService.Finalapprove(final, this.temporaryNumber, this.finalHeader)
+          let DocumentHeadValue = this.requisitionFullData.documentHeader;
+          this.requisitionService.Finalapprove(final, DocumentHeadValue, this.finalHeader)
             .subscribe(result => {
-              // this.selection.clear();
-              // this.swal.success('message');
-              // this.loadItemsData(0);
+              debugger
+              if (result.status === true) {
+                this.approvestatus=result.data.approvedReq
+                this.loadData(0)
+              }
             })
-
         }
-
       })
     }
 
@@ -2055,18 +2057,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.swal.error('Please save your data before downloading the RTO file.')
     }
     let shipcompId = this.ReqData.orderReference.split(',')[0];
-    if(this.ReqData.orderReferenceType == "Group"){
+    if (this.ReqData.orderReferenceType == "Group") {
       this.codeAccount = this.GetGroupAccCode.filter(x => x.pmsGroupId == shipcompId)[0];
-   }
-   if(this.ReqData.orderReferenceType == "Component"){
-     this.codeAccount = this.GetCompoAccCode.filter(x => x.componentId == shipcompId)[0];
-   }
-   if(this.ReqData.orderReferenceType == "Store"){
-     this.codeAccount = this.GetStoreAccCode.filter(x => x.shipStoreId == shipcompId)[0];
-   }
-   if(this.ReqData.orderReferenceType == "Spare"){
-     this.codeAccount = this.GetSpareAccCode.filter(x => x.spareId == shipcompId)[0];
-   }
+    }
+    if (this.ReqData.orderReferenceType == "Component") {
+      this.codeAccount = this.GetCompoAccCode.filter(x => x.componentId == shipcompId)[0];
+    }
+    if (this.ReqData.orderReferenceType == "Store") {
+      this.codeAccount = this.GetStoreAccCode.filter(x => x.shipStoreId == shipcompId)[0];
+    }
+    if (this.ReqData.orderReferenceType == "Spare") {
+      this.codeAccount = this.GetSpareAccCode.filter(x => x.spareId == shipcompId)[0];
+    }
     let Dates = this.datePipe.transform(this.ReqData.recDate, 'yyyyMMdd');
     let year = this.datePipe.transform(this.ReqData.recDate, 'yy');
 
