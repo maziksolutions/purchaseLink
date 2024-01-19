@@ -34,3 +34,117 @@
   max-width: 40px;
   width: 30px;
 }
+
+.treeview .treeview-list-item .treeview-text
+{
+    font-weight: 400 !important;
+    margin-left: 0.8rem;
+}
+.viewArea
+{
+    max-height: 60vh !important;
+    overflow-y: scroll;
+}
+.treeview [data-bs-toggle=collapse]:after
+{
+    display: none;
+}
+.treeview.treeview-slect .toggle-container input
+{
+    left: 0;
+}
+.mat-tree-node
+{
+    min-height: 24px !important;    
+    font-weight: 400;
+    /* font-size: 0.92rem !important;     */
+}
+.red
+  {
+    color:#f54141 !important;
+  }
+.mat-icon-button {   
+    width: 25px !important;  
+    height: 25px !important;  
+    line-height: 25px !important;    
+}
+.material-icons
+{
+    font-size: 15px !important;
+    color: #494949 !important;
+}
+.viewArea2
+{
+    max-height: 70vh !important;
+    overflow-y: scroll;
+}
+.viewArea3
+{
+    max-height: 80vh !important;
+    overflow-y: scroll;
+}
+.active-node a{  
+    font-size: 14px;
+   font-weight: 700;
+   color: #ff9d2e !important;
+}
+.mat-tree
+{
+   background-color: var(--pms-card-bg) !important; 
+}
+
+/* .mat-tree a
+{
+   color: #2763b2 !important;
+} */
+.mat-tree span
+{
+   color: var(--pms-headings-color) !important;
+}
+
+::ng-deep .mat-tooltip {
+    /* your own custom styles here */ 
+    /* e.g. */
+    color: #fff !important;
+    background-color: #1c4978 !important;
+    font-size: 12px !important;
+}
+
+.activeRow td
+{
+    color: #fff !important;
+    background: #1c4978 !important; 
+    --pms-table-accent-bg: #1c4978 !important; 
+}
+
+.activeRow .text-primary
+{
+    color: #fff !important;
+}
+
+.mat-column-priority {
+    flex: 0 0 120px;
+  }
+  .highlight{
+    background-color: #8d7c5970 !important;
+    outline: none;
+  }
+  .hand-cursor{
+    cursor: pointer !important;
+  }
+  .mat-tree-node a { 
+
+    text-overflow: ellipsis; 
+    overflow: hidden; 
+    white-space: nowrap;
+  }
+
+  .mat-tree-node span {
+    /* width: 100%; */
+    text-overflow: ellipsis; 
+    overflow: hidden; 
+    white-space: nowrap;
+  }
+  .mat-tree-node  a {
+    color: var(--pms-headings-color) !important;
+  }

@@ -210,6 +210,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   GetCompoAccCode: any;
   GetStoreAccCode: any;
   GetSpareAccCode: any;
+  filteredOrderTypes: any
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -219,6 +220,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.targetLoc = environment.location;
     this.sideNavService.initSidenav();
     this.userId = this.authStatusService.userId();
     this.reqGetId = this.route.snapshot.paramMap.get('requisitionId');
@@ -287,7 +289,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.loadData(0);
     this.fillattachmenttype();
 
-    this.sortItems();    
+    this.sortItems();
     this.sideNavService.setActiveComponent(true);
     // const orderTypeIdControl = this.RequisitionForm.get('header.orderTypeId');
     // if (orderTypeIdControl) {
@@ -356,40 +358,40 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   get serviceType() { return this.serviceTypeForm.controls }
 
-  generateTempNumber() {    
-      debugger
-      this.requisitionService.getTempNumber(0).subscribe(res => {
-        if (res.data != null) {
-          var formattedNumber = parseInt(res.data.documentHeader)
-          formattedNumber++;
+  generateTempNumber() {
 
-          let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-          let text = '';
-          length = 3;
-          for (var i = 0; i < length; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-          }
+    this.requisitionService.getTempNumber(0).subscribe(res => {
+      if (res.data != null) {
+        var formattedNumber = parseInt(res.data.documentHeader)
+        formattedNumber++;
 
-          this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
-          this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
-
+        let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let text = '';
+        length = 3;
+        for (var i = 0; i < length; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-        if (res.data == null) {
-          var formattedNumber = parseInt('000');
-          formattedNumber++;
 
-          let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-          let text = '';
-          length = 3;
-          for (var i = 0; i < length; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-          }
+        this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+        this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
 
-          this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
-          this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+      }
+      if (res.data == null) {
+        var formattedNumber = parseInt('000');
+        formattedNumber++;
 
+        let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let text = '';
+        length = 3;
+        for (var i = 0; i < length; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
-      })    
+
+        this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+        this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+
+      }
+    })
   }
 
   get jobListControls() {
@@ -492,7 +494,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   autoSave(partName: string): void {
 
     if (partName == 'header') {
-      debugger
+
       const formPart = this.RequisitionForm.get(partName);
       if (this.isRequisitionApproved) {
         const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -612,7 +614,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     else if (partName == 'delivery') {
 
       if (this.reqId) {
-        debugger
+
         const formPart = this.RequisitionForm.get(partName);
         formPart?.patchValue({
           reqIds: this.reqId,
@@ -650,11 +652,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
     else if (partName == 'items') {
       if (this.reqId) {
-        debugger
+
         const itemList = this.dataSource.data.map(item => {
 
           if (item.itemsId != 0) {
-            debugger
+
             const { editMode, ...rest } = item;
             rest.vesselId = this.requisitionFullData.vesselId
             return rest;
@@ -852,21 +854,21 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           projectNameCodeId: requisitionData.projectNameCodeId,
           remarks: requisitionData.remarks,
           orderReference: requisitionData.orderReferenceNames,
-          documentHeader:requisitionData.documentHeader,
-          orderReferenceType:requisitionData.orderReferenceType
+          documentHeader: requisitionData.documentHeader,
+          orderReferenceType: requisitionData.orderReferenceType
         });
 
-        if (!this.approvestatus) {
-          this.temporaryNumber = requisitionData.documentHeader
-        }else{
-          const headerStringParts=requisitionData.documentHeader.split(' – ');
+        if (this.approvestatus ==='Approved') {
+          const headerStringParts = requisitionData.documentHeader.split(' – ');
           if (headerStringParts.length === 6) {
             const headerSerialNumber = headerStringParts[5];
             // this.headabb = headerStringParts[3];
             this.temporaryNumber = headerSerialNumber;
-          }
+          }          
+        } else {
+          this.temporaryNumber = requisitionData.documentHeader
         }
-        
+
         if (requisitionData.originSite == 'Office') {
           this.headsite = 'O'
         }
@@ -886,6 +888,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
         this.loadOrderTypeByEditReq().subscribe(res => {
           this.orderTypes = res;
+          debugger
+          const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == requisitionData.projectNameCodeId).map(item => item.serviceTypeId)
+          if (selectedProjectCode[0] != null) {
+            const serviceTypeIds: string[] = selectedProjectCode[0].split(',');
+
+            // Filter order types based on service type IDs
+            this.filteredOrderTypes = this.orderTypes.filter(orderType => {
+              const orderTypeServiceTypeIds: string[] = orderType.serviceTypeId.split(',');
+              return serviceTypeIds.some(id => orderTypeServiceTypeIds.includes(id));
+            });
+          }
+
           this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(requisitionData.orderTypeId)).map(x => x.defaultOrderType);
           formPart?.patchValue({ orderTypeId: requisitionData.orderTypeId })
           if (requisitionData.orderReferenceType === 'Component' || requisitionData.orderReferenceType === 'Spare') {
@@ -1121,6 +1135,20 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         }
       )
   }
+  selectProjectCode(event: any) {
+
+    const selectedId = event.target.value;
+    const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == selectedId).map(item => item.serviceTypeId)
+    if (selectedProjectCode[0] != null) {
+      const serviceTypeIds: string[] = selectedProjectCode[0].split(',');
+
+      // Filter order types based on service type IDs
+      this.filteredOrderTypes = this.orderTypes.filter(orderType => {
+        const orderTypeServiceTypeIds: string[] = orderType.serviceTypeId.split(',');
+        return serviceTypeIds.some(id => orderTypeServiceTypeIds.includes(id));
+      });
+    }
+  }
 
   LoadProjectnameAndcode() {
     this.purchaseService.getprojectname(0)
@@ -1172,7 +1200,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     }
     else {
-      debugger
+
       this.deletetooltip = 'Archive';
       if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
@@ -1210,9 +1238,19 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   LoadVessel() {
     this.vesselService.getVessels(0)
       .subscribe(response => {
-        this.Vessels = response.data;
+        if (this.targetLoc == 'Vessel') {
+          const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
+          if (filteredVessels.length > 0) {
+            this.Vessels = filteredVessels;
+            this.selectedVesselId = filteredVessels[0].vesselId;
+          }
+        }
+        else {
+          this.Vessels = response.data;
+        }
       })
   }
+
   LoadDepartment() {
     this.userService.getDepartment(0)
       .subscribe(response => {
@@ -1288,7 +1326,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   LoadheadorderType() {
-    debugger
+
     this.zone.run(() => {
       debugger
       this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
@@ -1302,10 +1340,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
       this.RequisitionForm.get('header')?.patchValue({ orderReference: '' });
       this.cdr.markForCheck();
-      if(this.headsite === 'V'){
+      if (this.headsite === 'V') {
         this.headCode = this.Vessels.filter(x => x.vesselId === parseInt(this.selectedVesselId)).map(x => x.vesselCode);
-      }      
-    
+      }
+
       // Update document header element
       const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
       // documentHeaderElement.innerHTML = `<i class="fas fa-radiation text-danger"></i><i class="fas fa-exclamation-triangle text-danger"></i> REQ – ${this.headsite} – ${this.headCode} – ${this.headabb} – ${this.currentyear} – ${this.headserialNumber}`;
@@ -1943,17 +1981,17 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         if (result.value) {
           this.requisitionService.Finalapprove(final, this.temporaryNumber, this.finalHeader)
             .subscribe(result => {
+              this.loadData(0)
               // this.selection.clear();
               // this.swal.success('message');
               // this.loadItemsData(0);
             })
-
         }
-
       })
     }
 
     if (final == 'Reject') {
+      debugger
       var title = "";
       Swal.fire({
         title: 'Are you sure about Reject?',
@@ -1963,16 +2001,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         confirmButtonText: 'Yes',
         cancelButtonText: 'No'
       }).then((result) => {
+        debugger
         if (result.value) {
-          this.requisitionService.Finalapprove(final, this.temporaryNumber, this.finalHeader)
+          let DocumentHeadValue = this.requisitionFullData.documentHeader;
+          this.requisitionService.Finalapprove(final, DocumentHeadValue, this.finalHeader)
             .subscribe(result => {
-              // this.selection.clear();
-              // this.swal.success('message');
-              // this.loadItemsData(0);
+              debugger
+              if (result.status === true) {
+                this.approvestatus=result.data.approvedReq
+                this.loadData(0)
+              }
             })
-
         }
-
       })
     }
 
@@ -2017,18 +2057,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.swal.error('Please save your data before downloading the RTO file.')
     }
     let shipcompId = this.ReqData.orderReference.split(',')[0];
-    if(this.ReqData.orderReferenceType == "Group"){
+    if (this.ReqData.orderReferenceType == "Group") {
       this.codeAccount = this.GetGroupAccCode.filter(x => x.pmsGroupId == shipcompId)[0];
-   }
-   if(this.ReqData.orderReferenceType == "Component"){
-     this.codeAccount = this.GetCompoAccCode.filter(x => x.componentId == shipcompId)[0];
-   }
-   if(this.ReqData.orderReferenceType == "Store"){
-     this.codeAccount = this.GetStoreAccCode.filter(x => x.shipStoreId == shipcompId)[0];
-   }
-   if(this.ReqData.orderReferenceType == "Spare"){
-     this.codeAccount = this.GetSpareAccCode.filter(x => x.spareId == shipcompId)[0];
-   }
+    }
+    if (this.ReqData.orderReferenceType == "Component") {
+      this.codeAccount = this.GetCompoAccCode.filter(x => x.componentId == shipcompId)[0];
+    }
+    if (this.ReqData.orderReferenceType == "Store") {
+      this.codeAccount = this.GetStoreAccCode.filter(x => x.shipStoreId == shipcompId)[0];
+    }
+    if (this.ReqData.orderReferenceType == "Spare") {
+      this.codeAccount = this.GetSpareAccCode.filter(x => x.spareId == shipcompId)[0];
+    }
     let Dates = this.datePipe.transform(this.ReqData.recDate, 'yyyyMMdd');
     let year = this.datePipe.transform(this.ReqData.recDate, 'yy');
 

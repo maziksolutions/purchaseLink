@@ -59,6 +59,9 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   private apiCalled = false;
   matchingAccountCodes: string[] = [];
 
+  searchString:any="";
+  activeNode: any;
+  
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefDirectPopUpComponent>, private swal: SwalToastService,
     public requisitionService: RequisitionService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private zone: NgZone) { }
 
@@ -406,6 +409,30 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         }
       }
     }
+  }
+
+  filterParentNode(node: ComponentFlatNode): boolean {
+    if (
+      !this.searchString ||
+      node.groupName.toLowerCase().indexOf(this.searchString?.toLowerCase()) !==
+        -1
+    ) {
+      return false
+    }
+    const descendants = this.treeControl.getDescendants(node)
+  
+    if (
+      descendants.some(
+        (descendantNode) =>
+          descendantNode.groupName
+            .toLowerCase()
+            .indexOf(this.searchString?.toLowerCase()) !== -1
+      )
+    ) {
+      return false
+    }
+  
+    return true
   }
   //#endregion
 

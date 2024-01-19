@@ -343,7 +343,7 @@ onSubmitUserFleet(form: any) {
 }
 
 loadUserFleetData(status: number) {
-  this.userManagementService.loadUserFleet(0)
+  this.userManagementService.loadUserFleet(0, this.authStatusService.userId())
   .subscribe(response => {
     // var objProcR = [];
     this.userFleetdataSource.data = response.data;

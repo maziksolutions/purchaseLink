@@ -8,7 +8,7 @@
         <div class="position-relative">
           <div class="row flex-between-center">
             <div class="col-auto align-self-center"
-              *ngIf="approvestatus != 'Waiting For Approval' && approvestatus != 'Approved'">
+              *ngIf="approvestatus === undefined || approvestatus === null">
               <h5 class="mb-0">Purchasing / New Requisition</h5>
               <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
                   class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">New
@@ -24,6 +24,12 @@
               <h5 class="mb-0">Approved Requisition</h5>
               <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
                   class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Approved
+                Requisition</span>
+            </div>
+            <div class="col-auto align-self-center" *ngIf="approvestatus == 'Reject'">
+              <h5 class="mb-0">Reject Requisition</h5>
+              <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
+                  class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Rejected
                 Requisition</span>
             </div>
 
@@ -169,7 +175,7 @@
                   </div>
 
                   <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-                    *ngIf="approvestatus != 'Waiting For Approval' && approvestatus != 'Approved'" title=""
+                    *ngIf="approvestatus === undefined || approvestatus === null" title=""
                     data-bs-original-title="Send for Approval" aria-label="" (click)="sendApprove()">
                     <i class="fas fa-share-square text-primary"></i></a>
 
@@ -183,24 +189,28 @@
                     *ngIf="approvestatus == 'Waiting For Approval'" data-bs-original-title="Reject" aria-label=""
                     (click)="FinalApprove('Reject')"> <i class="fas fa-times text-danger"></i></a>
 
+                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    *ngIf="approvestatus == 'Reject'" data-bs-original-title="Reject" aria-label="">
+                    <i class="fas fa-times text-danger"></i></a>
+
 
                   <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     (click)="openAttachmentPopup()" data-bs-original-title="Add Attachment" aria-label=""><i
                       class="fas fa-paperclip text-primary"></i></a>
 
-                  <button class="px-1 m-r-5" type="submit" style="border: #f9fafd;" data-bs-toggle="tooltip"
+                  <!-- <button class="px-1 m-r-5" type="submit" style="border: #f9fafd;" data-bs-toggle="tooltip"
                     data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
                       class="fas fa-save text-primary"></i></button>
 
                   <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban text-danger"></i></a>
+                    data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban text-danger"></i></a> -->
 
-                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                  <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Export PDF" aria-label="" [class.disabled]="!isRequisitionApproved"><i class="fas fa-file-pdf text-danger"></i></a>
 
                   <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Export Excel" aria-label="" [class.disabled]="!isRequisitionApproved"><i
-                      class="fas fa-file-excel text-success"></i></a>
+                      class="fas fa-file-excel text-success"></i></a> -->
 
                   <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" *ngIf="approvestatus == 'Approved'"
                     data-bs-placement="top" matTooltip="RTO" (click)="downloadNotepad()" data-bs-original-title="List"
@@ -238,7 +248,7 @@
                   <h6 class="text-900 mb-1">Project Name / Code</h6>
                   <fieldset class="form-group mb-0">
                     <select class="form-control form-small form-select" formControlName="projectNameCodeId"
-                      (change)="autoSave('header')" required>
+                      (change)="autoSave('header')" (change)="selectProjectCode($event)" required>
                       <option value="" selected disabled>Select </option>
                       <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
                         {{item.projectName|titlecase }}-{{item.projectCode}}
@@ -253,7 +263,7 @@
                     <select class="form-control form-small form-select" formControlName="orderTypeId"
                       [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
                       <option value="0" selected disabled>Select OrderTypes</option>
-                      <option *ngFor="let item of orderTypes" value="{{item.orderTypeId}}">
+                      <option *ngFor="let item of filteredOrderTypes" value="{{item.orderTypeId}}">
                         {{item.orderTypes | titlecase}}
                       </option>
                     </select>
@@ -432,7 +442,8 @@
           <div class="card-body collapse" id="delivery" formGroupName="delivery">
             <div class="row">
               <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">Expected Delivery Port</h6>
+                <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
+                  Expected Delivery Port</h6>
                 <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Expected Port</h6>
                 <fieldset class="form-group mb-0">
                   <select class="form-control form-small form-select" formControlName="expectedDeliveryPort" required
@@ -445,7 +456,8 @@
                 </fieldset>
               </div>
               <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">Expected Delivery Date</h6>
+                <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
+                  Expected Delivery Date</h6>
                 <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Expected Date</h6>
                 <input type="date" class="mb-0 fs--2 text-500" formControlName="expectedDeliveryDate"
                   (change)="autoSave('delivery')" />
@@ -461,7 +473,8 @@
                   (change)="autoSave('delivery')" />
               </div>
               <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">Delivery Address</h6>
+                <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
+                  Delivery Address</h6>
                 <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Service Location</h6>
                 <h6 class="mb-0 fs--2"><a type="button" data-bs-toggle="modal" data-bs-target="#delivery-address"
                     data-bs-placement="top" aria-label="">Address</a></h6>
@@ -619,7 +632,7 @@
         </form>
       </div>
       <!--Delivery Form End Here -->
-     
+
       <!--Items Form Start Here -->
       <div class="card mb-3" *ngIf="defaultOrderType[0]==='Spare' || defaultOrderType[0]==='Store'">
         <div class="card-header bg-light">
@@ -919,9 +932,9 @@
                   <ng-container matColumnDef="attachments">
                     <mat-header-cell *matHeaderCellDef>Attachments</mat-header-cell>
                     <mat-cell class="text-center" *matCellDef="let row"><a class="px-1 m-r-5 text-center" type="button"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="" (click)="openAttachmentItem(row.itemsId)"
-                        data-bs-original-title="Add Attachment" aria-label=""><i
-                          class="fas fa-paperclip text-primary"></i></a></mat-cell>
+                        data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                        (click)="openAttachmentItem(row.itemsId)" data-bs-original-title="Add Attachment"
+                        aria-label=""><i class="fas fa-paperclip text-primary"></i></a></mat-cell>
                   </ng-container>
                   <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
                   <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
@@ -1273,8 +1286,8 @@
                   data-fa-transform="shrink-2"></span>Service Request</h5>
             </div>
             <div class="col-auto ms-auto">
-              <a class="btn btn-primary" type="button" [attr.data-bs-toggle]="modal" [attr.data-bs-target]="modalTarget" (click)="openAddServiceModal()"><i
-                  class="fas fa-plus"></i> Add Services</a>
+              <a class="btn btn-primary" type="button" [attr.data-bs-toggle]="modal" [attr.data-bs-target]="modalTarget"
+                (click)="openAddServiceModal()"><i class="fas fa-plus"></i> Add Services</a>
               <!--This is for Add new Service pop up view-->
               <div class="modal fade" id="add-service" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-xl mt-6" role="document">
@@ -1394,7 +1407,7 @@
                   <tr>
                     <td colspan="6" class="hiddenRow">
 
-                       <div class="accordion-collapse collapse m-2" [attr.id]="'row' + i">
+                      <div class="accordion-collapse collapse m-2" [attr.id]="'row' + i">
                         <table class="table table-sm table-bordered table-striped overflow-hidden mb-0 border-400">
                           <thead class="bg-300">
                             <tr>
@@ -1417,14 +1430,14 @@
                               <td>{{ job.unit }}</td>
                               <td>{{ job.remarks }}</td>
                               <td>
-                                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                  data-bs-original-title="Attachment" aria-label=""><i
+                                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                                  title="" data-bs-original-title="Attachment" aria-label=""><i
                                     class="fas fa-paperclip text-primary"></i></a>
                               </td>
                             </tr>
                           </tbody>
                         </table>
-                      </div> 
+                      </div>
                     </td>
                   </tr>
                 </ng-container>
@@ -1717,8 +1730,8 @@
 
 <!-- Attachment Item -->
 
-<div class="modal fade" id="openAttachmentItem" tabindex="-1" role="dialog"
-  aria-labelledby="authentication-modal-label" aria-hidden="true">
+<div class="modal fade" id="openAttachmentItem" tabindex="-1" role="dialog" aria-labelledby="authentication-modal-label"
+  aria-hidden="true">
   <div class="modal-dialog mt-6  modal-xl" role="document">
     <div class="modal-content border-0">
       <div class="modal-header">
@@ -1821,9 +1834,9 @@
                     <td>{{ selected.name }}</td>
                     <td>{{ selected.size/1024 | number:'1.0-0' }}</td>
                     <td>
-                      <a class="px-2 m-r-1" type="button" (click)="removeItemSelectedFile(index)" data-bs-toggle="tooltip"
-                        data-bs-placement="top" title="" data-bs-original-title="Delete" aria-label=""><i
-                          class="fas fa-trash text-danger"></i></a>
+                      <a class="px-2 m-r-1" type="button" (click)="removeItemSelectedFile(index)"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Delete"
+                        aria-label=""><i class="fas fa-trash text-danger"></i></a>
                     </td>
                   </tr>
                 </tbody>

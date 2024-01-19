@@ -21,6 +21,7 @@ import { ShipmasterService } from 'src/app/services/shipmaster.service';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { environment } from 'src/environments/environment';
 import { PmsgroupService } from 'src/app/services/pmsgroup.service';
+import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 declare var SideNavi: any;
@@ -43,7 +44,7 @@ export class RequisitionslistComponent implements OnInit {
   selectedIndex: any;
   dataSource = new MatTableDataSource<any>();
   displayedColumns: string[] = ['checkbox', 'Requisition_No', 'Delivery_Site', 'OriginSite', 'RequestOrderType', 'OrderTitle',
-    'OrderReference', 'Department', 'Priority', 'ProjectName_Code'];
+    'OrderReference', 'Department', 'Priority', 'ProjectName_Code', 'Status'];
   selection = new SelectionModel<any>(true, []);
   rights: RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
@@ -62,16 +63,19 @@ export class RequisitionslistComponent implements OnInit {
   GetCompoAccCode: any;
   GetStoreAccCode: any;
   GetSpareAccCode: any;
+  myFleet:any;
+  fullVesselList:any;
 
-  constructor(private sideNavService: SideNavService, private route: Router,
+
+  constructor(private sideNavService: SideNavService, private route: Router,private authStatusService: AuthStatusService,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService,
     private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe, private shipmasterService: ShipmasterService,
-    private exportExcelService: ExportExcelService,private pmsgroupService:PmsgroupService) {
-      this.route.events.subscribe((event) => {
-        if (event instanceof NavigationEnd) {
-          this.sideNavService.initSidenav();
-        }
-      })
+    private exportExcelService: ExportExcelService, private pmsgroupService: PmsgroupService) {
+    this.route.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.sideNavService.initSidenav();
+      }
+    })
   }
 
   get fm() { return this.RequisitionForm.controls };
@@ -87,6 +91,7 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    debugger
     this.targetLoc = environment.location;
     this.sideNavService.setActiveComponent(false);
     this.sideNavService.initSidenav();
@@ -108,6 +113,7 @@ export class RequisitionslistComponent implements OnInit {
     if (this.targetLoc == 'Vessel') {
       this.VesselId = environment.vesselId;
     }
+    this.loadUserFleetData();
     this.loadData(0);
     this.LoadVessel();
     this.Loadgroup();
@@ -118,6 +124,30 @@ export class RequisitionslistComponent implements OnInit {
 
     this.loadScript('assets/js/SideNavi.js');
   }
+
+  loadUserFleetData() {
+    this.userManagementService.loadUserFleet(0, this.authStatusService.userId())
+      .subscribe(response => {
+        this.myFleet= response.data; 
+      });
+  }
+  filteredVessels(id)
+  {
+    debugger
+    this.VesselId=null;
+    var vesselList=this.myFleet.filter(x=>x.userFleetId==id)[0]["vessels"];
+
+   if(vesselList!=null || vesselList!=undefined)
+   {        
+    this.Vessels=this.fullVesselList.filter(x=>vesselList.split(",").includes(x.vesselId.toString()));
+    // this.searchForm.controls.vesselId.setValue('');
+   }    
+
+    // this.sfm.fleetId.setValue(id);       
+    // this.page = 1; this.currentPage = 0;   
+    // this.loadShipComponentList(this.sfm.componentId.value, this.searchForm.controls.type.value);
+  }  
+
 
   private loadScript(scriptUrl: string): void {
     const script = document.createElement('script');
@@ -163,6 +193,7 @@ export class RequisitionslistComponent implements OnInit {
         }
         else {
           this.Vessels = response.data;
+          this.fullVesselList=response.data;
         }
       })
   }
@@ -318,22 +349,22 @@ export class RequisitionslistComponent implements OnInit {
       })
   }
   downloadNotepad() {
-debugger
+    debugger
     const id = this.selection.selected.filter(x => x.approvedReq == "Approved");
 
     for (let i = 0; i < id.length; i++) {
       this.ReqData = this.dataSource.data.filter(x => x.requisitionId == id[i].requisitionId && x.approvedReq == "Approved");
       let shipcompId = this.ReqData[0].orderReference.split(',')[0];
-      if(this.ReqData[0].orderReferenceType == "Group"){
-         this.accountcode = this.GetGroupAccCode.filter(x => x.pmsGroupId == shipcompId)[0];
+      if (this.ReqData[0].orderReferenceType == "Group") {
+        this.accountcode = this.GetGroupAccCode.filter(x => x.pmsGroupId == shipcompId)[0];
       }
-      if(this.ReqData[0].orderReferenceType == "Component"){
+      if (this.ReqData[0].orderReferenceType == "Component") {
         this.accountcode = this.GetCompoAccCode.filter(x => x.componentId == shipcompId)[0];
       }
-      if(this.ReqData[0].orderReferenceType == "Store"){
+      if (this.ReqData[0].orderReferenceType == "Store") {
         this.accountcode = this.GetStoreAccCode.filter(x => x.shipStoreId == shipcompId)[0];
       }
-      if(this.ReqData[0].orderReferenceType == "Spare"){
+      if (this.ReqData[0].orderReferenceType == "Spare") {
         this.accountcode = this.GetSpareAccCode.filter(x => x.spareId == shipcompId)[0];
       }
 
