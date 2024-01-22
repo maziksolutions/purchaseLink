@@ -141,7 +141,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   checkInternal: boolean = false;
   headsite: string;
   headCode: string;
-  currentyear: any;
+  currentyear = new Date().getFullYear();
   headabb: string;
   requisitiondata: any;
   headserialNumber: string;
@@ -303,7 +303,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     // }
 
     this.requisitionService.selectedItems$.subscribe(data => {
-
+      debugger
       if (data != null && data.displayValue !== '' && data.saveValue !== '') {
         this.zone.run(() => {
           this.displayValue = ''
@@ -522,64 +522,66 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         // formPart?.get('orderReference')?.setValue(displayValue);
         this.requisitionService.addRequisitionMaster(formData)
           .subscribe(data => {
+            if (this.defaultOrderType[0] !== 'Service') {
+              if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
+                this.items = []
+                this.dataSource.data.map(item => {
+                  const newItem = {
+                    itemsId: 0,
+                    spareId: item.spareId || null,
+                    storeId: item.storeId || null,
+                    itemCode: item.itemCode || '',
+                    itemName: item.itemName || '',
+                    partNo: item.partNo || '',
+                    availableQty: item.minimumLevel || '',
+                    dwg: item.dwg || '',
+                    maker: item.makerReference || '',
+                    model: item.model || '',
+                    minRequired: item.minRequired || 0,
+                    reqQty: item.reqQty || 0,
+                    rob: item.rob || 0,
+                    lpp: item.lpp || 0,
+                    lpd: item.lpd || 0,
+                    aq: item.aq || 0,
+                    unit: item.unit || 0,
+                    uc: item.uc || 0,
+                    qu: item.qu || 0,
+                    dt: item.dt || '',
+                    id: item.id || 0,
+                    cost: item.cost || 0,
+                    cbc: item.cbc || 0,
+                    lowest: item.lowest || 0,
+                    remarks: item.remarks || '',
+                    line: item.line || '',
+                    componentName: item.componentName || '',
+                    componentCode: item.componentCode || '',
+                    equipmentName: item.equipmentName || '',
+                    prevReqdQty: item.prevReqdQty || '',
+                    approvedQty: item.approvedQty || '',
+                    qtyInUse: item.qtyInUse || '',
+                    qtyRoB: item.qtyRoB || '',
+                    reorderQty: item.reorderQty || '',
+                    reorderLevel: item.reorderLevel || '',
+                    maxQuantity: item.maxQuantity || '',
+                    split: item.split || false,
+                    asset: item.asset || false,
+                    additionalRemarks: item.additionalRemarks || '',
+                    storageLocation: item.storageLocation || '',
+                    attachments: item.attachments || '',
+                    pmReqId: this.reqId,
+                    vesselId: this.requisitionFullData.vesselId
+                  };
+                  this.items.push(newItem);
+                });
+              }
+            }
             if (data.message == "data added") {
               this.reqId = data.data;
 
               this.swal.success('Added successfully.');
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
-                  this.items = []
-                  this.dataSource.data.map(item => {
-                    const newItem = {
-                      itemsId: 0,
-                      spareId: item.spareId || null,
-                      storeId: item.storeId || null,
-                      itemCode: item.itemCode || '',
-                      itemName: item.itemName || '',
-                      partNo: item.partNo || '',
-                      availableQty: item.minimumLevel || '',
-                      dwg: item.dwg || '',
-                      maker: item.makerReference || '',
-                      model: item.model || '',
-                      minRequired: item.minRequired || 0,
-                      reqQty: item.reqQty || 0,
-                      rob: item.rob || 0,
-                      lpp: item.lpp || 0,
-                      lpd: item.lpd || 0,
-                      aq: item.aq || 0,
-                      unit: item.unit || 0,
-                      uc: item.uc || 0,
-                      qu: item.qu || 0,
-                      dt: item.dt || '',
-                      id: item.id || 0,
-                      cost: item.cost || 0,
-                      cbc: item.cbc || 0,
-                      lowest: item.lowest || 0,
-                      remarks: item.remarks || '',
-                      line: item.line || '',
-                      componentName: item.componentName || '',
-                      componentCode: item.componentCode || '',
-                      equipmentName: item.equipmentName || '',
-                      prevReqdQty: item.prevReqdQty || '',
-                      approvedQty: item.approvedQty || '',
-                      qtyInUse: item.qtyInUse || '',
-                      qtyRoB: item.qtyRoB || '',
-                      reorderQty: item.reorderQty || '',
-                      reorderLevel: item.reorderLevel || '',
-                      maxQuantity: item.maxQuantity || '',
-                      split: item.split || false,
-                      asset: item.asset || false,
-                      additionalRemarks: item.additionalRemarks || '',
-                      storageLocation: item.storageLocation || '',
-                      attachments: item.attachments || '',
-                      pmReqId: this.reqId,
-                      vesselId: this.requisitionFullData.vesselId
-                    };
-                    this.items.push(newItem);
-                  });
-
                   this.requisitionService.addItemsDataList(this.items).subscribe(res => {
-
                     if (res.message == "All items added") {
                       this.swal.success('Added successfully.');
                       this.loadItemsData(0);
@@ -590,7 +592,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             }
             else if (data.message == "Update") {
               this.swal.success('Data has been updated successfully.');
-
+              if (this.defaultOrderType[0] !== 'Service') {
+                if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
+                  this.requisitionService.addItemsDataList(this.items).subscribe(res => {
+                    if (res.message == "All items added") {
+                      this.swal.success('Added successfully.');
+                      this.loadItemsData(0);
+                    }
+                  });
+                }
+              }
             }
             else if (data.message == "duplicate") {
               this.swal.info('Data already exist. Please enter new data');
@@ -858,13 +869,13 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           orderReferenceType: requisitionData.orderReferenceType
         });
 
-        if (this.approvestatus ==='Approved') {
+        if (this.approvestatus === 'Approved') {
           const headerStringParts = requisitionData.documentHeader.split(' – ');
           if (headerStringParts.length === 6) {
             const headerSerialNumber = headerStringParts[5];
             // this.headabb = headerStringParts[3];
             this.temporaryNumber = headerSerialNumber;
-          }          
+          }
         } else {
           this.temporaryNumber = requisitionData.documentHeader
         }
@@ -1239,6 +1250,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.vesselService.getVessels(0)
       .subscribe(response => {
         if (this.targetLoc == 'Vessel') {
+          this.headsite = 'V'
           const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
           if (filteredVessels.length > 0) {
             this.Vessels = filteredVessels;
@@ -1246,6 +1258,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           }
         }
         else {
+          this.headsite = 'O'
           this.Vessels = response.data;
         }
       })
@@ -1720,11 +1733,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //#endregion
 
   listDetails(id) {
-
+    debugger
     const uniqueIds = new Set<number>();
     this.listViewItems = this.dataSource.data.filter(item => {
-      if (item.ids == id && !uniqueIds.has(item.ids)) {
-        uniqueIds.add(item.ids);
+      if (item.itemsId == id && !uniqueIds.has(item.itemsId)) {
+        uniqueIds.add(item.itemsId);
         return true;
       }
       return false;
@@ -1915,8 +1928,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   FinalApprove(final) {
-
-
+    debugger
     if (final == 'Approved') {
 
       if (this.headsite == 'O') {
@@ -2008,7 +2020,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             .subscribe(result => {
               debugger
               if (result.status === true) {
-                this.approvestatus=result.data.approvedReq
+                this.approvestatus = result.data.approvedReq
                 this.loadData(0)
               }
             })
@@ -2050,7 +2062,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       })
   }
   downloadNotepad() {
-
+    debugger
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
     this.ReqData = this.requisitionFullData;
     if (this.ReqData == undefined) {
@@ -2145,7 +2157,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   submitattachmentfrm(form: any) {
     this.reqId
-
+    debugger
     if (this.reqId == 0) {
       this.swal.error('Firstly please add (select) the maintenance ');
       return;
@@ -2740,6 +2752,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //#region AttachmentItem
 
   openAttachmentItem(id) {
+    debugger
     this.GetItemId = id;
 
     $("#openAttachmentItem").modal('show');
@@ -2812,6 +2825,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
 
   submitItemAttachmentfrm(form: any) {
+    debugger
     this.GetItemId
 
     if (this.GetItemId == 0) {
