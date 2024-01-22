@@ -7,12 +7,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppMaterialModule } from 'src/app/app.material.module';
 import { WfgroupComponent } from './wfgroup/wfgroup.component';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { WfWorkflowComponent } from './wf-workflow/wf-workflow.component';
 
 
 @NgModule({
   declarations: [
     WfeventComponent,
-    WfgroupComponent
+    WfgroupComponent,
+    WfWorkflowComponent
   ],
   imports: [
     CommonModule,

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SiteLayoutComponent } from 'src/app/_layout/site-layout/site-layout.component';
 import { WfeventComponent } from './wfevent/wfevent.component';
 import { WfgroupComponent } from './wfgroup/wfgroup.component';
+import { WfWorkflowComponent } from './wf-workflow/wf-workflow.component';
 
 const routes: Routes = [
   {
@@ -10,6 +11,7 @@ const routes: Routes = [
     children: [
       { path: 'wfevent', component: WfeventComponent },
       { path: 'wfgroup', component: WfgroupComponent },
+      { path: 'wfworkflow', component: WfWorkflowComponent },
 
     ]
   }
