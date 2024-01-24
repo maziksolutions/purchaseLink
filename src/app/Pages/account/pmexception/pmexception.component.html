@@ -111,6 +111,20 @@
                         </fieldset>
                     </div>
 
+                    <div class="col">
+                        <fieldset class="form-group mb-0">
+                            <ng-multiselect-dropdown placeholder="Select Inventory Type"
+                            [data]="inventoryType" class="multiselect-dropdown"
+                            [(ngModel)]="selectInvetoryType" [settings]="dropdownInventoryTypeSetting" (onSelect)="onInvtoryTypeSelect($event)" 
+                            formControlName="inventoryType"
+                            (onSelectAll)="onInventoryTypeSelectAll($event)"
+                            (onDeSelect)="onInventoryTypeDeSelect($event)"
+                            (onDeSelectAll)="onInventoryTypeDeSelectAll($event)"
+                            >
+                        </ng-multiselect-dropdown>
+                        </fieldset>
+                    </div>
+
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
                             data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""
@@ -165,6 +179,13 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Account Code</mat-header-cell>
                     <mat-cell *matCellDef="let row">
                         <span> {{row.accountCode}} </span>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="inventoryType">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Inventory Type</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span> {{row.inventoryType}} </span>
                     </mat-cell>
                 </ng-container>
 

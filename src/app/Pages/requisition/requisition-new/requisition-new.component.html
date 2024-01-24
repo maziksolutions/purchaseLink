@@ -340,7 +340,7 @@
 <!--Header Form End Here -->
 
 <!--Account Form Start Here -->
-<div class="card mb-3">
+<!-- <div class="card mb-3">
   <div class="card-header bg-light">
     <div class="row flex-between-end">
       <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#account"
@@ -400,7 +400,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 <!--Account Form End Here -->
 
 <!--Delivery Form Start Here -->
@@ -895,6 +895,7 @@
               <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
               <mat-cell *matCellDef="let row" (click)="openEditModal(row)">{{ row.rob }}</mat-cell>
             </ng-container>
+
             <ng-container matColumnDef="enterQuantity">
               <mat-header-cell *matHeaderCellDef>Req Qty</mat-header-cell>
               <mat-cell *matCellDef="let row; let i = index" #reqQty>
@@ -905,16 +906,26 @@
                   [id]="'reqQty_' + i + '_' + row.ids" />
               </mat-cell>
             </ng-container>
+
             <ng-container matColumnDef="unit">
               <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
               <mat-cell *matCellDef="let row">{{ row.unit }}</mat-cell>
             </ng-container>
-            <ng-container style="min-width: 80px; width: 80px; max-width: 80px;" matColumnDef="remarks">
+
+            <ng-container matColumnDef="itemSpec">
+              <mat-header-cell *matHeaderCellDef>Item Spec</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{ row.maker ? row.maker + '-' : '' }}
+                {{ row.material ? row.material + '-' : '' }}
+                {{ row.description ? row.description + '-' : '' }}
+                {{ row.remarks ? row.remarks : '' }}</mat-cell>
+            </ng-container>
+
+            <ng-container style="min-width: 80px; width: 80px; max-width: 80px;" matColumnDef="itemRemarks">
               <mat-header-cell style="min-width: 80px; width: 80px; max-width: 80px;"
                 *matHeaderCellDef>Remarks</mat-header-cell>
               <mat-cell #reqQty style="min-width: 80px; width: 80px; max-width: 80px;"
                 *matCellDef="let row; let i = index" [ngClass]="{'highlight': isHighlighted(row)}">
-                <input matInput placeholder="Enter data" (change)="autoSave('items')" [(ngModel)]="row.remarks">
+                <input matInput placeholder="Enter data" (change)="autoSave('items')" [(ngModel)]="row.itemRemarks">
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="attachments">

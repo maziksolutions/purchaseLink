@@ -72,7 +72,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   serviceObject: any = {}; isEditMode = false;
-  displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'lastDlDt', 'lastDlQty', 'rob', 'enterQuantity', 'unit', 'remarks', 'attachments'];
+  displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'lastDlDt', 'lastDlQty', 'rob', 'enterQuantity', 'unit', 'itemSpec', 'itemRemarks', 'attachments'];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
   leftTableColumn: string[] = ['checkbox', 'inventoryName', 'partNo', 'dwg', 'quantity', 'availableQty', 'minRequired', 'reorderLevel'];
   rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];
@@ -328,12 +328,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             this.leftTableDataSource.data = []
             this.dataSource.data = [];
             this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
+            console.log(this.dataSource.data)
             this.autoSave('header')
           }
           else if (data.orderReferenceType === 'Store') {
             this.leftTableDataSource.data = []
             this.dataSource.data = [];
             this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
+            console.log(this.dataSource.data)
             this.autoSave('header')
           }
         }
@@ -537,6 +539,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                     dwg: item.dwg || '',
                     maker: item.makerReference || '',
                     model: item.model || '',
+                    material: item.material || '',
+                    description: item.description || '',
+                    remarks: item.remarks || '',
                     minRequired: item.minRequired || 0,
                     reqQty: item.reqQty || 0,
                     rob: item.rob || 0,
@@ -551,7 +556,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                     cost: item.cost || 0,
                     cbc: item.cbc || 0,
                     lowest: item.lowest || 0,
-                    remarks: item.remarks || '',
+                    itemRemarks: item.itemRemarks || '',
                     line: item.line || '',
                     componentName: item.componentName || '',
                     componentCode: item.componentCode || '',
@@ -982,7 +987,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       cost: item.assetCost || 0,
       cbc: item.cbc || 0,
       lowest: item.lowest || 0,
-      remarks: item.remarks || '',
+      itemRemarks: '',
       line: item.remarks || '',
       componentName: item.componentName || '',
       componentCode: item.componentCode || '',
@@ -1027,7 +1032,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       cost: item.assetCost || 0,
       cbc: item.cbc || 0,
       lowest: item.lowest || 0,
+      itemRemarks: '',
       remarks: item.remarks || '',
+      material: item.material || '',
+      description: item.description || '',
       line: item.remarks || '',
       componentName: item.componentName || '',
       componentCode: item.componentCode || '',
@@ -1311,7 +1319,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   getCartItems(status) {
 
     this.shipmasterService.GetCartItemsInfo(status).subscribe(res => {
-
+      debugger
       if (this.defaultOrderType[0] === 'Service' || this.defaultOrderType[0] === 'Spare') {
         this.spareItemDataSource.data = res.data.map(item => {
 
@@ -1322,18 +1330,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           }
           return spareMaster
         }).filter(spareMaster => spareMaster)
-
+        console.log(this.spareItemDataSource.data)
       }
       else if (this.defaultOrderType[0] === 'Store') {
         this.storeItemDataSource.data = res.data.map(item => {
-
+          debugger
           this.cartItemId = 'shipStoreId';
           const storeMaster = item.shipStore;
           if (storeMaster)
             storeMaster.requiredQuantity = item.requiredQuantity
           return storeMaster
         }).filter(store => store)
-
+        console.log(this.storeItemDataSource.data)
       }
     })
   }
@@ -1377,7 +1385,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             itemName: item.shipSpares.inventoryName || '',
             partNo: item.shipSpares.partNo || '',
             dwg: item.drawingNo || '',
-            maker: item.components.maker.makerName || '',
+            maker: item.shipSpares.makerReference || '',
             model: item.components.modelNo || '',
             minRequired: item.minRequired || 0,
             reqQty: item.reqQty || 0,
@@ -1393,7 +1401,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             cost: item.shipSpares.assetCost || 0,
             cbc: item.cbc || 0,
             lowest: item.lowest || 0,
-            remarks: item.remarks || '',
+            itemRemarks: '',
             line: item.line || '',
             componentName: item.components.shipComponentName || '',
             componentCode: item.components.shipComponentCode || '',
@@ -1411,6 +1419,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             storageLocation: item.storageLocation || '',
             attachments: item.attachments || '',
             availableQty: item.shipSpares.minimumLevel,
+            itemSpec: item.makerReference || '' + ' ' + item.remarks || '',
             editMode: false,
           }));
           if (this.reqId) {
@@ -1455,7 +1464,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           cost: item.assetCost || 0,
           cbc: item.cbc || 0,
           lowest: item.lowest || 0,
-          remarks: item.remarks || '',
+          itemRemarks: '',
           line: item.line || '',
           componentName: item.group.groupName || '',
           componentCode: item.group.groupCode || '',
@@ -1472,6 +1481,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           additionalRemarks: item.additionalRemarks || '',
           storageLocation: item.storageLocation || '',
           attachments: item.attachments || '',
+          description: item.description || '',
+          material: item.material || '',
+          remarks: item.remarks || '',
           editMode: false,
         }))
         if (this.reqId) {
@@ -1565,7 +1577,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         cost: item.cost || 0,
         cbc: item.cbc || 0,
         lowest: item.lowest || 0,
-        remarks: item.remarks || '',
+        itemRemarks: item.itemRemarks || '',
         line: item.line || '',
         componentName: item.componentName || '',
         componentCode: item.componentCode || '',
@@ -1581,6 +1593,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         asset: item.asset || false,
         additionalRemarks: item.additionalRemarks || '',
         storageLocation: item.storageLocation || '',
+        remarks: item.remarks || '',
+        description: item.description || '',
+        material: item.material || '',
         attachments: item.attachments || '',
       };
       this.items.push(newItem);
@@ -1651,6 +1666,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (this.reqId)
       this.requisitionService.getItemsByReqId(this.reqId)
         .subscribe(response => {
+          debugger
           this.flag = status;
           this.dataSource.data = [];
           this.zone.run(() => {

@@ -53,6 +53,7 @@ export class RequisitionslistComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   Vessels: any;
   selectedVesselId: number = 0;
+  selectedVesselGroupId: number = 0;
   targetLoc: string;
   VesselId: any;
   vesselcode: any;
@@ -63,11 +64,11 @@ export class RequisitionslistComponent implements OnInit {
   GetCompoAccCode: any;
   GetStoreAccCode: any;
   GetSpareAccCode: any;
-  myFleet:any;
-  fullVesselList:any;
+  myFleet: any;
+  fullVesselList: any;
 
 
-  constructor(private sideNavService: SideNavService, private route: Router,private authStatusService: AuthStatusService,
+  constructor(private sideNavService: SideNavService, private route: Router, private authStatusService: AuthStatusService,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService,
     private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe, private shipmasterService: ShipmasterService,
     private exportExcelService: ExportExcelService, private pmsgroupService: PmsgroupService) {
@@ -128,25 +129,23 @@ export class RequisitionslistComponent implements OnInit {
   loadUserFleetData() {
     this.userManagementService.loadUserFleet(0, this.authStatusService.userId())
       .subscribe(response => {
-        this.myFleet= response.data; 
+        this.myFleet = response.data;
       });
   }
-  filteredVessels(id)
-  {
+  filteredVessels(id) {
     debugger
-    this.VesselId=null;
-    var vesselList=this.myFleet.filter(x=>x.userFleetId==id)[0]["vessels"];
+    this.VesselId = null;
+    var vesselList = this.myFleet.filter(x => x.userFleetId == id)[0]["vessels"];
 
-   if(vesselList!=null || vesselList!=undefined)
-   {        
-    this.Vessels=this.fullVesselList.filter(x=>vesselList.split(",").includes(x.vesselId.toString()));
-    // this.searchForm.controls.vesselId.setValue('');
-   }    
+    if (vesselList != null || vesselList != undefined) {
+      this.Vessels = this.fullVesselList.filter(x => vesselList.split(",").includes(x.vesselId.toString()));
+      // this.searchForm.controls.vesselId.setValue('');
+    }
 
     // this.sfm.fleetId.setValue(id);       
     // this.page = 1; this.currentPage = 0;   
     // this.loadShipComponentList(this.sfm.componentId.value, this.searchForm.controls.type.value);
-  }  
+  }
 
 
   private loadScript(scriptUrl: string): void {
@@ -193,7 +192,7 @@ export class RequisitionslistComponent implements OnInit {
         }
         else {
           this.Vessels = response.data;
-          this.fullVesselList=response.data;
+          this.fullVesselList = response.data;
         }
       })
   }

@@ -176,6 +176,10 @@ export class RequisitionService {
   }
   //#endregion
 
+  getInventoryType(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterInventoryType/${status}`, httpOptions);
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('An error occurred:', error.error.message);

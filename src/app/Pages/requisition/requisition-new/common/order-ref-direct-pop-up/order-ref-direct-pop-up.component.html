@@ -162,8 +162,8 @@
         <mat-cell *matCellDef="let row">{{ row.inventoryName }}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="componentName">
-        <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
-        <mat-cell *matCellDef="let row">{{ row.componentName }}</mat-cell>
+        <mat-header-cell *matHeaderCellDef>Group Name</mat-header-cell>
+        <mat-cell class="ellipsis-text" [title]="row.group.groupName" *matCellDef="let row">{{ row.group.groupName }}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="itemCode">
         <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>

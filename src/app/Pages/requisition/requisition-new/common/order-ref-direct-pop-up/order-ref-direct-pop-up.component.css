@@ -148,3 +148,8 @@
   .mat-tree-node  a {
     color: var(--pms-headings-color) !important;
   }
+  .ellipsis-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
