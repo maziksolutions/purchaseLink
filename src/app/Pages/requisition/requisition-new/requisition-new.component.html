@@ -437,17 +437,28 @@
     <div class="card-body collapse" id="delivery" formGroupName="delivery">
       <div class="row">
         <div class="col-lg mb-3">
-          <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
+          <!-- <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
             Expected Delivery Port</h6>
-          <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Expected Port</h6>
-          <fieldset class="form-group mb-0">
-            <select class="form-control form-small form-select" formControlName="expectedDeliveryPort" required
+          <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Expected Port</h6> -->
+
+          <fieldset class="form-group mb-0 serarch-container">
+            <mat-form-field class="custom-form-field">
+              <input type="text" [placeholder]="myPlaceholder" aria-label="Port" matInput [formControl]="myControl" [matAutocomplete]="auto">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let port of filteredPorts | async" [value]="port">
+                  {{port.locationName}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+
+            <!-- <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchTerm" />           -->
+            <!-- <select class="form-control form-small form-select" formControlName="expectedDeliveryPort" required
               (change)="autoSave('delivery')">
               <option value="" selected disabled>Select </option>
               <option *ngFor="let item of portList" value="{{item.locationName}}">
                 {{item.locationName}}
               </option>
-            </select>
+            </select> -->
           </fieldset>
         </div>
         <div class="col-lg mb-3">

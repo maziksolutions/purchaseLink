@@ -129,6 +129,7 @@ export class RequisitionslistComponent implements OnInit {
   loadUserFleetData() {
     this.userManagementService.loadUserFleet(0, this.authStatusService.userId())
       .subscribe(response => {
+       
         this.myFleet = response.data;
       });
   }
@@ -181,7 +182,7 @@ export class RequisitionslistComponent implements OnInit {
   LoadVessel() {
     this.vesselService.getVessels(0)
       .subscribe(response => {
-
+        debugger
         if (this.targetLoc == 'Vessel') {
           const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
           if (filteredVessels.length > 0) {

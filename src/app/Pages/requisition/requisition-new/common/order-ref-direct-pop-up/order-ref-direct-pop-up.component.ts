@@ -66,7 +66,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     public requisitionService: RequisitionService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private zone: NgZone) { }
 
   ngOnInit(): void {
-
+   
     this.modalTitle = this.data.modalTitle;
     this.orderType = this.data.orderType;
     this.ComponentType = this.data.componentType;
@@ -79,7 +79,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       this.bindData(this.dataSourceTree);
     if (this.groupTableSourceTree) {
       this.bindGroup(this.groupTableSourceTree)
-    }
+    }    
   }
 
   closeModal(): void {
@@ -118,15 +118,25 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       if (checked && !this.apiCalled) {
         this.requisitionService.checkAccountCode(accountCode, this.orderTypeId).subscribe(async res => {
           if (res.status === true) {
-            await this.matchingAccountCodes.push(res.accounts)
-            if (this.matchingAccountCodes[0].length > 0) {
+            if(res.accounts.length > 0){
+              await this.matchingAccountCodes.push(res.accounts)
+              if (this.matchingAccountCodes[0].length > 0) {
+                this.apiCalled = true
+                if (checked) {
+                  this.spareItemSelection.select(item);
+                } else {
+                  this.spareItemSelection.deselect(item);
+                }
+              }
+            }else {
+              this.matchingAccountCodes.push(accountCode)
               this.apiCalled = true
               if (checked) {
                 this.spareItemSelection.select(item);
               } else {
                 this.spareItemSelection.deselect(item);
               }
-            }
+            }           
           }
         })
       }
@@ -158,6 +168,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
   //#region  this is for StoreItems Table Chekcbox handling code  
   onCheckboxStoreItemChange(event: MatCheckboxChange, checked: boolean, item: any): void {
+    debugger
     if (this.storeItemSelection.selected.length === 0) {
       this.matchingAccountCodes = [];
       this.apiCalled = false;
@@ -166,16 +177,27 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     if (accountCode !== null && accountCode !== undefined) {
       if (checked && !this.apiCalled) {
         this.requisitionService.checkAccountCode(accountCode, this.orderTypeId).subscribe(async res => {
+          debugger
           if (res.status === true) {
-            await this.matchingAccountCodes.push(res.accounts)
-            if (this.matchingAccountCodes[0].length > 0) {
-              this.apiCalled = true
-              if (checked) {
-                this.storeItemSelection.select(item);
+            if (res.accounts.length > 0) {
+              await this.matchingAccountCodes.push(res.accounts)
+              if (this.matchingAccountCodes[0].length > 0) {
+                this.apiCalled = true
+                if (checked) {
+                  this.storeItemSelection.select(item);
+                } else {
+                  this.storeItemSelection.deselect(item);
+                }
               } else {
-                this.storeItemSelection.deselect(item);
+                if (checked) {
+                  this.storeItemSelection.select(item);
+                } else {
+                  this.storeItemSelection.deselect(item);
+                }
               }
             } else {
+              this.matchingAccountCodes.push(accountCode)
+              this.apiCalled = true
               if (checked) {
                 this.storeItemSelection.select(item);
               } else {
@@ -186,6 +208,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         })
       }
       else {
+        debugger
         const isInMatchingList = this.matchingAccountCodes[0].includes(accountCode.toString());
         if (isInMatchingList) {
           if (checked) {
@@ -528,7 +551,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           }
         })
       } else {
-        
+
         if (this.matchingAccountCodes[0] === undefined) {
           checkbox.checked = false;
           if (node.selected) {

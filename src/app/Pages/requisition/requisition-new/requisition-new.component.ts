@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ChangeDetectorRef, NgZone, QueryList, ViewChildren, AfterViewInit, OnDestroy, AfterViewChecked } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -25,7 +25,7 @@ import { VesselManagementService } from 'src/app/services/vessel-management.serv
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
 import { RequisitionService } from 'src/app/services/requisition.service';
 import { parse } from 'path';
-import { map, filter, debounce, debounceTime, distinctUntilChanged, isEmpty } from 'rxjs/operators';
+import { map, filter, debounce, debounceTime, distinctUntilChanged, isEmpty, startWith } from 'rxjs/operators';
 import { isNull } from '@angular/compiler/src/output/output_ast';
 import { AutoSaveService } from 'src/app/services/auto-save.service';
 import { PmsgroupService } from 'src/app/services/pmsgroup.service';
@@ -33,13 +33,14 @@ import { saveAs } from 'file-saver';
 import { DatePipe } from '@angular/common';
 import { TypemasterService } from 'src/app/services/typemaster.service';
 import { DomSanitizer } from '@angular/platform-browser';
-
+import { Observable } from 'rxjs';
 import { Subscription, concat } from 'rxjs';
 import { OrderRefPopUpViewComponent } from './common/order-ref-pop-up-view/order-ref-pop-up-view.component';
 import { OrderRefDirectPopUpComponent } from './common/order-ref-direct-pop-up/order-ref-direct-pop-up.component';
 import { EditReqQtyComponent } from './common/edit-req-qty/edit-req-qty.component';
 import { HostListener } from '@angular/core';
 import { ReqItemsModel, ServiceTypeData } from '../../Models/reqItems-model';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
@@ -61,6 +62,10 @@ export interface componentTableItems {
   componentName: string;
   checkboxState: boolean;
   checkboxDisabled: boolean;
+}
+
+export interface Port {
+  locationName: string;
 }
 
 @Component({
@@ -118,8 +123,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   Departments: any;
   selectedVesselId: any = '0';
   selectedOrderTypeId: any = '0';
-  // Shipcomponent: any;
-  portList: any;
+  // Shipcomponent: any;  
   deliveryForm: FormGroup;
   genericCheckbox: boolean = false;
   internalCheckbox: boolean = false;
@@ -211,6 +215,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   GetStoreAccCode: any;
   GetSpareAccCode: any;
   filteredOrderTypes: any
+  searchTerm: string = '';
+  myControl = new FormControl();
+  portList: Port[] = [];
+  filteredPorts: Observable<Port[]>;
+  showSearchInput: boolean = true;
+  myPlaceholder: string = this.defaultOrderType[0] === 'Service' ? 'Expected Port' : 'Expected Delivery Port';
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -1241,6 +1251,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           // this.LoadUserDetails();
           this.getReqData();
         } else {
+          this.saveValue = ''
+          this.displayValue = ''
           // this.LoadUserDetails();
           this.LoadOrdertype();
           this.LoadProjectnameAndcode();
@@ -1284,12 +1296,41 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       return res.data;
     }))
   }
+
   loadPortList() {
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
         this.portList = response.data;
-      })
+        this.filteredPorts = this.myControl.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filterPorts(value))
+        );
+      });
   }
+  displayFn(port: any): string {
+    return port && port.locationName ? port.locationName : '';
+  }
+  private _filterPorts(value: string | Port): Port[] {
+    const filterValue = (typeof value === 'string' ? value : value?.locationName || '').toLowerCase();
+    return this.portList.filter(port => port.locationName.toLowerCase().includes(filterValue));
+  }
+  filterPorts(searchTerm: string) {
+    if (searchTerm.trim().length > 0) {
+      this.showSearchInput = false;
+      this.filteredPorts = this.myControl.valueChanges.pipe(
+        startWith(searchTerm),
+        map(value => this._filterPorts(value))
+      );
+    } else {
+      this.showSearchInput = true;
+      this.filteredPorts = this.myControl.valueChanges.pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.locationName),
+        map(name => name ? this._filterPorts(name) : this.portList.slice())
+      );
+    }
+  }
+
 
   LoadShipCompnent(status) {
     this.requisitionService.getTemplateTree().subscribe(res => {

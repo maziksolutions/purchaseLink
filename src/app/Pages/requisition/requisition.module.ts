@@ -17,6 +17,8 @@ import { OrderRefPopUpViewComponent } from './requisition-new/common/order-ref-p
 import { OrderRefDirectPopUpComponent } from './requisition-new/common/order-ref-direct-pop-up/order-ref-direct-pop-up.component';
 import { EditReqQtyComponent } from './requisition-new/common/edit-req-qty/edit-req-qty.component';
 import { MatTreeModule } from '@angular/material/tree';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import { MatTreeModule } from '@angular/material/tree';
     RequisitionRoutingModule,
     MatTreeModule,
     MatExpansionModule,
+    MatAutocompleteModule,
+    MatInputModule,
     FormsModule, ReactiveFormsModule, DirectivesModule, HttpClientModule, AppMaterialModule,
     NgMultiSelectDropDownModule.forRoot()
   ],
