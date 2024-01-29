@@ -384,7 +384,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       ? parseInt(accountCodeToCheck, 10)
       : accountCodeToCheck
     if (!isNaN(accountCodeAsNumber)) {
-      if (node.selected && !this.apiCalled && this.selectedGroupIds.length === 0) {
+      if (node.selected && !this.apiCalled && this.selectedComponentIds.length === 0) {
         this.requisitionService.checkAccountCode(accountCodeToCheck, this.orderTypeId).subscribe(res => {
           debugger
           if (res.status === true) {
@@ -429,7 +429,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     }
     else {
       debugger
-      if (this.matchingAccountCodes[0].length > 0) {
+      if (this.matchingAccountCodes.length > 0) {
         if (isNaN(accountCodeAsNumber)) {
           checkbox.checked = false;
           if (node.selected) {
@@ -452,6 +452,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           }
         }
       } else {
+        debugger
         this.handleSelectedComponent(node, node.selected ?? false)
       }
     }
@@ -574,7 +575,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       }
     } else {
 
-      if (this.matchingAccountCodes[0].length > 0) {
+      if (this.matchingAccountCodes.length > 0) {
         if (isNaN(accountCodeAsNumber)) {
           checkbox.checked = false;
           if (node.selected) {
