@@ -64,8 +64,18 @@ export interface componentTableItems {
   checkboxDisabled: boolean;
 }
 
+interface Country {
+  countryId: number;
+  countryName: string;
+  countryCode: string;
+}
+
 export interface Port {
+  locationId: number;
+  countryId: number;
+  location: string;
   locationName: string;
+  countryMaster?: Country;
 }
 
 @Component({
@@ -220,7 +230,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   portList: Port[] = [];
   filteredPorts: Observable<Port[]>;
   showSearchInput: boolean = true;
-  myPlaceholder: string = this.defaultOrderType[0] === 'Service' ? 'Expected Port' : 'Expected Delivery Port';
+  myPlaceholder: string = this.defaultOrderType[0] === 'Service' ? 'Expected Port' : 'Expected Delivery Port'; 
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -640,14 +650,20 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     else if (partName == 'delivery') {
 
       if (this.reqId) {
-
+        debugger
         const formPart = this.RequisitionForm.get(partName);
-        formPart?.patchValue({
-          reqIds: this.reqId,
-          vesselId: this.requisitionFullData.vesselId
-        })
+        const selectedPort = this.myControl.value;
+        if (selectedPort) {
+          // const concatenatedValue = selectedPort.location + ',' + selectedPort.locationName;
+          formPart?.patchValue({
+            reqIds: this.reqId,
+            expectedDeliveryPort: selectedPort.locationName,
+            vesselId: this.selectedVesselId
+          })
+        }
+
         if (partName == 'delivery' && formPart != null && formPart.valid) {
-          this.requisitionFullData.vesselId
+          // this.requisitionFullData.vesselId
           this.requisitionService.addDeliveryAddress(formPart.value)
             .subscribe(data => {
 
@@ -907,7 +923,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.selectedVesselId = requisitionData.vesselId;
         const objProcR = requisitionData.orderReference.split(',');
         this.getPortList().subscribe(res => {
-
+          this.loadPortList()
           this.portList = res;
           this.loadDeliveryInfo();
         });
@@ -1120,13 +1136,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   loadDeliveryInfo() {
     this.requisitionService.getDeliveryInfoByReqId(this.reqId).subscribe(res => {
-
+      debugger
       const deliveryInfoData = res.data;
       if (deliveryInfoData) {
+        debugger
+        const selectedPort = this.portList.find(port => port.locationName === deliveryInfoData.expectedDeliveryPort);
+        if (selectedPort) {
+          this.myControl.setValue(selectedPort);
+        }
         const delivery = this.RequisitionForm.get('delivery');
         delivery?.patchValue({
           delInfoId: deliveryInfoData.delInfoId,
-          expectedDeliveryPort: deliveryInfoData.expectedDeliveryPort,
+          // expectedDeliveryPort: this.portList.find(deliveryInfoData.expectedDeliveryPort),
           expectedDeliveryDate: this.formatDate(deliveryInfoData.expectedDeliveryDate),
           vesselETA: this.formatDate(deliveryInfoData.vesselETA),
           vesselETB: this.formatDate(deliveryInfoData.vesselETB),
@@ -1135,6 +1156,13 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     })
   }
+  // findPortByLocationName(locationName: string): any {
+  //   debugger
+  //   // Splitting the locationName by comma
+  //   const [_, name] = locationName.split(','); // Using '_' to ignore the first part
+  //   // Finding the corresponding port object based on the locationName
+  //   return this.portList.find(port => port.locationName === name.trim());
+  // }
 
   private formatDate(dateString: string): string {
     return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
@@ -1300,7 +1328,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   loadPortList() {
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
-        this.portList = response.data;
+        debugger
+        this.portList = response.data.filter(data => data.countryMaster && data.countryMaster.countryName);
+
+        // console.log(this.portList)
         this.filteredPorts = this.myControl.valueChanges.pipe(
           startWith(''),
           map(value => this._filterPorts(value))
@@ -1308,13 +1339,27 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       });
   }
   displayFn(port: any): string {
-    return port && port.locationName ? port.locationName : '';
+    debugger
+    if (port && port.locationName && port.countryMaster && port.countryMaster.countryName){
+      return `${port.locationName}, ${port.countryMaster.countryName}`;
+    } else if (port && port.locationName) {
+      return port.locationName;
+    } else {
+      return '';
+    }
   }
   private _filterPorts(value: string | Port): Port[] {
-    const filterValue = (typeof value === 'string' ? value : value?.locationName || '').toLowerCase();
-    return this.portList.filter(port => port.locationName.toLowerCase().includes(filterValue));
+    debugger
+    const filterValue = (typeof value === 'string' ? value : value?.locationName || '' ).toLowerCase();
+    
+    return this.portList.filter(port => {      
+      const locationName = port.locationName.toLowerCase();
+      const countryName = port.countryMaster?.countryName?.toLowerCase();      
+       return locationName.includes(filterValue) || countryName?.includes(filterValue);
+    });
   }
   filterPorts(searchTerm: string) {
+    debugger
     if (searchTerm.trim().length > 0) {
       this.showSearchInput = false;
       this.filteredPorts = this.myControl.valueChanges.pipe(

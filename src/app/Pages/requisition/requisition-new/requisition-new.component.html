@@ -443,10 +443,11 @@
 
           <fieldset class="form-group mb-0 serarch-container">
             <mat-form-field class="custom-form-field">
-              <input type="text" [placeholder]="myPlaceholder" aria-label="Port" matInput [formControl]="myControl" [matAutocomplete]="auto">
+              <input type="text" [placeholder]="myPlaceholder" aria-label="Port" matInput [formControl]="myControl"
+                [matAutocomplete]="auto">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                 <mat-option *ngFor="let port of filteredPorts | async" [value]="port">
-                  {{port.locationName}}
+                  {{port.locationName}} {{ port.countryMaster ? ', ' + port.countryMaster.countryName : '' }}
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
