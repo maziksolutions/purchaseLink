@@ -1,15 +1,13 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { SideNavService } from './sidenavi-service';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SwalToastService } from 'src/app/services/swal-toast.service';
-import { error } from 'console';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
 import { RequisitionService } from 'src/app/services/requisition.service';
+import { SideNavService } from 'src/app/services/sidenavi-service';
+import { SwalToastService } from 'src/app/services/swal-toast.service';
 
 export interface CommentData {
   commentId: number;
@@ -17,7 +15,6 @@ export interface CommentData {
   commentData: string;
 };
 
-declare var SideNavi: any;
 @Component({
   selector: 'app-sidenavi-right',
   templateUrl: './sidenavi-right.component.html',
@@ -38,23 +35,22 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private sideNaviService: SideNavService, private fb: FormBuilder, private reqService: RequisitionService,
+  constructor( private fb: FormBuilder, private sidenavService:SideNavService, private reqService:RequisitionService,
     private swal: SwalToastService, private activatedRoute: ActivatedRoute, private router: Router) {
+      this.commentsForm = this.fb.group({
+        commentId: 0,
+        commentType: ['', Validators.required],
+        commentData: ['', Validators.required]
+      });
+     }
 
-    this.commentsForm = this.fb.group({
-      commentId: 0,
-      commentType: ['', Validators.required],
-      commentData: ['', Validators.required]
-    });
-  }
-
-  get fm() { return this.commentsForm.controls }
+     get fm() { return this.commentsForm.controls }
 
   ngOnInit(): void {
     this.loadData(0);
-    this.isActive = this.sideNaviService.getActiveComponent();
+    this.isActive = this.sidenavService.getActiveComponent();
 
-    this.sideNaviService.commentTypeChange$.subscribe((commentType: string) => {
+    this.sidenavService.commentTypeChange$.subscribe((commentType: string) => {
 
       this.comments = [];
       this.loadData(0, commentType);
@@ -67,7 +63,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
       this.destroy$.next();
       this.destroy$.complete();
     }
-    this.sideNaviService.destroySidenav();
+    this.sidenavService.destroySidenav();
   }
 
   onSubmit(form: any) {
@@ -168,7 +164,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   }
 
   setActiveComponent(comName: boolean): void {
-    this.sideNaviService.setActiveComponent(comName);
+    this.sidenavService.setActiveComponent(comName);
     this.isActive = comName;
   }
 

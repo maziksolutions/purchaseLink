@@ -4,9 +4,7 @@ import { PurchaseMasterService } from '../../../services/purchase-master.service
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ImportDataComponent } from '../../common/import-data/import-data.component';
 import { DataSource, SelectionModel } from '@angular/cdk/collections';
 import { ViewChild } from '@angular/core';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
@@ -14,9 +12,6 @@ import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { RightsModel } from '../../Models/page-rights';
-import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
-import { response } from '../../Models/response-model';
-import { SideNavService } from '../sidenavi-right/sidenavi-service';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -24,9 +19,7 @@ import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
 import { VesselManagementService } from 'src/app/services/vessel-management.service';
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
 import { RequisitionService } from 'src/app/services/requisition.service';
-import { parse } from 'path';
 import { map, filter, debounce, debounceTime, distinctUntilChanged, isEmpty, startWith } from 'rxjs/operators';
-import { isNull } from '@angular/compiler/src/output/output_ast';
 import { AutoSaveService } from 'src/app/services/auto-save.service';
 import { PmsgroupService } from 'src/app/services/pmsgroup.service';
 import { saveAs } from 'file-saver';
@@ -40,7 +33,7 @@ import { OrderRefDirectPopUpComponent } from './common/order-ref-direct-pop-up/o
 import { EditReqQtyComponent } from './common/edit-req-qty/edit-req-qty.component';
 import { HostListener } from '@angular/core';
 import { ReqItemsModel, ServiceTypeData } from '../../Models/reqItems-model';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { SideNavService } from 'src/app/services/sidenavi-service';
 
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
@@ -177,7 +170,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   selectedListItem: { itemName: any; id: any; }[] = [];
   itemsId: string = '';
-  private selectedItemsSubscription: Subscription;
 
   selectedComponents: componentTableItems[] = [];
   isReqApproved: boolean = false;
@@ -206,7 +198,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   targetLoc: any;
   fileUrlss: any;
   filenamecut: string;
-  private subscription: Subscription;
 
   attachmentItemdataSource = new MatTableDataSource<any>();
   selectionItemAttachment = new SelectionModel<any>(true, []);

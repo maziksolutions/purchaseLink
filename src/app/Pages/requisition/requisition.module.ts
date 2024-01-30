@@ -4,8 +4,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { RequisitionRoutingModule } from './requisition-routing.module';
 import { RequisitionslistComponent } from './requisitionslist/requisitionslist.component';
 import { RequisitionNewComponent } from './requisition-new/requisition-new.component';
-import { SidenaviRightComponent } from './sidenavi-right/sidenavi-right.component';
-import { SideNavService } from './sidenavi-right/sidenavi-service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { DirectivesModule } from 'src/app/directives.module';
@@ -19,12 +17,13 @@ import { EditReqQtyComponent } from './requisition-new/common/edit-req-qty/edit-
 import { MatTreeModule } from '@angular/material/tree';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
+import { SideNavService } from 'src/app/services/sidenavi-service';
+import { SharedModule } from '../Shared/shared.module';
 
 @NgModule({
   declarations: [
     RequisitionslistComponent,
     RequisitionNewComponent,
-    SidenaviRightComponent,
     RfqlistComponent,
     RequisitionTrackingComponent,
     OrderRefPopUpViewComponent,
@@ -39,7 +38,8 @@ import { MatInputModule } from '@angular/material/input';
     MatExpansionModule,
     MatAutocompleteModule,
     MatInputModule,
-    FormsModule, ReactiveFormsModule, DirectivesModule, HttpClientModule, AppMaterialModule,
+    SharedModule,
+    FormsModule, DirectivesModule, HttpClientModule, AppMaterialModule,
     NgMultiSelectDropDownModule.forRoot()
   ],
   providers: [

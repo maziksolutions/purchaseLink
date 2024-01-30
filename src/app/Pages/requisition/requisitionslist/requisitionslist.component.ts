@@ -1,4 +1,3 @@
-import { SideNavService } from '../sidenavi-right/sidenavi-service';
 import { Subscription } from 'rxjs';
 import { Router, NavigationExtras, NavigationEnd } from '@angular/router';
 import { Component, OnInit, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
@@ -22,6 +21,7 @@ import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { environment } from 'src/environments/environment';
 import { PmsgroupService } from 'src/app/services/pmsgroup.service';
 import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
+import { SideNavService } from 'src/app/services/sidenavi-service';
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
 declare var SideNavi: any;
