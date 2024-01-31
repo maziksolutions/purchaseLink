@@ -1,4 +1,3 @@
-import { Subscription } from 'rxjs';
 import { Router, NavigationExtras, NavigationEnd } from '@angular/router';
 import { Component, OnInit, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -13,7 +12,6 @@ import { UserManagementService } from 'src/app/services/user-management.service'
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
 import { VesselManagementService } from 'src/app/services/vessel-management.service';
 import { saveAs } from 'file-saver';
-import { filter, map } from 'rxjs/operators';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { DatePipe } from '@angular/common';
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
@@ -22,16 +20,6 @@ import { environment } from 'src/environments/environment';
 import { PmsgroupService } from 'src/app/services/pmsgroup.service';
 import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
 import { SideNavService } from 'src/app/services/sidenavi-service';
-declare var $: any;
-declare let Swal, PerfectScrollbar: any;
-declare var SideNavi: any;
-
-interface Item {
-  id: number;
-  name: string;
-  quantity: number;
-  unit: string;
-}
 
 
 @Component({
@@ -69,7 +57,7 @@ export class RequisitionslistComponent implements OnInit {
 
 
   constructor(private sideNavService: SideNavService, private route: Router, private authStatusService: AuthStatusService,
-    private userManagementService: UserManagementService, private vesselService: VesselManagementService,
+    private userManagementService: UserManagementService, private vesselService: VesselManagementService, private elRef: ElementRef,
     private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe, private shipmasterService: ShipmasterService,
     private exportExcelService: ExportExcelService, private pmsgroupService: PmsgroupService) {
     this.route.events.subscribe((event) => {
@@ -81,21 +69,22 @@ export class RequisitionslistComponent implements OnInit {
 
   get fm() { return this.RequisitionForm.controls };
 
-  navigateToNewReq() {
+  // navigateToNewReq() {
 
-    this.sideNavService.destroySidenav();
+  //   this.sideNavService.destroySidenav();
 
-    const navigationExtras: NavigationExtras = {
-      queryParams: { 'reload': true }
-    };
-    this.route.navigate(['/Requisition/RequisitionsNew'], navigationExtras);
-  }
+  //   const navigationExtras: NavigationExtras = {
+  //     queryParams: { 'reload': true }
+  //   };
+  //   this.route.navigate(['/Requisition/RequisitionsNew'], navigationExtras);
+  // }
 
   ngOnInit(): void {
     debugger
     this.targetLoc = environment.location;
     this.sideNavService.setActiveComponent(false);
     this.sideNavService.initSidenav();
+
     this.RequisitionForm = this.fb.group({
       requisitionId: [0],
       originSite: ['', [Validators.required]],
@@ -126,10 +115,33 @@ export class RequisitionslistComponent implements OnInit {
     this.loadScript('assets/js/SideNavi.js');
   }
 
+  ngAfterViewInit(): void {
+    this.checkDropdownItems();
+  }
+  checkDropdownItems() {
+    debugger
+    const dropdownItems = this.elRef.nativeElement.querySelectorAll('.dropdown-item');
+    // if (dropdownItems.length === 1) {
+    //   const singleItem = dropdownItems[0] as HTMLElement;
+    //   singleItem.click();
+    // }
+  }
+
+  handleButtonClick() {
+    debugger
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    if (dropdownItems.length === 1) {
+      const singleItem = dropdownItems[0] as HTMLElement;
+      singleItem.click();
+    } else {
+      // Handle regular dropdown behavior here (e.g., show the dropdown)
+    }
+  }
+
   loadUserFleetData() {
     this.userManagementService.loadUserFleet(0, this.authStatusService.userId())
       .subscribe(response => {
-       
+
         this.myFleet = response.data;
       });
   }
@@ -271,7 +283,7 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   clear() {
-
+    debugger
     this.RequisitionForm.reset();
     this.RequisitionForm.controls.requisitionId.setValue(0);
     this.RequisitionForm.controls.originSite.setValue('');
@@ -282,7 +294,7 @@ export class RequisitionslistComponent implements OnInit {
     this.RequisitionForm.controls.departmentId.setValue('');
     this.RequisitionForm.controls.priorityId.setValue('');
     this.RequisitionForm.controls.projectNameCodeId.setValue('');
-    this.route.navigate(['/Requisition/RequisitionsNew'])
+    this.route.navigate(['/Requisition/RequisitionsNew']);
   }
 
   generateExcel() {

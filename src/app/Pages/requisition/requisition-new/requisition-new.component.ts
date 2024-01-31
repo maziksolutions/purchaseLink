@@ -982,14 +982,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   transformSpare(item: any): any {
+    debugger
     return {
       itemsId: 0,
       itemCode: item.inventoryCode || '',
       itemName: item.inventoryName || '',
-      partNo: item.partNo || '',
-      dwg: item.dwg || '',
-      maker: item.makerReference || '',
-      model: item.model || '',
+      partNo: item.spareAssembly.partNo || '',
+      dwg: item.spareAssembly.drawingNo || '',
+      maker: item.spareAssembly.components.maker.makerName || '',
+      makerReference:item.makerReference || '',
+      model: item.spareAssembly.modelNo || '',
       minRequired: item.minRequired || 0,
       reqQty: item.requiredQuantity || 0,
       rob: item.rob || 0,
@@ -1006,8 +1008,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       lowest: item.lowest || 0,
       itemRemarks: '',
       line: item.remarks || '',
-      componentName: item.componentName || '',
-      componentCode: item.componentCode || '',
+      componentName: item.spareAssembly.components.shipComponentName || '',
+      componentCode: item.spareAssembly.components.shipComponentCode || '',
       EquipmentName: item.EquipmentName || '',
       prevReqdQty: item.prevReqdQty || '',
       approvedQty: item.approvedQty || '',
@@ -1077,12 +1079,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   getCartItemsInEditReq(status) {
     return this.shipmasterService.GetCartItemsInfo(status).pipe(map(res => {
+      debugger
       if (this.defaultOrderType[0] === 'Service' || this.defaultOrderType[0] === 'Spare') {
         return this.spareItemDataSource.data = res.data.map(item => {
-          this.cartItemId = 'shipSpareId';
+          this.cartItemId = 'shipSpareId';          
           const spareMaster = item.shipSpareMaster;
           if (spareMaster) {
-            spareMaster.requiredQuantity = item.requiredQuantity
+            spareMaster.requiredQuantity = item.requiredQuantity,
+            spareMaster.spareAssembly =item.shipComponentSparesLink
           }
           return spareMaster
         }).filter(spareMaster => spareMaster)
@@ -1403,7 +1407,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.cartItemId = 'shipSpareId';
           const spareMaster = item.shipSpareMaster;
           if (spareMaster) {
-            spareMaster.requiredQuantity = item.requiredQuantity
+            spareMaster.requiredQuantity = item.requiredQuantity,
+            spareMaster.spareAssembly =item.shipComponentSparesLink
           }
           return spareMaster
         }).filter(spareMaster => spareMaster)

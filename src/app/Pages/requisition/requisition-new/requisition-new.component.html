@@ -889,7 +889,7 @@
             </ng-container>
             <ng-container matColumnDef="make">
               <mat-header-cell *matHeaderCellDef>Make</mat-header-cell>
-              <mat-cell class="ellipsis-text" *matCellDef="let row" [title]="row.make">{{ row.make }}</mat-cell>
+              <mat-cell class="ellipsis-text" *matCellDef="let row" [title]="row.maker">{{ row.maker }}</mat-cell>
             </ng-container>
             <ng-container matColumnDef="model">
               <mat-header-cell *matHeaderCellDef>Model</mat-header-cell>
@@ -926,7 +926,7 @@
 
             <ng-container matColumnDef="itemSpec">
               <mat-header-cell *matHeaderCellDef>Item Spec</mat-header-cell>
-              <mat-cell *matCellDef="let row"> {{ row.maker ? row.maker + '-' : '' }}
+              <mat-cell *matCellDef="let row"> {{ row.makerReference ? row.makerReference + '-' : '' }}
                 {{ row.material ? row.material + '-' : '' }}
                 {{ row.description ? row.description + '-' : '' }}
                 {{ row.remarks ? row.remarks : '' }}</mat-cell>
@@ -1051,12 +1051,8 @@
           <div class="col-lg-9" *ngFor="let item of listViewItems">
             <div class="row mb-4">
               <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Q.App</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.itemCode}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">PUR</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.itemCode}}</h6>
+                <h6 class="text-900 mb-2">Line #</h6>
+                <h6 class="mb-0 fs--2 text-500">{{ listViewItems.indexOf(item) + 1 }}</h6>
               </div>
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Item No</h6>
@@ -1067,70 +1063,8 @@
                 <h6 class="mb-0 fs--2 text-500">{{item.itemName}}</h6>
               </div>
               <div class="col-lg-2">
-                <h6 class="text-900 mb-2">LPP</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.lpp}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">LPD</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.lpd}}</h6>
-              </div>
-            </div>
-            <div class="row mb-4">
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">AQ</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.aq}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Unit</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.unit}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">UC</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.uc}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">QU</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.qu}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">DT</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.dt}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">ID</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.id}}</h6>
-              </div>
-            </div>
-            <div class="row mb-4">
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Cost</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.cost}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">CBC</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.cbc}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Lowest</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.lowest}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Remark</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.remarks}}</h6>
-              </div>
-            </div>
-            <div class="row mb-4">
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Line #</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.line}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Item Name</h6>
+                <h6 class="text-900 mb-2">Equipment Name</h6>
                 <h6 class="mb-0 fs--2 text-500">{{item.componentName}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Item Code</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.componentCode}}</h6>
               </div>
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Drawing #</h6>
@@ -1138,75 +1072,101 @@
               </div>
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Maker / Model</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.make}} / {{item.model}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Part #</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.part}}</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.maker}} / {{item.model}}</h6>
               </div>
             </div>
+
             <div class="row mb-4">
               <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Equipment Name</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.EquipmentName}}</h6>
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Prev. Reqd Qty</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.prevReqdQty}} (PCS)</h6>
+                <h6 class="text-900 mb-2">Part #</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.partNo}}</h6>
               </div>
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Requested Qty</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.enterQuantity}}</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.reqQty}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Unit</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.unit}} (PCS)</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Prev. Reqd Qty</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.prevReqdQty}}</h6>
               </div>
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Approved Qty</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.approvedQty}} (PCS)</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.approvedQty}}</h6>
               </div>
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Qty in Use</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.qtyInUse}} (PCS)</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.qtyInUse}} </h6>
               </div>
+            </div>
+
+            <div class="row mb-4">
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Qty RoB</h6>
                 <h6 class="mb-0 fs--2 text-500">{{item.qtyRob}}</h6>
               </div>
-            </div>
-            <div class="row mb-4">
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Min Required</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.rob}} (PCS)</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.minRequired}}</h6>
               </div>
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Reorder Qty</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.reorderQty}} (PCS)</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.reorderQty}}</h6>
               </div>
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Reorder Level</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.reorderLevel}} (PCS)</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.reorderLevel}}</h6>
               </div>
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Max Quantity</h6>
-                <h6 class="mb-0 fs--2 text-500">{{item.maxQuantity}} (PCS)</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.maxQuantity}}</h6>
               </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Split</h6>
-                <input type="checkbox" class="form-check">
-              </div>
-              <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Asset</h6>
-                <input type="checkbox" class="form-check">
-              </div>
-            </div>
-            <div class="row mb-4">
-
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Additional Remarks</h6>
                 <h6 class="mb-0 fs--2 text-500">{{item.additionalRemarks}}</h6>
               </div>
+            </div>
+
+            <div class="row mb-4">
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Storage Location</h6>
                 <h6 class="mb-0 fs--2 text-500">{{item.storageLocation}}</h6>
               </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Q.App</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.qu}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">PUR</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.pur}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">LPP</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.lpp}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">LPD</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.lpd}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">AQ</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.aq}}</h6>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">ID</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.id}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Remark</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.remarks}}</h6>
+              </div>
+
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Attachents</h6>
                 <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#attachents"><i
