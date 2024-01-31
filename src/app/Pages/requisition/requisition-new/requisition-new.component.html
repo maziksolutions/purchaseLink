@@ -229,7 +229,7 @@
             <h6 class="text-900 mb-2">Site Required at</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="vesselId"
-                [(ngModel)]="selectedVesselId" required>
+                [(ngModel)]="selectedVesselId" required (change)="LoadProjectnameAndcode()">
                 <option value="0" selected disabled>Select Site Required at</option>
                 <option *ngFor="let item of  Vessels" id="abc" value="{{item.vesselId}}">
                   {{item.vesselName | titlecase}}
@@ -243,7 +243,7 @@
             <h6 class="text-900 mb-1">Project Name / Code</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="projectNameCodeId"
-                (change)="autoSave('header')" (change)="selectProjectCode($event)" required>
+                 (change)="selectProjectCode($event)" required>
                 <option value="" selected disabled>Select </option>
                 <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
                   {{item.projectName|titlecase }}-{{item.projectCode}}
@@ -404,7 +404,7 @@
 <!--Account Form End Here -->
 
 <!--Delivery Form Start Here -->
-<div class="card mb-3">
+<div class="card mb-3" *ngIf="reqId !== undefined">
   <form (ngSubmit)="onSubmit(deliveryForm)" [formGroup]="RequisitionForm">
     <div class="card-header bg-light">
       <div class="row flex-between-end">
@@ -639,7 +639,7 @@
 <!--Delivery Form End Here -->
 
 <!--Items Form Start Here -->
-<div class="card mb-3" *ngIf="defaultOrderType[0]==='Spare' || defaultOrderType[0]==='Store'">
+<div class="card mb-3" *ngIf="reqId !== undefined && (defaultOrderType[0]==='Spare' || defaultOrderType[0]==='Store')">
   <div class="card-header bg-light">
     <div class="row flex-between-end">
       <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#items"
@@ -1244,7 +1244,7 @@
 <!--Items Form End Here -->
 
 <!--Service Request Start Here-->
-<div class="card mb-3" *ngIf="defaultOrderType[0]==='Service'">
+<div class="card mb-3" *ngIf="reqId !== undefined && defaultOrderType[0]==='Service'">
   <div class="card-header bg-light">
     <div class="row flex-between-end">
       <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#services"
