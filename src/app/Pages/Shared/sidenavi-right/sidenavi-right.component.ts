@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { RequisitionService } from 'src/app/services/requisition.service';
 import { SideNavService } from 'src/app/services/sidenavi-service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
+import { environment } from 'src/environments/environment';
 
 export interface CommentData {
   commentId: number;
@@ -30,8 +31,8 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   isActive = false;
-
   selectedComment: any = null;
+  targetLoc: string;
 
   private destroy$ = new Subject<void>();
 
@@ -47,8 +48,16 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
      get fm() { return this.commentsForm.controls }
 
   ngOnInit(): void {
+    debugger
+    this.targetLoc = environment.location;
     this.loadData(0);
     this.isActive = this.sidenavService.getActiveComponent();
+
+    if (this.targetLoc === 'Vessel') {
+      this.commentType = 'internal';
+    } else if (this.targetLoc === 'Office') {
+      this.commentType = 'generic';
+    }
 
     this.sidenavService.commentTypeChange$.subscribe((commentType: string) => {
 

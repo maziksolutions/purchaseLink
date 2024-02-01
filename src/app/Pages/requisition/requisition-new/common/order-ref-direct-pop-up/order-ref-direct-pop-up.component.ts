@@ -66,7 +66,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     public requisitionService: RequisitionService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private zone: NgZone) { }
 
   ngOnInit(): void {
-   
+    debugger
     this.modalTitle = this.data.modalTitle;
     this.orderType = this.data.orderType;
     this.ComponentType = this.data.componentType;
@@ -79,7 +79,9 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       this.bindData(this.dataSourceTree);
     if (this.groupTableSourceTree) {
       this.bindGroup(this.groupTableSourceTree)
-    }    
+    }
+
+    console.log(this.spareItemDataSource.data)
   }
 
   closeModal(): void {
@@ -118,7 +120,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       if (checked && !this.apiCalled) {
         this.requisitionService.checkAccountCode(accountCode, this.orderTypeId).subscribe(async res => {
           if (res.status === true) {
-            if(res.accounts.length > 0){
+            if (res.accounts.length > 0) {
               await this.matchingAccountCodes.push(res.accounts)
               if (this.matchingAccountCodes[0].length > 0) {
                 this.apiCalled = true
@@ -128,7 +130,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
                   this.spareItemSelection.deselect(item);
                 }
               }
-            }else {
+            } else {
               this.matchingAccountCodes.push(accountCode)
               this.apiCalled = true
               if (checked) {
@@ -136,7 +138,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
               } else {
                 this.spareItemSelection.deselect(item);
               }
-            }           
+            }
           }
         })
       }
@@ -294,10 +296,9 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         if (SelctedSpareItems.length > 0) {
 
           this.dataSource.data = SelctedSpareItems;
-          const spareItemDisplayValue = this.spareItemDataSource.data
-            .filter(row => this.spareItemSelection.isSelected(row))
-            .map(item => item.inventoryName)
-            .join(', ');
+          const spareItemDisplayValue = SelctedSpareItems
+            .map(item => `${item.spareAssembly.components.shipComponentName}-${item.spareAssembly.drawingNo}`.trim() +
+              `-${item.spareAssembly.partNo}-${item.spareAssembly.components.maker.makerName}`.trim()).join(', ');
           const spareItemSaveValue = this.spareItemDataSource.data
             .filter(row => this.spareItemSelection.isSelected(row))
             .map(item => (item.shipSpareId).toString())

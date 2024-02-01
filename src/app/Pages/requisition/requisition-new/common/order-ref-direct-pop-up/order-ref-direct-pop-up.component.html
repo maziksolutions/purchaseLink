@@ -120,7 +120,7 @@
     </ng-container>
     <ng-container matColumnDef="componentName">
         <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
-        <mat-cell *matCellDef="let row">{{ row.componentName }}</mat-cell>
+        <mat-cell *matCellDef="let row">{{ row.spareAssembly.components.shipComponentName }}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="itemCode">
         <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
@@ -136,7 +136,7 @@
     </ng-container>
     <ng-container matColumnDef="dwg">
         <mat-header-cell *matHeaderCellDef>Drawing No</mat-header-cell>
-        <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
+        <mat-cell *matCellDef="let row">{{ row.spareAssembly.components.drawingNo }}</mat-cell>
     </ng-container>
 
     <mat-header-row class="bg-300" *matHeaderRowDef="spareItemsTableColumn; sticky:true"></mat-header-row>
@@ -163,7 +163,8 @@
     </ng-container>
     <ng-container matColumnDef="componentName">
         <mat-header-cell *matHeaderCellDef>Group Name</mat-header-cell>
-        <mat-cell class="ellipsis-text" [title]="row.group.groupName" *matCellDef="let row">{{ row.group.groupName }}</mat-cell>
+        <mat-cell class="ellipsis-text" [title]="row.group.groupName" *matCellDef="let row">{{ row.group.groupName
+            }}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="itemCode">
         <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
@@ -190,6 +191,5 @@
 <!-- End Here-->
 
 <div mat-dialog-actions class="modal-footer">
-    <a class="btn btn-primary" type="button" (click)="saveComponent()">Ok</a> <button type="button"
-        class="btn btn-danger me-1" aria-label="" (click)="closeModal()">Cancel</button>
+    <a class="btn btn-primary" type="button" (click)="saveComponent()">Ok</a>
 </div>
