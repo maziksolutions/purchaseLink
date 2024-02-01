@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
 import { Keys } from '../Shared/localKeys';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
 declare let Swal, PerfectScrollbar: any;
 @Component({
@@ -14,8 +14,14 @@ declare let Swal, PerfectScrollbar: any;
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   userId: any;
-  constructor(private swal: SwalToastService, private userManagementService: UserManagementService,
-    private router: Router, private authStatusService: AuthStatusService) { }
+  param1 :any;
+  constructor(private router: Router,private swal: SwalToastService, private userManagementService: UserManagementService,
+    private authStatusService: AuthStatusService, private route: ActivatedRoute,) {
+      this.route.queryParams.subscribe(params => {
+        this.param1 = params['pms'];      
+    });
+
+     }
 
   ngOnInit(): void {
     // this.userId = this.authStatusService.userId();
@@ -23,6 +29,24 @@ export class LoginComponent implements OnInit {
       userName: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required)
     })
+
+if(parseInt(this.param1)>0)
+{
+  this.userManagementService.getUserById(this.param1).subscribe((response) => {    
+    if (response.status) {      
+      localStorage.setItem(Keys.userId, response.data.userId);
+      localStorage.setItem(Keys.userName, response.data.userName);
+      localStorage.setItem(Keys.token, response.data.token);
+      localStorage.setItem(Keys.refreshtoken, response.data.refreshToken);
+      this.router.navigate(['/Requisition/RequisitionsNew'])
+    }
+    else {
+      Swal.fire('', 'Username/Password not found', "error");
+    }
+  })
+    
+    
+}
   }
   get formControl() {
     return this.loginForm.controls;
@@ -40,7 +64,6 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) return;
     this.userManagementService.Auth(this.loginForm.value).subscribe((response) => {
       if (response.success) {
-        console.log(response)
         localStorage.setItem(Keys.userId, response.userId);
         localStorage.setItem(Keys.userName, response.userName);
         localStorage.setItem(Keys.token, response.token);
