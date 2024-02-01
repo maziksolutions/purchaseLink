@@ -2625,11 +2625,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent, row: any): void {
+    
     if (event.defaultPrevented) {
       return;
     }
     const target = event.target as HTMLElement;
-    if (this.reqId !== undefined && this.defaultOrderType[0] === 'Spare' || this.defaultOrderType[0] === 'Store') {
+    if (this.reqId !== undefined && (this.defaultOrderType[0] === 'Spare' || this.defaultOrderType[0] === 'Store')) {
       const isWithinItemTable = target.closest('.itemTable');
       const isWithinRightTable = this.rightTable.nativeElement.contains(target);
 
