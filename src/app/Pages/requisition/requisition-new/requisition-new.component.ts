@@ -313,45 +313,43 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     //   });
     // }
 
-    this.requisitionService.selectedItems$.subscribe(data => {
-      debugger
-      if (data != null && data.displayValue !== '' && data.saveValue !== '') {
-        this.zone.run(() => {
-          this.displayValue = ''
-          this.saveValue = ''
-          this.displayValue = data.displayValue;
-          this.saveValue = data.saveValue;
-        })
-        const orderType = data.defaultOrderType
-        this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
-        if (orderType !== 'Service') {
-          if (data.orderReferenceType === 'Component') {
-            this.dataSource.data = [];
-            this.getSpareItems(data.orderReferenceType, data.saveValue);
-            this.autoSave('header')
-          }
-          else if (data.orderReferenceType === 'Group') {
-            this.dataSource.data = [];
-            this.getSpareItems(data.orderReferenceType, data.saveValue);
-            this.autoSave('header')
-          }
-          else if (data.orderReferenceType === 'Spare') {
-            this.leftTableDataSource.data = []
-            this.dataSource.data = [];
-            this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
-            console.log(this.dataSource.data)
-            this.autoSave('header')
-          }
-          else if (data.orderReferenceType === 'Store') {
-            this.leftTableDataSource.data = []
-            this.dataSource.data = [];
-            this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
-            console.log(this.dataSource.data)
-            this.autoSave('header')
-          }
-        }
-      }
-    });
+    // this.requisitionService.selectedItems$.subscribe(data => {
+
+    //   if (data != null && data.displayValue !== '' && data.saveValue !== '') {
+    //     this.zone.run(() => {
+    //       this.displayValue = ''
+    //       this.saveValue = ''
+    //       this.displayValue = data.displayValue;
+    //       this.saveValue = data.saveValue;
+    //     })
+    //     const orderType = data.defaultOrderType
+    //     this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
+    //     if (orderType !== 'Service') {
+    //       if (data.orderReferenceType === 'Component') {
+    //         this.dataSource.data = [];
+    //         this.getSpareItems(data.orderReferenceType, data.saveValue);
+    //         this.autoSave('header')
+    //       }
+    //       else if (data.orderReferenceType === 'Group') {
+    //         this.dataSource.data = [];
+    //         this.getSpareItems(data.orderReferenceType, data.saveValue);
+    //         this.autoSave('header')
+    //       }
+    //       else if (data.orderReferenceType === 'Spare') {
+    //         this.leftTableDataSource.data = []
+    //         this.dataSource.data = [];
+    //         this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
+    //         this.autoSave('header')
+    //       }
+    //       else if (data.orderReferenceType === 'Store') {
+    //         this.leftTableDataSource.data = []
+    //         this.dataSource.data = [];
+    //         this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
+    //         this.autoSave('header')
+    //       }
+    //     }
+    //   }
+    // });
 
     this.Loadgroup();
     this.LoadComponent();
@@ -608,6 +606,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               }
             }
             else if (data.message == "Update") {
+
               this.swal.success('Data has been updated successfully.');
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
@@ -922,7 +921,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
         this.loadOrderTypeByEditReq().subscribe(res => {
           this.orderTypes = res;
-          debugger
+
           const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == requisitionData.projectNameCodeId).map(item => item.serviceTypeId)
           if (selectedProjectCode[0] != null) {
             const serviceTypeIds: string[] = selectedProjectCode[0].split(',');
@@ -1189,7 +1188,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       )
   }
   selectProjectCode(event: any) {
-    debugger
+
     const selectedId = event.target.value;
     const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == selectedId).map(item => item.serviceTypeId)
     if (selectedProjectCode[0] != null) {
@@ -1206,6 +1205,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   LoadProjectnameAndcode() {
     debugger
+    this.selectedVesselId = this.RequisitionForm.get('header')?.value.vesselId
+    alert(this.selectedVesselId)
     this.purchaseService.getprojectname(0)
       .subscribe(response => {
         this.projectnameAndcode = response.data;
@@ -1291,9 +1292,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   LoadVessel() {
+    debugger
     this.vesselService.getVessels(0)
       .subscribe(response => {
+        debugger
         if (this.targetLoc == 'Vessel') {
+          debugger
           this.headsite = 'V'
           const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
           if (filteredVessels.length > 0) {
@@ -1382,12 +1386,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   loadGroupsComponent() {
-    this.requisitionService.getGroupTemplateTree().subscribe(res => {
-      this.groupTableSourceTree = res
-    })
-    if (this.selectedVesselId)
-      this.pmsService.GetStoreByShipId(this.selectedVesselId).subscribe(res => {
-
+    debugger
+    // this.requisitionService.getGroupTemplateTree().subscribe(res => {
+    //   debugger
+    //   this.groupTableSourceTree = res
+    // })
+    if (this.selectedVesselId) {
+      const shipIdUint: number = parseInt(this.selectedVesselId, 10)
+      this.requisitionService.GetStoreByShipId(shipIdUint).subscribe(res => {
+        debugger
         this.groupTableDataSource.data = res.data.map(item => {
           return {
             pmsGroupId: item.pmsGroupId,
@@ -1397,6 +1404,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           };
         });
       })
+    }
+
   }
 
   getCartItems(status) {
@@ -1835,6 +1844,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     const uniqueIds = new Set<number>();
     this.listViewItems = this.dataSource.data.filter(item => {
       if (item.itemsId == id && !uniqueIds.has(item.itemsId)) {
+
         uniqueIds.add(item.itemsId);
         return true;
       }
@@ -2472,7 +2482,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   // Attachment End
   openModal() {
-
+    debugger
+    let dialogRef: any
     const orderType = this.defaultOrderType[0]
     const dialogConfig = new MatDialogConfig();
     dialogConfig.position = { top: '70px' };
@@ -2481,7 +2492,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         const isSpareDataEmpty = this.spareItemDataSource.data.length === 0;
         if (orderType === 'Spare') {
           if (isSpareDataEmpty) {
-            const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
+            dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
               width: '1000px',
               height: '70vh',
               data: {
@@ -2489,29 +2500,21 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                 dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
               }
             });
-            dialogRef.afterClosed().subscribe(result => {
-              if (result === 'success') {
-
-              }
-            })
           } else {
-            const dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
+            debugger
+            const selectedCartItems = this.dataSource.data
+            dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
               width: '500px',
               data: {
                 modalTitle: "Order Reference", orderType: orderType, spareTableData: this.spareItemDataSource.data,
-                componentType: 'Component', dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
+                componentType: 'Component', dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId,
+                selectedCartItems: selectedCartItems
               }
             });
-
-            dialogRef.afterClosed().subscribe(result => {
-              if (result === 'success') {
-                this.defaultOrderType[0]
-              }
-            })
           }
         } else if (orderType === 'Service') {
           if (isSpareDataEmpty) {
-            const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
+            dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
               width: '1000px',
               height: '70vh',
               data: {
@@ -2519,61 +2522,80 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                 dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
               }
             });
-            dialogRef.afterClosed().subscribe(result => {
-              if (result === 'success') {
-
-              }
-            })
           } else {
-            const dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
+            dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
               width: '500px',
               data: {
                 modalTitle: "Order Reference", orderType: orderType, spareTableData: this.spareItemDataSource.data,
                 componentType: 'Component', dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
               }
             });
-
-            dialogRef.afterClosed().subscribe(result => {
-              if (result === 'success') {
-                this.defaultOrderType[0]
-              }
-            })
           }
         }
       } else {
-
         const isStoreDataEmpty = this.storeItemDataSource.data.length === 0;
         if (isStoreDataEmpty) {
-          const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
+          dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
             width: '1000px',
             data: {
               modalTitle: "Order Reference", componentType: 'Group', orderType: orderType,
-              groupTableData: this.groupTableSourceTree, orderTypeId: this.selectedOrderTypeId
+              groupTableData: this.groupTableDataSource.data, orderTypeId: this.selectedOrderTypeId
             }
           });
-          dialogRef.afterClosed().subscribe(result => {
-            if (result === 'success') {
-
-            }
-          })
         } else {
-
-          const dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
+          const selectedCartItems = this.dataSource.data
+          dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
             width: '500px',
             data: {
-              modalTitle: "Order Reference", orderType: orderType, groupTableData: this.groupTableSourceTree,
-              storeTableData: this.storeItemDataSource.data, orderTypeId: this.selectedOrderTypeId
+              modalTitle: "Order Reference", orderType: orderType, groupTableData: this.groupTableDataSource.data,
+              storeTableData: this.storeItemDataSource.data, orderTypeId: this.selectedOrderTypeId,
+              selectedCartItems: selectedCartItems
             }
           });
-
-          dialogRef.afterClosed().subscribe(result => {
-            if (result === 'success') {
-              this.defaultOrderType[0]
-            }
-          })
         }
       }
     }
+    dialogRef.afterClosed().subscribe(result => {
+      debugger
+      if (result.result === 'success') {
+        debugger
+        const data = result.dataToSend
+        if (data != null && data.displayValue !== '' && data.saveValue !== '') {
+          this.zone.run(() => {
+            this.displayValue = ''
+            this.saveValue = ''
+            this.displayValue = data.displayValue;
+            this.saveValue = data.saveValue;
+          })
+          const orderType = data.defaultOrderType
+          this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
+          if (orderType !== 'Service') {
+            if (data.orderReferenceType === 'Component') {
+              this.dataSource.data = [];
+              this.getSpareItems(data.orderReferenceType, data.saveValue);
+              this.autoSave('header')
+            }
+            else if (data.orderReferenceType === 'Group') {
+              this.dataSource.data = [];
+              this.getSpareItems(data.orderReferenceType, data.saveValue);
+              this.autoSave('header')
+            }
+            else if (data.orderReferenceType === 'Spare') {
+              this.leftTableDataSource.data = []
+              this.dataSource.data = [];
+              this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
+              this.autoSave('header')
+            }
+            else if (data.orderReferenceType === 'Store') {
+              this.leftTableDataSource.data = []
+              this.dataSource.data = [];
+              this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
+              this.autoSave('header')
+            }
+          }
+        }
+      }
+    })
   }
 
   openEditModal(row) {
@@ -2625,7 +2647,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent, row: any): void {
-    
+
     if (event.defaultPrevented) {
       return;
     }

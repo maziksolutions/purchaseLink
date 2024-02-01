@@ -26,11 +26,11 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   groupSelection = new SelectionModel<any>(true, []);
   selectedGroupsDropdown: { pmsGroupId: number, groupName: string, accountCode: any; }[] = [];
 
-  spareItemsTableColumn: string[] = ['checkbox', 'inventoryName', 'componentName', 'itemCode', 'reqQty', 'minReq', 'dwg'];
+  spareItemsTableColumn: string[] = ['checkbox', 'inventoryName', 'componentName', 'itemCode', 'reqQty', 'minReq', 'dwg', 'partNo'];
   spareItemDataSource = new MatTableDataSource<any>();
   spareItemSelection = new SelectionModel<any>(true, []);
 
-  storeItemsTableColumn: string[] = ['checkbox', 'inventoryName', 'componentName', 'itemCode', 'reqQty', 'minReq', 'dwg'];
+  storeItemsTableColumn: string[] = ['checkbox', 'inventoryName', 'componentName', 'itemCode', 'reqQty', 'minReq', 'dwg', 'partNo'];
   storeItemDataSource = new MatTableDataSource<any>();
   storeItemSelection = new SelectionModel<any>(true, []);
 
@@ -61,6 +61,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
   searchString: any = "";
   activeNode: any;
+  selectedCartItems: any
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefDirectPopUpComponent>, private swal: SwalToastService,
     public requisitionService: RequisitionService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private zone: NgZone) { }
@@ -71,17 +72,44 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     this.orderType = this.data.orderType;
     this.ComponentType = this.data.componentType;
     this.dataSourceTree = this.data.dataSourceTree
-    this.groupTableSourceTree = this.data.groupTableData
+    // this.groupTableSourceTree = this.data.groupTableData
+    this.groupTableDataSource.data = this.data.groupTableData
     this.spareItemDataSource.data = this.data.spareTableData
     this.storeItemDataSource.data = this.data.storeTableData
     this.orderTypeId = this.data.orderTypeId
+    this.selectedCartItems = this.data.selectedCartItems
+
+    if (this.spareItemDataSource.data && this.selectedCartItems) {
+      debugger
+      this.spareItemDataSource.data.forEach(spare => {
+        // Check if the spare item's ID exists in the selectedSpares array
+        const isSelected = this.selectedCartItems.some(selectedSpare => selectedSpare.spareId === spare.shipSpareId);
+        // If the spare item is selected, mark it as selected
+        if (isSelected) {
+          debugger
+          this.spareItemSelection.select(spare);
+        }
+      });
+    } else if (this.storeItemDataSource.data && this.selectedCartItems) {
+      debugger
+      this.storeItemDataSource.data.forEach(store => {
+        // Check if the spare item's ID exists in the selectedSpares array
+        const isSelected = this.selectedCartItems.some(selectedSpare => selectedSpare.storeId === store.shipStoreId);
+        // If the spare item is selected, mark it as selected
+        if (isSelected) {
+          debugger
+          this.storeItemSelection.select(store);
+        }
+      });
+    }
+
     if (this.dataSourceTree)
       this.bindData(this.dataSourceTree);
     if (this.groupTableSourceTree) {
       this.bindGroup(this.groupTableSourceTree)
     }
 
-    console.log(this.spareItemDataSource.data)
+    console.log(this.groupTableDataSource.data)    
   }
 
   closeModal(): void {
@@ -268,13 +296,19 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
           if (this.orderType === 'Service') {
             const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, defaultOrderType: this.orderType }
-            this.requisitionService.updateSelectedItems(dataToSend);
+            // this.requisitionService.updateSelectedItems(dataToSend);
+            this.dialogRef.close({
+              result: 'success',
+              DataToSend: dataToSend
+            })
           } else {
             const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType }
-            this.requisitionService.updateSelectedItems(dataToSend);
+            // this.requisitionService.updateSelectedItems(dataToSend);
+            this.dialogRef.close({
+              result: 'success',
+              DataToSend: dataToSend
+            })
           }
-
-          this.dialogRef.close();
         }
         break;
       case 'Group':
@@ -287,8 +321,11 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
           const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType }
 
-          this.requisitionService.updateSelectedItems(dataToSend);
-          this.dialogRef.close();
+          // this.requisitionService.updateSelectedItems(dataToSend);
+          this.dialogRef.close({
+            result: 'success',
+            DataToSend: dataToSend
+          })
         }
         break;
       case 'Spare':
@@ -311,13 +348,19 @@ export class OrderRefDirectPopUpComponent implements OnInit {
               displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType,
               cartItems: SelctedSpareItems, defaultOrderType: this.orderType
             }
-            this.requisitionService.updateSelectedItems(dataToSend);
+            // this.requisitionService.updateSelectedItems(dataToSend);
+            this.dialogRef.close({
+              result: 'success',
+              DataToSend: dataToSend
+            })
           } else {
             const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, cartItems: SelctedSpareItems }
-            this.requisitionService.updateSelectedItems(dataToSend);
+            // this.requisitionService.updateSelectedItems(dataToSend);
+            this.dialogRef.close({
+              result: 'success',
+              DataToSend: dataToSend
+            })
           }
-
-          this.dialogRef.close();
         }
         break;
       case 'Store':
@@ -327,7 +370,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           this.dataSource.data = SelctedStoreItems;
           const storeItemDisplayValue = this.storeItemDataSource.data
             .filter(row => this.storeItemSelection.isSelected(row))
-            .map(item => item.inventoryName)
+            .map(item => item.group.groupName)
             .join(', ');
           const storeItemSaveValue = this.storeItemDataSource.data
             .filter(row => this.storeItemSelection.isSelected(row))
@@ -337,8 +380,10 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           this.saveValue = storeItemSaveValue;
           const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, cartItems: SelctedStoreItems }
 
-          this.requisitionService.updateSelectedItems(dataToSend);
-          this.dialogRef.close();
+          this.dialogRef.close({
+            result: 'success',
+            DataToSend: dataToSend
+          })
         }
         break;
       default:
@@ -384,7 +429,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     const accountCodeAsNumber = typeof accountCodeToCheck === 'string'
       ? parseInt(accountCodeToCheck, 10)
       : accountCodeToCheck
-    if (!isNaN(accountCodeAsNumber)) {
+    if (!isNaN(accountCodeAsNumber) && accountCodeAsNumber != null) {
       if (node.selected && !this.apiCalled && this.selectedComponentIds.length === 0) {
         this.requisitionService.checkAccountCode(accountCodeToCheck, this.orderTypeId).subscribe(res => {
           debugger
@@ -520,7 +565,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   );
 
   handleGroupCheckboxChange(event: Event, node: GroupFlatNode) {
-
+    debugger
     if (this.selectedGroupIds.length === 0 && this.selectedGroupName.length === 0) {
       this.matchingAccountCodes = [];
       this.apiCalled = false;
@@ -531,7 +576,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       ? parseInt(node.groupAccountCode, 10)
       : node.groupAccountCode
 
-    if (!isNaN(accountCodeAsNumber)) {
+    if (!isNaN(accountCodeAsNumber) && accountCodeAsNumber != null) {
       if (node.selected && !this.apiCalled && this.selectedGroupIds.length === 0) {
         this.requisitionService.checkAccountCode(accountCodeAsNumber, this.orderTypeId).subscribe(res => {
 

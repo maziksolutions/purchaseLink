@@ -36,34 +36,39 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor( private fb: FormBuilder, private sidenavService:SideNavService, private reqService:RequisitionService,
-    private swal: SwalToastService, private activatedRoute: ActivatedRoute, private router: Router) {
-      this.commentsForm = this.fb.group({
-        commentId: 0,
-        commentType: ['', Validators.required],
-        commentData: ['', Validators.required]
-      });
-     }
+  constructor(private fb: FormBuilder, private sidenavService: SideNavService, private reqService: RequisitionService,
+    private swal: SwalToastService, private activatedRoute: ActivatedRoute, private router: Router) { }
 
-     get fm() { return this.commentsForm.controls }
+  get fm() { return this.commentsForm.controls }
 
   ngOnInit(): void {
-    debugger
+    
     this.targetLoc = environment.location;
-    this.loadData(0);
-    this.isActive = this.sidenavService.getActiveComponent();
 
+    this.commentsForm = this.fb.group({
+      commentId: 0,
+      commentType: ['', Validators.required],
+      commentData: ['', Validators.required]
+    });
+
+    this.isActive = this.sidenavService.getActiveComponent();
+    
     if (this.targetLoc === 'Vessel') {
-      this.commentType = 'internal';
+      this.commentType='internal'
+      this.commentsForm.patchValue({commentType:'internal'})
     } else if (this.targetLoc === 'Office') {
-      this.commentType = 'generic';
+      this.commentType='generic'
+      this.commentsForm.patchValue({commentType:'generic'})
     }
 
-    this.sidenavService.commentTypeChange$.subscribe((commentType: string) => {
+    this.loadData(0, this.commentType);
 
-      this.comments = [];
-      this.loadData(0, commentType);
-    })
+    // this.sidenavService.commentTypeChange$.subscribe((commentType: string) => {
+    //   debugger
+    //   this.comments = [];
+    //   this.loadData(0, commentType);
+    // })
+
   }
 
   ngOnDestroy(): void {
@@ -76,7 +81,7 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(form: any) {
-
+    
     if (form.value.commentId == null) {
       form.value.commentId = 0;
     }
@@ -138,19 +143,19 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
     //   }
     // }
     this.reqService.getComments(status)
-      .subscribe(response => {
-
+      .subscribe(response => {        
         this.flag = status;
         var data = response.data;
 
         data.map(res => { this.comments.push({ commentId: res.commentId, commentData: res.commentData, commentType: res.commentType }) });
-        if (commentType)
+        if (this.targetLoc === 'Vessel') {
           this.comments = this.comments.filter(res => res.commentType == commentType);
+        }
         // this.dataSource.data = response.data;
 
         // this.dataSource.sort = this.sort;
         // this.dataSource.paginator = this.paginator;
-        this.clear();
+        // this.clear();
         // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
   }
@@ -170,6 +175,13 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
 
   clear() {
     this.commentsForm.reset();
+    if (this.targetLoc === 'Vessel') {
+      this.commentType='internal'
+      this.commentsForm.patchValue({commentType:'internal'})
+    } else if (this.targetLoc === 'Office') {
+      this.commentType='generic'
+      this.commentsForm.patchValue({commentType:'generic'})
+    }
   }
 
   setActiveComponent(comName: boolean): void {

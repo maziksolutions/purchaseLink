@@ -146,6 +146,8 @@ export class RequisitionService {
   updateSelectedItems(data: { displayValue: string; saveValue: string; orderReferenceType: string; cartItems?: any[]; defaultOrderType?: string }): void {
     this.selectedItemsSubject.next(data);
   }
+
+  //#region Tree structure for Component and Groups
   getTemplateTree(): Observable<TemplateTree[]> {
     return this.httpClient.get<TemplateTree[]>(this.linkurl + 'componentTemplateTree');
   }
@@ -153,6 +155,13 @@ export class RequisitionService {
   getGroupTemplateTree(): Observable<TemplateTree[]> {
     return this.httpClient.get<TemplateTree[]>(this.linkurl + 'groupTemplateTree');
   }
+
+  GetStoreByShipId(shipId):Observable<any>{
+    debugger
+    return this.httpClient.get<any>(`${this.linkurl}StoreLinkedGroups/${shipId}`,httpOptions)
+    .pipe(catchError(this.handleError));
+  }
+  //#endregion
 
   editRobData(data: any): Observable<any> {
     return this.httpClient.post<any>(this.linkurl + 'editRobData', data)
