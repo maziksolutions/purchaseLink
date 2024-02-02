@@ -1,5 +1,3 @@
-import { SideNavService } from '../sidenavi-right/sidenavi-service';
-import { Subscription } from 'rxjs';
 import { Router, NavigationExtras, NavigationEnd } from '@angular/router';
 import { Component, OnInit, ElementRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -14,7 +12,6 @@ import { UserManagementService } from 'src/app/services/user-management.service'
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
 import { VesselManagementService } from 'src/app/services/vessel-management.service';
 import { saveAs } from 'file-saver';
-import { filter, map } from 'rxjs/operators';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { DatePipe } from '@angular/common';
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
@@ -22,16 +19,7 @@ import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { environment } from 'src/environments/environment';
 import { PmsgroupService } from 'src/app/services/pmsgroup.service';
 import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
-declare var $: any;
-declare let Swal, PerfectScrollbar: any;
-declare var SideNavi: any;
-
-interface Item {
-  id: number;
-  name: string;
-  quantity: number;
-  unit: string;
-}
+import { SideNavService } from 'src/app/services/sidenavi-service';
 
 
 @Component({
@@ -53,6 +41,7 @@ export class RequisitionslistComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   Vessels: any;
   selectedVesselId: number = 0;
+  selectedVesselGroupId: number = 0;
   targetLoc: string;
   VesselId: any;
   vesselcode: any;
@@ -63,12 +52,12 @@ export class RequisitionslistComponent implements OnInit {
   GetCompoAccCode: any;
   GetStoreAccCode: any;
   GetSpareAccCode: any;
-  myFleet:any;
-  fullVesselList:any;
+  myFleet: any;
+  fullVesselList: any;
 
 
-  constructor(private sideNavService: SideNavService, private route: Router,private authStatusService: AuthStatusService,
-    private userManagementService: UserManagementService, private vesselService: VesselManagementService,
+  constructor(private sideNavService: SideNavService, private route: Router, private authStatusService: AuthStatusService,
+    private userManagementService: UserManagementService, private vesselService: VesselManagementService, private elRef: ElementRef,
     private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe, private shipmasterService: ShipmasterService,
     private exportExcelService: ExportExcelService, private pmsgroupService: PmsgroupService) {
     this.route.events.subscribe((event) => {
@@ -80,21 +69,22 @@ export class RequisitionslistComponent implements OnInit {
 
   get fm() { return this.RequisitionForm.controls };
 
-  navigateToNewReq() {
+  // navigateToNewReq() {
 
-    this.sideNavService.destroySidenav();
+  //   this.sideNavService.destroySidenav();
 
-    const navigationExtras: NavigationExtras = {
-      queryParams: { 'reload': true }
-    };
-    this.route.navigate(['/Requisition/RequisitionsNew'], navigationExtras);
-  }
+  //   const navigationExtras: NavigationExtras = {
+  //     queryParams: { 'reload': true }
+  //   };
+  //   this.route.navigate(['/Requisition/RequisitionsNew'], navigationExtras);
+  // }
 
   ngOnInit(): void {
     
     this.targetLoc = environment.location;
     this.sideNavService.setActiveComponent(false);
     this.sideNavService.initSidenav();
+
     this.RequisitionForm = this.fb.group({
       requisitionId: [0],
       originSite: ['', [Validators.required]],
@@ -125,28 +115,50 @@ export class RequisitionslistComponent implements OnInit {
     this.loadScript('assets/js/SideNavi.js');
   }
 
+  ngAfterViewInit(): void {
+    this.checkDropdownItems();
+  }
+  checkDropdownItems() {
+    debugger
+    const dropdownItems = this.elRef.nativeElement.querySelectorAll('.dropdown-item');
+    // if (dropdownItems.length === 1) {
+    //   const singleItem = dropdownItems[0] as HTMLElement;
+    //   singleItem.click();
+    // }
+  }
+
+  handleButtonClick() {
+    debugger
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    if (dropdownItems.length === 1) {
+      const singleItem = dropdownItems[0] as HTMLElement;
+      singleItem.click();
+    } else {
+      // Handle regular dropdown behavior here (e.g., show the dropdown)
+    }
+  }
+
   loadUserFleetData() {
     this.userManagementService.loadUserFleet(0, this.authStatusService.userId())
       .subscribe(response => {
-        this.myFleet= response.data; 
+
+        this.myFleet = response.data;
       });
   }
-  filteredVessels(id)
-  {
-    
-    this.VesselId=null;
-    var vesselList=this.myFleet.filter(x=>x.userFleetId==id)[0]["vessels"];
+  filteredVessels(id) {
+    debugger
+    this.VesselId = null;
+    var vesselList = this.myFleet.filter(x => x.userFleetId == id)[0]["vessels"];
 
-   if(vesselList!=null || vesselList!=undefined)
-   {        
-    this.Vessels=this.fullVesselList.filter(x=>vesselList.split(",").includes(x.vesselId.toString()));
-    // this.searchForm.controls.vesselId.setValue('');
-   }    
+    if (vesselList != null || vesselList != undefined) {
+      this.Vessels = this.fullVesselList.filter(x => vesselList.split(",").includes(x.vesselId.toString()));
+      // this.searchForm.controls.vesselId.setValue('');
+    }
 
     // this.sfm.fleetId.setValue(id);       
     // this.page = 1; this.currentPage = 0;   
     // this.loadShipComponentList(this.sfm.componentId.value, this.searchForm.controls.type.value);
-  }  
+  }
 
 
   private loadScript(scriptUrl: string): void {
@@ -182,7 +194,7 @@ export class RequisitionslistComponent implements OnInit {
   LoadVessel() {
     this.vesselService.getVessels(0)
       .subscribe(response => {
-
+        debugger
         if (this.targetLoc == 'Vessel') {
           const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
           if (filteredVessels.length > 0) {
@@ -193,7 +205,7 @@ export class RequisitionslistComponent implements OnInit {
         }
         else {
           this.Vessels = response.data;
-          this.fullVesselList=response.data;
+          this.fullVesselList = response.data;
         }
       })
   }
@@ -271,7 +283,7 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   clear() {
-
+    debugger
     this.RequisitionForm.reset();
     this.RequisitionForm.controls.requisitionId.setValue(0);
     this.RequisitionForm.controls.originSite.setValue('');
@@ -282,7 +294,7 @@ export class RequisitionslistComponent implements OnInit {
     this.RequisitionForm.controls.departmentId.setValue('');
     this.RequisitionForm.controls.priorityId.setValue('');
     this.RequisitionForm.controls.projectNameCodeId.setValue('');
-    this.route.navigate(['/Requisition/RequisitionsNew'])
+    this.route.navigate(['/Requisition/RequisitionsNew']);
   }
 
   generateExcel() {

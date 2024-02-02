@@ -48,7 +48,7 @@
 <!-- End Here-->
 
 <!--  Group Tree Data Start Here-->
-<!-- <mat-table *ngIf="ComponentType==='Group'" mat-dialog-content #table [dataSource]="groupTableDataSource"
+<mat-table *ngIf="ComponentType==='Group'" mat-dialog-content #table [dataSource]="groupTableDataSource"
     class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
 
     <ng-container matColumnDef="checkbox">
@@ -73,9 +73,9 @@
     <mat-row *matRowDef="let row; columns: groupTableColumn; let i = index"
         [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.pmsGroupId==selectedIndex))}"></mat-row>
 
-</mat-table> -->
+</mat-table>
 
-<mat-tree *ngIf="ComponentType==='Group'" [dataSource]="groupTableSourceTree" [treeControl]="treeGroupControl"
+<!-- <mat-tree *ngIf="ComponentType==='Group'" [dataSource]="groupTableSourceTree" [treeControl]="treeGroupControl"
     class="wrapper">
     <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding [matTreeNodePaddingIndent]="10"
         (click)="activeNode = node" id="{{node.groupId+node.type}}" [ngClass]="{ 'active-node': node==activeNode}"
@@ -93,14 +93,14 @@
 
     </mat-tree-node>
     <mat-tree-node *matTreeNodeDef="let node;" class="expand-tree">
-        <!-- use a disabled button to provide padding for tree leaf -->
-        <a style="cursor: pointer; padding-left: 25px;" *ngIf="node.type=='Group'"
+         use a disabled button to provide padding for tree leaf -->
+      <!--  <a style="cursor: pointer; padding-left: 25px;" *ngIf="node.type=='Group'"
             matTooltip="{{node.groupName.length>40?node.groupName:''}}">
             <input type="checkbox" [checked]="node.selected" (change)="handleGroupCheckboxChange($event, node)">
             {{node.groupName}}
         </a>
     </mat-tree-node>
-</mat-tree>
+</mat-tree> -->
 <!-- End Here-->
 
 <!--  Spare Cart Item Table Data Start Here-->
@@ -120,7 +120,7 @@
     </ng-container>
     <ng-container matColumnDef="componentName">
         <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
-        <mat-cell *matCellDef="let row">{{ row.componentName }}</mat-cell>
+        <mat-cell *matCellDef="let row">{{ row.spareAssembly.components.shipComponentName }}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="itemCode">
         <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
@@ -136,7 +136,11 @@
     </ng-container>
     <ng-container matColumnDef="dwg">
         <mat-header-cell *matHeaderCellDef>Drawing No</mat-header-cell>
-        <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
+        <mat-cell *matCellDef="let row">{{ row.spareAssembly.components.drawingNo }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="partNo">
+        <mat-header-cell *matHeaderCellDef>Part No</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.spareAssembly.components.partNo }}</mat-cell>
     </ng-container>
 
     <mat-header-row class="bg-300" *matHeaderRowDef="spareItemsTableColumn; sticky:true"></mat-header-row>
@@ -162,8 +166,9 @@
         <mat-cell *matCellDef="let row">{{ row.inventoryName }}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="componentName">
-        <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
-        <mat-cell *matCellDef="let row">{{ row.componentName }}</mat-cell>
+        <mat-header-cell *matHeaderCellDef>Group Name</mat-header-cell>
+        <mat-cell class="ellipsis-text" [title]="row.group.groupName" *matCellDef="let row">{{ row.group.groupName
+            }}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="itemCode">
         <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
@@ -181,6 +186,10 @@
         <mat-header-cell *matHeaderCellDef>Drawing No</mat-header-cell>
         <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
     </ng-container>
+    <ng-container matColumnDef="partNo">
+        <mat-header-cell *matHeaderCellDef>Part No</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{ row.partNo }}</mat-cell>
+    </ng-container>
 
     <mat-header-row class="bg-300" *matHeaderRowDef="storeItemsTableColumn; sticky:true"></mat-header-row>
     <mat-row *matRowDef="let row; columns: storeItemsTableColumn; let i = index"
@@ -190,6 +199,5 @@
 <!-- End Here-->
 
 <div mat-dialog-actions class="modal-footer">
-    <a class="btn btn-primary" type="button" (click)="saveComponent()">Ok</a> <button type="button"
-        class="btn btn-danger me-1" aria-label="" (click)="closeModal()">Cancel</button>
+    <a class="btn btn-primary" type="button" (click)="saveComponent()">Ok</a>
 </div>

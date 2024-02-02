@@ -24269,7 +24269,7 @@ h5, .h5 {
 .navbar-vertical.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-vibrant .navbar-collapse,
 .navbar-vertical.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-inverted .navbar-collapse,
 .navbar-vertical.navbar-inverted .navbar-vertical-content {
-  max-height: calc(100vh - 4.3125rem - 1rem) !important;
+  max-height: calc(100vh - 4.3125rem - 0rem) !important;
 }
 .navbar-vertical .navbar-collapse {
   background-color: var(--pms-navbar-vertical-bg-color);

@@ -1,30 +1,24 @@
 <app-sidenavi-right></app-sidenavi-right>
-<main class="main" id="top">
-  <div class="container-fluid" data-layout="container">
-    <div class="content">
-      <div class="card px-3 py-2 mb-3">
 
-        <div class="position-relative">
-          <div class="row">
-            <div class="col-lg-4">
-              <h5 class="mb-0">RFQ</h5>
-              <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
-                  class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">RFQ</span>
-            </div>
-            <div class="col-lg-8">
-
-            </div>
-          </div>
-        </div>
-
+<div class="card px-3 py-2 mb-3">
+  <div class="position-relative">
+    <div class="row">
+      <div class="col-lg-4">
+        <h5 class="mb-0">RFQ</h5>
+        <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
+            class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">RFQ</span>
       </div>
+      <div class="col-lg-8">
+      </div>
+    </div>
+  </div>
+</div>
 
-
-      <div class="card mb-3">
-        <div class="card-body">
-          <div class="row">
-            <div class="col-lg-2">
-              <!-- <div class="mb-2">
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-lg-2">
+        <!-- <div class="mb-2">
 
                 <select class="form-control form-small form-select" [(ngModel)]="selectedVesselId"
                   (change)="filterVessel()">
@@ -38,60 +32,49 @@
               </div> -->
 
 
-              <div class="mb-2">
-                <!-- <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select Vessel</button>
+        <div class="mb-2">
+          <!-- <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select Vessel</button>
                 <div class="dropdown-menu">
                   <a class="dropdown-item" href="#">Vessel 1</a>
                   <a class="dropdown-item" href="#">Vessel 2</a>
                   <a class="dropdown-item" href="#">Vessel 3</a>
                 </div> -->
 
-                <select class="form-control form-small form-select" [(ngModel)]="selectedVesselId"
-                >
-                <option value="0" selected disabled>Select Vessel</option>
-                <option *ngFor="let item of  Vessels" value="{{item.vesselId}}">
-                  {{item.vesselName | titlecase}}
+          <select class="form-control form-small form-select" [(ngModel)]="selectedVesselId">
+            <option value="0" selected disabled>Select Vessel</option>
+            <option *ngFor="let item of  Vessels" value="{{item.vesselId}}">
+              {{item.vesselName | titlecase}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="col-lg-10">
+        <div class="form-inline float-end mb-2">
+          <a class="form-small text-primary px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="" data-bs-original-title="Modify Column" aria-label=""><i class="fas fa-columns"></i></a>
+          <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+            data-bs-original-title="Add Attachment" aria-label=""><i class="fas fa-paperclip text-primary"></i></a>
 
-                </option>
-              </select>
-
-
-              </div>
-
-
-            </div>
-
-            <div class="col-lg-10">
-              <div class="form-inline float-end mb-2">
-                <a class="form-small text-primary px-1 m-r-5" type="button" data-bs-toggle="tooltip"
-                  data-bs-placement="top" title="" data-bs-original-title="Modify Column" aria-label=""><i
-                    class="fas fa-columns"></i></a>
-                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                  data-bs-original-title="Add Attachment" aria-label=""><i
-                    class="fas fa-paperclip text-primary"></i></a>
-
-                <button class="btn btn-secondary dropdown-toggle pe-1 me-1" type="button" data-bs-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false"><span class="pe-1"><i
-                      class="fas fa-plus"></i></span></button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item"  routerLink="/Requisition/RequisitionsNew">REQUISITION</a>
-                  <!-- <button class="dropdown-item" (click)="clear()">REQUISITION</button> -->
-                  <a class="dropdown-item" href="#">DIRECT PO</a>
-                  <a class="dropdown-item" href="#">INVOICE</a>
-                </div>
-
-                <a class="px-2 m-r-5 font-medium-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-                  title="" data-bs-original-title="Export PDF" aria-label=""><i
-                    class="fas fa-file-pdf text-danger"></i></a>
-
-                <a class="font-medium-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                  data-bs-original-title="Export Excel" aria-label=""><i class="fas fa-file-excel text-success"></i></a>
-
-              </div>
-            </div>
+          <button class="btn btn-secondary dropdown-toggle pe-1 me-1" type="button" data-bs-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false"><span class="pe-1"><i class="fas fa-plus"></i></span></button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" routerLink="/Requisition/RequisitionsNew">REQUISITION</a>
+            <!-- <button class="dropdown-item" (click)="clear()">REQUISITION</button> -->
+            <a class="dropdown-item" href="#">DIRECT PO</a>
+            <a class="dropdown-item" href="#">INVOICE</a>
           </div>
 
-          <!-- <div class="table-responsive scrollbar">
+          <a class="px-2 m-r-5 font-medium-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+            data-bs-original-title="Export PDF" aria-label=""><i class="fas fa-file-pdf text-danger"></i></a>
+
+          <a class="font-medium-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+            data-bs-original-title="Export Excel" aria-label=""><i class="fas fa-file-excel text-success"></i></a>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="table-responsive scrollbar">
             <mat-table #table [dataSource]="dataSource" matSort
               class="table table-hover table-striped table-sm small table-bordered">
 
@@ -183,9 +166,6 @@
               [pageSizeOptions]="[20, 40, 60, 100]">
             </mat-paginator>
           </div> -->
-          
-        </div>
-      </div>
-    </div>
+
   </div>
-</main>
+</div>

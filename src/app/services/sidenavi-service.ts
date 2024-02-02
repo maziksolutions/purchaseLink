@@ -1,15 +1,11 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { resolve } from 'dns';
-import { rejects } from 'assert';
 
 declare var SideNavi: any;
 @Injectable({
   providedIn: 'root'
 })
-
 export class SideNavService {
   private commentType: string = '';
   private sideNavInitialized: boolean = false;

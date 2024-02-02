@@ -22,10 +22,12 @@ export class OrderRefPopUpViewComponent implements OnInit {
   orderType: string;
   componentType: string;
   orderTypeId: number
+  selectedCartItems:any
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefPopUpViewComponent>, public dialog: MatDialog) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {   
+    debugger 
     this.modalTitle = this.data.modalTitle;
     this.orderType = this.data.orderType;
     this.componentType = this.data.componentType
@@ -34,70 +36,64 @@ export class OrderRefPopUpViewComponent implements OnInit {
     this.spareItemDataSource.data = this.data.spareTableData
     this.storeItemDataSource.data = this.data.storeTableData
     this.orderTypeId = this.data.orderTypeId
+    this.selectedCartItems=this.data.selectedCartItems   
   }
 
   openModal(type: string) {
-
+    let dialogRef: any
     if (type === 'Component') {
 
-      const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
+      dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
         width: '1000px',
         data: {
           modalTitle: "Order Reference", componentType: type, orderType: this.orderType,
           dataSourceTree: this.dataSourceTree, orderTypeId: this.orderTypeId
         }
       });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result === 'success') {
-
-        }
-      })
     } else if (type === 'Group') {
 
-      const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
+      dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
         width: '1000px',
         data: {
           modalTitle: "Order Reference", componentType: type,
           groupTableData: this.groupTableSourceTree, orderTypeId: this.orderTypeId
         }
       });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result === 'success') {
-
-        }
-      })
     } else if (type === 'Spare') {
 
-      const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
+      dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
         width: '1000px',
         data: {
           modalTitle: "Order Reference", componentType: type, orderType: this.orderType,
-          spareTableData: this.spareItemDataSource.data, orderTypeId: this.orderTypeId
+          spareTableData: this.spareItemDataSource.data, orderTypeId: this.orderTypeId,
+          selectedCartItems:this.selectedCartItems
         }
       });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result === 'success') {
-
-        }
-      })
     } else if (type === 'Store') {
 
-      const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
+      dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
         width: '1000px',
         data: {
           modalTitle: "Order Reference", componentType: type,
-          storeTableData: this.storeItemDataSource.data, orderTypeId: this.orderTypeId
+          storeTableData: this.storeItemDataSource.data, orderTypeId: this.orderTypeId,
+          selectedCartItems:this.selectedCartItems
         }
       });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result === 'success') {
-
-        }
-      })
     }
-
-    this.dialogRef.close();
-
+    dialogRef.afterClosed().subscribe(result => {
+      debugger
+      if (result) {
+        if (result.result === 'success') {
+          debugger
+          this.dialogRef.close({
+            result: 'success',
+            dataToSend: result.DataToSend
+          })
+        }
+      }else{
+        this.dialogRef.close();
+      }     
+    })
   }
 
   closeModal(): void {

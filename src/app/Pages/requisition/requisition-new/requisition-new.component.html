@@ -1,330 +1,325 @@
 <app-sidenavi-right></app-sidenavi-right>
-<main class="main" id="top">
-  <div class="container-fluid" data-layout="container">
-    <div class="content">
 
-
-      <div class="card px-3 py-2 mb-3">
-        <div class="position-relative">
-          <div class="row flex-between-center">
-            <div class="col-auto align-self-center"
-              *ngIf="approvestatus === undefined || approvestatus === null">
-              <h5 class="mb-0">Purchasing / New Requisition</h5>
-              <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
-                  class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">New
-                Requisition</span>
-            </div>
-            <div class="col-auto align-self-center" *ngIf="approvestatus == 'Waiting For Approval'">
-              <h5 class="mb-0">Requisition Approval</h5>
-              <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
-                  class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Requisition
-                Approval</span>
-            </div>
-            <div class="col-auto align-self-center" *ngIf="approvestatus == 'Approved'">
-              <h5 class="mb-0">Approved Requisition</h5>
-              <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
-                  class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Approved
-                Requisition</span>
-            </div>
-            <div class="col-auto align-self-center" *ngIf="approvestatus == 'Reject'">
-              <h5 class="mb-0">Reject Requisition</h5>
-              <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
-                  class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Rejected
-                Requisition</span>
-            </div>
-
-
-
-            <div class="col-auto ms-auto">
-              <a routerLink="/Requisition/Requisitionslist" class="btn btn-pms-primary" type="button" data-index="0"
-                data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Back"
-                aria-label="Back"><i class="fas fa-arrow-left"></i></a>
-            </div>
-
-          </div>
-        </div>
+<div class="card px-3 py-2 mb-3">
+  <div class="position-relative">
+    <div class="row flex-between-center">
+      <div class="col-auto align-self-center" *ngIf="approvestatus === undefined || approvestatus === null">
+        <h5 class="mb-0">Purchasing / New Requisition</h5>
+        <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
+            class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">New
+          Requisition</span>
+      </div>
+      <div class="col-auto align-self-center" *ngIf="approvestatus == 'Waiting For Approval'">
+        <h5 class="mb-0">Requisition Approval</h5>
+        <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
+            class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Requisition
+          Approval</span>
+      </div>
+      <div class="col-auto align-self-center" *ngIf="approvestatus == 'Approved'">
+        <h5 class="mb-0">Approved Requisition</h5>
+        <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
+            class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Approved
+          Requisition</span>
+      </div>
+      <div class="col-auto align-self-center" *ngIf="approvestatus == 'Reject'">
+        <h5 class="mb-0">Reject Requisition</h5>
+        <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
+            class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Rejected
+          Requisition</span>
       </div>
 
-      <!--Header Form Start Here -->
-      <div class="card mb-3">
-        <form [formGroup]="RequisitionForm">
-          <div formGroupName="header">
-            <div class="card-header bg-light">
-              <div class="row flex-between-end">
-                <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse"
-                  data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
-                  <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2">
-                    </span>Document Header
-                    <small class="ms-5" id="documentHeader" *ngIf="approvestatus == 'Approved'">
 
-                      {{finallyHeader}}
-                    </small>
-                    <small class="ms-5" *ngIf="approvestatus != 'Approved'">
-                      <!-- Show temporary number for unapproved requisitions -->
-                      Temp – {{headsite}} – {{temporaryNumber}}
-                    </small>
-                  </h5>
+
+      <div class="col-auto ms-auto">
+        <a routerLink="/Requisition/Requisitionslist" class="btn btn-pms-primary" type="button" data-index="0"
+          data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Back" aria-label="Back"><i
+            class="fas fa-arrow-left"></i></a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!--Header Form Start Here -->
+<div class="card mb-3">
+  <form [formGroup]="RequisitionForm">
+    <div formGroupName="header">
+      <div class="card-header bg-light">
+        <div class="row flex-between-end">
+          <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse"
+            data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
+            <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2">
+              </span>Document Header
+              <small class="ms-5" id="documentHeader" *ngIf="approvestatus == 'Approved'">
+
+                {{finallyHeader}}
+              </small>
+              <small class="ms-5" *ngIf="approvestatus != 'Approved'">
+                <!-- Show temporary number for unapproved requisitions -->
+                Temp – {{headsite}} – {{temporaryNumber}}
+              </small>
+            </h5>
+          </div>
+          <div class="col-auto ms-auto">
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#transit" aria-label=""
+              [class.disabled]="!isRequisitionApproved"
+              [style.pointer-events]="isRequisitionApproved ? 'auto' : 'none'">
+              <img src="assets/img/transition.png" width="25px"></a>
+            <div class="modal fade" id="transit" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-lg mt-6" role="document">
+                <div class="modal-content border-0">
+                  <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                      data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="">&nbsp;</h5>
+
+                  </div>
+                  <div class="modal-body mt-0 scrollbar-visible">
+                    <div class="row">
+                      <div class="col-lg mb-3">
+                        <h6 class="text-900 mb-2">To Stage</h6>
+                        <h6 class="mb-0 fs--2 text-500">To Stage</h6>
+                      </div>
+                      <div class="col-lg mb-3">
+                        <h6 class="text-900 mb-2">Assignee</h6>
+                        <h6 class="mb-0 fs--2 text-500">Assignee</h6>
+                      </div>
+                      <div class="col-lg mb-3">
+                        <h6 class="text-900 mb-2">Date</h6>
+                        <h6 class="mb-0 fs--2 text-500">Date</h6>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg mb-3">
+                        <h6 class="text-900 mb-2">Comments</h6>
+                        <textarea class="form-control" rows="5"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary me-1" aria-label="">Ok</button> <button type="button"
+                      class="btn btn-danger me-1" aria-label="">Cancel</button>
+                  </div>
                 </div>
-                <div class="col-auto ms-auto">
-                  <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#transit" aria-label=""
-                    [class.disabled]="!isRequisitionApproved"
-                    [style.pointer-events]="isRequisitionApproved ? 'auto' : 'none'">
-                    <img src="assets/img/transition.png" width="25px"></a>
-                  <div class="modal fade" id="transit" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-lg mt-6" role="document">
-                      <div class="modal-content border-0">
-                        <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                          <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                            data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+            </div>
+            <a class="px-1 m-r-5" id="navbarDropdownNotification" href="#" role="button" data-bs-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false" [class.disabled]="!isRequisitionApproved"
+              [style.pointer-events]="isRequisitionApproved ? 'auto' : 'none'">
+              <i class="far fa-calendar-alt text-primary"></i></a>
+            <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification"
+              aria-labelledby="navbarDropdownNotification">
+              <div class="card card-notification shadow-none">
+                <div class="card-header bg-light shadow">
+                  <div class="row justify-content-between align-items-center">
+                    <div class="col-auto">
+                      <h6 class="card-header-title mb-0">Timeline</h6>
+                    </div>
+                  </div>
+                </div>
+                <div class="scrollbar-overlay py-4 pe-4" style="max-height:19rem">
+                  <div class="row g-3 timeline timeline-primary timeline-past pb-card">
+                    <div class="col ps-4 ms-2">
+                      <div class="row gx-0 border-bottom pb-card">
+                        <div class="col-auto p-2 bg-soft-info">
+                          <p class="fs--2 text-800 mb-0">6 days <br><br></p>
                         </div>
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="">&nbsp;</h5>
+                        <div class="col ms-2">
+                          <p class="fs--1 text-600 mb-0">Spares Requisition Created by Chief Officer on 02 Apr
+                            2020.
+                            Requestor Comments - xxxxxxxx </p>
+                        </div>
 
-                        </div>
-                        <div class="modal-body mt-0 scrollbar-visible">
-                          <div class="row">
-                            <div class="col-lg mb-3">
-                              <h6 class="text-900 mb-2">To Stage</h6>
-                              <h6 class="mb-0 fs--2 text-500">To Stage</h6>
-                            </div>
-                            <div class="col-lg mb-3">
-                              <h6 class="text-900 mb-2">Assignee</h6>
-                              <h6 class="mb-0 fs--2 text-500">Assignee</h6>
-                            </div>
-                            <div class="col-lg mb-3">
-                              <h6 class="text-900 mb-2">Date</h6>
-                              <h6 class="mb-0 fs--2 text-500">Date</h6>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col-lg mb-3">
-                              <h6 class="text-900 mb-2">Comments</h6>
-                              <textarea class="form-control" rows="5"></textarea>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-primary me-1" aria-label="">Ok</button> <button
-                            type="button" class="btn btn-danger me-1" aria-label="">Cancel</button>
-                        </div>
                       </div>
                     </div>
                   </div>
-                  <a class="px-1 m-r-5" id="navbarDropdownNotification" href="#" role="button" data-bs-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false" [class.disabled]="!isRequisitionApproved"
-                    [style.pointer-events]="isRequisitionApproved ? 'auto' : 'none'">
-                    <i class="far fa-calendar-alt text-primary"></i></a>
-                  <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification"
-                    aria-labelledby="navbarDropdownNotification">
-                    <div class="card card-notification shadow-none">
-                      <div class="card-header bg-light shadow">
-                        <div class="row justify-content-between align-items-center">
-                          <div class="col-auto">
-                            <h6 class="card-header-title mb-0">Timeline</h6>
-                          </div>
+                  <div class="row g-3 timeline timeline-primary timeline-past pb-card">
+                    <div class="col ps-4 ms-2">
+                      <div class="row gx-0 border-bottom pb-card">
+                        <div class="col-auto p-2 bg-soft-info">
+                          <p class="fs--2 text-800 mb-0">1 day <br><br>7 Days</p>
                         </div>
-                      </div>
-                      <div class="scrollbar-overlay py-4 pe-4" style="max-height:19rem">
-                        <div class="row g-3 timeline timeline-primary timeline-past pb-card">
-                          <div class="col ps-4 ms-2">
-                            <div class="row gx-0 border-bottom pb-card">
-                              <div class="col-auto p-2 bg-soft-info">
-                                <p class="fs--2 text-800 mb-0">6 days <br><br></p>
-                              </div>
-                              <div class="col ms-2">
-                                <p class="fs--1 text-600 mb-0">Spares Requisition Created by Chief Officer on 02 Apr
-                                  2020.
-                                  Requestor Comments - xxxxxxxx </p>
-                              </div>
+                        <div class="col ms-2">
+                          <p class="fs--1 text-600 mb-0">Spares Requisition Reviewed & Approved by Master on 03
+                            Apr
+                            2020. Approver Comments - yyyyyyy</p>
+                        </div>
 
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row g-3 timeline timeline-primary timeline-past pb-card">
-                          <div class="col ps-4 ms-2">
-                            <div class="row gx-0 border-bottom pb-card">
-                              <div class="col-auto p-2 bg-soft-info">
-                                <p class="fs--2 text-800 mb-0">1 day <br><br>7 Days</p>
-                              </div>
-                              <div class="col ms-2">
-                                <p class="fs--1 text-600 mb-0">Spares Requisition Reviewed & Approved by Master on 03
-                                  Apr
-                                  2020. Approver Comments - yyyyyyy</p>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row g-3 timeline timeline-primary timeline-past">
-                          <div class="col ps-4 ms-2">
-                            <div class="row gx-0 pb-card">
-                              <div class="col-auto p-2 bg-soft-info">
-                                <p class="fs--2 text-800 mb-0">3 day <br><br>10 Days</p>
-                              </div>
-                              <div class="col ms-2">
-                                <p class="fs--1 text-600 mb-0">Spares Requisition Reviewed by Purchase Executive on 06
-                                  Apr
-                                  2020.</p>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
+                  <div class="row g-3 timeline timeline-primary timeline-past">
+                    <div class="col ps-4 ms-2">
+                      <div class="row gx-0 pb-card">
+                        <div class="col-auto p-2 bg-soft-info">
+                          <p class="fs--2 text-800 mb-0">3 day <br><br>10 Days</p>
+                        </div>
+                        <div class="col ms-2">
+                          <p class="fs--1 text-600 mb-0">Spares Requisition Reviewed by Purchase Executive on 06
+                            Apr
+                            2020.</p>
+                        </div>
 
-                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-                    *ngIf="approvestatus === undefined || approvestatus === null" title=""
-                    data-bs-original-title="Send for Approval" aria-label="" (click)="sendApprove()">
-                    <i class="fas fa-share-square text-primary"></i></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+              *ngIf="approvestatus === undefined || approvestatus === null" title=""
+              data-bs-original-title="Send for Approval" aria-label="" (click)="sendApprove()">
+              <i class="fas fa-share-square text-primary"></i></a>
 
 
-                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip"
-                    *ngIf="approvestatus == 'Waiting For Approval'" data-bs-placement="top" title=""
-                    data-bs-original-title="Approved" aria-label="" (click)="FinalApprove('Approved')">
-                    <i class="fas fa-check text-primary"></i></a>
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" *ngIf="approvestatus == 'Waiting For Approval'"
+              data-bs-placement="top" title="" data-bs-original-title="Approved" aria-label=""
+              (click)="FinalApprove('Approved')">
+              <i class="fas fa-check text-primary"></i></a>
 
-                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    *ngIf="approvestatus == 'Waiting For Approval'" data-bs-original-title="Reject" aria-label=""
-                    (click)="FinalApprove('Reject')"> <i class="fas fa-times text-danger"></i></a>
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+              *ngIf="approvestatus == 'Waiting For Approval'" data-bs-original-title="Reject" aria-label=""
+              (click)="FinalApprove('Reject')"> <i class="fas fa-times text-danger"></i></a>
 
-                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    *ngIf="approvestatus == 'Reject'" data-bs-original-title="Reject" aria-label="">
-                    <i class="fas fa-times text-danger"></i></a>
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+              *ngIf="approvestatus == 'Reject'" data-bs-original-title="Reject" aria-label="">
+              <i class="fas fa-times text-danger"></i></a>
 
 
-                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    (click)="openAttachmentPopup()" data-bs-original-title="Add Attachment" aria-label=""><i
-                      class="fas fa-paperclip text-primary"></i></a>
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+              (click)="openAttachmentPopup()" data-bs-original-title="Add Attachment" aria-label=""><i
+                class="fas fa-paperclip text-primary"></i></a>
 
-                  <!-- <button class="px-1 m-r-5" type="submit" style="border: #f9fafd;" data-bs-toggle="tooltip"
+            <!-- <button class="px-1 m-r-5" type="submit" style="border: #f9fafd;" data-bs-toggle="tooltip"
                     data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
                       class="fas fa-save text-primary"></i></button>
 
                   <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban text-danger"></i></a> -->
 
-                  <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+            <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Export PDF" aria-label="" [class.disabled]="!isRequisitionApproved"><i class="fas fa-file-pdf text-danger"></i></a>
 
                   <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Export Excel" aria-label="" [class.disabled]="!isRequisitionApproved"><i
                       class="fas fa-file-excel text-success"></i></a> -->
 
-                  <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" *ngIf="approvestatus == 'Approved'"
-                    data-bs-placement="top" matTooltip="RTO" (click)="downloadNotepad()" data-bs-original-title="List"
-                    aria-label=""><i class="fas fa-file-alt"></i></a>
-                </div>
-              </div>
-            </div>
-            <hr class="m-0">
-            <div class="card-body fs--1 collapse show" id="document-header">
+            <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" *ngIf="approvestatus == 'Approved'"
+              data-bs-placement="top" matTooltip="RTO" (click)="downloadNotepad()" data-bs-original-title="List"
+              aria-label=""><i class="fas fa-file-alt"></i></a>
+          </div>
+        </div>
+      </div>
+      <hr class="m-0">
+      <div class="card-body fs--1 collapse show" id="document-header">
 
-              <div class="row">
-                <div class="col-lg mb-3">
-                  <h6 class="text-900 mb-2">Origin Site</h6>
+        <div class="row">
+          <div class="col-lg mb-3">
+            <h6 class="text-900 mb-2">Origin Site</h6>
 
-                  <fieldset class="form-group mb-0">
-                    <input type="text" class="form-control form-small" disabled value="{{location}}">
-                  </fieldset>
+            <fieldset class="form-group mb-0">
+              <input type="text" class="form-control form-small" disabled value="{{location}}">
+            </fieldset>
 
-                </div>
-                <div class="col-lg mb-3">
-                  <h6 class="text-900 mb-2">Site Required at</h6>
-                  <fieldset class="form-group mb-0">
-                    <select class="form-control form-small form-select" formControlName="vesselId"
-                      [(ngModel)]="selectedVesselId" required>
-                      <option value="0" selected disabled>Select Site Required at</option>
-                      <option *ngFor="let item of  Vessels" id="abc" value="{{item.vesselId}}">
-                        {{item.vesselName | titlecase}}
+          </div>
+          <div class="col-lg mb-3">
+            <h6 class="text-900 mb-2">Site Required at</h6>
+            <fieldset class="form-group mb-0">
+              <select class="form-control form-small form-select" formControlName="vesselId"
+                [(ngModel)]="selectedVesselId" required (change)="LoadProjectnameAndcode()">
+                <option value="0" selected disabled>Select Site Required at</option>
+                <option *ngFor="let item of  Vessels" id="abc" value="{{item.vesselId}}">
+                  {{item.vesselName | titlecase}}
 
-                      </option>
-                    </select>
-                  </fieldset>
-                </div>
+                </option>
+              </select>
+            </fieldset>
+          </div>
 
-                <div class="col-lg mb-3">
-                  <h6 class="text-900 mb-1">Project Name / Code</h6>
-                  <fieldset class="form-group mb-0">
-                    <select class="form-control form-small form-select" formControlName="projectNameCodeId"
-                      (change)="autoSave('header')" (change)="selectProjectCode($event)" required>
-                      <option value="" selected disabled>Select </option>
-                      <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
-                        {{item.projectName|titlecase }}-{{item.projectCode}}
-                      </option>
-                    </select>
-                  </fieldset>
-                </div>
+          <div class="col-lg mb-3">
+            <h6 class="text-900 mb-1">Project Name / Code</h6>
+            <fieldset class="form-group mb-0">
+              <select class="form-control form-small form-select" formControlName="projectNameCodeId"
+                 (change)="selectProjectCode($event)" required>
+                <option value="" selected disabled>Select </option>
+                <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
+                  {{item.projectName|titlecase }}-{{item.projectCode}}
+                </option>
+              </select>
+            </fieldset>
+          </div>
 
-                <div class="col-lg mb-3">
-                  <h6 class="text-900 mb-1">Request Order Type</h6>
-                  <fieldset class="form-group mb-0">
-                    <select class="form-control form-small form-select" formControlName="orderTypeId"
-                      [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
-                      <option value="0" selected disabled>Select OrderTypes</option>
-                      <option *ngFor="let item of filteredOrderTypes" value="{{item.orderTypeId}}">
-                        {{item.orderTypes | titlecase}}
-                      </option>
-                    </select>
-                  </fieldset>
-                </div>
+          <div class="col-lg mb-3">
+            <h6 class="text-900 mb-1">Request Order Type</h6>
+            <fieldset class="form-group mb-0">
+              <select class="form-control form-small form-select" formControlName="orderTypeId"
+                [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
+                <option value="0" selected disabled>Select OrderTypes</option>
+                <option *ngFor="let item of filteredOrderTypes" value="{{item.orderTypeId}}">
+                  {{item.orderTypes | titlecase}}
+                </option>
+              </select>
+            </fieldset>
+          </div>
 
-                <div class="col-lg mb-3">
-                  <h6 class="text-900 mb-2">Order Title</h6>
-                  <h6 class="mb-0 fs--2 text-500"></h6>
-                  <fieldset class="form-group mb-0">
-                    <input type="text" formControlName="orderTitle" class="form-control form-small"
-                      (change)="autoSave('header')" placeholder="Order Title" maxlength="100" required>
-                  </fieldset>
-                </div>
-              </div>
+          <div class="col-lg mb-3">
+            <h6 class="text-900 mb-2">Order Title</h6>
+            <h6 class="mb-0 fs--2 text-500"></h6>
+            <fieldset class="form-group mb-0">
+              <input type="text" formControlName="orderTitle" class="form-control form-small"
+                (change)="autoSave('header')" placeholder="Order Title" maxlength="100" required>
+            </fieldset>
+          </div>
+        </div>
 
-              <div class="row">
-                <div class="col-lg-6 mb-3">
-                  <h6 class="text-900 mb-2">Order Reference</h6>
-                  <fieldset class="form-group mb-0">
-                    <input type="text" class="form-control form-small ellipsis-text"
-                      placeholder="Select Component Items" (click)="openModal()" (change)="autoSave('header')"
-                      formControlName="orderReference" [value]="displayValue" [title]="displayValue" readonly>
-                  </fieldset>
-                </div>
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <h6 class="text-900 mb-2">Order Reference</h6>
+            <fieldset class="form-group mb-0">
+              <input type="text" class="form-control form-small ellipsis-text" placeholder="Select Component Items"
+                (click)="openModal()" formControlName="orderReference"
+                [value]="displayValue" [title]="displayValue" readonly>
+            </fieldset>
+          </div>
 
-                <div class="col-lg-2 mb-3">
-                  <h6 class="text-900 mb-2">Department</h6>
-                  <fieldset class="form-group mb-0">
-                    <select class="form-control form-small form-select" formControlName="departmentId"
-                      (change)="autoSave('header')" required>
-                      <option value="" selected disabled>Select Department</option>
-                      <option *ngFor="let item of Departments" value="{{item.departmentId}}">
-                        {{item.departmentName | titlecase}}
-                      </option>
-                    </select>
-                  </fieldset>
-                </div>
+          <div class="col-lg-2 mb-3">
+            <h6 class="text-900 mb-2">Department</h6>
+            <fieldset class="form-group mb-0">
+              <select class="form-control form-small form-select" formControlName="departmentId"
+                (change)="autoSave('header')" required>
+                <option value="" selected disabled>Select Department</option>
+                <option *ngFor="let item of Departments" value="{{item.departmentId}}">
+                  {{item.departmentName | titlecase}}
+                </option>
+              </select>
+            </fieldset>
+          </div>
 
-                <div class="col-lg-2 mb-3">
-                  <h6 class="text-900 mb-1">Priority</h6>
-                  <fieldset class="form-group mb-0">
-                    <select class="form-control form-small form-select" formControlName="priorityId"
-                      (change)="autoSave('header')" required>
-                      <option value="" selected disabled>Select Priority </option>
-                      <option *ngFor="let item of Priority" value="{{item.prefenceId}}">
-                        {{item.description |titlecase }}
-                      </option>
-                    </select>
-                  </fieldset>
-                </div>
+          <div class="col-lg-2 mb-3">
+            <h6 class="text-900 mb-1">Priority</h6>
+            <fieldset class="form-group mb-0">
+              <select class="form-control form-small form-select" formControlName="priorityId"
+                (change)="autoSave('header')" required>
+                <option value="" selected disabled>Select Priority </option>
+                <option *ngFor="let item of Priority" value="{{item.prefenceId}}">
+                  {{item.description |titlecase }}
+                </option>
+              </select>
+            </fieldset>
+          </div>
 
-                <div class="col-lg-2 mb-3">
-                  <h6 class="text-900 mb-2">Remarks</h6>
-                  <fieldset class="form-group mb-0">
-                    <input type="text" class="form-control form-small" formControlName="remarks" placeholder="Remarks"
-                      (change)="autoSave('header')" maxlength="100" required>
-                  </fieldset>
-                </div>
+          <div class="col-lg-2 mb-3">
+            <h6 class="text-900 mb-2">Remarks</h6>
+            <fieldset class="form-group mb-0">
+              <input type="text" class="form-control form-small" formControlName="remarks" placeholder="Remarks"
+                (change)="autoSave('header')" maxlength="100" required>
+            </fieldset>
+          </div>
 
-                <!-- <div class="col-lg mb-2">
+          <!-- <div class="col-lg mb-2">
                   <h6 class="text-900 mb-2">Comments</h6>
                   <div class="form-check form-check-inline mb-0">
                     <input class="form-check-input" id="generic" type="checkbox" formControlName="genericComment"
@@ -337,142 +332,152 @@
                     <label class="form-check-label mb-0" for="internal">Internal</label>
                   </div>
                 </div> -->
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <!--Header Form End Here -->
-
-      <!--Account Form Start Here -->
-      <div class="card mb-3">
-        <div class="card-header bg-light">
-          <div class="row flex-between-end">
-            <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#account"
-              aria-expanded="false" aria-controls="document-header">
-              <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3"
-                  data-fa-transform="shrink-2"></span>Accounts Info</h5>
-            </div>
-            <div class="col-auto ms-auto">
-              <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                data-bs-original-title="Variance Grid" aria-label=""><i class="fas fa-th text-primary"></i></a> <a
-                class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                data-bs-original-title="Variance Chart" aria-label=""><i class="fas fa-chart-pie text-primary"></i></a>
-            </div>
-          </div>
-        </div>
-        <hr class="m-0">
-        <div class="card-body fs--1 collapse" id="account">
-          <div class="row">
-            <div class="col-lg-3 mb-3">
-              <h6 class="text-900 mb-1">Account Code</h6>
-              <fieldset class="form-group mb-0">
-                <select class="form-control form-small form-select" id="" onchange="location = this.value;">
-                  <option>Select</option>
-                  <option value="purchase-link-account.html">Account Code / Name</option>
-                </select>
-              </fieldset>
-            </div>
-            <div class="col-lg-3 mb-3">
-              <h6 class="text-900 mb-2">Account Name</h6>
-              <h6 class="mb-0 fs--2 text-500">Account Name</h6>
-            </div>
-            <div class="col-lg-3 mb-3">
-              <h6 class="text-900 mb-2">Budget Period</h6>
-              <h6 class="mb-0 fs--2 text-500">Budget Period</h6>
-            </div>
-            <div class="col-lg-3 mb-3">
-              <h6 class="text-900 mb-2">Account Category</h6>
-              <h6 class="mb-0 fs--2 text-500">Account Category</h6>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-lg-3 mb-3">
-              <h6 class="text-900 mb-2">Estimated Req Cost</h6>
-              <h6 class="mb-0 fs--2 text-500">Estimated Req Cost</h6>
-            </div>
-            <div class="col-lg-3 mb-3">
-              <h6 class="text-900 mb-2">Budget Cost</h6>
-              <h6 class="mb-0 fs--2 text-500">Budget Cost</h6>
-            </div>
-            <div class="col-lg-3 mb-3">
-              <h6 class="text-900 mb-2">Committed Cost</h6>
-              <h6 class="mb-0 fs--2 text-500">Committed Cost</h6>
-            </div>
-            <div class="col-lg-3 mb-3">
-              <h6 class="text-900 mb-2">Actual Cost</h6>
-              <h6 class="mb-0 fs--2 text-500">Actual Cost</h6>
-            </div>
-          </div>
         </div>
       </div>
-      <!--Account Form End Here -->
+    </div>
+  </form>
+</div>
+<!--Header Form End Here -->
 
-      <!--Delivery Form Start Here -->
-      <div class="card mb-3">
-        <form (ngSubmit)="onSubmit(deliveryForm)" [formGroup]="RequisitionForm">
-          <div class="card-header bg-light">
-            <div class="row flex-between-end">
-              <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#delivery"
-                aria-expanded="false" aria-controls="document-header">
-                <h5 class="mb-0" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
-                  <span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2"></span>Delivery Info
-                </h5>
-                <h5 class="mb-0" *ngIf="defaultOrderType[0] === 'Service'">
-                  <span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2"></span>Service Info
-                </h5>
-              </div>
-              <div class="col-auto ms-auto">
-                <!-- <button class="btn btn-primary form-small  m-r-5" data-bs-toggle="tooltip" data-bs-placement="top"
+<!--Account Form Start Here -->
+<!-- <div class="card mb-3">
+  <div class="card-header bg-light">
+    <div class="row flex-between-end">
+      <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#account"
+        aria-expanded="false" aria-controls="document-header">
+        <h5 class="mb-0"><span class="fas fa-caret-right accordion-icon me-3"
+            data-fa-transform="shrink-2"></span>Accounts Info</h5>
+      </div>
+      <div class="col-auto ms-auto">
+        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+          data-bs-original-title="Variance Grid" aria-label=""><i class="fas fa-th text-primary"></i></a> <a
+          class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+          data-bs-original-title="Variance Chart" aria-label=""><i class="fas fa-chart-pie text-primary"></i></a>
+      </div>
+    </div>
+  </div>
+  <hr class="m-0">
+  <div class="card-body fs--1 collapse" id="account">
+    <div class="row">
+      <div class="col-lg-3 mb-3">
+        <h6 class="text-900 mb-1">Account Code</h6>
+        <fieldset class="form-group mb-0">
+          <select class="form-control form-small form-select" id="" onchange="location = this.value;">
+            <option>Select</option>
+            <option value="purchase-link-account.html">Account Code / Name</option>
+          </select>
+        </fieldset>
+      </div>
+      <div class="col-lg-3 mb-3">
+        <h6 class="text-900 mb-2">Account Name</h6>
+        <h6 class="mb-0 fs--2 text-500">Account Name</h6>
+      </div>
+      <div class="col-lg-3 mb-3">
+        <h6 class="text-900 mb-2">Budget Period</h6>
+        <h6 class="mb-0 fs--2 text-500">Budget Period</h6>
+      </div>
+      <div class="col-lg-3 mb-3">
+        <h6 class="text-900 mb-2">Account Category</h6>
+        <h6 class="mb-0 fs--2 text-500">Account Category</h6>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 mb-3">
+        <h6 class="text-900 mb-2">Estimated Req Cost</h6>
+        <h6 class="mb-0 fs--2 text-500">Estimated Req Cost</h6>
+      </div>
+      <div class="col-lg-3 mb-3">
+        <h6 class="text-900 mb-2">Budget Cost</h6>
+        <h6 class="mb-0 fs--2 text-500">Budget Cost</h6>
+      </div>
+      <div class="col-lg-3 mb-3">
+        <h6 class="text-900 mb-2">Committed Cost</h6>
+        <h6 class="mb-0 fs--2 text-500">Committed Cost</h6>
+      </div>
+      <div class="col-lg-3 mb-3">
+        <h6 class="text-900 mb-2">Actual Cost</h6>
+        <h6 class="mb-0 fs--2 text-500">Actual Cost</h6>
+      </div>
+    </div>
+  </div>
+</div> -->
+<!--Account Form End Here -->
+
+<!--Delivery Form Start Here -->
+<div class="card mb-3" *ngIf="reqId !== undefined">
+  <form (ngSubmit)="onSubmit(deliveryForm)" [formGroup]="RequisitionForm">
+    <div class="card-header bg-light">
+      <div class="row flex-between-end">
+        <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#delivery"
+          aria-expanded="false" aria-controls="document-header">
+          <h5 class="mb-0" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
+            <span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2"></span>Delivery Info
+          </h5>
+          <h5 class="mb-0" *ngIf="defaultOrderType[0] === 'Service'">
+            <span class="fas fa-caret-right accordion-icon me-3" data-fa-transform="shrink-2"></span>Service Info
+          </h5>
+        </div>
+        <div class="col-auto ms-auto">
+          <!-- <button class="btn btn-primary form-small  m-r-5" data-bs-toggle="tooltip" data-bs-placement="top"
                   title="" data-bs-original-title="Save" aria-label="" [disabled]="!reqId"><i
                     class="fas fa-save"></i></button> -->
-                <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+          <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                   data-bs-original-title="Edit Delivery Info" aria-label=""><i class="fas fa-edit text-primary"></i></a>
                 <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                   data-bs-original-title="Send Delivery Instructions" aria-label=""><i
                     class="fas fa-share-square text-primary"></i></a> -->
-                <!-- <a class="px-1" type="button" data-bs-toggle="modal" data-bs-target="#additional-cost"
+          <!-- <a class="px-1" type="button" data-bs-toggle="modal" data-bs-target="#additional-cost"
                   *ngIf="approvestatus == 'Waiting For Approval' || approvestatus == 'Approved'">
                   <button class="btn btn-secondary form-small" type="button">Manage Additional Cost</button> </a> -->
 
-              </div>
-            </div>
-          </div>
-          <hr class="m-0">
-          <div class="card-body collapse" id="delivery" formGroupName="delivery">
-            <div class="row">
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
-                  Expected Delivery Port</h6>
-                <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Expected Port</h6>
-                <fieldset class="form-group mb-0">
-                  <select class="form-control form-small form-select" formControlName="expectedDeliveryPort" required
-                    (change)="autoSave('delivery')">
-                    <option value="" selected disabled>Select </option>
-                    <option *ngFor="let item of portList" value="{{item.locationName}}">
-                      {{item.locationName}}
-                    </option>
-                  </select>
-                </fieldset>
-              </div>
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
-                  Expected Delivery Date</h6>
-                <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Expected Date</h6>
-                <input type="date" class="mb-0 fs--2 text-500" formControlName="expectedDeliveryDate"
-                  (change)="autoSave('delivery')" />
-              </div>
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">Vessel ETA</h6>
-                <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETA"
-                  (change)="autoSave('delivery')" />
-              </div>
-              <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">Vessel ETB</h6>
-                <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETB"
-                  (change)="autoSave('delivery')" />
-              </div>
-              <div class="col-lg mb-3">
+        </div>
+      </div>
+    </div>
+    <hr class="m-0">
+    <div class="card-body collapse" id="delivery" formGroupName="delivery">
+      <div class="row">
+        <div class="col-lg mb-3">
+          <!-- <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
+            Expected Delivery Port</h6>
+          <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Expected Port</h6> -->
+
+          <fieldset class="form-group mb-0 serarch-container">
+            <mat-form-field class="custom-form-field">
+              <input type="text" [placeholder]="myPlaceholder" aria-label="Port" matInput [formControl]="myControl"
+                [matAutocomplete]="auto">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let port of filteredPorts | async" [value]="port">
+                  {{port.locationName}} {{ port.countryMaster ? ', ' + port.countryMaster.countryName : '' }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+
+            <!-- <input type="text" class="form-control" placeholder="Search..." [(ngModel)]="searchTerm" />           -->
+            <!-- <select class="form-control form-small form-select" formControlName="expectedDeliveryPort" required
+              (change)="autoSave('delivery')">
+              <option value="" selected disabled>Select </option>
+              <option *ngFor="let item of portList" value="{{item.locationName}}">
+                {{item.locationName}}
+              </option>
+            </select> -->
+          </fieldset>
+        </div>
+        <div class="col-lg mb-3">
+          <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
+            Expected Delivery Date</h6>
+          <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Expected Date</h6>
+          <input type="date" class="mb-0 fs--2 text-500" formControlName="expectedDeliveryDate"
+            (change)="autoSave('delivery')" />
+        </div>
+        <div class="col-lg mb-3">
+          <h6 class="text-900 mb-2">Vessel ETA</h6>
+          <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETA" (change)="autoSave('delivery')" />
+        </div>
+        <div class="col-lg mb-3">
+          <h6 class="text-900 mb-2">Vessel ETB</h6>
+          <input type="date" class="mb-0 fs--2 text-500" formControlName="vesselETB" (change)="autoSave('delivery')" />
+        </div>
+        <!-- <div class="col-lg mb-3">
                 <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
                   Delivery Address</h6>
                 <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Service Location</h6>
@@ -560,13 +565,13 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
+              </div> -->
+      </div>
+    </div>
 
-          <!-- Additional-cost -->
+    <!-- Additional-cost -->
 
-          <!-- <div class="modal fade" id="additional-cost" tabindex="-1" aria-hidden="true">
+    <!-- <div class="modal fade" id="additional-cost" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl mt-6" role="document">
               <div class="modal-content border-0">
                 <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
@@ -629,641 +634,600 @@
           </div> -->
 
 
-        </form>
+  </form>
+</div>
+<!--Delivery Form End Here -->
+
+<!--Items Form Start Here -->
+<div class="card mb-3" *ngIf="reqId !== undefined && (defaultOrderType[0]==='Spare' || defaultOrderType[0]==='Store')">
+  <div class="card-header bg-light">
+    <div class="row flex-between-end">
+      <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#items"
+        aria-expanded="false" aria-controls="items">
+        <h5 class="mb-0 d-inline-block"><span class="fas fa-caret-right accordion-icon me-3"
+            data-fa-transform="shrink-2"></span>Items</h5>
       </div>
-      <!--Delivery Form End Here -->
+      <div class="col-auto ms-auto">
+        <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#ship-items" data-bs-placement="top"
+          title="Add RFQ" data-bs-original-title="Add RFQ" aria-label=""><i class="fas fa-plus text-primary"></i></a>
+        <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" (click)="deleteItems()" data-bs-placement="top"
+          matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""><i
+            class="fas fa-trash text-danger"></i></a>
+        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+          data-bs-original-title="Approve Items" aria-label=""><i class="far fa-check-circle text-primary"></i></a>
 
-      <!--Items Form Start Here -->
-      <div class="card mb-3" *ngIf="defaultOrderType[0]==='Spare' || defaultOrderType[0]==='Store'">
-        <div class="card-header bg-light">
-          <div class="row flex-between-end">
-            <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#items"
-              aria-expanded="false" aria-controls="items">
-              <h5 class="mb-0 d-inline-block"><span class="fas fa-caret-right accordion-icon me-3"
-                  data-fa-transform="shrink-2"></span>Items</h5>
-            </div>
-            <div class="col-auto ms-auto">
-              <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#ship-items"
-                data-bs-placement="top" title="Add RFQ" data-bs-original-title="Add RFQ" aria-label=""><i
-                  class="fas fa-plus text-primary"></i></a>
-              <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" (click)="deleteItems()"
-                data-bs-placement="top" matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""><i
-                  class="fas fa-trash text-danger"></i></a>
-              <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                data-bs-original-title="Approve Items" aria-label=""><i
-                  class="far fa-check-circle text-primary"></i></a>
+        <button class="btn btn-primary form-small m-r-5" type="button" data-bs-toggle="tooltip"
+          *ngIf="this.approvestatus == 'Waiting For Approval' || approvestatus == 'Approved'" data-bs-placement="top"
+          title="" data-bs-original-title="Copy Requisition Quantity to Approved Quantity" aria-label="">
+          <i class="fas fa-copy"></i></button>
 
-              <button class="btn btn-primary form-small m-r-5" type="button" data-bs-toggle="tooltip"
-                *ngIf="this.approvestatus == 'Waiting For Approval' || approvestatus == 'Approved'"
-                data-bs-placement="top" title="" data-bs-original-title="Copy Requisition Quantity to Approved Quantity"
-                aria-label="">
-                <i class="fas fa-copy"></i></button>
+        <!--Strat here Items Pop Up View-->
+        <div class="modal fade" id="ship-items" tabindex="-1" aria-hidden="true" role="dialog"
+          aria-labelledby="authentication-modal-label">
+          <div class="modal-dialog modal-xl mt-6" role="document">
+            <div class="modal-content border-0">
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                  data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-header">
+                <h5 class="modal-title" id="">&nbsp;</h5>
 
-              <!--Strat here Items Pop Up View-->
-              <div class="modal fade" id="ship-items" tabindex="-1" aria-hidden="true" role="dialog"
-                aria-labelledby="authentication-modal-label">
-                <div class="modal-dialog modal-xl mt-6" role="document">
-                  <div class="modal-content border-0">
-                    <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                      <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                        data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body mt-0 scrollbar-visible">
+                <div class="form-inline mb-3">
+                  <input type="text" class="form-control form-small m-r-5 mb-d3 m-r-d0" placeholder="Search"
+                    (keyup)="applyFilter($any($event.target).value)" #searchInput>
+                  <button class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top"
+                    title="" data-bs-original-title="Search" aria-label=""><i class="fas fa-search"
+                      aria-hidden="true"></i></button>
+
+                </div>
+                <div class="row">
+                  <div class="col-md-8">
+                    <div class="table-responsive scrollbar-visible">
+                      <table class="table table-hover table-striped table-sm small">
+                        <thead>
+                          <tr>
+                            <th colspan="6" class="bg-primary text-light text-center">Choose Ship Spare Parts
+                            </th>
+                          </tr>
+                          <mat-table #leftTable [dataSource]="leftTableDataSource"
+                            class="table table-hover table-striped table-sm small table-bordered">
+                            <ng-container matColumnDef="checkbox">
+                              <mat-header-cell *matHeaderCellDef>
+                                <mat-checkbox (change)="$event ? masterLeftTableToggle() : null"
+                                  [checked]="leftTableSelection.hasValue() && isAllLeftTableSelected()"
+                                  [indeterminate]="leftTableSelection.hasValue() && !isAllLeftTableSelected()">
+                                </mat-checkbox>
+
+                              </mat-header-cell>
+                              <mat-cell *matCellDef="let row">
+                                <mat-checkbox (click)="$event.stopPropagation()"
+                                  (change)="$event ? leftTableSelection.toggle(row) : null"
+                                  [checked]="leftTableSelection.isSelected(row)"
+                                  [aria-label]="checkboxLeftTableLabel(row)"></mat-checkbox>
+                              </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="inventoryName">
+                              <mat-header-cell *matHeaderCellDef>Part Name</mat-header-cell>
+                              <mat-cell *matCellDef="let row">{{ row.itemName }}</mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="partNo">
+                              <mat-header-cell *matHeaderCellDef>Part No.</mat-header-cell>
+                              <mat-cell *matCellDef="let row">{{ row.part }}</mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="dwg">
+                              <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
+                              <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="quantity">
+                              <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
+                              <mat-cell *matCellDef="let row">{{ row.rob }}</mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="availableQty">
+                              <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
+                              <mat-cell *matCellDef="let row">{{ row.unit }}</mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="minRequired">
+                              <mat-header-cell *matHeaderCellDef>Min Required</mat-header-cell>
+                              <mat-cell *matCellDef="let row">{{ row.minRequired }}</mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="reorderLevel">
+                              <mat-header-cell *matHeaderCellDef>Reorder Level</mat-header-cell>
+                              <mat-cell *matCellDef="let row">{{ row.reorderQty }}</mat-cell>
+                            </ng-container>
+                            <mat-header-row class="bg-300"
+                              *matHeaderRowDef="leftTableColumn; sticky:true"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: leftTableColumn; let i = index"
+                              [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.shipComponentSpareId==selectedIndex))}"></mat-row>
+                          </mat-table>
+                        </thead>
+                      </table>
                     </div>
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="">&nbsp;</h5>
+                  </div>
 
-                    </div>
-                    <div class="modal-body mt-0 scrollbar-visible">
-                      <div class="form-inline mb-3">
-                        <input type="text" class="form-control form-small m-r-5 mb-d3 m-r-d0" placeholder="Search"
-                          (keyup)="applyFilter($any($event.target).value)" #searchInput>
-                        <button class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
-                          data-bs-placement="top" title="" data-bs-original-title="Search" aria-label=""><i
-                            class="fas fa-search" aria-hidden="true"></i></button>
+                  <div class="col-md-1">
+                    <button type="button" (click)="moveItemToRight()" [disabled]="leftTableDataSource.data.length === 0"
+                      id="multiselect_rightSelected" class="btn w-100 btn-primary mb-1"><i
+                        class="fas fa-angle-right"></i></button>
+                    <button type="button" (click)="moveItemToLeft()" id="multiselect_leftSelected"
+                      [disabled]="rightTableDataSource.data.length === 0" class="btn w-100 btn-primary mb-1"><i
+                        class="fas fa-angle-left"></i></button>
+                    <button type="button" id="multiselect_rightAll" [disabled]="leftTableDataSource.data.length === 0"
+                      (click)="moveAllItemToRight()" class="btn w-100 btn-primary mb-1"><i
+                        class="fas fa-angle-double-right"></i></button>
+                    <button type="button" id="multiselect_leftAll" [disabled]="rightTableDataSource.data.length === 0"
+                      (click)="moveAllItemToLeft()" class="btn w-100 btn-primary"><i
+                        class="fas fa-angle-double-left"></i></button>
+                  </div>
 
-                      </div>
-                      <div class="row">
-                        <div class="col-md-8">
-                          <div class="table-responsive scrollbar-visible">
-                            <table class="table table-hover table-striped table-sm small">
-                              <thead>
-                                <tr>
-                                  <th colspan="6" class="bg-primary text-light text-center">Choose Ship Spare Parts
-                                  </th>
-                                </tr>
-                                <mat-table #leftTable [dataSource]="leftTableDataSource"
-                                  class="table table-hover table-striped table-sm small table-bordered">
-                                  <ng-container matColumnDef="checkbox">
-                                    <mat-header-cell *matHeaderCellDef>
-                                      <mat-checkbox (change)="$event ? masterLeftTableToggle() : null"
-                                        [checked]="leftTableSelection.hasValue() && isAllLeftTableSelected()"
-                                        [indeterminate]="leftTableSelection.hasValue() && !isAllLeftTableSelected()">
-                                      </mat-checkbox>
+                  <div class="col-md-3">
+                    <div class="table-responsive scrollbar-visible">
+                      <table class="table table-hover table-striped table-sm small">
+                        <thead>
+                          <tr>
+                            <th colspan="6" class="bg-primary text-light text-center">Selected Spare Parts</th>
+                          </tr>
 
-                                    </mat-header-cell>
-                                    <mat-cell *matCellDef="let row">
-                                      <mat-checkbox (click)="$event.stopPropagation()"
-                                        (change)="$event ? leftTableSelection.toggle(row) : null"
-                                        [checked]="leftTableSelection.isSelected(row)"
-                                        [aria-label]="checkboxLeftTableLabel(row)"></mat-checkbox>
-                                    </mat-cell>
-                                  </ng-container>
-                                  <ng-container matColumnDef="inventoryName">
-                                    <mat-header-cell *matHeaderCellDef>Part Name</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.itemName }}</mat-cell>
-                                  </ng-container>
-                                  <ng-container matColumnDef="partNo">
-                                    <mat-header-cell *matHeaderCellDef>Part No.</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.part }}</mat-cell>
-                                  </ng-container>
-                                  <ng-container matColumnDef="dwg">
-                                    <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
-                                  </ng-container>
-                                  <ng-container matColumnDef="quantity">
-                                    <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.rob }}</mat-cell>
-                                  </ng-container>
-                                  <ng-container matColumnDef="availableQty">
-                                    <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.unit }}</mat-cell>
-                                  </ng-container>
-                                  <ng-container matColumnDef="minRequired">
-                                    <mat-header-cell *matHeaderCellDef>Min Required</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.minRequired }}</mat-cell>
-                                  </ng-container>
-                                  <ng-container matColumnDef="reorderLevel">
-                                    <mat-header-cell *matHeaderCellDef>Reorder Level</mat-header-cell>
-                                    <mat-cell *matCellDef="let row">{{ row.reorderQty }}</mat-cell>
-                                  </ng-container>
-                                  <mat-header-row class="bg-300"
-                                    *matHeaderRowDef="leftTableColumn; sticky:true"></mat-header-row>
-                                  <mat-row *matRowDef="let row; columns: leftTableColumn; let i = index"
-                                    [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.shipComponentSpareId==selectedIndex))}"></mat-row>
-                                </mat-table>
-                              </thead>
-                            </table>
-                          </div>
-                        </div>
+                          <mat-table #rightTable [dataSource]="rightTableDataSource"
+                            class="table table-hover table-striped table-sm small table-bordered">
+                            <ng-container matColumnDef="checkbox">
+                              <mat-header-cell *matHeaderCellDef>
+                                <mat-checkbox (change)="$event ? masterRightTableToggle() : null"
+                                  [checked]="rightTableSelection.hasValue() && isAllRightTableSelected()"
+                                  [indeterminate]="rightTableSelection.hasValue() && !isAllRightTableSelected()">
+                                </mat-checkbox>
 
-                        <div class="col-md-1">
-                          <button type="button" (click)="moveItemToRight()"
-                            [disabled]="leftTableDataSource.data.length === 0" id="multiselect_rightSelected"
-                            class="btn w-100 btn-primary mb-1"><i class="fas fa-angle-right"></i></button>
-                          <button type="button" (click)="moveItemToLeft()" id="multiselect_leftSelected"
-                            [disabled]="rightTableDataSource.data.length === 0" class="btn w-100 btn-primary mb-1"><i
-                              class="fas fa-angle-left"></i></button>
-                          <button type="button" id="multiselect_rightAll"
-                            [disabled]="leftTableDataSource.data.length === 0" (click)="moveAllItemToRight()"
-                            class="btn w-100 btn-primary mb-1"><i class="fas fa-angle-double-right"></i></button>
-                          <button type="button" id="multiselect_leftAll"
-                            [disabled]="rightTableDataSource.data.length === 0" (click)="moveAllItemToLeft()"
-                            class="btn w-100 btn-primary"><i class="fas fa-angle-double-left"></i></button>
-                        </div>
-
-                        <div class="col-md-3">
-                          <div class="table-responsive scrollbar-visible">
-                            <table class="table table-hover table-striped table-sm small">
-                              <thead>
-                                <tr>
-                                  <th colspan="6" class="bg-primary text-light text-center">Selected Spare Parts</th>
-                                </tr>
-
-                                <mat-table #rightTable [dataSource]="rightTableDataSource"
-                                  class="table table-hover table-striped table-sm small table-bordered">
-                                  <ng-container matColumnDef="checkbox">
-                                    <mat-header-cell *matHeaderCellDef>
-                                      <mat-checkbox (change)="$event ? masterRightTableToggle() : null"
-                                        [checked]="rightTableSelection.hasValue() && isAllRightTableSelected()"
-                                        [indeterminate]="rightTableSelection.hasValue() && !isAllRightTableSelected()">
-                                      </mat-checkbox>
-
-                                    </mat-header-cell>
-                                    <mat-cell *matCellDef="let row">
-                                      <mat-checkbox (click)="$event.stopPropagation()"
-                                        (change)="$event ? rightTableSelection.toggle(row) : null"
-                                        [checked]="rightTableSelection.isSelected(row)"
-                                        [aria-label]="checkboxRightTableLabel(row)"></mat-checkbox>
-                                    </mat-cell>
-                                  </ng-container>
-                                  <ng-container style="min-width: 50px; width: 50px; max-width: 50px;"
-                                    matColumnDef="userInput">
-                                    <mat-header-cell style="min-width: 50px; width: 50px; max-width: 50px;"
-                                      *matHeaderCellDef>Qty</mat-header-cell>
-                                    <mat-cell #reqQty style="min-width: 50px; width: 50px; max-width: 50px;"
-                                      *matCellDef="let row; let i = index"
-                                      [ngClass]="{'highlight': isHighlighted(row)}">
-                                      <span *ngIf="!row.editMode" (click)="toggleEditModeItem(row)"
-                                        style="cursor: pointer">{{ row.reqQty }}</span>
-                                      <input #reqQtyElements *ngIf="row.editMode" matInput placeholder="Enter data"
-                                        [(ngModel)]="row.reqQty" (blur)="saveChanges(row)"
-                                        (keydown)="handleKeyDown($event, row)"
-                                        [id]="'reqQty_' + i + '_' + row.shipComponentSpareId" />
-                                    </mat-cell>
-                                  </ng-container>
-                                  <ng-container class="rightTableCode" matColumnDef="partNo">
-                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>PartNo.</mat-header-cell>
-                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{ row.part }}</mat-cell>
-                                  </ng-container>
-                                  <ng-container class="rightTableCode" matColumnDef="inventoryName">
-                                    <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part
-                                      Name</mat-header-cell>
-                                    <mat-cell class="rightTableCode" *matCellDef="let row">{{row.itemName }}</mat-cell>
-                                  </ng-container>
-                                  <mat-header-row class="bg-300"
-                                    *matHeaderRowDef="rightTableColumn; sticky:true"></mat-header-row>
-                                  <mat-row *matRowDef="let row; columns: rightTableColumn; let i = index"
-                                    [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.shipComponentSpareId==selectedIndex))}"></mat-row>
-                                </mat-table>
-                              </thead>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-primary me-1" aria-label="" [disabled]="!reqId"
-                        (click)="storeTableData()">Ok</button>
-                      <button type="button" data-bs-dismiss="modal" class="btn btn-danger me-1"
-                        aria-label="">Cancel</button>
+                              </mat-header-cell>
+                              <mat-cell *matCellDef="let row">
+                                <mat-checkbox (click)="$event.stopPropagation()"
+                                  (change)="$event ? rightTableSelection.toggle(row) : null"
+                                  [checked]="rightTableSelection.isSelected(row)"
+                                  [aria-label]="checkboxRightTableLabel(row)"></mat-checkbox>
+                              </mat-cell>
+                            </ng-container>
+                            <ng-container style="min-width: 50px; width: 50px; max-width: 50px;"
+                              matColumnDef="userInput">
+                              <mat-header-cell style="min-width: 50px; width: 50px; max-width: 50px;"
+                                *matHeaderCellDef>Qty</mat-header-cell>
+                              <mat-cell #reqQty style="min-width: 50px; width: 50px; max-width: 50px;"
+                                *matCellDef="let row; let i = index" [ngClass]="{'highlight': isHighlighted(row)}">
+                                <span *ngIf="!row.editMode" (click)="toggleEditModeItem(row)" style="cursor: pointer">{{
+                                  row.reqQty }}</span>
+                                <input #reqQtyElements *ngIf="row.editMode" matInput placeholder="Enter data"
+                                  [(ngModel)]="row.reqQty" (blur)="saveChanges(row)"
+                                  (keydown)="handleKeyDown($event, row)"
+                                  [id]="'reqQty_' + i + '_' + row.shipComponentSpareId" />
+                              </mat-cell>
+                            </ng-container>
+                            <ng-container class="rightTableCode" matColumnDef="partNo">
+                              <mat-header-cell class="rightTableCode" *matHeaderCellDef>PartNo.</mat-header-cell>
+                              <mat-cell class="rightTableCode" *matCellDef="let row">{{ row.part }}</mat-cell>
+                            </ng-container>
+                            <ng-container class="rightTableCode" matColumnDef="inventoryName">
+                              <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part
+                                Name</mat-header-cell>
+                              <mat-cell class="rightTableCode" *matCellDef="let row">{{row.itemName }}</mat-cell>
+                            </ng-container>
+                            <mat-header-row class="bg-300"
+                              *matHeaderRowDef="rightTableColumn; sticky:true"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: rightTableColumn; let i = index"
+                              [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.shipComponentSpareId==selectedIndex))}"></mat-row>
+                          </mat-table>
+                        </thead>
+                      </table>
                     </div>
                   </div>
                 </div>
               </div>
-              <!--End here Items Pop Up View-->
-              <div class="nav nav-pills nav-pills-pms flex-grow-1 d-inline-block m-r-5" role="tablist">
-                <button class="btn btn-sm active" data-bs-toggle="pill" data-bs-target="#list-view" type="button"
-                  role="tab"><i class="fas fa-list"></i> List View</button>
-                <button class="btn btn-sm" data-bs-toggle="pill" data-bs-target="#detail-view" type="button"
-                  role="tab"><i class="fas fa-th"></i> Details View</button>
-              </div> <a class="form-small text-primary float-end" type="button" data-bs-toggle="tooltip"
-                data-bs-placement="top" title="" data-bs-original-title="Modify Column" aria-label=""><i
-                  class="fas fa-columns"></i></a>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary me-1" aria-label="" [disabled]="!reqId"
+                  (click)="storeTableData()">Ok</button>
+                <button type="button" data-bs-dismiss="modal" class="btn btn-danger me-1" aria-label="">Cancel</button>
+              </div>
             </div>
           </div>
         </div>
-        <hr class="m-0">
-        <div class="card-body collapse" id="items">
-          <div class="tab-content">
-            <div class="tab-pane preview-tab-pane active" role="tabpanel" id="list-view">
-              <div class="row">
-                <div>
+        <!--End here Items Pop Up View-->
+        <div class="nav nav-pills nav-pills-pms flex-grow-1 d-inline-block m-r-5" role="tablist">
+          <button class="btn btn-sm active" data-bs-toggle="pill" data-bs-target="#list-view" type="button"
+            role="tab"><i class="fas fa-list"></i> List View</button>
+          <button class="btn btn-sm" data-bs-toggle="pill" data-bs-target="#detail-view" type="button" role="tab"><i
+              class="fas fa-th"></i> Details View</button>
+        </div> <a class="form-small text-primary float-end" type="button" data-bs-toggle="tooltip"
+          data-bs-placement="top" title="" data-bs-original-title="Modify Column" aria-label=""><i
+            class="fas fa-columns"></i></a>
+      </div>
+    </div>
+  </div>
+  <hr class="m-0">
+  <div class="card-body collapse" id="items">
+    <div class="tab-content">
+      <div class="tab-pane preview-tab-pane active" role="tabpanel" id="list-view">
+        <div class="row">
+          <div>
+
+          </div>
+        </div>
+        <div class="table-responsive scrollbar">
+          <mat-table #itemTable [dataSource]="dataSource" matSort
+            class="table table-hover table-striped table-sm small table-bordered itemTable">
+            <ng-container matColumnDef="checkbox">
+              <mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="$event ? masterToggle() : null"
+                  [checked]="selection.hasValue() && isAllSelected()"
+                  [indeterminate]="selection.hasValue() && !isAllSelected()">
+                </mat-checkbox>
+
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+                  [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="index" style="width: 50px;">
+              <mat-header-cell class="mat-column-index" *matHeaderCellDef>#</mat-header-cell>
+              <mat-cell class="mat-column-index" style="width: 50px;" *matCellDef="let row; let i = index">{{ i +
+                1 }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="itemName">
+              <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ row.itemName }}</mat-cell>
+            </ng-container>
+            <ng-container class="rightTableCode" matColumnDef="itemCode">
+              <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ row.itemCode }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="part">
+              <mat-header-cell *matHeaderCellDef>Part</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ row.partNo }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="dwg">
+              <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="make">
+              <mat-header-cell *matHeaderCellDef>Make</mat-header-cell>
+              <mat-cell class="ellipsis-text" *matCellDef="let row" [title]="row.maker">{{ row.maker }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="model">
+              <mat-header-cell *matHeaderCellDef>Model</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ row.model }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="lastDlDt">
+              <mat-header-cell *matHeaderCellDef>Last Dl Date</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ row.lastDlDt }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="lastDlQty">
+              <mat-header-cell *matHeaderCellDef>Last Dl Qty</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ row.lastDlQty }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="rob">
+              <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
+              <mat-cell *matCellDef="let row" (click)="openEditModal(row)">{{ row.rob }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="enterQuantity">
+              <mat-header-cell *matHeaderCellDef>Req Qty</mat-header-cell>
+              <mat-cell *matCellDef="let row; let i = index" #reqQty>
+                <span *ngIf="!row.editMode" (click)="toggleEditMode(row)" style="cursor: pointer">{{ row.reqQty
+                  }}</span>
+                <input #reqQtyElements *ngIf="row.editMode" type="number" [(ngModel)]="row.reqQty"
+                  (blur)="saveChanges(row)" (keydown)="handleKeyDown($event, row)"
+                  [id]="'reqQty_' + i + '_' + row.ids" />
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="unit">
+              <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{ row.unit }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="itemSpec">
+              <mat-header-cell *matHeaderCellDef>Item Spec</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{ row.makerReference ? row.makerReference + '-' : '' }}
+                {{ row.material ? row.material + '-' : '' }}
+                {{ row.description ? row.description + '-' : '' }}
+                {{ row.remarks ? row.remarks : '' }}</mat-cell>
+            </ng-container>
+
+            <ng-container style="min-width: 80px; width: 80px; max-width: 80px;" matColumnDef="itemRemarks">
+              <mat-header-cell style="min-width: 80px; width: 80px; max-width: 80px;"
+                *matHeaderCellDef>Remarks</mat-header-cell>
+              <mat-cell #reqQty style="min-width: 80px; width: 80px; max-width: 80px;"
+                *matCellDef="let row; let i = index" [ngClass]="{'highlight': isHighlighted(row)}">
+                <input matInput placeholder="Enter data" (change)="autoSave('items')" [(ngModel)]="row.itemRemarks">
+              </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="attachments">
+              <mat-header-cell *matHeaderCellDef>Attachments</mat-header-cell>
+              <mat-cell class="text-center" *matCellDef="let row"><a class="px-1 m-r-5 text-center" type="button"
+                  data-bs-toggle="tooltip" data-bs-placement="top" title="" (click)="openAttachmentItem(row.itemsId)"
+                  data-bs-original-title="Add Attachment" aria-label=""><i
+                    class="fas fa-paperclip text-primary"></i></a></mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
+              [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.ids==selectedIndex))}"></mat-row>
+          </mat-table>
+          <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
+            [pageSizeOptions]="[20, 40, 60, 100]">
+          </mat-paginator>
+          <div class="modal fade" id="attachents-list-01" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog mt-6" role="document">
+              <div class="modal-content border-0">
+                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                  <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-header">
+                  <h5 class="modal-title" id="">Attachents</h5>
+
+                </div>
+                <div class="modal-body mt-0">
+                  <div class="d-flex mb-3 align-items-center">
+                    <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
+                    </div>
+                    <div class="ms-3 flex-shrink-1 flex-grow-1">
+                      <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item 01</a>
+                      </h6>
+                      <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
+                    </div>
+                  </div>
 
                 </div>
               </div>
-              <div class="table-responsive scrollbar">
-                <mat-table #itemTable [dataSource]="dataSource" matSort
-                  class="table table-hover table-striped table-sm small table-bordered itemTable">
-                  <ng-container matColumnDef="checkbox">
-                    <mat-header-cell *matHeaderCellDef>
-                      <mat-checkbox (change)="$event ? masterToggle() : null"
-                        [checked]="selection.hasValue() && isAllSelected()"
-                        [indeterminate]="selection.hasValue() && !isAllSelected()">
-                      </mat-checkbox>
+            </div>
+          </div>
+          <div class="modal fade" id="attachents-list-02" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog mt-6" role="document">
+              <div class="modal-content border-0">
+                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                  <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-header">
+                  <h5 class="modal-title" id="">Attachents</h5>
 
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let row">
-                      <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
-                        [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>
-                    </mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="index" style="width: 50px;">
-                    <mat-header-cell class="mat-column-index" *matHeaderCellDef>#</mat-header-cell>
-                    <mat-cell class="mat-column-index" style="width: 50px;" *matCellDef="let row; let i = index">{{ i +
-                      1 }}</mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="itemName">
-                    <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
-                    <mat-cell *matCellDef="let row">{{ row.itemName }}</mat-cell>
-                  </ng-container>
-                  <ng-container class="rightTableCode" matColumnDef="itemCode">
-                    <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
-                    <mat-cell *matCellDef="let row">{{ row.itemCode }}</mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="part">
-                    <mat-header-cell *matHeaderCellDef>Part</mat-header-cell>
-                    <mat-cell *matCellDef="let row">{{ row.partNo }}</mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="dwg">
-                    <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
-                    <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="make">
-                    <mat-header-cell *matHeaderCellDef>Make</mat-header-cell>
-                    <mat-cell class="ellipsis-text" *matCellDef="let row" [title]="row.make">{{ row.make }}</mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="model">
-                    <mat-header-cell *matHeaderCellDef>Model</mat-header-cell>
-                    <mat-cell *matCellDef="let row">{{ row.model }}</mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="lastDlDt">
-                    <mat-header-cell *matHeaderCellDef>Last Dl Date</mat-header-cell>
-                    <mat-cell *matCellDef="let row">{{ row.lastDlDt }}</mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="lastDlQty">
-                    <mat-header-cell *matHeaderCellDef>Last Dl Qty</mat-header-cell>
-                    <mat-cell *matCellDef="let row">{{ row.lastDlQty }}</mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="rob">
-                    <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
-                    <mat-cell *matCellDef="let row" (click)="openEditModal(row)">{{ row.rob }}</mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="enterQuantity">
-                    <mat-header-cell *matHeaderCellDef>Req Qty</mat-header-cell>
-                    <mat-cell *matCellDef="let row; let i = index" #reqQty>
-                      <span *ngIf="!row.editMode" (click)="toggleEditMode(row)" style="cursor: pointer">{{ row.reqQty
-                        }}</span>
-                      <input #reqQtyElements *ngIf="row.editMode" type="number" [(ngModel)]="row.reqQty"
-                        (blur)="saveChanges(row)" (keydown)="handleKeyDown($event, row)"
-                        [id]="'reqQty_' + i + '_' + row.ids" />
-                    </mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="unit">
-                    <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
-                    <mat-cell *matCellDef="let row">{{ row.unit }}</mat-cell>
-                  </ng-container>
-                  <ng-container style="min-width: 80px; width: 80px; max-width: 80px;" matColumnDef="remarks">
-                    <mat-header-cell style="min-width: 80px; width: 80px; max-width: 80px;"
-                      *matHeaderCellDef>Remarks</mat-header-cell>
-                    <mat-cell #reqQty style="min-width: 80px; width: 80px; max-width: 80px;"
-                      *matCellDef="let row; let i = index" [ngClass]="{'highlight': isHighlighted(row)}">
-                      <input matInput placeholder="Enter data" (change)="autoSave('items')" [(ngModel)]="row.remarks">
-                    </mat-cell>
-                  </ng-container>
-                  <ng-container matColumnDef="attachments">
-                    <mat-header-cell *matHeaderCellDef>Attachments</mat-header-cell>
-                    <mat-cell class="text-center" *matCellDef="let row"><a class="px-1 m-r-5 text-center" type="button"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                        (click)="openAttachmentItem(row.itemsId)" data-bs-original-title="Add Attachment"
-                        aria-label=""><i class="fas fa-paperclip text-primary"></i></a></mat-cell>
-                  </ng-container>
-                  <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-                  <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
-                    [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.ids==selectedIndex))}"></mat-row>
-                </mat-table>
-                <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
-                  [pageSizeOptions]="[20, 40, 60, 100]">
-                </mat-paginator>
-                <div class="modal fade" id="attachents-list-01" tabindex="-1" aria-hidden="true">
-                  <div class="modal-dialog mt-6" role="document">
-                    <div class="modal-content border-0">
-                      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                          data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="">Attachents</h5>
-
-                      </div>
-                      <div class="modal-body mt-0">
-                        <div class="d-flex mb-3 align-items-center">
-                          <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
-                          </div>
-                          <div class="ms-3 flex-shrink-1 flex-grow-1">
-                            <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item 01</a>
-                            </h6>
-                            <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
-                          </div>
-                        </div>
-
-                      </div>
+                </div>
+                <div class="modal-body mt-0">
+                  <div class="d-flex mb-3 align-items-center">
+                    <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
+                    </div>
+                    <div class="ms-3 flex-shrink-1 flex-grow-1">
+                      <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item 02</a>
+                      </h6>
+                      <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
                     </div>
                   </div>
+
                 </div>
-                <div class="modal fade" id="attachents-list-02" tabindex="-1" aria-hidden="true">
-                  <div class="modal-dialog mt-6" role="document">
-                    <div class="modal-content border-0">
-                      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                          data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="">Attachents</h5>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="attachents-list-03" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog mt-6" role="document">
+              <div class="modal-content border-0">
+                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                  <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                    data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-header">
+                  <h5 class="modal-title" id="">Attachents</h5>
 
-                      </div>
-                      <div class="modal-body mt-0">
-                        <div class="d-flex mb-3 align-items-center">
-                          <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
-                          </div>
-                          <div class="ms-3 flex-shrink-1 flex-grow-1">
-                            <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item 02</a>
-                            </h6>
-                            <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
-                          </div>
-                        </div>
-
-                      </div>
+                </div>
+                <div class="modal-body mt-0">
+                  <div class="d-flex mb-3 align-items-center">
+                    <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
                     </div>
-                  </div>
-                </div>
-                <div class="modal fade" id="attachents-list-03" tabindex="-1" aria-hidden="true">
-                  <div class="modal-dialog mt-6" role="document">
-                    <div class="modal-content border-0">
-                      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                          data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="">Attachents</h5>
-
-                      </div>
-                      <div class="modal-body mt-0">
-                        <div class="d-flex mb-3 align-items-center">
-                          <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
-                          </div>
-                          <div class="ms-3 flex-shrink-1 flex-grow-1">
-                            <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item 03</a>
-                            </h6>
-                            <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
-                          </div>
-                        </div>
-                      </div>
+                    <div class="ms-3 flex-shrink-1 flex-grow-1">
+                      <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item 03</a>
+                      </h6>
+                      <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="tab-pane code-tab-pane" role="tabpanel" id="detail-view">
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane code-tab-pane" role="tabpanel" id="detail-view">
 
-              <div class="row">
-                <div class="col-lg-3">
-                  <div class="table-responsive scrollbar">
-                    <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
-                      <tbody>
-                        <tr *ngFor="let item of dataSource.data; let i = index">
-                          <td class="listTableNo">{{i+1}}</td>
-                          <td (click)="listDetails(item.ids)">{{item.itemName}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                <div class="col-lg-9" *ngFor="let item of listViewItems">
-                  <div class="row mb-4">
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Q.App</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.itemCode}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">PUR</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.itemCode}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Item No</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.itemCode}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Item Name</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.itemName}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">LPP</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.lpp}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">LPD</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.lpd}}</h6>
-                    </div>
-                  </div>
-                  <div class="row mb-4">
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">AQ</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.aq}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Unit</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.unit}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">UC</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.uc}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">QU</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.qu}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">DT</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.dt}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">ID</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.id}}</h6>
-                    </div>
-                  </div>
-                  <div class="row mb-4">
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Cost</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.cost}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">CBC</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.cbc}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Lowest</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.lowest}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Remark</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.remarks}}</h6>
-                    </div>
-                  </div>
-                  <div class="row mb-4">
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Line #</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.line}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Item Name</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.componentName}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Item Code</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.componentCode}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Drawing #</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.dwg}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Maker / Model</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.make}} / {{item.model}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Part #</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.part}}</h6>
-                    </div>
-                  </div>
-                  <div class="row mb-4">
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Equipment Name</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.EquipmentName}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Prev. Reqd Qty</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.prevReqdQty}} (PCS)</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Requested Qty</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.enterQuantity}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Approved Qty</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.approvedQty}} (PCS)</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Qty in Use</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.qtyInUse}} (PCS)</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Qty RoB</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.qtyRob}}</h6>
-                    </div>
-                  </div>
-                  <div class="row mb-4">
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Min Required</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.rob}} (PCS)</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Reorder Qty</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.reorderQty}} (PCS)</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Reorder Level</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.reorderLevel}} (PCS)</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Max Quantity</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.maxQuantity}} (PCS)</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Split</h6>
-                      <input type="checkbox" class="form-check">
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Asset</h6>
-                      <input type="checkbox" class="form-check">
-                    </div>
-                  </div>
-                  <div class="row mb-4">
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="table-responsive scrollbar">
+              <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                <tbody>
+                  <tr *ngFor="let item of dataSource.data; let i = index">
+                    <td class="listTableNo">{{i+1}}</td>
+                    <td (click)="listDetails(item.itemsId)">{{item.itemName}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-lg-9" *ngFor="let item of listViewItems">
+            <div class="row mb-4">
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Line #</h6>
+                <h6 class="mb-0 fs--2 text-500">{{ listViewItems.indexOf(item) + 1 }}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Item No</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.itemCode}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Item Name</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.itemName}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Equipment Name</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.componentName}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Drawing #</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.dwg}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Maker / Model</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.maker}} / {{item.model}}</h6>
+              </div>
+            </div>
 
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Additional Remarks</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.additionalRemarks}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Storage Location</h6>
-                      <h6 class="mb-0 fs--2 text-500">{{item.storageLocation}}</h6>
-                    </div>
-                    <div class="col-lg-2">
-                      <h6 class="text-900 mb-2">Attachents</h6>
-                      <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#attachents"><i
-                          class="fas fa-paperclip text-primary"></i></a>
-                      <div class="modal fade" id="attachents" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog mt-6" role="document">
-                          <div class="modal-content border-0">
-                            <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                              <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                                data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="">Attachents</h5>
+            <div class="row mb-4">
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Part #</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.partNo}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Requested Qty</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.reqQty}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Unit</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.unit}} (PCS)</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Prev. Reqd Qty</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.prevReqdQty}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Approved Qty</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.approvedQty}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Qty in Use</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.qtyInUse}} </h6>
+              </div>
+            </div>
 
-                            </div>
-                            <div class="modal-body mt-0 scrollbar-visible" style="height: 70vh">
-                              <div class="d-flex mb-3 align-items-center">
-                                <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png"
-                                    alt="" />
-                                </div>
-                                <div class="ms-3 flex-shrink-1 flex-grow-1">
-                                  <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item
-                                      01</a>
-                                  </h6>
-                                  <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
-                                </div>
-                              </div>
-                              <hr class="bg-200" />
-                              <div class="d-flex mb-3 align-items-center">
-                                <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png"
-                                    alt="" />
-                                </div>
-                                <div class="ms-3 flex-shrink-1 flex-grow-1">
-                                  <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item
-                                      02</a>
-                                  </h6>
-                                  <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
-                                </div>
-                              </div>
-                              <hr class="bg-200" />
-                              <div class="d-flex mb-3 align-items-center">
-                                <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png"
-                                    alt="" />
-                                </div>
-                                <div class="ms-3 flex-shrink-1 flex-grow-1">
-                                  <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item
-                                      03</a>
-                                  </h6>
-                                  <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
-                                </div>
-                              </div>
-                              <hr class="bg-200" />
-                              <div class="d-flex mb-3 align-items-center">
-                                <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png"
-                                    alt="" />
-                                </div>
-                                <div class="ms-3 flex-shrink-1 flex-grow-1">
-                                  <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item
-                                      04</a>
-                                  </h6>
-                                  <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
-                                </div>
-                              </div>
-                              <hr class="bg-200" />
-                              <div class="d-flex mb-3 align-items-center">
-                              </div>
-                            </div>
+            <div class="row mb-4">
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Qty RoB</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.qtyRob}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Min Required</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.minRequired}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Reorder Qty</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.reorderQty}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Reorder Level</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.reorderLevel}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Max Quantity</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.maxQuantity}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Additional Remarks</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.additionalRemarks}}</h6>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Storage Location</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.storageLocation}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Q.App</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.qu}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">PUR</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.pur}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">LPP</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.lpp}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">LPD</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.lpd}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">AQ</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.aq}}</h6>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">ID</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.id}}</h6>
+              </div>
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Remark</h6>
+                <h6 class="mb-0 fs--2 text-500">{{item.remarks}}</h6>
+              </div>
+
+              <div class="col-lg-2">
+                <h6 class="text-900 mb-2">Attachents</h6>
+                <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#attachents"><i
+                    class="fas fa-paperclip text-primary"></i></a>
+                <div class="modal fade" id="attachents" tabindex="-1" aria-hidden="true">
+                  <div class="modal-dialog mt-6" role="document">
+                    <div class="modal-content border-0">
+                      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                          data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="">Attachents</h5>
+
+                      </div>
+                      <div class="modal-body mt-0 scrollbar-visible" style="height: 70vh">
+                        <div class="d-flex mb-3 align-items-center">
+                          <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
                           </div>
+                          <div class="ms-3 flex-shrink-1 flex-grow-1">
+                            <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item
+                                01</a>
+                            </h6>
+                            <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
+                          </div>
+                        </div>
+                        <hr class="bg-200" />
+                        <div class="d-flex mb-3 align-items-center">
+                          <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
+                          </div>
+                          <div class="ms-3 flex-shrink-1 flex-grow-1">
+                            <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item
+                                02</a>
+                            </h6>
+                            <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
+                          </div>
+                        </div>
+                        <hr class="bg-200" />
+                        <div class="d-flex mb-3 align-items-center">
+                          <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
+                          </div>
+                          <div class="ms-3 flex-shrink-1 flex-grow-1">
+                            <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item
+                                03</a>
+                            </h6>
+                            <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
+                          </div>
+                        </div>
+                        <hr class="bg-200" />
+                        <div class="d-flex mb-3 align-items-center">
+                          <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
+                          </div>
+                          <div class="ms-3 flex-shrink-1 flex-grow-1">
+                            <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item
+                                04</a>
+                            </h6>
+                            <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
+                          </div>
+                        </div>
+                        <hr class="bg-200" />
+                        <div class="d-flex mb-3 align-items-center">
                         </div>
                       </div>
                     </div>
@@ -1274,179 +1238,182 @@
           </div>
         </div>
       </div>
-      <!--Items Form End Here -->
+    </div>
+  </div>
+</div>
+<!--Items Form End Here -->
 
-      <!--Service Request Start Here-->
-      <div class="card mb-3" *ngIf="defaultOrderType[0]==='Service'">
-        <div class="card-header bg-light">
-          <div class="row flex-between-end">
-            <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#services"
-              aria-expanded="false" aria-controls="services">
-              <h5 class="mb-0 d-inline-block"><span class="fas fa-caret-right accordion-icon me-3"
-                  data-fa-transform="shrink-2"></span>Service Request</h5>
-            </div>
-            <div class="col-auto ms-auto">
-              <a class="btn btn-primary" type="button" [attr.data-bs-toggle]="modal" [attr.data-bs-target]="modalTarget"
-                (click)="openAddServiceModal()"><i class="fas fa-plus"></i> Add Services</a>
-              <!--This is for Add new Service pop up view-->
-              <div class="modal fade" id="add-service" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-xl mt-6" role="document">
-                  <div class="modal-content border-0">
-                    <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                      <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                        data-bs-dismiss="modal" aria-label="Close"></button>
+<!--Service Request Start Here-->
+<div class="card mb-3" *ngIf="reqId !== undefined && defaultOrderType[0]==='Service'">
+  <div class="card-header bg-light">
+    <div class="row flex-between-end">
+      <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#services"
+        aria-expanded="false" aria-controls="services">
+        <h5 class="mb-0 d-inline-block"><span class="fas fa-caret-right accordion-icon me-3"
+            data-fa-transform="shrink-2"></span>Service Request</h5>
+      </div>
+      <div class="col-auto ms-auto">
+        <a class="btn btn-primary" type="button" [attr.data-bs-toggle]="modal" [attr.data-bs-target]="modalTarget"
+          (click)="openAddServiceModal()"><i class="fas fa-plus"></i> Add Services</a>
+        <!--This is for Add new Service pop up view-->
+        <div class="modal fade" id="add-service" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-xl mt-6" role="document">
+            <div class="modal-content border-0">
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                  data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-header">
+                <h5 class="modal-title" id="">Add Services</h5>
+
+              </div>
+              <form (ngSubmit)="onSubmit(serviceTypeForm)" [formGroup]="serviceTypeForm">
+                <div class="modal-body mt-0 scrollbar-visible">
+                  <input type="hidden" formControlName="serviceReqId">
+                  <div class="row g-3 mb-3">
+                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="serviceName">Service
+                      Name</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control form-small" formControlName="serviceName"
+                        placeholder="Service Name">
                     </div>
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="">Add Services</h5>
-
+                  </div>
+                  <div class="row g-3 mb-3">
+                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="serviceDesc">Service
+                      Description</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control form-small" formControlName="serviceDesc"
+                        placeholder="Service Description">
                     </div>
-                    <form (ngSubmit)="onSubmit(serviceTypeForm)" [formGroup]="serviceTypeForm">
-                      <div class="modal-body mt-0 scrollbar-visible">
-                        <input type="hidden" formControlName="serviceReqId">
-                        <div class="row g-3 mb-3">
-                          <label class="col-sm-2 col-form-label py-0 font-small-3" for="serviceName">Service
-                            Name</label>
-                          <div class="col-sm-10">
-                            <input type="text" class="form-control form-small" formControlName="serviceName"
-                              placeholder="Service Name">
-                          </div>
-                        </div>
-                        <div class="row g-3 mb-3">
-                          <label class="col-sm-2 col-form-label py-0 font-small-3" for="serviceDesc">Service
-                            Description</label>
-                          <div class="col-sm-10">
-                            <input type="text" class="form-control form-small" formControlName="serviceDesc"
-                              placeholder="Service Description">
-                          </div>
-                        </div>
-                        <div class="row g-3 mb-3">
-                          <label class="col-sm-2 col-form-label py-0 font-small-3" for="remarks">Remarks</label>
-                          <div class="col-sm-10">
-                            <input type="text" class="form-control form-small" formControlName="remarks"
-                              placeholder="Remarks">
-                          </div>
-                        </div>
-                        <hr>
+                  </div>
+                  <div class="row g-3 mb-3">
+                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="remarks">Remarks</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control form-small" formControlName="remarks"
+                        placeholder="Remarks">
+                    </div>
+                  </div>
+                  <hr>
 
-                        <a class="btn btn-primary mb-3" type="button" (click)="addJob()"><i class="fas fa-plus"></i>
-                          Add</a>
+                  <a class="btn btn-primary mb-3" type="button" (click)="addJob()"><i class="fas fa-plus"></i>
+                    Add</a>
 
-                        <div formArrayName="jobList">
-                          <div *ngFor="let job of jobListControls; let i = index" class="row" [formGroupName]="i">
-                            <input type="hidden" formControlName="jobId">
-                            <div class="col-lg mb-3">
-                              <h6 class="text-900 mb-2">Job Description</h6>
-                              <input type="text" class="form-control form-small" formControlName="jobDescription">
-                            </div>
-                            <div class="col-lg mb-3">
-                              <h6 class="text-900 mb-2">Qty</h6>
-                              <input type="text" class="form-control form-small" formControlName="qty">
-                            </div>
-                            <div class="col-lg mb-3">
-                              <h6 class="text-900 mb-2">Unit</h6>
-                              <input type="text" class="form-control form-small" formControlName="unit">
-                            </div>
-                            <div class="col-lg mb-3">
-                              <h6 class="text-900 mb-2">Remarks</h6>
-                              <input type="text" class="form-control form-small" formControlName="remarks">
-                            </div>
-                            <div class="col-lg mb-3">
-                              <h6 class="text-900 mb-2">Attachment</h6>
-                              <input class="form-control" id="" type="file" formControlName="attachment">
-                            </div>
-                          </div>
-                        </div>
+                  <div formArrayName="jobList">
+                    <div *ngFor="let job of jobListControls; let i = index" class="row" [formGroupName]="i">
+                      <input type="hidden" formControlName="jobId">
+                      <div class="col-lg mb-3">
+                        <h6 class="text-900 mb-2">Job Description</h6>
+                        <input type="text" class="form-control form-small" formControlName="jobDescription">
                       </div>
-                      <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary me-1" aria-label="">Ok</button>
-                        <button type="button" class="btn btn-danger me-1" aria-label="">Cancel</button>
+                      <div class="col-lg mb-3">
+                        <h6 class="text-900 mb-2">Qty</h6>
+                        <input type="text" class="form-control form-small" formControlName="qty">
                       </div>
-                    </form>
+                      <div class="col-lg mb-3">
+                        <h6 class="text-900 mb-2">Unit</h6>
+                        <input type="text" class="form-control form-small" formControlName="unit">
+                      </div>
+                      <div class="col-lg mb-3">
+                        <h6 class="text-900 mb-2">Remarks</h6>
+                        <input type="text" class="form-control form-small" formControlName="remarks">
+                      </div>
+                      <div class="col-lg mb-3">
+                        <h6 class="text-900 mb-2">Attachment</h6>
+                        <input class="form-control" id="" type="file" formControlName="attachment">
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <!--End Here-->
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary me-1" aria-label="">Ok</button>
+                  <button type="button" class="btn btn-danger me-1" aria-label="">Cancel</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
+        <!--End Here-->
+      </div>
+    </div>
+  </div>
 
-        <hr class="m-0">
-        <div class="card-body collapse" id="services">
+  <hr class="m-0">
+  <div class="card-body collapse" id="services">
 
-          <div class="table-responsive scrollbar">
-            <table class="table table-sm small table-bordered table-striped overflow-hidden border-400">
-              <thead class="bg-primary text-light">
-                <tr>
-                  <th></th>
-                  <th>#</th>
-                  <th data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Service Name"
-                    aria-label="">SN</th>
-                  <th data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Service Description" aria-label="">SD</th>
-                  <th>Remarks</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <ng-container *ngFor="let service of serviceTypeDataSource; let i = index">
-                  <tr style="cursor: pointer">
-                    <td class="accordion-btn collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#row' + i"
-                      aria-expanded="false"><input type="checkbox"></td>
-                    <td class="accordion-btn collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#row' + i"
-                      aria-expanded="false">{{ i + 1 }}</td>
-                    <td class="accordion-btn collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#row' + i"
-                      aria-expanded="false"><span class="fas fa-caret-right accordion-icon mx-2"
-                        data-fa-transform="shrink-2"></span><strong>{{ service.serviceName }}</strong></td>
-                    <td class="accordion-btn collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#row' + i"
-                      aria-expanded="false">{{ service.serviceDesc }}</td>
-                    <td class="accordion-btn collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#row' + i"
-                      aria-expanded="false">{{ service.remarks }}</td>
-                    <td> <a class="px-1 m-r-5" type="button" (click)="openEditServiceModal(service)"><i
-                          class="fas fa-edit text-primary"></i></a></td>
-                  </tr>
-                  <tr>
-                    <td colspan="6" class="hiddenRow">
+    <div class="table-responsive scrollbar">
+      <table class="table table-sm small table-bordered table-striped overflow-hidden border-400">
+        <thead class="bg-primary text-light">
+          <tr>
+            <th></th>
+            <th>#</th>
+            <th data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Service Name"
+              aria-label="">SN</th>
+            <th data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Service Description"
+              aria-label="">SD</th>
+            <th>Remarks</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let service of serviceTypeDataSource; let i = index">
+            <tr style="cursor: pointer">
+              <td class="accordion-btn collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#row' + i"
+                aria-expanded="false"><input type="checkbox"></td>
+              <td class="accordion-btn collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#row' + i"
+                aria-expanded="false">{{ i + 1 }}</td>
+              <td class="accordion-btn collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#row' + i"
+                aria-expanded="false"><span class="fas fa-caret-right accordion-icon mx-2"
+                  data-fa-transform="shrink-2"></span><strong>{{ service.serviceName }}</strong></td>
+              <td class="accordion-btn collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#row' + i"
+                aria-expanded="false">{{ service.serviceDesc }}</td>
+              <td class="accordion-btn collapsed" data-bs-toggle="collapse" [attr.data-bs-target]="'#row' + i"
+                aria-expanded="false">{{ service.remarks }}</td>
+              <td> <a class="px-1 m-r-5" type="button" (click)="openEditServiceModal(service)"><i
+                    class="fas fa-edit text-primary"></i></a></td>
+            </tr>
+            <tr>
+              <td colspan="6" class="hiddenRow">
 
-                      <div class="accordion-collapse collapse m-2" [attr.id]="'row' + i">
-                        <table class="table table-sm table-bordered table-striped overflow-hidden mb-0 border-400">
-                          <thead class="bg-300">
-                            <tr>
-                              <th></th>
-                              <th>#</th>
-                              <th data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                data-bs-original-title="Job Description" aria-label="">JD</th>
-                              <th>Quantity</th>
-                              <th>Unit</th>
-                              <th>Remarks</th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr *ngFor="let job of service.jobList; let j = index">
-                              <th><input type="checkbox"></th>
-                              <td>{{ j + 1 }}</td>
-                              <td>{{ job.jobDescription }}</td>
-                              <td>{{ job.qty }}</td>
-                              <td>{{ job.unit }}</td>
-                              <td>{{ job.remarks }}</td>
-                              <td>
-                                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-                                  title="" data-bs-original-title="Attachment" aria-label=""><i
-                                    class="fas fa-paperclip text-primary"></i></a>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                  </tr>
-                </ng-container>
-              </tbody>
-            </table>
-          </div>
+                <div class="accordion-collapse collapse m-2" [attr.id]="'row' + i">
+                  <table class="table table-sm table-bordered table-striped overflow-hidden mb-0 border-400">
+                    <thead class="bg-300">
+                      <tr>
+                        <th></th>
+                        <th>#</th>
+                        <th data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                          data-bs-original-title="Job Description" aria-label="">JD</th>
+                        <th>Quantity</th>
+                        <th>Unit</th>
+                        <th>Remarks</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let job of service.jobList; let j = index">
+                        <th><input type="checkbox"></th>
+                        <td>{{ j + 1 }}</td>
+                        <td>{{ job.jobDescription }}</td>
+                        <td>{{ job.qty }}</td>
+                        <td>{{ job.unit }}</td>
+                        <td>{{ job.remarks }}</td>
+                        <td>
+                          <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                            data-bs-original-title="Attachment" aria-label=""><i
+                              class="fas fa-paperclip text-primary"></i></a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
 
 
-          <!-- <div class="modal fade" id="edit-service" tabindex="-1" aria-hidden="true">
+    <!-- <div class="modal fade" id="edit-service" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl mt-6" role="document">
               <div class="modal-content border-0">
                 <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
@@ -1509,17 +1476,11 @@
               </div>
             </div>
           </div> -->
-        </div>
-      </div>
-      <!--Service Request End Here-->
-
-      <!-- </form> -->
-    </div>
   </div>
-</main>
+</div>
+<!--Service Request End Here-->
 
 <!-- Attachment popup -->
-
 <div class="modal fade" id="openAttachmentModal" tabindex="-1" role="dialog"
   aria-labelledby="authentication-modal-label" aria-hidden="true">
   <div class="modal-dialog mt-6  modal-xl" role="document">
@@ -1535,12 +1496,9 @@
               data-mdb-dismiss="modal">
               <i class="fas fa-ban"></i>
             </button>
-
           </div>
         </div>
-
       </div>
-
       <div class="modal-body" style="font-weight: 400;">
         <div class="form">
           <div class="row">
@@ -1548,7 +1506,6 @@
               <h5 class="card-title proper-case">Attachments
               </h5>
             </div>
-
             <div class="col-xl-6 col-lg-12">
               <div class="form-inline float-end">
                 <select class="form-control form-small form-select" #docStatus
@@ -1708,28 +1665,19 @@
                   <mat-header-row *matHeaderRowDef="attachmentColumns; sticky:true"></mat-header-row>
                   <mat-row *matRowDef="let row; columns: attachmentColumns;"></mat-row>
                 </mat-table>
-
               </div>
             </div>
           </div>
         </div>
       </div>
-
-
-
     </div>
   </div>
-
-
 </div>
-
-
 <!-- END -->
 
 
 
 <!-- Attachment Item -->
-
 <div class="modal fade" id="openAttachmentItem" tabindex="-1" role="dialog" aria-labelledby="authentication-modal-label"
   aria-hidden="true">
   <div class="modal-dialog mt-6  modal-xl" role="document">
@@ -1924,16 +1872,9 @@
           </div>
         </div>
       </div>
-
-
-
     </div>
   </div>
-
-
 </div>
-
-
 <!-- END -->
 
 

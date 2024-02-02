@@ -26,11 +26,11 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   groupSelection = new SelectionModel<any>(true, []);
   selectedGroupsDropdown: { pmsGroupId: number, groupName: string, accountCode: any; }[] = [];
 
-  spareItemsTableColumn: string[] = ['checkbox', 'inventoryName', 'componentName', 'itemCode', 'reqQty', 'minReq', 'dwg'];
+  spareItemsTableColumn: string[] = ['checkbox', 'inventoryName', 'componentName', 'itemCode', 'reqQty', 'minReq', 'dwg', 'partNo'];
   spareItemDataSource = new MatTableDataSource<any>();
   spareItemSelection = new SelectionModel<any>(true, []);
 
-  storeItemsTableColumn: string[] = ['checkbox', 'inventoryName', 'componentName', 'itemCode', 'reqQty', 'minReq', 'dwg'];
+  storeItemsTableColumn: string[] = ['checkbox', 'inventoryName', 'componentName', 'itemCode', 'reqQty', 'minReq', 'dwg', 'partNo'];
   storeItemDataSource = new MatTableDataSource<any>();
   storeItemSelection = new SelectionModel<any>(true, []);
 
@@ -59,27 +59,57 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   private apiCalled = false;
   matchingAccountCodes: string[] = [];
 
-  searchString:any="";
+  searchString: any = "";
   activeNode: any;
-  
+  selectedCartItems: any
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefDirectPopUpComponent>, private swal: SwalToastService,
     public requisitionService: RequisitionService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private zone: NgZone) { }
 
   ngOnInit(): void {
-    
+    debugger
     this.modalTitle = this.data.modalTitle;
     this.orderType = this.data.orderType;
     this.ComponentType = this.data.componentType;
     this.dataSourceTree = this.data.dataSourceTree
-    this.groupTableSourceTree = this.data.groupTableData
+    // this.groupTableSourceTree = this.data.groupTableData
+    this.groupTableDataSource.data = this.data.groupTableData
     this.spareItemDataSource.data = this.data.spareTableData
     this.storeItemDataSource.data = this.data.storeTableData
     this.orderTypeId = this.data.orderTypeId
+    this.selectedCartItems = this.data.selectedCartItems
+
+    if (this.spareItemDataSource.data && this.selectedCartItems) {
+      debugger
+      this.spareItemDataSource.data.forEach(spare => {
+        // Check if the spare item's ID exists in the selectedSpares array
+        const isSelected = this.selectedCartItems.some(selectedSpare => selectedSpare.spareId === spare.shipSpareId);
+        // If the spare item is selected, mark it as selected
+        if (isSelected) {
+          debugger
+          this.spareItemSelection.select(spare);
+        }
+      });
+    } else if (this.storeItemDataSource.data && this.selectedCartItems) {
+      debugger
+      this.storeItemDataSource.data.forEach(store => {
+        // Check if the spare item's ID exists in the selectedSpares array
+        const isSelected = this.selectedCartItems.some(selectedSpare => selectedSpare.storeId === store.shipStoreId);
+        // If the spare item is selected, mark it as selected
+        if (isSelected) {
+          debugger
+          this.storeItemSelection.select(store);
+        }
+      });
+    }
+
     if (this.dataSourceTree)
       this.bindData(this.dataSourceTree);
     if (this.groupTableSourceTree) {
       this.bindGroup(this.groupTableSourceTree)
     }
+
+    console.log(this.groupTableDataSource.data)    
   }
 
   closeModal(): void {
@@ -108,7 +138,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
   //#region  this is for SpareItems Table Chekcbox handling code  
   onCheckboxChange(event: MatCheckboxChange, checked: boolean, item: any): void {
-    
+
     if (this.spareItemSelection.selected.length === 0) {
       this.matchingAccountCodes = [];
       this.apiCalled = false;
@@ -116,10 +146,20 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     const accountCode = item.accountCode
     if (accountCode !== null && accountCode !== undefined) {
       if (checked && !this.apiCalled) {
-        this.requisitionService.checkAccountCode(accountCode, this.orderTypeId).subscribe(async res => {         
+        this.requisitionService.checkAccountCode(accountCode, this.orderTypeId).subscribe(async res => {
           if (res.status === true) {
-            await this.matchingAccountCodes.push(res.accounts)
-            if (this.matchingAccountCodes[0].length > 0) {
+            if (res.accounts.length > 0) {
+              await this.matchingAccountCodes.push(res.accounts)
+              if (this.matchingAccountCodes[0].length > 0) {
+                this.apiCalled = true
+                if (checked) {
+                  this.spareItemSelection.select(item);
+                } else {
+                  this.spareItemSelection.deselect(item);
+                }
+              }
+            } else {
+              this.matchingAccountCodes.push(accountCode)
               this.apiCalled = true
               if (checked) {
                 this.spareItemSelection.select(item);
@@ -130,7 +170,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           }
         })
       }
-      else {        
+      else {
         const isInMatchingList = this.matchingAccountCodes[0].includes(accountCode.toString());
         if (isInMatchingList) {
           if (checked) {
@@ -157,7 +197,8 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   //#endregion
 
   //#region  this is for StoreItems Table Chekcbox handling code  
-  onCheckboxStoreItemChange(event: MatCheckboxChange, checked: boolean, item: any): void {    
+  onCheckboxStoreItemChange(event: MatCheckboxChange, checked: boolean, item: any): void {
+    debugger
     if (this.storeItemSelection.selected.length === 0) {
       this.matchingAccountCodes = [];
       this.apiCalled = false;
@@ -165,17 +206,28 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     const accountCode = item.accountCode
     if (accountCode !== null && accountCode !== undefined) {
       if (checked && !this.apiCalled) {
-        this.requisitionService.checkAccountCode(accountCode, this.orderTypeId).subscribe(async res => {         
+        this.requisitionService.checkAccountCode(accountCode, this.orderTypeId).subscribe(async res => {
+          debugger
           if (res.status === true) {
-            await this.matchingAccountCodes.push(res.accounts)
-            if (this.matchingAccountCodes[0].length > 0) {
-              this.apiCalled = true
-              if (checked) {
-                this.storeItemSelection.select(item);
+            if (res.accounts.length > 0) {
+              await this.matchingAccountCodes.push(res.accounts)
+              if (this.matchingAccountCodes[0].length > 0) {
+                this.apiCalled = true
+                if (checked) {
+                  this.storeItemSelection.select(item);
+                } else {
+                  this.storeItemSelection.deselect(item);
+                }
               } else {
-                this.storeItemSelection.deselect(item);
+                if (checked) {
+                  this.storeItemSelection.select(item);
+                } else {
+                  this.storeItemSelection.deselect(item);
+                }
               }
             } else {
+              this.matchingAccountCodes.push(accountCode)
+              this.apiCalled = true
               if (checked) {
                 this.storeItemSelection.select(item);
               } else {
@@ -186,6 +238,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         })
       }
       else {
+        debugger
         const isInMatchingList = this.matchingAccountCodes[0].includes(accountCode.toString());
         if (isInMatchingList) {
           if (checked) {
@@ -243,13 +296,19 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
           if (this.orderType === 'Service') {
             const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, defaultOrderType: this.orderType }
-            this.requisitionService.updateSelectedItems(dataToSend);
+            // this.requisitionService.updateSelectedItems(dataToSend);
+            this.dialogRef.close({
+              result: 'success',
+              DataToSend: dataToSend
+            })
           } else {
             const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType }
-            this.requisitionService.updateSelectedItems(dataToSend);
+            // this.requisitionService.updateSelectedItems(dataToSend);
+            this.dialogRef.close({
+              result: 'success',
+              DataToSend: dataToSend
+            })
           }
-
-          this.dialogRef.close();
         }
         break;
       case 'Group':
@@ -262,8 +321,11 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
           const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType }
 
-          this.requisitionService.updateSelectedItems(dataToSend);
-          this.dialogRef.close();
+          // this.requisitionService.updateSelectedItems(dataToSend);
+          this.dialogRef.close({
+            result: 'success',
+            DataToSend: dataToSend
+          })
         }
         break;
       case 'Spare':
@@ -271,10 +333,9 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         if (SelctedSpareItems.length > 0) {
 
           this.dataSource.data = SelctedSpareItems;
-          const spareItemDisplayValue = this.spareItemDataSource.data
-            .filter(row => this.spareItemSelection.isSelected(row))
-            .map(item => item.inventoryName)
-            .join(', ');
+          const spareItemDisplayValue = SelctedSpareItems
+            .map(item => `${item.spareAssembly.components.shipComponentName}-${item.spareAssembly.drawingNo}`.trim() +
+              `-${item.spareAssembly.partNo}-${item.spareAssembly.components.maker.makerName}`.trim()).join(', ');
           const spareItemSaveValue = this.spareItemDataSource.data
             .filter(row => this.spareItemSelection.isSelected(row))
             .map(item => (item.shipSpareId).toString())
@@ -287,13 +348,19 @@ export class OrderRefDirectPopUpComponent implements OnInit {
               displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType,
               cartItems: SelctedSpareItems, defaultOrderType: this.orderType
             }
-            this.requisitionService.updateSelectedItems(dataToSend);
+            // this.requisitionService.updateSelectedItems(dataToSend);
+            this.dialogRef.close({
+              result: 'success',
+              DataToSend: dataToSend
+            })
           } else {
             const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, cartItems: SelctedSpareItems }
-            this.requisitionService.updateSelectedItems(dataToSend);
+            // this.requisitionService.updateSelectedItems(dataToSend);
+            this.dialogRef.close({
+              result: 'success',
+              DataToSend: dataToSend
+            })
           }
-        
-          this.dialogRef.close();
         }
         break;
       case 'Store':
@@ -303,7 +370,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           this.dataSource.data = SelctedStoreItems;
           const storeItemDisplayValue = this.storeItemDataSource.data
             .filter(row => this.storeItemSelection.isSelected(row))
-            .map(item => item.inventoryName)
+            .map(item => item.group.groupName)
             .join(', ');
           const storeItemSaveValue = this.storeItemDataSource.data
             .filter(row => this.storeItemSelection.isSelected(row))
@@ -313,8 +380,10 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           this.saveValue = storeItemSaveValue;
           const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, cartItems: SelctedStoreItems }
 
-          this.requisitionService.updateSelectedItems(dataToSend);
-          this.dialogRef.close();
+          this.dialogRef.close({
+            result: 'success',
+            DataToSend: dataToSend
+          })
         }
         break;
       default:
@@ -349,6 +418,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   );
 
   handleCheckboxChange(event: Event, node: ComponentFlatNode) {
+    debugger
     if (this.selectedComponentIds.length === 0 && this.selectedComponentName.length === 0) {
       this.matchingAccountCodes = [];
       this.apiCalled = false;
@@ -356,57 +426,80 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     const checkbox = event.target as HTMLInputElement;
     node.selected = checkbox.checked;
     const accountCodeToCheck = node.groupAccountCode !== null ? node.groupAccountCode : node.componentAccountCode;
-    if (accountCodeToCheck != null && accountCodeToCheck !== undefined) {
-      if (node.selected && !this.apiCalled) {
+    const accountCodeAsNumber = typeof accountCodeToCheck === 'string'
+      ? parseInt(accountCodeToCheck, 10)
+      : accountCodeToCheck
+    if (!isNaN(accountCodeAsNumber) && accountCodeAsNumber != null) {
+      if (node.selected && !this.apiCalled && this.selectedComponentIds.length === 0) {
         this.requisitionService.checkAccountCode(accountCodeToCheck, this.orderTypeId).subscribe(res => {
-         
+          debugger
           if (res.status === true) {
-            this.matchingAccountCodes.push(res.accounts)
-            if (this.matchingAccountCodes[0].length > 0) {
-              this.apiCalled = true
-              if (node.selected) {
-                this.selectedComponentIds.push(node.groupId);
-                this.selectedComponentName.push(node.groupName);
-              } else {
-                const index = this.selectedComponentIds.indexOf(node.groupId);
-                if (index !== -1) {
-                  this.selectedComponentIds.splice(index, 1);
-                  this.selectedComponentName.splice(index, 1);
-                }
+            this.apiCalled = true
+            if (res.accounts.length > 0) {
+              this.matchingAccountCodes.push(res.accounts)
+              if (this.matchingAccountCodes[0].length > 0) {
+                this.handleSelectedComponent(node, node.selected ?? false);
               }
+              else {
+                this.handleSelectedComponent(node, node.selected ?? false);
+              }
+            }
+            else {
+              this.matchingAccountCodes.push(node.groupAccountCode.toString())
+              this.handleSelectedComponent(node, node.selected ?? false);
             }
           }
         })
       } else {
-        const isInMatchingList = this.matchingAccountCodes[0].includes(accountCodeToCheck.toString());
-        node.selected = isInMatchingList;
-        if (!node.selected) {
-          // Uncheck the checkbox if the account code doesn't match
+        debugger
+        if (this.matchingAccountCodes[0] === undefined) {
           checkbox.checked = false;
-        }
-        if (node.selected) {
-          this.selectedComponentIds.push(node.groupId);
-          this.selectedComponentName.push(node.groupName);
-        } else {
-          const index = this.selectedComponentIds.indexOf(node.groupId);
-          if (index !== -1) {
-            this.selectedComponentIds.splice(index, 1);
-            this.selectedComponentName.splice(index, 1);
+          if (node.selected) {
+            this.swal.info('Account Code not match. Please select another data');
+            node.selected = false
           }
-          this.swal.info('Account Code not match. Please select another data');
+        } else {
+          const isInMatchingList = this.matchingAccountCodes[0].includes(accountCodeAsNumber.toString());
+          if (!isInMatchingList) {
+            // Uncheck the checkbox if the account code doesn't match
+            checkbox.checked = false;
+            if (node.selected) {
+              this.swal.info('Account Code not match. Please select another data');
+              node.selected = false
+            }
+          } else {
+            this.handleSelectedComponent(node, node.selected ?? false)
+          }
         }
       }
     }
     else {
-      if (node.selected) {
-        this.selectedComponentIds.push(node.groupId);
-        this.selectedComponentName.push(node.groupName);
-      } else {
-        const index = this.selectedComponentIds.indexOf(node.groupId);
-        if (index !== -1) {
-          this.selectedComponentIds.splice(index, 1);
-          this.selectedComponentName.splice(index, 1);
+      debugger
+      if (this.matchingAccountCodes.length > 0) {
+        if (isNaN(accountCodeAsNumber)) {
+          checkbox.checked = false;
+          if (node.selected) {
+            this.swal.info('Account Code not match. Please select another data');
+            node.selected = false
+          } else {
+            this.handleSelectedComponent(node, node.selected ?? false)
+          }
+        } else {
+          const isInMatchingList = this.matchingAccountCodes[0].includes(accountCodeAsNumber.toString());
+          if (!isInMatchingList) {
+            // Uncheck the checkbox if the account code doesn't match
+            checkbox.checked = false;
+            if (node.selected) {
+              this.swal.info('Account Code not match. Please select another data');
+              node.selected = false
+            }
+          } else {
+            this.handleSelectedComponent(node, node.selected ?? false)
+          }
         }
+      } else {
+        debugger
+        this.handleSelectedComponent(node, node.selected ?? false)
       }
     }
   }
@@ -415,12 +508,12 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     if (
       !this.searchString ||
       node.groupName.toLowerCase().indexOf(this.searchString?.toLowerCase()) !==
-        -1
+      -1
     ) {
       return false
     }
     const descendants = this.treeControl.getDescendants(node)
-  
+
     if (
       descendants.some(
         (descendantNode) =>
@@ -431,8 +524,20 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     ) {
       return false
     }
-  
+
     return true
+  }
+  private handleSelectedComponent(node: ComponentFlatNode, addToSelection: boolean) {
+    if (addToSelection) {
+      this.selectedComponentIds.push(node.groupId);
+      this.selectedComponentName.push(node.groupName);
+    } else {
+      const index = this.selectedComponentIds.indexOf(node.groupId);
+      if (index !== -1) {
+        this.selectedComponentIds.splice(index, 1);
+        this.selectedComponentName.splice(index, 1);
+      }
+    }
   }
   //#endregion
 
@@ -467,73 +572,92 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     }
     const checkbox = event.target as HTMLInputElement;
     node.selected = checkbox.checked;
-    if (node.groupAccountCode != null && node.groupAccountCode !== undefined) {
-      if (node.selected && !this.apiCalled) {
-        this.requisitionService.checkAccountCode(node.groupAccountCode, this.orderTypeId).subscribe(res => {
-          debugger
+    const accountCodeAsNumber = typeof node.groupAccountCode === 'string'
+      ? parseInt(node.groupAccountCode, 10)
+      : node.groupAccountCode
+
+    if (!isNaN(accountCodeAsNumber) && accountCodeAsNumber != null) {
+      if (node.selected && !this.apiCalled && this.selectedGroupIds.length === 0) {
+        this.requisitionService.checkAccountCode(accountCodeAsNumber, this.orderTypeId).subscribe(res => {
+
           if (res.status === true) {
-            this.matchingAccountCodes.push(res.accounts)
-            if (this.matchingAccountCodes[0].length > 0) {
-              this.apiCalled = true
-              if (node.selected) {
-                this.selectedGroupIds.push(node.groupId);
-                this.selectedGroupName.push(node.groupName);
-              } else {
-                const index = this.selectedGroupIds.indexOf(node.groupId);
-                if (index !== -1) {
-                  this.selectedGroupIds.splice(index, 1);
-                  this.selectedGroupName.splice(index, 1);
-                }
-                this.swal.info('Account Code not match. Please select another data');
+            this.apiCalled = true
+            if (res.accounts.length > 0) {
+              this.matchingAccountCodes.push(res.accounts)
+              if (this.matchingAccountCodes[0].length > 0) {
+                this.handleSelectedGroups(node, node.selected ?? false);
+              }
+              else {
+                this.handleSelectedGroups(node, node.selected ?? false);
               }
             }
-            else{
-              if (node.selected) {
-                this.selectedGroupIds.push(node.groupId);
-                this.selectedGroupName.push(node.groupName);
-              } else {
-                const index = this.selectedGroupIds.indexOf(node.groupId);
-                if (index !== -1) {
-                  this.selectedGroupIds.splice(index, 1);
-                  this.selectedGroupName.splice(index, 1);
-                }
-                this.swal.info('Account Code not match. Please select another data');
-              }
+            else {
+              this.matchingAccountCodes.push(node.groupAccountCode.toString())
+              this.handleSelectedGroups(node, node.selected ?? false);
             }
           }
         })
       } else {
-        debugger
-        const isInMatchingList = this.matchingAccountCodes[0].includes(node.groupAccountCode.toString());
-        node.selected = isInMatchingList;
-        if (!node.selected) {
-          // Uncheck the checkbox if the account code doesn't match
+
+        if (this.matchingAccountCodes[0] === undefined) {
           checkbox.checked = false;
-        }
-        if (node.selected) {
-          this.selectedGroupIds.push(node.groupId);
-          this.selectedGroupName.push(node.groupName);
-        } else {
-          const index = this.selectedGroupIds.indexOf(node.groupId);
-          if (index !== -1) {
-            this.selectedGroupIds.splice(index, 1);
-            this.selectedGroupName.splice(index, 1);
+          if (node.selected) {
+            this.swal.info('Account Code not match. Please select another data');
+            node.selected = false
           }
-          this.swal.info('Account Code not match. Please select another data');
+        } else {
+          const isInMatchingList = this.matchingAccountCodes[0].includes(node.groupAccountCode.toString());
+          if (!isInMatchingList) {
+            // Uncheck the checkbox if the account code doesn't match
+            checkbox.checked = false;
+            if (node.selected) {
+              this.swal.info('Account Code not match. Please select another data');
+              node.selected = false
+            }
+          } else {
+            this.handleSelectedGroups(node, node.selected ?? false)
+          }
         }
       }
     } else {
-      debugger
-      if (node.selected) {
-        this.selectedGroupIds.push(node.groupId);
-        this.selectedGroupName.push(node.groupName);
-      } else {
-        const index = this.selectedGroupIds.indexOf(node.groupId);
-        if (index !== -1) {
-          this.selectedGroupIds.splice(index, 1);
-          this.selectedGroupName.splice(index, 1);
+
+      if (this.matchingAccountCodes.length > 0) {
+        if (isNaN(accountCodeAsNumber)) {
+          checkbox.checked = false;
+          if (node.selected) {
+            this.swal.info('Account Code not match. Please select another data');
+            node.selected = false
+          } else {
+            this.handleSelectedGroups(node, node.selected ?? false)
+          }
+        } else {
+          const isInMatchingList = this.matchingAccountCodes[0].includes(node.groupAccountCode.toString());
+          if (!isInMatchingList) {
+            // Uncheck the checkbox if the account code doesn't match
+            checkbox.checked = false;
+            if (node.selected) {
+              this.swal.info('Account Code not match. Please select another data');
+              node.selected = false
+            }
+          } else {
+            this.handleSelectedGroups(node, node.selected ?? false)
+          }
         }
-        this.swal.info('Account Code not match. Please select another data');
+      } else {
+        this.handleSelectedGroups(node, node.selected ?? false)
+      }
+    }
+  }
+
+  private handleSelectedGroups(node: GroupFlatNode, addToSelection: boolean) {
+    if (addToSelection) {
+      this.selectedGroupIds.push(node.groupId);
+      this.selectedGroupName.push(node.groupName);
+    } else {
+      const index = this.selectedGroupIds.indexOf(node.groupId);
+      if (index !== -1) {
+        this.selectedGroupIds.splice(index, 1);
+        this.selectedGroupName.splice(index, 1);
       }
     }
   }

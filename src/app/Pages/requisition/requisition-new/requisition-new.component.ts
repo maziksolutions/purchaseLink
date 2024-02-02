@@ -1,12 +1,10 @@
 import { Component, ElementRef, OnInit, ChangeDetectorRef, NgZone, QueryList, ViewChildren, AfterViewInit, OnDestroy, AfterViewChecked } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ImportDataComponent } from '../../common/import-data/import-data.component';
 import { DataSource, SelectionModel } from '@angular/cdk/collections';
 import { ViewChild } from '@angular/core';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
@@ -14,9 +12,6 @@ import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { RightsModel } from '../../Models/page-rights';
-import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
-import { response } from '../../Models/response-model';
-import { SideNavService } from '../sidenavi-right/sidenavi-service';
 import { environment } from 'src/environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -24,22 +19,21 @@ import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
 import { VesselManagementService } from 'src/app/services/vessel-management.service';
 import { ShipmasterService } from 'src/app/services/shipmaster.service';
 import { RequisitionService } from 'src/app/services/requisition.service';
-import { parse } from 'path';
-import { map, filter, debounce, debounceTime, distinctUntilChanged, isEmpty } from 'rxjs/operators';
-import { isNull } from '@angular/compiler/src/output/output_ast';
+import { map, filter, debounce, debounceTime, distinctUntilChanged, isEmpty, startWith } from 'rxjs/operators';
 import { AutoSaveService } from 'src/app/services/auto-save.service';
 import { PmsgroupService } from 'src/app/services/pmsgroup.service';
 import { saveAs } from 'file-saver';
 import { DatePipe } from '@angular/common';
 import { TypemasterService } from 'src/app/services/typemaster.service';
 import { DomSanitizer } from '@angular/platform-browser';
-
+import { Observable } from 'rxjs';
 import { Subscription, concat } from 'rxjs';
 import { OrderRefPopUpViewComponent } from './common/order-ref-pop-up-view/order-ref-pop-up-view.component';
 import { OrderRefDirectPopUpComponent } from './common/order-ref-direct-pop-up/order-ref-direct-pop-up.component';
 import { EditReqQtyComponent } from './common/edit-req-qty/edit-req-qty.component';
 import { HostListener } from '@angular/core';
 import { ReqItemsModel, ServiceTypeData } from '../../Models/reqItems-model';
+import { SideNavService } from 'src/app/services/sidenavi-service';
 
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
@@ -63,6 +57,20 @@ export interface componentTableItems {
   checkboxDisabled: boolean;
 }
 
+interface Country {
+  countryId: number;
+  countryName: string;
+  countryCode: string;
+}
+
+export interface Port {
+  locationId: number;
+  countryId: number;
+  location: string;
+  locationName: string;
+  countryMaster?: Country;
+}
+
 @Component({
   selector: 'app-requisition-new',
   templateUrl: './requisition-new.component.html',
@@ -72,7 +80,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   serviceObject: any = {}; isEditMode = false;
-  displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'lastDlDt', 'lastDlQty', 'rob', 'enterQuantity', 'unit', 'remarks', 'attachments'];
+  displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'lastDlDt', 'lastDlQty', 'rob', 'enterQuantity', 'unit', 'itemSpec', 'itemRemarks', 'attachments'];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
   leftTableColumn: string[] = ['checkbox', 'inventoryName', 'partNo', 'dwg', 'quantity', 'availableQty', 'minRequired', 'reorderLevel'];
   rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];
@@ -118,8 +126,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   Departments: any;
   selectedVesselId: any = '0';
   selectedOrderTypeId: any = '0';
-  // Shipcomponent: any;
-  portList: any;
+  // Shipcomponent: any;  
   deliveryForm: FormGroup;
   genericCheckbox: boolean = false;
   internalCheckbox: boolean = false;
@@ -141,7 +148,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   checkInternal: boolean = false;
   headsite: string;
   headCode: string;
-  currentyear: any;
+  currentyear = new Date().getFullYear();
   headabb: string;
   requisitiondata: any;
   headserialNumber: string;
@@ -163,7 +170,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   selectedListItem: { itemName: any; id: any; }[] = [];
   itemsId: string = '';
-  private selectedItemsSubscription: Subscription;
 
   selectedComponents: componentTableItems[] = [];
   isReqApproved: boolean = false;
@@ -192,7 +198,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   targetLoc: any;
   fileUrlss: any;
   filenamecut: string;
-  private subscription: Subscription;
 
   attachmentItemdataSource = new MatTableDataSource<any>();
   selectionItemAttachment = new SelectionModel<any>(true, []);
@@ -211,6 +216,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   GetStoreAccCode: any;
   GetSpareAccCode: any;
   filteredOrderTypes: any
+  searchTerm: string = '';
+  myControl = new FormControl();
+  portList: Port[] = [];
+  filteredPorts: Observable<Port[]>;
+  showSearchInput: boolean = true;
+  myPlaceholder: string = this.defaultOrderType[0] === 'Service' ? 'Expected Port' : 'Expected Delivery Port';
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -302,43 +313,43 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     //   });
     // }
 
-    this.requisitionService.selectedItems$.subscribe(data => {
+    // this.requisitionService.selectedItems$.subscribe(data => {
 
-      if (data != null && data.displayValue !== '' && data.saveValue !== '') {
-        this.zone.run(() => {
-          this.displayValue = ''
-          this.saveValue = ''
-          this.displayValue = data.displayValue;
-          this.saveValue = data.saveValue;
-        })
-        const orderType = data.defaultOrderType
-        this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
-        if (orderType !== 'Service') {
-          if (data.orderReferenceType === 'Component') {
-            this.dataSource.data = [];
-            this.getSpareItems(data.orderReferenceType, data.saveValue);
-            this.autoSave('header')
-          }
-          else if (data.orderReferenceType === 'Group') {
-            this.dataSource.data = [];
-            this.getSpareItems(data.orderReferenceType, data.saveValue);
-            this.autoSave('header')
-          }
-          else if (data.orderReferenceType === 'Spare') {
-            this.leftTableDataSource.data = []
-            this.dataSource.data = [];
-            this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
-            this.autoSave('header')
-          }
-          else if (data.orderReferenceType === 'Store') {
-            this.leftTableDataSource.data = []
-            this.dataSource.data = [];
-            this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
-            this.autoSave('header')
-          }
-        }
-      }
-    });
+    //   if (data != null && data.displayValue !== '' && data.saveValue !== '') {
+    //     this.zone.run(() => {
+    //       this.displayValue = ''
+    //       this.saveValue = ''
+    //       this.displayValue = data.displayValue;
+    //       this.saveValue = data.saveValue;
+    //     })
+    //     const orderType = data.defaultOrderType
+    //     this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
+    //     if (orderType !== 'Service') {
+    //       if (data.orderReferenceType === 'Component') {
+    //         this.dataSource.data = [];
+    //         this.getSpareItems(data.orderReferenceType, data.saveValue);
+    //         this.autoSave('header')
+    //       }
+    //       else if (data.orderReferenceType === 'Group') {
+    //         this.dataSource.data = [];
+    //         this.getSpareItems(data.orderReferenceType, data.saveValue);
+    //         this.autoSave('header')
+    //       }
+    //       else if (data.orderReferenceType === 'Spare') {
+    //         this.leftTableDataSource.data = []
+    //         this.dataSource.data = [];
+    //         this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
+    //         this.autoSave('header')
+    //       }
+    //       else if (data.orderReferenceType === 'Store') {
+    //         this.leftTableDataSource.data = []
+    //         this.dataSource.data = [];
+    //         this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
+    //         this.autoSave('header')
+    //       }
+    //     }
+    //   }
+    // });
 
     this.Loadgroup();
     this.LoadComponent();
@@ -522,64 +533,70 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         // formPart?.get('orderReference')?.setValue(displayValue);
         this.requisitionService.addRequisitionMaster(formData)
           .subscribe(data => {
+
+            this.reqId = data.data;
+            if (this.defaultOrderType[0] !== 'Service') {
+              if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
+                this.items = []
+                this.dataSource.data.map(item => {
+                  const newItem = {
+                    itemsId: 0,
+                    spareId: item.spareId || null,
+                    storeId: item.storeId || null,
+                    itemCode: item.itemCode || '',
+                    itemName: item.itemName || '',
+                    partNo: item.partNo || '',
+                    availableQty: item.minimumLevel || '',
+                    dwg: item.dwg || '',
+                    maker: item.makerReference || '',
+                    model: item.model || '',
+                    material: item.material || '',
+                    description: item.description || '',
+                    remarks: item.remarks || '',
+                    minRequired: item.minRequired || 0,
+                    reqQty: item.reqQty || 0,
+                    rob: item.rob || 0,
+                    lpp: item.lpp || 0,
+                    lpd: item.lpd || 0,
+                    aq: item.aq || 0,
+                    unit: item.unit || 0,
+                    uc: item.uc || 0,
+                    qu: item.qu || 0,
+                    dt: item.dt || '',
+                    id: item.id || 0,
+                    cost: item.cost || 0,
+                    cbc: item.cbc || 0,
+                    lowest: item.lowest || 0,
+                    itemRemarks: item.itemRemarks || '',
+                    line: item.line || '',
+                    componentName: item.componentName || '',
+                    componentCode: item.componentCode || '',
+                    equipmentName: item.equipmentName || '',
+                    prevReqdQty: item.prevReqdQty || '',
+                    approvedQty: item.approvedQty || '',
+                    qtyInUse: item.qtyInUse || '',
+                    qtyRoB: item.qtyRoB || '',
+                    reorderQty: item.reorderQty || '',
+                    reorderLevel: item.reorderLevel || '',
+                    maxQuantity: item.maxQuantity || '',
+                    split: item.split || false,
+                    asset: item.asset || false,
+                    additionalRemarks: item.additionalRemarks || '',
+                    storageLocation: item.storageLocation || '',
+                    attachments: item.attachments || '',
+                    pmReqId: this.reqId,
+                    vesselId: this.requisitionFullData.vesselId
+                  };
+                  this.items.push(newItem);
+                });
+              }
+            }
             if (data.message == "data added") {
-              this.reqId = data.data;
 
               this.swal.success('Added successfully.');
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
-                  this.items = []
-                  this.dataSource.data.map(item => {
-                    const newItem = {
-                      itemsId: 0,
-                      spareId: item.spareId || null,
-                      storeId: item.storeId || null,
-                      itemCode: item.itemCode || '',
-                      itemName: item.itemName || '',
-                      partNo: item.partNo || '',
-                      availableQty: item.minimumLevel || '',
-                      dwg: item.dwg || '',
-                      maker: item.makerReference || '',
-                      model: item.model || '',
-                      minRequired: item.minRequired || 0,
-                      reqQty: item.reqQty || 0,
-                      rob: item.rob || 0,
-                      lpp: item.lpp || 0,
-                      lpd: item.lpd || 0,
-                      aq: item.aq || 0,
-                      unit: item.unit || 0,
-                      uc: item.uc || 0,
-                      qu: item.qu || 0,
-                      dt: item.dt || '',
-                      id: item.id || 0,
-                      cost: item.cost || 0,
-                      cbc: item.cbc || 0,
-                      lowest: item.lowest || 0,
-                      remarks: item.remarks || '',
-                      line: item.line || '',
-                      componentName: item.componentName || '',
-                      componentCode: item.componentCode || '',
-                      equipmentName: item.equipmentName || '',
-                      prevReqdQty: item.prevReqdQty || '',
-                      approvedQty: item.approvedQty || '',
-                      qtyInUse: item.qtyInUse || '',
-                      qtyRoB: item.qtyRoB || '',
-                      reorderQty: item.reorderQty || '',
-                      reorderLevel: item.reorderLevel || '',
-                      maxQuantity: item.maxQuantity || '',
-                      split: item.split || false,
-                      asset: item.asset || false,
-                      additionalRemarks: item.additionalRemarks || '',
-                      storageLocation: item.storageLocation || '',
-                      attachments: item.attachments || '',
-                      pmReqId: this.reqId,
-                      vesselId: this.requisitionFullData.vesselId
-                    };
-                    this.items.push(newItem);
-                  });
-
                   this.requisitionService.addItemsDataList(this.items).subscribe(res => {
-
                     if (res.message == "All items added") {
                       this.swal.success('Added successfully.');
                       this.loadItemsData(0);
@@ -589,8 +606,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               }
             }
             else if (data.message == "Update") {
-              this.swal.success('Data has been updated successfully.');
 
+              this.swal.success('Data has been updated successfully.');
+              if (this.defaultOrderType[0] !== 'Service') {
+                if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
+                  this.requisitionService.addItemsDataList(this.items).subscribe(res => {
+                    if (res.message == "All items added") {
+                      this.swal.success('Added successfully.');
+                      this.loadItemsData(0);
+                    }
+                  });
+                }
+              }
             }
             else if (data.message == "duplicate") {
               this.swal.info('Data already exist. Please enter new data');
@@ -616,12 +643,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       if (this.reqId) {
 
         const formPart = this.RequisitionForm.get(partName);
-        formPart?.patchValue({
-          reqIds: this.reqId,
-          vesselId: this.requisitionFullData.vesselId
-        })
+        const selectedPort = this.myControl.value;
+        if (selectedPort) {
+          // const concatenatedValue = selectedPort.location + ',' + selectedPort.locationName;
+          formPart?.patchValue({
+            reqIds: this.reqId,
+            expectedDeliveryPort: selectedPort.locationName,
+            vesselId: this.selectedVesselId
+          })
+        }
+
         if (partName == 'delivery' && formPart != null && formPart.valid) {
-          this.requisitionFullData.vesselId
+          // this.requisitionFullData.vesselId
           this.requisitionService.addDeliveryAddress(formPart.value)
             .subscribe(data => {
 
@@ -858,13 +891,13 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           orderReferenceType: requisitionData.orderReferenceType
         });
 
-        if (this.approvestatus ==='Approved') {
+        if (this.approvestatus === 'Approved') {
           const headerStringParts = requisitionData.documentHeader.split(' – ');
           if (headerStringParts.length === 6) {
             const headerSerialNumber = headerStringParts[5];
             // this.headabb = headerStringParts[3];
             this.temporaryNumber = headerSerialNumber;
-          }          
+          }
         } else {
           this.temporaryNumber = requisitionData.documentHeader
         }
@@ -881,14 +914,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.selectedVesselId = requisitionData.vesselId;
         const objProcR = requisitionData.orderReference.split(',');
         this.getPortList().subscribe(res => {
-
+          this.loadPortList()
           this.portList = res;
           this.loadDeliveryInfo();
         });
 
         this.loadOrderTypeByEditReq().subscribe(res => {
           this.orderTypes = res;
-          debugger
+
           const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == requisitionData.projectNameCodeId).map(item => item.serviceTypeId)
           if (selectedProjectCode[0] != null) {
             const serviceTypeIds: string[] = selectedProjectCode[0].split(',');
@@ -949,14 +982,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   transformSpare(item: any): any {
+
     return {
       itemsId: 0,
       itemCode: item.inventoryCode || '',
       itemName: item.inventoryName || '',
-      partNo: item.partNo || '',
-      dwg: item.dwg || '',
-      maker: item.makerReference || '',
-      model: item.model || '',
+      partNo: item.spareAssembly.partNo || '',
+      dwg: item.spareAssembly.drawingNo || '',
+      maker: item.spareAssembly.components.maker.makerName || '',
+      makerReference: item.makerReference || '',
+      model: item.spareAssembly.modelNo || '',
       minRequired: item.minRequired || 0,
       reqQty: item.requiredQuantity || 0,
       rob: item.rob || 0,
@@ -971,10 +1006,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       cost: item.assetCost || 0,
       cbc: item.cbc || 0,
       lowest: item.lowest || 0,
-      remarks: item.remarks || '',
+      itemRemarks: '',
       line: item.remarks || '',
-      componentName: item.componentName || '',
-      componentCode: item.componentCode || '',
+      componentName: item.spareAssembly.components.shipComponentName || '',
+      componentCode: item.spareAssembly.components.shipComponentCode || '',
       EquipmentName: item.EquipmentName || '',
       prevReqdQty: item.prevReqdQty || '',
       approvedQty: item.approvedQty || '',
@@ -1016,7 +1051,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       cost: item.assetCost || 0,
       cbc: item.cbc || 0,
       lowest: item.lowest || 0,
+      itemRemarks: '',
       remarks: item.remarks || '',
+      material: item.material || '',
+      description: item.description || '',
       line: item.remarks || '',
       componentName: item.componentName || '',
       componentCode: item.componentCode || '',
@@ -1041,12 +1079,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   getCartItemsInEditReq(status) {
     return this.shipmasterService.GetCartItemsInfo(status).pipe(map(res => {
+
       if (this.defaultOrderType[0] === 'Service' || this.defaultOrderType[0] === 'Spare') {
         return this.spareItemDataSource.data = res.data.map(item => {
           this.cartItemId = 'shipSpareId';
           const spareMaster = item.shipSpareMaster;
           if (spareMaster) {
-            spareMaster.requiredQuantity = item.requiredQuantity
+            spareMaster.requiredQuantity = item.requiredQuantity,
+              spareMaster.spareAssembly = item.shipComponentSparesLink
           }
           return spareMaster
         }).filter(spareMaster => spareMaster)
@@ -1094,10 +1134,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
       const deliveryInfoData = res.data;
       if (deliveryInfoData) {
+
+        const selectedPort = this.portList.find(port => port.locationName === deliveryInfoData.expectedDeliveryPort);
+        if (selectedPort) {
+          this.myControl.setValue(selectedPort);
+        }
         const delivery = this.RequisitionForm.get('delivery');
         delivery?.patchValue({
           delInfoId: deliveryInfoData.delInfoId,
-          expectedDeliveryPort: deliveryInfoData.expectedDeliveryPort,
+          // expectedDeliveryPort: this.portList.find(deliveryInfoData.expectedDeliveryPort),
           expectedDeliveryDate: this.formatDate(deliveryInfoData.expectedDeliveryDate),
           vesselETA: this.formatDate(deliveryInfoData.vesselETA),
           vesselETB: this.formatDate(deliveryInfoData.vesselETB),
@@ -1106,6 +1151,13 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     })
   }
+  // findPortByLocationName(locationName: string): any {
+  //   debugger
+  //   // Splitting the locationName by comma
+  //   const [_, name] = locationName.split(','); // Using '_' to ignore the first part
+  //   // Finding the corresponding port object based on the locationName
+  //   return this.portList.find(port => port.locationName === name.trim());
+  // }
 
   private formatDate(dateString: string): string {
     return dateString ? new Date(dateString).toISOString().split('T')[0] : '';
@@ -1147,14 +1199,17 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         const orderTypeServiceTypeIds: string[] = orderType.serviceTypeId.split(',');
         return serviceTypeIds.some(id => orderTypeServiceTypeIds.includes(id));
       });
+      this.autoSave('header')
     }
   }
 
   LoadProjectnameAndcode() {
+    debugger
+    this.selectedVesselId = this.RequisitionForm.get('header')?.value.vesselId
+    alert(this.selectedVesselId)
     this.purchaseService.getprojectname(0)
       .subscribe(response => {
         this.projectnameAndcode = response.data;
-
       })
   }
 
@@ -1222,9 +1277,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           // this.LoadUserDetails();
           this.getReqData();
         } else {
+          this.saveValue = ''
+          this.displayValue = ''
           // this.LoadUserDetails();
           this.LoadOrdertype();
-          this.LoadProjectnameAndcode();
           this.LoadPriority();
           this.LoadVessel();
           this.LoadDepartment();
@@ -1236,16 +1292,22 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   LoadVessel() {
+    debugger
     this.vesselService.getVessels(0)
       .subscribe(response => {
+        debugger
         if (this.targetLoc == 'Vessel') {
+          debugger
+          this.headsite = 'V'
           const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
           if (filteredVessels.length > 0) {
             this.Vessels = filteredVessels;
             this.selectedVesselId = filteredVessels[0].vesselId;
+            this.LoadProjectnameAndcode()
           }
         }
         else {
+          this.headsite = 'O'
           this.Vessels = response.data;
         }
       })
@@ -1263,12 +1325,58 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       return res.data;
     }))
   }
+
   loadPortList() {
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
-        this.portList = response.data;
-      })
+
+        this.portList = response.data.filter(data => data.countryMaster && data.countryMaster.countryName);
+
+        // console.log(this.portList)
+        this.filteredPorts = this.myControl.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filterPorts(value))
+        );
+      });
   }
+  displayFn(port: any): string {
+
+    if (port && port.locationName && port.countryMaster && port.countryMaster.countryName) {
+      return `${port.locationName}, ${port.countryMaster.countryName}`;
+    } else if (port && port.locationName) {
+      return port.locationName;
+    } else {
+      return '';
+    }
+  }
+  private _filterPorts(value: string | Port): Port[] {
+
+    const filterValue = (typeof value === 'string' ? value : value?.locationName || '').toLowerCase();
+
+    return this.portList.filter(port => {
+      const locationName = port.locationName.toLowerCase();
+      const countryName = port.countryMaster?.countryName?.toLowerCase();
+      return locationName.includes(filterValue) || countryName?.includes(filterValue);
+    });
+  }
+  filterPorts(searchTerm: string) {
+
+    if (searchTerm.trim().length > 0) {
+      this.showSearchInput = false;
+      this.filteredPorts = this.myControl.valueChanges.pipe(
+        startWith(searchTerm),
+        map(value => this._filterPorts(value))
+      );
+    } else {
+      this.showSearchInput = true;
+      this.filteredPorts = this.myControl.valueChanges.pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.locationName),
+        map(name => name ? this._filterPorts(name) : this.portList.slice())
+      );
+    }
+  }
+
 
   LoadShipCompnent(status) {
     this.requisitionService.getTemplateTree().subscribe(res => {
@@ -1278,12 +1386,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   loadGroupsComponent() {
-    this.requisitionService.getGroupTemplateTree().subscribe(res => {
-      this.groupTableSourceTree = res
-    })
-    if (this.selectedVesselId)
-      this.pmsService.GetStoreByShipId(this.selectedVesselId).subscribe(res => {
-
+    debugger
+    // this.requisitionService.getGroupTemplateTree().subscribe(res => {
+    //   debugger
+    //   this.groupTableSourceTree = res
+    // })
+    if (this.selectedVesselId) {
+      const shipIdUint: number = parseInt(this.selectedVesselId, 10)
+      this.requisitionService.GetStoreByShipId(shipIdUint).subscribe(res => {
+        debugger
         this.groupTableDataSource.data = res.data.map(item => {
           return {
             pmsGroupId: item.pmsGroupId,
@@ -1293,6 +1404,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           };
         });
       })
+    }
+
   }
 
   getCartItems(status) {
@@ -1305,11 +1418,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.cartItemId = 'shipSpareId';
           const spareMaster = item.shipSpareMaster;
           if (spareMaster) {
-            spareMaster.requiredQuantity = item.requiredQuantity
+            spareMaster.requiredQuantity = item.requiredQuantity,
+              spareMaster.spareAssembly = item.shipComponentSparesLink
           }
           return spareMaster
         }).filter(spareMaster => spareMaster)
-
       }
       else if (this.defaultOrderType[0] === 'Store') {
         this.storeItemDataSource.data = res.data.map(item => {
@@ -1320,7 +1433,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             storeMaster.requiredQuantity = item.requiredQuantity
           return storeMaster
         }).filter(store => store)
-
       }
     })
   }
@@ -1328,7 +1440,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   LoadheadorderType() {
 
     this.zone.run(() => {
-      debugger
+
       this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
       this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
       if (this.defaultOrderType[0] === 'Service' || this.defaultOrderType[0] === 'Spare') {
@@ -1364,7 +1476,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             itemName: item.shipSpares.inventoryName || '',
             partNo: item.shipSpares.partNo || '',
             dwg: item.drawingNo || '',
-            maker: item.components.maker.makerName || '',
+            maker: item.shipSpares.makerReference || '',
             model: item.components.modelNo || '',
             minRequired: item.minRequired || 0,
             reqQty: item.reqQty || 0,
@@ -1380,7 +1492,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             cost: item.shipSpares.assetCost || 0,
             cbc: item.cbc || 0,
             lowest: item.lowest || 0,
-            remarks: item.remarks || '',
+            itemRemarks: '',
             line: item.line || '',
             componentName: item.components.shipComponentName || '',
             componentCode: item.components.shipComponentCode || '',
@@ -1398,6 +1510,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             storageLocation: item.storageLocation || '',
             attachments: item.attachments || '',
             availableQty: item.shipSpares.minimumLevel,
+            itemSpec: item.makerReference || '' + ' ' + item.remarks || '',
             editMode: false,
           }));
           if (this.reqId) {
@@ -1442,7 +1555,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           cost: item.assetCost || 0,
           cbc: item.cbc || 0,
           lowest: item.lowest || 0,
-          remarks: item.remarks || '',
+          itemRemarks: '',
           line: item.line || '',
           componentName: item.group.groupName || '',
           componentCode: item.group.groupCode || '',
@@ -1459,6 +1572,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           additionalRemarks: item.additionalRemarks || '',
           storageLocation: item.storageLocation || '',
           attachments: item.attachments || '',
+          description: item.description || '',
+          material: item.material || '',
+          remarks: item.remarks || '',
           editMode: false,
         }))
         if (this.reqId) {
@@ -1552,7 +1668,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         cost: item.cost || 0,
         cbc: item.cbc || 0,
         lowest: item.lowest || 0,
-        remarks: item.remarks || '',
+        itemRemarks: item.itemRemarks || '',
         line: item.line || '',
         componentName: item.componentName || '',
         componentCode: item.componentCode || '',
@@ -1568,6 +1684,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         asset: item.asset || false,
         additionalRemarks: item.additionalRemarks || '',
         storageLocation: item.storageLocation || '',
+        remarks: item.remarks || '',
+        description: item.description || '',
+        material: item.material || '',
         attachments: item.attachments || '',
       };
       this.items.push(newItem);
@@ -1638,6 +1757,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (this.reqId)
       this.requisitionService.getItemsByReqId(this.reqId)
         .subscribe(response => {
+
           this.flag = status;
           this.dataSource.data = [];
           this.zone.run(() => {
@@ -1720,11 +1840,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //#endregion
 
   listDetails(id) {
-
+    debugger
     const uniqueIds = new Set<number>();
     this.listViewItems = this.dataSource.data.filter(item => {
-      if (item.ids == id && !uniqueIds.has(item.ids)) {
-        uniqueIds.add(item.ids);
+      if (item.itemsId == id && !uniqueIds.has(item.itemsId)) {
+
+        uniqueIds.add(item.itemsId);
         return true;
       }
       return false;
@@ -1916,7 +2037,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   FinalApprove(final) {
 
-
     if (final == 'Approved') {
 
       if (this.headsite == 'O') {
@@ -1991,7 +2111,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
 
     if (final == 'Reject') {
-      debugger
+
       var title = "";
       Swal.fire({
         title: 'Are you sure about Reject?',
@@ -2001,14 +2121,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         confirmButtonText: 'Yes',
         cancelButtonText: 'No'
       }).then((result) => {
-        debugger
+
         if (result.value) {
           let DocumentHeadValue = this.requisitionFullData.documentHeader;
           this.requisitionService.Finalapprove(final, DocumentHeadValue, this.finalHeader)
             .subscribe(result => {
-              debugger
+
               if (result.status === true) {
-                this.approvestatus=result.data.approvedReq
+                this.approvestatus = result.data.approvedReq
                 this.loadData(0)
               }
             })
@@ -2144,6 +2264,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   submitattachmentfrm(form: any) {
+
     this.reqId
 
     if (this.reqId == 0) {
@@ -2361,105 +2482,120 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   // Attachment End
   openModal() {
+    debugger
+    let dialogRef: any
     const orderType = this.defaultOrderType[0]
     const dialogConfig = new MatDialogConfig();
     dialogConfig.position = { top: '70px' };
-    if (orderType === 'Spare' || orderType === 'Service') {
-      const isSpareDataEmpty = this.spareItemDataSource.data.length === 0;
-      if (orderType === 'Spare') {
-        if (isSpareDataEmpty) {
-          const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-            width: '1000px',
-            height: '70vh',
-            data: {
-              modalTitle: "Order Reference", componentType: 'Component', orderType: orderType,
-              dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
-            }
-          });
-          dialogRef.afterClosed().subscribe(result => {
-            if (result === 'success') {
-
-            }
-          })
-        } else {
-          const dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
-            width: '500px',
-            data: {
-              modalTitle: "Order Reference", orderType: orderType, spareTableData: this.spareItemDataSource.data,
-              componentType: 'Component', dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
-            }
-          });
-
-          dialogRef.afterClosed().subscribe(result => {
-            if (result === 'success') {
-              this.defaultOrderType[0]
-            }
-          })
-        }
-      } else if (orderType === 'Service') {
-        if (isSpareDataEmpty) {
-          const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-            width: '1000px',
-            height: '70vh',
-            data: {
-              modalTitle: "Order Reference", componentType: 'Component', orderType: orderType,
-              dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
-            }
-          });
-          dialogRef.afterClosed().subscribe(result => {
-            if (result === 'success') {
-
-            }
-          })
-        } else {
-          const dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
-            width: '500px',
-            data: {
-              modalTitle: "Order Reference", orderType: orderType, spareTableData: this.spareItemDataSource.data,
-              componentType: 'Component', dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
-            }
-          });
-
-          dialogRef.afterClosed().subscribe(result => {
-            if (result === 'success') {
-              this.defaultOrderType[0]
-            }
-          })
-        }
-      }
-    } else {
-
-      const isStoreDataEmpty = this.storeItemDataSource.data.length === 0;
-      if (isStoreDataEmpty) {
-        const dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-          width: '1000px',
-          data: {
-            modalTitle: "Order Reference", componentType: 'Group', orderType: orderType,
-            groupTableData: this.groupTableSourceTree, orderTypeId: this.selectedOrderTypeId
+    if (orderType != undefined) {
+      if (orderType === 'Spare' || orderType === 'Service') {
+        const isSpareDataEmpty = this.spareItemDataSource.data.length === 0;
+        if (orderType === 'Spare') {
+          if (isSpareDataEmpty) {
+            dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
+              width: '1000px',
+              height: '70vh',
+              data: {
+                modalTitle: "Order Reference", componentType: 'Component', orderType: orderType,
+                dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
+              }
+            });
+          } else {
+            debugger
+            const selectedCartItems = this.dataSource.data
+            dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
+              width: '500px',
+              data: {
+                modalTitle: "Order Reference", orderType: orderType, spareTableData: this.spareItemDataSource.data,
+                componentType: 'Component', dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId,
+                selectedCartItems: selectedCartItems
+              }
+            });
           }
-        });
-        dialogRef.afterClosed().subscribe(result => {
-          if (result === 'success') {
-
+        } else if (orderType === 'Service') {
+          if (isSpareDataEmpty) {
+            dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
+              width: '1000px',
+              height: '70vh',
+              data: {
+                modalTitle: "Order Reference", componentType: 'Component', orderType: orderType,
+                dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
+              }
+            });
+          } else {
+            dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
+              width: '500px',
+              data: {
+                modalTitle: "Order Reference", orderType: orderType, spareTableData: this.spareItemDataSource.data,
+                componentType: 'Component', dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
+              }
+            });
           }
-        })
+        }
       } else {
-
-        const dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
-          width: '500px',
-          data: {
-            modalTitle: "Order Reference", orderType: orderType, groupTableData: this.groupTableSourceTree,
-            storeTableData: this.storeItemDataSource.data, orderTypeId: this.selectedOrderTypeId
-          }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-          if (result === 'success') {
-            this.defaultOrderType[0]
-          }
-        })
+        const isStoreDataEmpty = this.storeItemDataSource.data.length === 0;
+        if (isStoreDataEmpty) {
+          dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
+            width: '1000px',
+            data: {
+              modalTitle: "Order Reference", componentType: 'Group', orderType: orderType,
+              groupTableData: this.groupTableDataSource.data, orderTypeId: this.selectedOrderTypeId
+            }
+          });
+        } else {
+          const selectedCartItems = this.dataSource.data
+          dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
+            width: '500px',
+            data: {
+              modalTitle: "Order Reference", orderType: orderType, groupTableData: this.groupTableDataSource.data,
+              storeTableData: this.storeItemDataSource.data, orderTypeId: this.selectedOrderTypeId,
+              selectedCartItems: selectedCartItems
+            }
+          });
+        }
       }
     }
+    dialogRef.afterClosed().subscribe(result => {
+      debugger
+      if (result.result === 'success') {
+        debugger
+        const data = result.dataToSend
+        if (data != null && data.displayValue !== '' && data.saveValue !== '') {
+          this.zone.run(() => {
+            this.displayValue = ''
+            this.saveValue = ''
+            this.displayValue = data.displayValue;
+            this.saveValue = data.saveValue;
+          })
+          const orderType = data.defaultOrderType
+          this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
+          if (orderType !== 'Service') {
+            if (data.orderReferenceType === 'Component') {
+              this.dataSource.data = [];
+              this.getSpareItems(data.orderReferenceType, data.saveValue);
+              this.autoSave('header')
+            }
+            else if (data.orderReferenceType === 'Group') {
+              this.dataSource.data = [];
+              this.getSpareItems(data.orderReferenceType, data.saveValue);
+              this.autoSave('header')
+            }
+            else if (data.orderReferenceType === 'Spare') {
+              this.leftTableDataSource.data = []
+              this.dataSource.data = [];
+              this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
+              this.autoSave('header')
+            }
+            else if (data.orderReferenceType === 'Store') {
+              this.leftTableDataSource.data = []
+              this.dataSource.data = [];
+              this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
+              this.autoSave('header')
+            }
+          }
+        }
+      }
+    })
   }
 
   openEditModal(row) {
@@ -2511,11 +2647,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent, row: any): void {
+
     if (event.defaultPrevented) {
       return;
     }
     const target = event.target as HTMLElement;
-    if (this.defaultOrderType[0] === 'Spare' || this.defaultOrderType[0] === 'Store') {
+    if (this.reqId !== undefined && (this.defaultOrderType[0] === 'Spare' || this.defaultOrderType[0] === 'Store')) {
       const isWithinItemTable = target.closest('.itemTable');
       const isWithinRightTable = this.rightTable.nativeElement.contains(target);
 
@@ -2740,6 +2877,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //#region AttachmentItem
 
   openAttachmentItem(id) {
+
     this.GetItemId = id;
 
     $("#openAttachmentItem").modal('show');
@@ -2812,6 +2950,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
 
   submitItemAttachmentfrm(form: any) {
+
     this.GetItemId
 
     if (this.GetItemId == 0) {

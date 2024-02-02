@@ -334,6 +334,7 @@ AddStoreMaster(formData): Observable<any> {
 }
 // Get Store by shipId
 GetStoreByShipId(id):Observable<any>{
+  debugger
   return this.httpClient.get<any>(this.linkurl + 'StoreLinkedGroups/' + id,httpOptions)
   .pipe(catchError(this.handleError));
 }

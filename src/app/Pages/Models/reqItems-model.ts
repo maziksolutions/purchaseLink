@@ -22,7 +22,7 @@ export class ReqItemsModel {
     cost: number;
     cbc: number;
     lowest: number;
-    remarks: string;
+    itemRemarks: string;
     line: string;
     componentName: string;
     componentCode: string;
@@ -39,6 +39,9 @@ export class ReqItemsModel {
     additionalRemarks: string;
     storageLocation: string;
     attachments: string;
+    remarks: string;
+    material:string;
+    description:string;
     pmReqId: number
 }
 

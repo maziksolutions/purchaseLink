@@ -14,7 +14,7 @@
                 <a class="px-3" data-bs-toggle="modal" data-bs-target="#searchbox"><i
                         class="fas fa-search mb-3 font-medium-2"></i></a><br>
                 <a class="px-3" data-bs-toggle="modal" *ngIf="isActive" data-bs-target="#remarks">
-                    <i class="fas fa-comment mb-3 font-medium-2"></i></a><br>
+                    <i class="fas fa-comment mb-3 font-medium-2"></i></a><br *ngIf="isActive">
                 <div class="theme-control-toggle fa-icon-wait p-l-10 mb-3">
                     <input class="form-check-input ms-0 theme-control-toggle-input" id="themeControlToggle"
                         type="checkbox" data-theme-control="theme" value="dark" />
@@ -272,12 +272,12 @@
             <form (ngSubmit)="onSubmit(commentsForm)" [formGroup]="commentsForm">
                 <div class="modal-footer d-flex justify-content-end align-items-center">
                     <div class="flex-grow-1">                        
-                        <label class="m-2">
+                        <label class="m-2" *ngIf="targetLoc==='Office'">
                             <input type="radio" formControlName="commentType" value="generic" [(ngModel)]="commentType" />
                            Generic
                         </label>
                     
-                        <label>
+                        <label *ngIf="targetLoc==='Vessel' || targetLoc==='Office'">
                             <input type="radio" formControlName="commentType" value="internal" [(ngModel)]="commentType" />
                             Internal
                         </label>

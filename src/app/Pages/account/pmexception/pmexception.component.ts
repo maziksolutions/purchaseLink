@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AccountMasterService } from 'src/app/services/account-master.service';
@@ -13,7 +13,20 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ExceptionService } from 'src/app/services/exception.service';
 import { SelectionModel } from '@angular/cdk/collections';
+import { RequisitionService } from 'src/app/services/requisition.service';
 declare let Swal, PerfectScrollbar: any;
+
+const accountCodeOrInventoryTypeValidator = (control: AbstractControl): { [key: string]: boolean } | null => {
+  debugger
+  const accountCode = control.get('accountCode')?.value;
+  const inventoryType = control.get('inventoryType')?.value;
+
+  if ((!accountCode || accountCode.length === 0) && (!inventoryType || inventoryType.length === 0)){
+    return { 'atLeastOneRequired': true };
+  }
+  else
+    return null
+}
 
 @Component({
   selector: 'app-pmexception',
@@ -24,16 +37,20 @@ export class PMExceptionComponent implements OnInit {
   ExceptionForm: FormGroup; flag; pkey: number = 0;
   selectorderType: string[] = [];
   selectprojectNC: string[] = [];
+  selectInvetoryType: string[] = [];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('searchInput') searchInput: ElementRef;
-  displayedColumns: string[] = ['checkbox', 'orderTypeId', 'projectCode', 'accountCode'];
+  displayedColumns: string[] = ['checkbox', 'orderTypeId', 'projectCode', 'accountCode', 'inventoryType'];
   dropdownAccountcodeSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; tooltipField: string; };
   dropdownprojectNCSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; tooltipField: string; };
+  dropdownInventoryTypeSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; tooltipField: string; };
   selectedaccountCode: string[] = [];
   selectedprojectNC: string[] = [];
+  selectedInventoryType: string[] = [];
+  inventoryType: any;
   accountcode: any;
   orderTypes: any;
   fullname: any;
@@ -49,7 +66,7 @@ export class PMExceptionComponent implements OnInit {
     public dialog: MatDialog,
     private exportExcelService: ExportExcelService,
     private purchaseService: PurchaseMasterService,
-    private swal: SwalToastService,
+    private swal: SwalToastService, private reqService: RequisitionService,
     private accountMasterService: AccountMasterService,
     private exceptionService: ExceptionService,) { }
 
@@ -59,8 +76,9 @@ export class PMExceptionComponent implements OnInit {
       exceptionId: [0],
       orderTypeId: ['', [Validators.required]],
       projectCode: ['', [Validators.required]],
-      accountCode: ['', [Validators.required]]
-    });
+      accountCode: [''],
+      inventoryType: ['']
+    }, { validator: accountCodeOrInventoryTypeValidator });
 
     this.dropdownAccountcodeSetting = {
       singleSelection: false,
@@ -83,11 +101,22 @@ export class PMExceptionComponent implements OnInit {
       tooltipField: 'description',
     };
 
+    this.dropdownInventoryTypeSetting = {
+      singleSelection: false,
+      idField: 'inventoryTypeId',
+      textField: 'inventoryType',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true,
+      tooltipField: 'description',
+    };
+
     this.loadData(0);
     this.LoadAccountcode();
     this.LoadOrderType();
     this.LoadProjectnameAndcode();
-
+    this.LoadInventoryType();
 
   }
 
@@ -127,14 +156,47 @@ export class PMExceptionComponent implements OnInit {
       })
   }
 
+  //#region Inventory Type
+  LoadInventoryType() {
+    this.selectedInventoryType.length = 0
+    this.reqService.getInventoryType(0).subscribe(res => {
+      this.inventoryType = res.data
+      console.log(this.inventoryType)
+    })
+  }
+  onInvtoryTypeSelect(event: any) {
+    debugger
+    let isSelect = event.inventoryTypeId;
+    if (isSelect) {
+      this.selectedInventoryType.push(event.inventoryTypeId);
+
+    }
+  }
+  onInventoryTypeSelectAll(event: any) {
+    if (event)
+      this.selectedInventoryType = event.map((x: { inventoryTypeId: any; }) => x.inventoryTypeId);
+  }
+  onInventoryTypeDeSelect(event: any) {
+
+    let rindex = this.selectInvetoryType.findIndex(inventoryTypeId => inventoryTypeId == event.inventoryTypeId);
+    if (rindex !== -1) {
+      this.selectedInventoryType.splice(rindex, 1)
+    }
+  }
+  onInventoryTypeDeSelectAll(event: any) {
+
+    this.selectedInventoryType.length = 0;
+  }
+  //#endregion
+
+  //#region AccountCode 
   onAccountcodeSelect(event: any) {
-  
+
     event.fullName = event.fullName.replace(/\D/g, '');
 
     let isSelect = event.fullName;
     if (isSelect) {
       this.selectedaccountCode.push(event.fullName);
-
     }
   }
 
@@ -155,50 +217,49 @@ export class PMExceptionComponent implements OnInit {
   onAccountcodeDeSelectAll(event: any) {
     this.selectedaccountCode.length = 0;
   }
+  //#endregion
 
-
-
+  //#region Project Name and Code 
   onprojectNCSelect(event: any) {
-   
+    debugger
     event.fullNameCode = event.fullNameCode.replace(/\D/g, '');
     let isSelect = event.fullNameCode;
     if (isSelect) {
       this.selectedprojectNC.push(event.fullNameCode);
-
     }
   }
-
   onprojectNCSelectAll(event: any) {
     if (event)
       this.selectedprojectNC = event.map((x: { fullNameCode: any; }) => x.fullNameCode.replace(/\D/g, ''));
   }
-
   onprojectNCDeSelect(event: any) {
-
+    debugger
     event.fullNameCode = event.fullNameCode.replace(/\D/g, '');
     let rindex = this.selectedprojectNC.findIndex(fullNameCode => fullNameCode == event.fullNameCode);
     if (rindex !== -1) {
       this.selectedprojectNC.splice(rindex, 1)
     }
   }
-
   onprojectNCDeSelectAll(event: any) {
     this.selectedprojectNC.length = 0;
   }
+  //#endregion
 
   onSubmit(form: any) {
-    
+    debugger
     form.value.accountCode = this.selectedaccountCode.join(',');
     form.value.projectCode = this.selectedprojectNC.join(',');
+    form.value.inventoryType = this.selectedInventoryType.join(',')
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
-
-    this.exceptionService.addException(fmdata)
+    if(this.ExceptionForm.valid){
+      this.exceptionService.addException(fmdata)
       .subscribe(data => {
 
         if (data.message == "data added") {
           this.selectedaccountCode = []
           this.selectedprojectNC = []
+          this.selectedInventoryType = []
           this.swal.success('Added successfully.');
           this.loadData(0);
           this.clear();
@@ -206,6 +267,7 @@ export class PMExceptionComponent implements OnInit {
         else if (data.message == "updated") {
           this.selectedaccountCode = []
           this.selectedprojectNC = []
+          this.selectedInventoryType = []
           this.swal.success('Data has been updated successfully.');
           this.loadData(0);
         }
@@ -222,6 +284,8 @@ export class PMExceptionComponent implements OnInit {
         }
 
       });
+    }
+    
   }
 
   clear() {
@@ -253,7 +317,7 @@ export class PMExceptionComponent implements OnInit {
   }
   /** The label for the checkbox on the passed row */
   checkboxLabel(row: any): string {
-    
+
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
@@ -320,7 +384,7 @@ export class PMExceptionComponent implements OnInit {
 
         this.flag = status;
 
-        this.dataSource.data = response.data;       
+        this.dataSource.data = response.data;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.clear();
@@ -336,12 +400,9 @@ export class PMExceptionComponent implements OnInit {
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
     this.exceptionService.getExceptionById(id)
       .subscribe((response) => {
-        
+        debugger
         if (response.status) {
 
-          var objProcR = [];
-          var objProcRS = [];
-          var objJoin = [];
           this.dropdownList = [];
           if (response.data.accountCode != '' && response.data.accountCode != null) {
 
@@ -373,9 +434,6 @@ export class PMExceptionComponent implements OnInit {
 
           response.data.accountCode = this.dropdownList;
 
-          var getObj = [];
-          var joinObj = [];
-          var finalObj = [];
           this.projectList = [];
           if (response.data.projectCode != '' && response.data.projectCode != null) {
 
@@ -408,6 +466,13 @@ export class PMExceptionComponent implements OnInit {
           }
           response.data.projectCode = this.projectList;
 
+          if (response.data.inventoryType != '' && response.data.inventoryType != null) {
+            const getObj = response.data.inventoryType.split(',')
+            const numericInventoryTypeIds = getObj.map(id => parseInt(id, 10));
+            const obj = this.inventoryType.filter(item => numericInventoryTypeIds.includes(item.inventoryTypeId))
+            response.data.inventoryType = obj
+          }
+
           this.ExceptionForm.patchValue(response.data);
 
         }
@@ -430,7 +495,7 @@ export class PMExceptionComponent implements OnInit {
       delete item.exceptionId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy
         , delete item.orderTypeId
-        item.pmOrderType = item.pmOrderType.orderTypes;
+      item.pmOrderType = item.pmOrderType.orderTypes;
     })
     this.exportExcelService.exportAsExcelFile(data, 'Exception', 'Exception');
   }

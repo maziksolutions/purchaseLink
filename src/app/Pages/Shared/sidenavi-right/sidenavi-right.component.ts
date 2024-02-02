@@ -1,15 +1,14 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { SideNavService } from './sidenavi-service';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SwalToastService } from 'src/app/services/swal-toast.service';
-import { error } from 'console';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
 import { RequisitionService } from 'src/app/services/requisition.service';
+import { SideNavService } from 'src/app/services/sidenavi-service';
+import { SwalToastService } from 'src/app/services/swal-toast.service';
+import { environment } from 'src/environments/environment';
 
 export interface CommentData {
   commentId: number;
@@ -17,7 +16,6 @@ export interface CommentData {
   commentData: string;
 };
 
-declare var SideNavi: any;
 @Component({
   selector: 'app-sidenavi-right',
   templateUrl: './sidenavi-right.component.html',
@@ -33,32 +31,44 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   isActive = false;
-
   selectedComment: any = null;
+  targetLoc: string;
 
   private destroy$ = new Subject<void>();
 
-  constructor(private sideNaviService: SideNavService, private fb: FormBuilder, private reqService: RequisitionService,
-    private swal: SwalToastService, private activatedRoute: ActivatedRoute, private router: Router) {
+  constructor(private fb: FormBuilder, private sidenavService: SideNavService, private reqService: RequisitionService,
+    private swal: SwalToastService, private activatedRoute: ActivatedRoute, private router: Router) { }
+
+  get fm() { return this.commentsForm.controls }
+
+  ngOnInit(): void {
+    
+    this.targetLoc = environment.location;
 
     this.commentsForm = this.fb.group({
       commentId: 0,
       commentType: ['', Validators.required],
       commentData: ['', Validators.required]
     });
-  }
 
-  get fm() { return this.commentsForm.controls }
+    this.isActive = this.sidenavService.getActiveComponent();
+    
+    if (this.targetLoc === 'Vessel') {
+      this.commentType='internal'
+      this.commentsForm.patchValue({commentType:'internal'})
+    } else if (this.targetLoc === 'Office') {
+      this.commentType='generic'
+      this.commentsForm.patchValue({commentType:'generic'})
+    }
 
-  ngOnInit(): void {
-    this.loadData(0);
-    this.isActive = this.sideNaviService.getActiveComponent();
+    this.loadData(0, this.commentType);
 
-    this.sideNaviService.commentTypeChange$.subscribe((commentType: string) => {
+    // this.sidenavService.commentTypeChange$.subscribe((commentType: string) => {
+    //   debugger
+    //   this.comments = [];
+    //   this.loadData(0, commentType);
+    // })
 
-      this.comments = [];
-      this.loadData(0, commentType);
-    })
   }
 
   ngOnDestroy(): void {
@@ -67,11 +77,11 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
       this.destroy$.next();
       this.destroy$.complete();
     }
-    this.sideNaviService.destroySidenav();
+    this.sidenavService.destroySidenav();
   }
 
   onSubmit(form: any) {
-
+    
     if (form.value.commentId == null) {
       form.value.commentId = 0;
     }
@@ -133,19 +143,19 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
     //   }
     // }
     this.reqService.getComments(status)
-      .subscribe(response => {
-
+      .subscribe(response => {        
         this.flag = status;
         var data = response.data;
 
         data.map(res => { this.comments.push({ commentId: res.commentId, commentData: res.commentData, commentType: res.commentType }) });
-        if (commentType)
+        if (this.targetLoc === 'Vessel') {
           this.comments = this.comments.filter(res => res.commentType == commentType);
+        }
         // this.dataSource.data = response.data;
 
         // this.dataSource.sort = this.sort;
         // this.dataSource.paginator = this.paginator;
-        this.clear();
+        // this.clear();
         // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
   }
@@ -165,10 +175,17 @@ export class SidenaviRightComponent implements OnInit, OnDestroy {
 
   clear() {
     this.commentsForm.reset();
+    if (this.targetLoc === 'Vessel') {
+      this.commentType='internal'
+      this.commentsForm.patchValue({commentType:'internal'})
+    } else if (this.targetLoc === 'Office') {
+      this.commentType='generic'
+      this.commentsForm.patchValue({commentType:'generic'})
+    }
   }
 
   setActiveComponent(comName: boolean): void {
-    this.sideNaviService.setActiveComponent(comName);
+    this.sidenavService.setActiveComponent(comName);
     this.isActive = comName;
   }
 
