@@ -1205,7 +1205,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   LoadProjectnameAndcode() {
     debugger
-    this.selectedVesselId = this.RequisitionForm.get('header')?.value.vesselId   
+    this.selectedVesselId = this.RequisitionForm.get('header')?.value.vesselId
     this.purchaseService.getprojectname(0)
       .subscribe(response => {
         this.projectnameAndcode = response.data;
@@ -1393,7 +1393,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (this.selectedVesselId) {
       const shipIdUint: number = parseInt(this.selectedVesselId, 10)
       const keyword = '';
-      const pageNumber = 1; 
+      const pageNumber = 1;
       const pageSize = 20;
       // this.requisitionService.GetStoreByShipId(shipIdUint,keyword,pageNumber,pageSize).subscribe(res => {
       //   debugger
@@ -2489,16 +2489,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   openModal() {
     debugger
     let dialogRef: any
-    const orderType = this.defaultOrderType[0]
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.position = { top: '70px' };
+    const orderType = this.defaultOrderType[0]    
     if (orderType != undefined) {
       if (orderType === 'Spare' || orderType === 'Service') {
         const isSpareDataEmpty = this.spareItemDataSource.data.length === 0;
         if (orderType === 'Spare') {
           if (isSpareDataEmpty) {
             dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-              width: '1000px',
+              width: '800px',
               height: '70vh',
               data: {
                 modalTitle: "Order Reference", componentType: 'Component', orderType: orderType,
@@ -2509,7 +2507,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             debugger
             const selectedCartItems = this.dataSource.data
             dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
-              width: '500px',
+              width: '400px',
               data: {
                 modalTitle: "Order Reference", orderType: orderType, spareTableData: this.spareItemDataSource.data,
                 componentType: 'Component', dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId,
@@ -2520,8 +2518,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         } else if (orderType === 'Service') {
           if (isSpareDataEmpty) {
             dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-              width: '1000px',
-              height: '70vh',
+              width: '800px',
               data: {
                 modalTitle: "Order Reference", componentType: 'Component', orderType: orderType,
                 dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
@@ -2529,7 +2526,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             });
           } else {
             dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
-              width: '500px',
+              width: '400px',
               data: {
                 modalTitle: "Order Reference", orderType: orderType, spareTableData: this.spareItemDataSource.data,
                 componentType: 'Component', dataSourceTree: this.dataSourceTree, orderTypeId: this.selectedOrderTypeId
@@ -2540,18 +2537,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       } else {
         const isStoreDataEmpty = this.storeItemDataSource.data.length === 0;
         if (isStoreDataEmpty) {
-          debugger
+          debugger          
           dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-            width: '1000px',
+            width: '800px',           
             data: {
-              modalTitle: "Order Reference", componentType: 'Group', orderType: orderType, vesselId:this.selectedVesselId,
+              modalTitle: "Order Reference", componentType: 'Group', orderType: orderType, vesselId: this.selectedVesselId,
               groupTableData: this.groupTableDataSource.data, orderTypeId: this.selectedOrderTypeId
             }
           });
         } else {
           const selectedCartItems = this.dataSource.data
           dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
-            width: '500px',
+            width: '400px',
             data: {
               modalTitle: "Order Reference", orderType: orderType, groupTableData: this.groupTableDataSource.data,
               storeTableData: this.storeItemDataSource.data, orderTypeId: this.selectedOrderTypeId,
