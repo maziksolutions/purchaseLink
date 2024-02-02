@@ -2096,7 +2096,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
       var title = "";
       Swal.fire({
-        title: 'Are you sure about Approvel?',
+        title: 'Are you certain you want to proceed with the approval? ',
         text: title,
         icon: 'warning',
         showCancelButton: true,
@@ -2106,10 +2106,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         if (result.value) {
           this.requisitionService.Finalapprove(final, this.temporaryNumber, this.finalHeader)
             .subscribe(result => {
-              this.loadData(0)
-              // this.selection.clear();
-              // this.swal.success('message');
-              // this.loadItemsData(0);
+               this.swal.success('successfully Approved');
+               this.router.navigate(['/Requisition/Requisitionslist']);
+              
             })
         }
       })
@@ -2119,7 +2118,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
       var title = "";
       Swal.fire({
-        title: 'Are you sure about Reject?',
+        title: 'Are you certain you want to proceed with the reject?',
         text: title,
         icon: 'warning',
         showCancelButton: true,
@@ -2134,7 +2133,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
               if (result.status === true) {
                 this.approvestatus = result.data.approvedReq
-                this.loadData(0)
+                this.swal.error('Requisition Approval Reject');
+               this.router.navigate(['/Requisition/Requisitionslist']);
               }
             })
         }
@@ -2562,6 +2562,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       debugger
       if (result.result === 'success') {
         debugger
+        console.log(result)
         const data = result.dataToSend
         if (data != null && data.displayValue !== '' && data.saveValue !== '') {
           this.zone.run(() => {
