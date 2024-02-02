@@ -23,7 +23,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
   componentType: string;
   orderTypeId: number
   selectedCartItems:any
-
+  vesselId:any
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefPopUpViewComponent>, public dialog: MatDialog) { }
 
   ngOnInit(): void {   
@@ -37,6 +37,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
     this.storeItemDataSource.data = this.data.storeTableData
     this.orderTypeId = this.data.orderTypeId
     this.selectedCartItems=this.data.selectedCartItems   
+    this.vesselId=this.data.vesselId
   }
 
   openModal(type: string) {
