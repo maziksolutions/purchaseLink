@@ -53,11 +53,16 @@
                     </div>  
                     <div class="col-sm">        
                         <fieldset class="form-group mb-0">
-                            <select class="form-control form-small form-select" id="basicSelect"
-                                formControlName="eventId" required>
-                                <option value="" disabled>Select Event</option>
-                                <option *ngFor="let item of eventlist" value="{{item.eventId}}">{{item.tableName}}</option> 
-                            </select>
+ 
+                            <ng-multiselect-dropdown [placeholder]="'Select Event'" class="multiselect-dropdown"
+                            [settings]="dropdownEventSetting" [data]="eventlist" [(ngModel)]="dropdownList"
+                            (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
+                            formControlName="eventId" (onDeSelect)="onEventDeSelect($event)"
+                            (onDeSelectAll)="onEventDeSelectAll($event)"
+                            >
+                        </ng-multiselect-dropdown>
+
+
                         </fieldset>
                             </div>             
 
@@ -109,7 +114,7 @@
                 <ng-container matColumnDef="eventLink">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Event Link</mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                        <span> {{row.wfEvents.tableName.toUpperCase()}} </span>
+                        <span> {{row.eventNames.toUpperCase()}} </span>
                     </mat-cell>
                 </ng-container>
       

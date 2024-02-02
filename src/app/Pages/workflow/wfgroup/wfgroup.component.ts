@@ -23,6 +23,10 @@ export class WfgroupComponent implements OnInit {
   @ViewChild('searchInput') searchInput: ElementRef;
   deletetooltip: string;
   selectedIndex: any;
+  selectedItems: string[] = [];
+  dropdownList: { eventId: number, tableName: string }[] = [];
+  dropdownEventSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
+
   displayedColumns: string[] = ['checkbox', 'groupName','eventLink'];
   eventlist: any;
 
@@ -39,6 +43,16 @@ export class WfgroupComponent implements OnInit {
       eventId: ['', [Validators.required]],
   
     });
+
+    this.dropdownEventSetting = {
+      singleSelection: false,
+      idField: 'eventId',
+      textField: 'tableName',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true
+    };
 
     this.loadData(0);
     this. LoadEvent();
@@ -64,9 +78,37 @@ export class WfgroupComponent implements OnInit {
   }
 
 
+  onSelectAll(event: any) {
+    
+    if (event)
+      this.selectedItems = event.map((x: { eventId: any; }) => x.eventId);
+  }
+
+  onItemSelect(event: any) {
+    
+    let isSelect = event.eventId;
+    if (isSelect) {
+      this.selectedItems.push(event.eventId);
+    }
+  }
+  onEventDeSelect(event: any) {
+    
+    let rindex = this.selectedItems.findIndex(eventId => eventId == event.eventId);
+    if (rindex !== -1) {
+      this.selectedItems.splice(rindex, 1)
+    }
+  }
+
+  onEventDeSelectAll(event: any) {
+    
+    this.selectedItems.length = 0;
+    // this.selectedCountries.splice(0, this.selectedCountries.length);
+  }
+
+
   onSubmit(form: any) {
     
-  
+    form.value.eventId = this.selectedItems.join(',');
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
 
@@ -161,6 +203,25 @@ debugger
       .subscribe((response) => {
         
         if (response.status) {
+
+          this.dropdownList = [];
+          if (response.data.eventId != '' && response.data.eventId != null) {
+            
+            const objProcR = response.data.eventId.split(',');
+
+            this.dropdownList = objProcR.map(item => {
+              return this.eventlist.find(x => x.eventId == item);
+            });
+            const merge4 = this.dropdownList.flat(1);
+            this.dropdownList = merge4;  
+            this.selectedItems.length=0; 
+            this.dropdownList.map(item=>{
+              this.selectedItems.push(item.eventId.toString());
+            })       
+          }
+
+
+          response.data.eventId = this.dropdownList;
 
           this.EventGroupForm.patchValue(response.data);
 

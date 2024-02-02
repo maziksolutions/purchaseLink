@@ -91,7 +91,7 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    debugger
+    
     this.targetLoc = environment.location;
     this.sideNavService.setActiveComponent(false);
     this.sideNavService.initSidenav();
@@ -133,7 +133,7 @@ export class RequisitionslistComponent implements OnInit {
   }
   filteredVessels(id)
   {
-    debugger
+    
     this.VesselId=null;
     var vesselList=this.myFleet.filter(x=>x.userFleetId==id)[0]["vessels"];
 
@@ -328,7 +328,6 @@ export class RequisitionslistComponent implements OnInit {
   LoadStore() {
     this.pmsgroupService.getStore(0)
       .subscribe(response => {
-
         this.GetStoreAccCode = response.data;
 
       })
@@ -349,7 +348,7 @@ export class RequisitionslistComponent implements OnInit {
       })
   }
   downloadNotepad() {
-    debugger
+    
     const id = this.selection.selected.filter(x => x.approvedReq == "Approved");
 
     for (let i = 0; i < id.length; i++) {
@@ -362,7 +361,7 @@ export class RequisitionslistComponent implements OnInit {
         this.accountcode = this.GetCompoAccCode.filter(x => x.componentId == shipcompId)[0];
       }
       if (this.ReqData[0].orderReferenceType == "Store") {
-        this.accountcode = this.GetStoreAccCode.filter(x => x.shipStoreId == shipcompId)[0];
+        this.accountcode = this.GetStoreAccCode.filter(x => x.storeId == shipcompId)[0];
       }
       if (this.ReqData[0].orderReferenceType == "Spare") {
         this.accountcode = this.GetSpareAccCode.filter(x => x.spareId == shipcompId)[0];
