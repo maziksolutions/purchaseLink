@@ -1205,8 +1205,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   LoadProjectnameAndcode() {
     debugger
-    this.selectedVesselId = this.RequisitionForm.get('header')?.value.vesselId
-    alert(this.selectedVesselId)
+    this.selectedVesselId = this.RequisitionForm.get('header')?.value.vesselId   
     this.purchaseService.getprojectname(0)
       .subscribe(response => {
         this.projectnameAndcode = response.data;
@@ -1393,17 +1392,23 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     // })
     if (this.selectedVesselId) {
       const shipIdUint: number = parseInt(this.selectedVesselId, 10)
-      this.requisitionService.GetStoreByShipId(shipIdUint).subscribe(res => {
-        debugger
-        this.groupTableDataSource.data = res.data.map(item => {
-          return {
-            pmsGroupId: item.pmsGroupId,
-            groupName: item.groupName,
-            accountCode: item.accountCode,
-            // Add other properties as needed
-          };
-        });
-      })
+      const keyword = '';
+      const pageNumber = 1; 
+      const pageSize = 20;
+      // this.requisitionService.GetStoreByShipId(shipIdUint,keyword,pageNumber,pageSize).subscribe(res => {
+      //   debugger
+      //   // this.groupTableDataSource.data = res.data.map(item => {
+      //   //   return {
+      //   //     pmsGroupId: item.pmsGroupId,
+      //   //     groupName: item.groupName,
+      //   //     accountCode: item.accountCode,
+      //   //     // Add other properties as needed
+      //   //   };
+      //   // });
+      //   // this.groupTableDataSource.data = res.data
+      //   // this.groupTableDataSource.sort = this.sort;
+      //   // this.groupTableDataSource.paginator = this.paginator;
+      // })
     }
 
   }
@@ -2535,10 +2540,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       } else {
         const isStoreDataEmpty = this.storeItemDataSource.data.length === 0;
         if (isStoreDataEmpty) {
+          debugger
           dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
             width: '1000px',
             data: {
-              modalTitle: "Order Reference", componentType: 'Group', orderType: orderType,
+              modalTitle: "Order Reference", componentType: 'Group', orderType: orderType, vesselId:this.selectedVesselId,
               groupTableData: this.groupTableDataSource.data, orderTypeId: this.selectedOrderTypeId
             }
           });
