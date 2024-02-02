@@ -101,6 +101,9 @@ export class WorkflowService {
   getWorkQueueState(id): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterWorkQueueState/${id}`, httpOptions);
   }
+  getWorkQueueStatefull(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}WorkQueueState/${status}`, httpOptions);
+  }
   getWorkQueueStateId(id): Observable<any> {
     return this.httpClient.get<any>(this.linkurl + 'getWorkQueueStateId/' + id, httpOptions)
       .pipe(catchError(this.handleError));
@@ -114,6 +117,75 @@ export class WorkflowService {
   }
 
   //#endregion
+
+    //#region WorkQueueState
+
+    getWorkQueueStateRole(id): Observable<any> {
+      return this.httpClient.get<any[]>(`${this.linkurl}filterWorkQueueStateRole/${id}`, httpOptions);
+    }
+
+    getWorkQSRId(id): Observable<any> {
+      return this.httpClient.get<any>(this.linkurl + 'getWorkQueueStateRoleId/' + id, httpOptions)
+        .pipe(catchError(this.handleError));
+    }
+    addWorkQueueStateRole(formData): Observable<any> {
+      return this.httpClient.post<any>(this.linkurl + 'addWorkQueueStateRole', formData)
+        .pipe(catchError(this.handleError));
+    }
+    archiveWorkQSR(jobType: any[]): Observable<string> {
+      return this.httpClient.post<string>(`${this.linkurl}archiveWorkQueueStateRole/`, jobType, httpOptions);
+    }
+
+    multiAddPosition(jobType: any[]): Observable<string> {
+      return this.httpClient.post<string>(`${this.linkurl}multiAddPosition/`, jobType, httpOptions);
+    }
+  
+    //#endregion
+
+        //#region WorkQueueTransition
+
+        getWorkQueueTransition(id): Observable<any> {
+          return this.httpClient.get<any[]>(`${this.linkurl}filterWorkQueueTransition/${id}`, httpOptions);
+        }
+    
+        getWorkQueueTransitionId(id): Observable<any> {
+          return this.httpClient.get<any>(this.linkurl + 'getWorkQueueTransitionId/' + id, httpOptions)
+            .pipe(catchError(this.handleError));
+        }
+        addWorkQueueTransition(formData): Observable<any> {
+          return this.httpClient.post<any>(this.linkurl + 'addWorkQueueTransition', formData)
+            .pipe(catchError(this.handleError));
+        }
+        archiveWorkQueueTransition(jobType: any[]): Observable<string> {
+          return this.httpClient.post<string>(`${this.linkurl}archiveWorkQueueTransition/`, jobType, httpOptions);
+        }
+      
+        //#endregion
+
+
+    //#region WorkQueueTransitionRole
+
+    getWorkQueueTransitionRole(id): Observable<any> {
+      return this.httpClient.get<any[]>(`${this.linkurl}filterWorkQueueTransitionRole/${id}`, httpOptions);
+    }
+
+    getWorkQTRId(id): Observable<any> {
+      return this.httpClient.get<any>(this.linkurl + 'getWorkQueueTransitionRoleId/' + id, httpOptions)
+        .pipe(catchError(this.handleError));
+    }
+    addWorkQueueTransitionRole(formData): Observable<any> {
+      return this.httpClient.post<any>(this.linkurl + 'addWorkQueueTransitionRole', formData)
+        .pipe(catchError(this.handleError));
+    }
+    archiveWorkQTR(jobType: any[]): Observable<string> {
+      return this.httpClient.post<string>(`${this.linkurl}archiveWorkQueueTransitionRole/`, jobType, httpOptions);
+    }
+
+    multiAddPositioninTransition(jobType: any[]): Observable<string> {
+      return this.httpClient.post<string>(`${this.linkurl}multiAddPositioninTransition/`, jobType, httpOptions);
+    }
+  
+    //#endregion
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

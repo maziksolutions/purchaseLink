@@ -18,7 +18,12 @@ import { WfWorkflowComponent } from './wf-workflow/wf-workflow.component';
   ],
   imports: [
     CommonModule,
-    WorkflowRoutingModule,AppMaterialModule,  FormsModule,ReactiveFormsModule,  NgMultiSelectDropDownModule.forRoot() 
+    WorkflowRoutingModule,AppMaterialModule,  FormsModule,ReactiveFormsModule, NgMultiSelectDropDownModule.forRoot() 
+
+
+  
+    
+ 
   ]
 })
 export class WorkflowModule { }

@@ -6,3 +6,27 @@
     flex: 0 0 30px;
   }
 
+.card-body {
+  min-height: 40vh;
+}
+
+.mat-table {
+  max-height: 24vh !important;
+  
+}
+
+
+.v-disabled .form-check-input:disabled {
+  pointer-events: none;
+  -webkit-filter: none;
+  filter: none;
+  opacity: 1;
+}
+
+.mat-column-fromTQR {
+  flex: 0 0 80px;
+}
+
+.mat-column-toTQR {
+  flex: 0 0 80px;
+}
