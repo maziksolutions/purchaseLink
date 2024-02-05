@@ -76,7 +76,4 @@ export class EditReqQtyComponent implements OnInit {
     }   
   }
 
-  CloseStockReconciliationModal() {
-
-  }
 }
