@@ -150,7 +150,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   }
 
   onPageChange(event: PageEvent) {
-    debugger
+    
     const newPageIndex = event.pageIndex;
     if (newPageIndex > this.currentPage) {
       // Incrementing page
@@ -168,7 +168,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   }
 
   loadGroupsComponent() {
-    debugger    
+        
     if (this.vesselId) {
       const request = new StoreLinkedGroupsModel(
         this.searchForm.value.shipId,
@@ -177,7 +177,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         this.searchForm.value.pageSize
       );
       this.requisitionService.GetStoreByShipId(request).subscribe(res => {
-        debugger
+        
         this.groupTableDataSource.data=[];
         this.groupTableDataSource.data = res.data
         this.pageTotal = res.total;
@@ -200,7 +200,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     this.isAllGroupSelected() ? this.groupSelection.clear() : this.groupTableDataSource.data.forEach(r => this.groupSelection.select(r));
   }
   groupLabel(row: any): string {
-
+    
     if (!row) {
       return `${this.isAllGroupSelected() ? 'select' : 'deselect'} all`;
     }
@@ -340,7 +340,11 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     if (this.ComponentType === 'Group') {
       filterValue = filterValue.trim();
       filterValue = filterValue.toLowerCase();
-      this.groupTableDataSource.filter = filterValue;
+      this.searchForm.patchValue({
+        keyword: filterValue
+      });
+      this.loadGroupsComponent();
+      // this.groupTableDataSource.filter = filterValue;
     } else if (this.ComponentType === 'Spare') {
       filterValue = filterValue.trim();
       filterValue = filterValue.toLowerCase();
@@ -371,21 +375,27 @@ export class OrderRefDirectPopUpComponent implements OnInit {
             // this.requisitionService.updateSelectedItems(dataToSend);
             this.dialogRef.close({
               result: 'success',
-              DataToSend: dataToSend
+              dataToSend: dataToSend
             })
           } else {
             const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType }
             // this.requisitionService.updateSelectedItems(dataToSend);
             this.dialogRef.close({
               result: 'success',
-              DataToSend: dataToSend
+              dataToSend: dataToSend
             })
           }
         }
         break;
       case 'Group':
-        if (this.selectedGroupIds.length > 0 && this.selectedGroupName.length > 0) {
-          debugger
+        if (this.groupSelection.selected.length > 0 ) {          
+
+          const selectedGroups = this.groupSelection.selected;
+  
+          // Extracting group names and IDs from the selected groups
+          this.selectedGroupName = selectedGroups.map(group => group.groupName);
+          this.selectedGroupIds = selectedGroups.map(group => group.pmsGroupId);
+
           const selectedCom = this.selectedGroupName.map(item => item).join(', ');
           const selectedComId = this.selectedGroupIds.map(item => item).join(',');
           this.displayValue = selectedCom
@@ -396,7 +406,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           // this.requisitionService.updateSelectedItems(dataToSend);
           this.dialogRef.close({
             result: 'success',
-            DataToSend: dataToSend
+            dataToSend: dataToSend
           })
         }
         break;
@@ -423,14 +433,14 @@ export class OrderRefDirectPopUpComponent implements OnInit {
             // this.requisitionService.updateSelectedItems(dataToSend);
             this.dialogRef.close({
               result: 'success',
-              DataToSend: dataToSend
+              dataToSend: dataToSend
             })
           } else {
             const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, cartItems: SelctedSpareItems }
             // this.requisitionService.updateSelectedItems(dataToSend);
             this.dialogRef.close({
               result: 'success',
-              DataToSend: dataToSend
+              dataToSend: dataToSend
             })
           }
         }
@@ -454,7 +464,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
           this.dialogRef.close({
             result: 'success',
-            DataToSend: dataToSend
+            dataToSend: dataToSend
           })
         }
         break;
