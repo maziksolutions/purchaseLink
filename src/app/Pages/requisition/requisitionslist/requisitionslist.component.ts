@@ -345,7 +345,7 @@ export class RequisitionslistComponent implements OnInit {
       })
   }
   LoadSpare() {
-    this.pmsgroupService.GetSpareList(0)
+    this.shipmasterService.GetShipSpareList(0)
       .subscribe(response => {
 
         this.GetSpareAccCode = response.data;

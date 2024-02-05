@@ -2179,7 +2179,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       })
   }
   LoadSpare() {
-    this.pmsService.GetSpareList(0)
+    this.shipmasterService.GetShipSpareList(0)
       .subscribe(response => {
 
         this.GetSpareAccCode = response.data;
