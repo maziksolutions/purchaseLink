@@ -222,6 +222,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   filteredPorts: Observable<Port[]>;
   showSearchInput: boolean = true;
   myPlaceholder: string = this.defaultOrderType[0] === 'Service' ? 'Expected Port' : 'Expected Delivery Port';
+  AttachlistwithID: any;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -1857,6 +1858,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     });
   }
 
+  showAttachinDetails(id){
+   var status = 0;
+    this.pmsService.getmattachment(status, 'Purchase Requisition Item', id)
+    .subscribe(response => {
+    debugger  
+   this.AttachlistwithID =  response.data;
+    
+    });
+  }
+
   applyFilter(filterValue: string) {
 
     filterValue = filterValue.trim();
@@ -2029,11 +2040,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         if (response.message != undefined) {
 
           let ss = response.message;
-          alert(ss)
+          this.swal.error(ss)
         }
 
         if (response.message == undefined) {
           this.approvestatus = response.data.approvedReq;
+          this.swal.success('Successfully send for approval.')
         }
 
       });
@@ -2912,6 +2924,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.pmsService.getmattachment(status, 'Purchase Requisition Item', this.GetItemId)
       .subscribe(response => {
         this.flag = status;
+        debugger
         this.attachmentItemdataSource.data = response.data;
         this.attachmentItemdataSource.sort = this.sort;
         this.attachmentItemdataSource.paginator = this.paginator;

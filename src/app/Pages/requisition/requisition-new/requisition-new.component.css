@@ -114,6 +114,7 @@
    padding: 0;
    margin: 0;
    border-top: 0 solid transparent !important;
+   display: block !important;
  }
  .mat-input-element {
   padding-bottom: 0;
