@@ -2562,17 +2562,19 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     }
     dialogRef.afterClosed().subscribe(result => {
-      debugger
+      
       if (result.result === 'success') {
-        debugger
+        
         console.log(result)
         const data = result.dataToSend
         if (data != null && data.displayValue !== '' && data.saveValue !== '') {
           this.zone.run(() => {
+            debugger
             this.displayValue = ''
             this.saveValue = ''
-            this.displayValue = data.displayValue;
+           this.displayValue = data.displayValue;
             this.saveValue = data.saveValue;
+            
           })
           const orderType = data.defaultOrderType
           this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
