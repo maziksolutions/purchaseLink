@@ -115,11 +115,18 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       });
     }
 
-    if (this.dataSourceTree)
-      this.bindData(this.dataSourceTree);
-    if (this.groupTableSourceTree) {
-      this.bindGroup(this.groupTableSourceTree)
+    if(this.ComponentType==='Component'){
+      this.requisitionService.getTemplateTree().subscribe(res => {
+        this.dataSourceTree = res;
+        this.bindData(this.dataSourceTree);
+      })
     }
+   
+    // if (this.dataSourceTree)
+    //   this.bindData(this.dataSourceTree);
+    // if (this.groupTableSourceTree) {
+    //   this.bindGroup(this.groupTableSourceTree)
+    // }
 
     this.searchForm = this.fb.group({
       shipId: this.vesselId,      
@@ -140,7 +147,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       });
       this.loadGroupsComponent();
     });
-   
+   console.log(this.spareItemDataSource.data)
   }
 
   get sfm() { return this.searchForm.controls };

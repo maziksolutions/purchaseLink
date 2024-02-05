@@ -131,3 +131,6 @@
   border: 1px solid #ccc; 
   box-shadow: none;
 }
+.mat-cell{
+  display: block !important;
+}

@@ -222,6 +222,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   filteredPorts: Observable<Port[]>;
   showSearchInput: boolean = true;
   myPlaceholder: string = this.defaultOrderType[0] === 'Service' ? 'Expected Port' : 'Expected Delivery Port';
+  selectedItemIndex: number = -1;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -537,6 +538,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             this.reqId = data.data;
             if (this.defaultOrderType[0] !== 'Service') {
               if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
+                debugger
                 this.items = []
                 this.dataSource.data.map(item => {
                   const newItem = {
@@ -548,7 +550,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                     partNo: item.partNo || '',
                     availableQty: item.minimumLevel || '',
                     dwg: item.dwg || '',
-                    maker: item.makerReference || '',
+                    maker: item.maker || '',
+                    makerReference: item.makerReference || '',
                     model: item.model || '',
                     material: item.material || '',
                     description: item.description || '',
@@ -606,7 +609,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               }
             }
             else if (data.message == "Update") {
-
+              debugger
               this.swal.success('Data has been updated successfully.');
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
@@ -685,21 +688,21 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
     else if (partName == 'items') {
       if (this.reqId) {
-
+        debugger
         const itemList = this.dataSource.data.map(item => {
 
           if (item.itemsId != 0) {
 
             const { editMode, ...rest } = item;
-            rest.vesselId = this.requisitionFullData.vesselId
+            rest.vesselId = this.selectedVesselId
             return rest;
           } else {
             const { editMode, ...rest } = item;
-            rest.vesselId = this.requisitionFullData.vesselId
+            rest.vesselId = this.selectedVesselId
             return rest;
           }
-
         })
+        debugger
         this.requisitionService.addItemsDataList(itemList).subscribe(res => {
 
           if (res.message == "All items added") {
@@ -735,6 +738,17 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //     this.autoSave('header');
   //   }
   // }
+  clearServiceForm(){    
+    debugger  
+    this.serviceTypeForm.controls.serviceName.setValue('')
+    this.serviceTypeForm.controls.serviceDesc.setValue('')
+    this.serviceTypeForm.controls.remarks.setValue('')
+    const jobListArray = this.serviceTypeForm.get('jobList') as FormArray;
+    while (jobListArray.length) {
+      jobListArray.removeAt(0);
+    }
+    this.serviceTypeForm.reset();
+  }
 
   onSubmit(form: any) {
 
@@ -744,11 +758,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
-          if (this.reqId)
-            this.loadServiceType(this.reqId);
+          if (this.reqId){
+            this.clearServiceForm();
+            this.loadServiceType(this.reqId);            
+          }            
         } else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
-
+          this.clearServiceForm();
+          this.loadServiceType(this.reqId);   
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -937,7 +954,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           formPart?.patchValue({ orderTypeId: requisitionData.orderTypeId })
           if (requisitionData.orderReferenceType === 'Component' || requisitionData.orderReferenceType === 'Spare') {
             this.getSpareItems('Component', objProcR);
-            this.LoadShipCompnent(0)
+            this.LoadShipCompnent()
             this.getCartItemsInEditReq(0).subscribe(res => {
               const transformedData: any[] = [];
               this.spareItemDataSource.data.forEach((item: any) => {
@@ -1178,7 +1195,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.orderTypes = response.data;
         this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
         if (this.defaultOrderType[0] === 'Spare' || this.defaultOrderType[0] === 'Service')
-          this.LoadShipCompnent(0);
+          this.LoadShipCompnent();
         else if (this.defaultOrderType[0] === 'Store')
           this.loadGroupsComponent()
       },
@@ -1328,7 +1345,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   loadPortList() {
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
-
+        debugger
         this.portList = response.data.filter(data => data.countryMaster && data.countryMaster.countryName);
 
         // console.log(this.portList)
@@ -1377,7 +1394,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
 
-  LoadShipCompnent(status) {
+  LoadShipCompnent() {
     this.requisitionService.getTemplateTree().subscribe(res => {
       this.dataSourceTree = res;
 
@@ -1449,7 +1466,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.headabb = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.abbreviation);
       this.defaultOrderType = this.orderTypes.filter(x => x.orderTypeId === parseInt(this.selectedOrderTypeId)).map(x => x.defaultOrderType);
       if (this.defaultOrderType[0] === 'Service' || this.defaultOrderType[0] === 'Spare') {
-        this.LoadShipCompnent(0)
+        this.LoadShipCompnent()
         this.getCartItems(0)
       } else if (this.defaultOrderType[0] === 'Store') {
         this.loadGroupsComponent()
@@ -1473,15 +1490,19 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (itemType === 'Component') {
       this.requisitionService.getItemsInfo(ids)
         .subscribe(res => {
+          debugger
+          console.log(res)
           const data = res.map(item => ({
             itemsId: item.shipComponentSpareId,
             spareId: item.shipSpareId || null,
             storeId: item.shipStoreId || null,
             itemCode: item.shipSpares.inventoryCode || '',
             itemName: item.shipSpares.inventoryName || '',
-            partNo: item.shipSpares.partNo || '',
+            partNo: item.partNo || '',
             dwg: item.drawingNo || '',
-            maker: item.shipSpares.makerReference || '',
+            maker: item.components.maker.makerName || '',
+            makerReference: item.shipSpares.makerReference || '',
+            material: item.shipSpares.material || '',
             model: item.components.modelNo || '',
             minRequired: item.minRequired || 0,
             reqQty: item.reqQty || 0,
@@ -1530,9 +1551,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                 }
               });
               this.leftTableDataSource.data = data;
+              console.log('leftTableData :- ', this.leftTableDataSource.data)
             })
           } else
             this.leftTableDataSource.data = data;
+          console.log('leftTableData :- ', this.leftTableDataSource.data)
         });
     } else if (itemType === 'Group') {
       this.requisitionService.getGroupsInfo(ids).subscribe(res => {
@@ -1844,8 +1867,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   //#endregion
 
-  listDetails(id) {
+  listDetails(id, indexNo) {
     debugger
+    this.selectedItemIndex = indexNo + 1
     const uniqueIds = new Set<number>();
     this.listViewItems = this.dataSource.data.filter(item => {
       if (item.itemsId == id && !uniqueIds.has(item.itemsId)) {
@@ -2106,9 +2130,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         if (result.value) {
           this.requisitionService.Finalapprove(final, this.temporaryNumber, this.finalHeader)
             .subscribe(result => {
-               this.swal.success('successfully Approved');
-               this.router.navigate(['/Requisition/Requisitionslist']);
-              
+              this.swal.success('successfully Approved');
+              this.router.navigate(['/Requisition/Requisitionslist']);
+
             })
         }
       })
@@ -2134,7 +2158,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               if (result.status === true) {
                 this.approvestatus = result.data.approvedReq
                 this.swal.error('Requisition Approval Reject');
-               this.router.navigate(['/Requisition/Requisitionslist']);
+                this.router.navigate(['/Requisition/Requisitionslist']);
               }
             })
         }
@@ -2489,7 +2513,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   openModal() {
     debugger
     let dialogRef: any
-    const orderType = this.defaultOrderType[0]    
+    const orderType = this.defaultOrderType[0]
     if (orderType != undefined) {
       if (orderType === 'Spare' || orderType === 'Service') {
         const isSpareDataEmpty = this.spareItemDataSource.data.length === 0;
@@ -2537,9 +2561,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       } else {
         const isStoreDataEmpty = this.storeItemDataSource.data.length === 0;
         if (isStoreDataEmpty) {
-          debugger          
+          debugger
           dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-            width: '800px',           
+            width: '800px',
             data: {
               modalTitle: "Order Reference", componentType: 'Group', orderType: orderType, vesselId: this.selectedVesselId,
               groupTableData: this.groupTableDataSource.data, orderTypeId: this.selectedOrderTypeId
@@ -2585,14 +2609,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               this.autoSave('header')
             }
             else if (data.orderReferenceType === 'Spare') {
+              debugger
               this.leftTableDataSource.data = []
-              this.dataSource.data = [];
+              // this.dataSource.data = [];
               this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
               this.autoSave('header')
             }
             else if (data.orderReferenceType === 'Store') {
+              debugger
               this.leftTableDataSource.data = []
-              this.dataSource.data = [];
+              // this.dataSource.data = [];
               this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
               this.autoSave('header')
             }
