@@ -243,7 +243,7 @@
             <h6 class="text-900 mb-1">Project Name / Code</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="projectNameCodeId"
-                 (change)="selectProjectCode($event)" required>
+                (change)="selectProjectCode($event)" required>
                 <option value="" selected disabled>Select </option>
                 <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
                   {{item.projectName|titlecase }}-{{item.projectCode}}
@@ -280,8 +280,8 @@
             <h6 class="text-900 mb-1">Order Reference</h6>
             <fieldset class="form-group mb-0">
               <input type="text" class="form-control form-small ellipsis-text" placeholder="Select Component Items"
-                (click)="openModal()" formControlName="orderReference"
-                [value]="displayValue" [title]="displayValue" readonly>
+                (click)="openModal()" formControlName="orderReference" [value]="displayValue" [title]="displayValue"
+                readonly>
             </fieldset>
           </div>
 
@@ -671,10 +671,10 @@
                   data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-header">
-                <h5 class="modal-title" id="">&nbsp;</h5>
+                <h5 class="modal-title" id="">Add Items</h5>
 
               </div>
-              <div class="modal-body mt-0 scrollbar-visible">
+              <div class="modal-body mt-0" style="height: 70vh;">
                 <div class="form-inline mb-3">
                   <input type="text" class="form-control form-small m-r-5 mb-d3 m-r-d0" placeholder="Search"
                     (keyup)="applyFilter($any($event.target).value)" #searchInput>
@@ -711,23 +711,23 @@
                             </ng-container>
                             <ng-container matColumnDef="inventoryName">
                               <mat-header-cell *matHeaderCellDef>Part Name</mat-header-cell>
-                              <mat-cell *matCellDef="let row">{{ row.itemName }}</mat-cell>
+                              <mat-cell class="ellipsis-text" title="{{row.itemName}}" *matCellDef="let row">{{ row.itemName }}</mat-cell>
                             </ng-container>
                             <ng-container matColumnDef="partNo">
                               <mat-header-cell *matHeaderCellDef>Part No.</mat-header-cell>
-                              <mat-cell *matCellDef="let row">{{ row.part }}</mat-cell>
+                              <mat-cell class="ellipsis-text" title="{{row.partNo}}" *matCellDef="let row">{{ row.partNo }}</mat-cell>
                             </ng-container>
                             <ng-container matColumnDef="dwg">
                               <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
-                              <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
+                              <mat-cell class="ellipsis-text" title="{{row.dwg}}" *matCellDef="let row">{{ row.dwg }}</mat-cell>
                             </ng-container>
                             <ng-container matColumnDef="quantity">
                               <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
-                              <mat-cell *matCellDef="let row">{{ row.rob }}</mat-cell>
+                              <mat-cell class="ellipsis-text" title="{{row.rob}}" *matCellDef="let row">{{ row.rob }}</mat-cell>
                             </ng-container>
                             <ng-container matColumnDef="availableQty">
                               <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
-                              <mat-cell *matCellDef="let row">{{ row.unit }}</mat-cell>
+                              <mat-cell class="ellipsis-text" title="{{row.unit}}" *matCellDef="let row">{{ row.unit }} (PCS)</mat-cell>
                             </ng-container>
                             <ng-container matColumnDef="minRequired">
                               <mat-header-cell *matHeaderCellDef>Min Required</mat-header-cell>
@@ -735,7 +735,7 @@
                             </ng-container>
                             <ng-container matColumnDef="reorderLevel">
                               <mat-header-cell *matHeaderCellDef>Reorder Level</mat-header-cell>
-                              <mat-cell *matCellDef="let row">{{ row.reorderQty }}</mat-cell>
+                              <mat-cell class="ellipsis-text" title="{{row.reorderQty}}" *matCellDef="let row">{{ row.reorderQty }}</mat-cell>
                             </ng-container>
                             <mat-header-row class="bg-300"
                               *matHeaderRowDef="leftTableColumn; sticky:true"></mat-header-row>
@@ -801,14 +801,14 @@
                                   [id]="'reqQty_' + i + '_' + row.shipComponentSpareId" />
                               </mat-cell>
                             </ng-container>
-                            <ng-container class="rightTableCode" matColumnDef="partNo">
-                              <mat-header-cell class="rightTableCode" *matHeaderCellDef>PartNo.</mat-header-cell>
-                              <mat-cell class="rightTableCode" *matCellDef="let row">{{ row.part }}</mat-cell>
+                            <ng-container  matColumnDef="partNo">
+                              <mat-header-cell  *matHeaderCellDef>PartNo.</mat-header-cell>
+                              <mat-cell class="ellipsis-text" title="{{row.partNo}}" *matCellDef="let row">{{ row.partNo }}</mat-cell>
                             </ng-container>
-                            <ng-container class="rightTableCode" matColumnDef="inventoryName">
-                              <mat-header-cell class="rightTableCode" *matHeaderCellDef>Part
+                            <ng-container matColumnDef="inventoryName">
+                              <mat-header-cell *matHeaderCellDef>Part
                                 Name</mat-header-cell>
-                              <mat-cell class="rightTableCode" *matCellDef="let row">{{row.itemName }}</mat-cell>
+                              <mat-cell class="rightTableCode" class="ellipsis-text" title="{{row.itemName}}" *matCellDef="let row">{{row.itemName }}</mat-cell>
                             </ng-container>
                             <mat-header-row class="bg-300"
                               *matHeaderRowDef="rightTableColumn; sticky:true"></mat-header-row>
@@ -824,7 +824,7 @@
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary me-1" aria-label="" [disabled]="!reqId"
                   (click)="storeTableData()">Ok</button>
-                <button type="button" data-bs-dismiss="modal" class="btn btn-danger me-1" aria-label="">Cancel</button>
+                <!-- <button type="button" data-bs-dismiss="modal" class="btn btn-danger me-1" aria-label="">Cancel</button> -->
               </div>
             </div>
           </div>
@@ -873,27 +873,27 @@
             </ng-container>
             <ng-container matColumnDef="itemName">
               <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
-              <mat-cell *matCellDef="let row">{{ row.itemName }}</mat-cell>
+              <mat-cell class="ellipsis-text" title="{{row.itemName}}" *matCellDef="let row">{{ row.itemName }}</mat-cell>
             </ng-container>
             <ng-container class="rightTableCode" matColumnDef="itemCode">
               <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
-              <mat-cell *matCellDef="let row">{{ row.itemCode }}</mat-cell>
+              <mat-cell class="ellipsis-text" title="{{row.itemCode}}" *matCellDef="let row">{{ row.itemCode }}</mat-cell>
             </ng-container>
             <ng-container matColumnDef="part">
               <mat-header-cell *matHeaderCellDef>Part</mat-header-cell>
-              <mat-cell *matCellDef="let row">{{ row.partNo }}</mat-cell>
+              <mat-cell class="ellipsis-text" title="{{row.partNo}}" *matCellDef="let row">{{ row.partNo }}</mat-cell>
             </ng-container>
             <ng-container matColumnDef="dwg">
               <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
-              <mat-cell *matCellDef="let row">{{ row.dwg }}</mat-cell>
+              <mat-cell class="ellipsis-text" title="{{row.dwg}}" *matCellDef="let row">{{ row.dwg }}</mat-cell>
             </ng-container>
             <ng-container matColumnDef="make">
               <mat-header-cell *matHeaderCellDef>Make</mat-header-cell>
-              <mat-cell class="ellipsis-text" *matCellDef="let row" [title]="row.maker">{{ row.maker }}</mat-cell>
+              <mat-cell class="ellipsis-text" *matCellDef="let row" title="{{row.maker}}">{{ row.maker }}</mat-cell>
             </ng-container>
             <ng-container matColumnDef="model">
               <mat-header-cell *matHeaderCellDef>Model</mat-header-cell>
-              <mat-cell *matCellDef="let row">{{ row.model }}</mat-cell>
+              <mat-cell class="ellipsis-text" title="{{row.model}}" *matCellDef="let row">{{ row.model }}</mat-cell>
             </ng-container>
             <ng-container matColumnDef="lastDlDt">
               <mat-header-cell *matHeaderCellDef>Last Dl Date</mat-header-cell>
@@ -905,7 +905,7 @@
             </ng-container>
             <ng-container matColumnDef="rob">
               <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
-              <mat-cell *matCellDef="let row" (click)="openEditModal(row)">{{ row.rob }}</mat-cell>
+              <mat-cell class="ellipsis-text" title="{{row.rob}}" *matCellDef="let row" (click)="openEditModal(row)">{{ row.rob }}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="enterQuantity">
@@ -921,15 +921,18 @@
 
             <ng-container matColumnDef="unit">
               <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
-              <mat-cell *matCellDef="let row">{{ row.unit }}</mat-cell>
+              <mat-cell *matCellDef="let row">{{ row.unit }} (PCS)</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="itemSpec">
               <mat-header-cell *matHeaderCellDef>Item Spec</mat-header-cell>
-              <mat-cell *matCellDef="let row"> {{ row.makerReference ? row.makerReference + '-' : '' }}
+              <mat-cell class="ellipsis-text" *matCellDef="let row" title="{{ row.makerReference ? row.makerReference + '-' : '' }}
+              {{ row.material ? row.material + '-' : '' }}
+              {{ row.description ? row.description + '-' : '' }}
+              {{ row.remarks ? row.remarks : '' }}"> {{ row.makerReference ? row.makerReference + '-' : '' }}
                 {{ row.material ? row.material + '-' : '' }}
                 {{ row.description ? row.description + '-' : '' }}
-                {{ row.remarks ? row.remarks : '' }}</mat-cell>
+                {{ row.remarks ? row.remarks : '' }} </mat-cell>
             </ng-container>
 
             <ng-container style="min-width: 80px; width: 80px; max-width: 80px;" matColumnDef="itemRemarks">
@@ -1042,17 +1045,17 @@
                 <tbody>
                   <tr *ngFor="let item of dataSource.data; let i = index">
                     <td class="listTableNo">{{i+1}}</td>
-                    <td (click)="listDetails(item.itemsId)">{{item.itemName}}</td>
+                    <td (click)="listDetails(item.itemsId, i)">{{item.itemName}}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          <div class="col-lg-9" *ngFor="let item of listViewItems">
+          <div class="col-lg-9" *ngFor="let item of listViewItems;">
             <div class="row mb-4">
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Line #</h6>
-                <h6 class="mb-0 fs--2 text-500">{{ listViewItems.indexOf(item) + 1 }}</h6>
+                <h6 class="mb-0 fs--2 text-500">{{ selectedItemIndex }}</h6>
               </div>
               <div class="col-lg-2">
                 <h6 class="text-900 mb-2">Item No</h6>

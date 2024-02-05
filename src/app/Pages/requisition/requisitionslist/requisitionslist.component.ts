@@ -270,7 +270,7 @@ export class RequisitionslistComponent implements OnInit {
     }
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
-
+        debugger
         this.flag = status;
         // this.documentHeaderList =response.data.map(x=>x.documentHeader.replace(/\D/g, '')) 
 

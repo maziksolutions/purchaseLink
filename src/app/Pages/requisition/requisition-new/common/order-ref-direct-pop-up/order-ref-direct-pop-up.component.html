@@ -143,11 +143,11 @@
     </ng-container>
     <ng-container matColumnDef="dwg">
         <mat-header-cell *matHeaderCellDef>Drawing No</mat-header-cell>
-        <mat-cell *matCellDef="let row">{{ row.spareAssembly.components.drawingNo }}</mat-cell>
+        <mat-cell *matCellDef="let row">{{ row.spareAssembly.drawingNo }}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="partNo">
         <mat-header-cell *matHeaderCellDef>Part No</mat-header-cell>
-        <mat-cell *matCellDef="let row">{{ row.spareAssembly.components.partNo }}</mat-cell>
+        <mat-cell *matCellDef="let row">{{ row.spareAssembly.partNo }}</mat-cell>
     </ng-container>
 
     <mat-header-row class="bg-300" *matHeaderRowDef="spareItemsTableColumn; sticky:true"></mat-header-row>
