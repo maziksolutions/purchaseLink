@@ -532,7 +532,7 @@ else{
   openModalWorkQT(){
     this.selectedIndexQueueTransition = null;
     if(this.workqueuestateId != null){
-
+debugger
     this.WorkQTForm.reset();
     this.WorkQTForm.controls.workQueueTransitionId.setValue(0);
     this.WorkQTForm.controls.workQueueStateId.setValue('');
@@ -551,7 +551,7 @@ else{
   }
 
   getTargetWorkQueue(action){
-
+debugger
 const selectedValue = (action.target as HTMLSelectElement).value;
     if(selectedValue == 'Approve'){
       this.TargetWorkQueueStateData = this.WQstatusdata.filter(x=>x.groupId == this.currentworkstate[0].groupId && x.eventId == this.currentworkstate[0].eventId
@@ -571,10 +571,12 @@ const selectedValue = (action.target as HTMLSelectElement).value;
     this.WorkQTForm.reset();
     this.WorkQTForm.controls.workQueueTransitionId.setValue(0);
     this.WorkQTForm.controls.workQueueStateId.setValue('');
-    this.WorkQTForm.controls.workQueueStateCurrentId.setValue('');
     this.WorkQTForm.controls.action.setValue('');
-    this.WorkQTForm.controls.eventId.setValue('');
     this.WorkQTForm.controls.groupId.setValue('');
+    this.WorkQTForm.controls.eventId.setValue('');
+    this.selectgroupname = this.dataSource.data.filter(x=>x.groupId ==  this.groupId);
+    this.currentworkstate =  this.dataSourceQueueState.data.filter(x=>x.workQueueStateId == this.workqueuestateId);
+    this.WorkQTForm.controls.workQueueStateCurrentId.setValue(this.currentworkstate[0].workQueueStateId);
     $("#addModalWQT").modal('hide');   
   }
 
@@ -592,14 +594,16 @@ const selectedValue = (action.target as HTMLSelectElement).value;
         if (data.message == "data added") {
 
           this.swal.success('Added successfully.');
+          this.closeModalWorkQT();
            this.loadWorkQueueTransitionData(this.workqueuestateId);
-           this.closeModalWorkQT();
+          
         }
         else if (data.message == "updated") {
 
           this.swal.success('Data has been updated successfully.');
+          this.closeModalWorkQT();
             this.loadWorkQueueTransitionData(this.workqueuestateId);
-           this.closeModalWorkQT();
+          
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');

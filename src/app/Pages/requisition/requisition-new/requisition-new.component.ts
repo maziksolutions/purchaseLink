@@ -223,6 +223,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   showSearchInput: boolean = true;
   myPlaceholder: string = this.defaultOrderType[0] === 'Service' ? 'Expected Port' : 'Expected Delivery Port';
   selectedItemIndex: number = -1;
+  AttachlistwithID: any;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -1881,6 +1882,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     });
   }
 
+  showAttachinDetails(id){
+   var status = 0;
+    this.pmsService.getmattachment(status, 'Purchase Requisition Item', id)
+    .subscribe(response => {
+    debugger  
+   this.AttachlistwithID =  response.data;
+    
+    });
+  }
+
   applyFilter(filterValue: string) {
 
     filterValue = filterValue.trim();
@@ -2053,11 +2064,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         if (response.message != undefined) {
 
           let ss = response.message;
-          alert(ss)
+          this.swal.error(ss)
         }
 
         if (response.message == undefined) {
           this.approvestatus = response.data.approvedReq;
+          this.swal.success('Successfully send for approval.')
         }
 
       });
@@ -2242,7 +2254,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     uniqueItems.forEach((item, index) => {
       stepData += `
-            #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.maker}','','','','','');`;
+            #${index + 2}=Items_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.maker}','','','','','');`;
     });
     stepData += `
         ENDSEC;`;
@@ -2583,17 +2595,19 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     }
     dialogRef.afterClosed().subscribe(result => {
-      debugger
+      
       if (result.result === 'success') {
-        debugger
+        
         console.log(result)
         const data = result.dataToSend
         if (data != null && data.displayValue !== '' && data.saveValue !== '') {
           this.zone.run(() => {
+            debugger
             this.displayValue = ''
             this.saveValue = ''
-            this.displayValue = data.displayValue;
+           this.displayValue = data.displayValue;
             this.saveValue = data.saveValue;
+            
           })
           const orderType = data.defaultOrderType
           this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
@@ -2936,6 +2950,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.pmsService.getmattachment(status, 'Purchase Requisition Item', this.GetItemId)
       .subscribe(response => {
         this.flag = status;
+        debugger
         this.attachmentItemdataSource.data = response.data;
         this.attachmentItemdataSource.sort = this.sort;
         this.attachmentItemdataSource.paginator = this.paginator;
