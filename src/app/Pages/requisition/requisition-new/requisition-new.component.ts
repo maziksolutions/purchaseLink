@@ -535,7 +535,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         // formPart?.get('orderReference')?.setValue(displayValue);
         this.requisitionService.addRequisitionMaster(formData)
           .subscribe(data => {
-
+            debugger
             this.reqId = data.data;
             if (this.defaultOrderType[0] !== 'Service') {
               if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
@@ -543,7 +543,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                 this.items = []
                 this.dataSource.data.map(item => {
                   const newItem = {
-                    itemsId: 0,
+                    itemsId: item.itemsId || 0,
                     spareId: item.spareId || null,
                     storeId: item.storeId || null,
                     itemCode: item.itemCode || '',
@@ -589,14 +589,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                     storageLocation: item.storageLocation || '',
                     attachments: item.attachments || '',
                     pmReqId: this.reqId,
-                    vesselId: this.requisitionFullData.vesselId
+                    vesselId: this.selectedVesselId
                   };
                   this.items.push(newItem);
                 });
               }
             }
             if (data.message == "data added") {
-
+              debugger
               this.swal.success('Added successfully.');
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
@@ -1000,16 +1000,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   transformSpare(item: any): any {
-
+    debugger
     return {
-      itemsId: 0,
+      itemsId: item.itemsId || 0,
       itemCode: item.inventoryCode || '',
       itemName: item.inventoryName || '',
       partNo: item.spareAssembly.partNo || '',
       dwg: item.spareAssembly.drawingNo || '',
-      maker: item.spareAssembly.components.maker.makerName || '',
+      maker: item.spareAssembly.components?.maker?.makerName || '',
       makerReference: item.makerReference || '',
-      model: item.spareAssembly.modelNo || '',
+      model: item.spareAssembly?.modelNo || '',
       minRequired: item.minRequired || 0,
       reqQty: item.requiredQuantity || 0,
       rob: item.rob || 0,
@@ -1026,8 +1026,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       lowest: item.lowest || 0,
       itemRemarks: '',
       line: item.remarks || '',
-      componentName: item.spareAssembly.components.shipComponentName || '',
-      componentCode: item.spareAssembly.components.shipComponentCode || '',
+      componentName: item.spareAssembly?.components?.shipComponentName || '',
+      componentCode: item.spareAssembly?.components?.shipComponentCode || '',
       EquipmentName: item.EquipmentName || '',
       prevReqdQty: item.prevReqdQty || '',
       approvedQty: item.approvedQty || '',
@@ -1786,7 +1786,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (this.reqId)
       this.requisitionService.getItemsByReqId(this.reqId)
         .subscribe(response => {
-
+          debugger
           this.flag = status;
           this.dataSource.data = [];
           this.zone.run(() => {
@@ -2211,7 +2211,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       })
   }
   downloadNotepad() {
-
+    debugger
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
     this.ReqData = this.requisitionFullData;
     if (this.ReqData == undefined) {
@@ -2250,7 +2250,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     stepData += `
    
-              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount.accountCode}','','','','','${this.ReqData.orderTitle}')`;
+              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount?.accountCode}','','','','','${this.ReqData.orderTitle}')`;
 
     uniqueItems.forEach((item, index) => {
       stepData += `
@@ -2624,14 +2624,17 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             }
             else if (data.orderReferenceType === 'Spare') {
               debugger
-              this.leftTableDataSource.data = []
+              // this.leftTableDataSource.data = []
               // this.dataSource.data = [];
-              this.dataSource.data = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
+              const cartItemIds = this.dataSource.data?.map((item: any) => item.spareId) || []; // Get shipspareIds from cartItems
+              data.cartItems = data.cartItems?.filter((item:any)=>!cartItemIds.includes(item.shipSpareId))
+              const newItemsData = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
+              this.dataSource.data = [...this.dataSource.data, ...newItemsData];
               this.autoSave('header')
             }
             else if (data.orderReferenceType === 'Store') {
               debugger
-              this.leftTableDataSource.data = []
+              // this.leftTableDataSource.data = []
               // this.dataSource.data = [];
               this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
               this.autoSave('header')
