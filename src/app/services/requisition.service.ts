@@ -187,6 +187,10 @@ export class RequisitionService {
     return this.httpClient.get<any>(this.linkurl + 'GetServiceTypeById/' + reqId, httpOptions)
       .pipe(catchError(this.handleError));
   }
+  getServiceTypefull(status): Observable<any> {
+    return this.httpClient.get<any>(`${this.linkurl}filterServiceType/${status}`, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
   //#endregion
 
   getInventoryType(status): Observable<any> {
