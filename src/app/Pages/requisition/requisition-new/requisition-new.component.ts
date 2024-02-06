@@ -507,7 +507,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   autoSave(partName: string): void {
 
     if (partName == 'header') {
-
+      debugger
       const formPart = this.RequisitionForm.get(partName);
       if (this.isRequisitionApproved) {
         const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -537,6 +537,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           .subscribe(data => {
             debugger
             this.reqId = data.data;
+            formPart.patchValue({requisitionId:data.data})
             if (this.defaultOrderType[0] !== 'Service') {
               if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
                 debugger
@@ -1048,7 +1049,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   transformStore(item: any): any {
     return {
-      itemsId: 0,
+      itemsId: item.itemsId || 0, 
       itemCode: item.inventoryCode || '',
       itemName: item.inventoryName || '',
       partNo: item.partNo || '',
@@ -1560,6 +1561,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         });
     } else if (itemType === 'Group') {
       this.requisitionService.getGroupsInfo(ids).subscribe(res => {
+        debugger 
+        console.log('groupItems :- ',res)
         const data = res.map(item => ({
           itemsId: item.shipStoreId,
           spareId: item.shipSpareId || null,
