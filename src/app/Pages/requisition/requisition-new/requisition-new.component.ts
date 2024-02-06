@@ -224,6 +224,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   myPlaceholder: string = this.defaultOrderType[0] === 'Service' ? 'Expected Port' : 'Expected Delivery Port';
   selectedItemIndex: number = -1;
   AttachlistwithID: any;
+  dataJobList: any;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -795,7 +796,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.requisitionService.getServiceType(id).subscribe(res => {
 
       if (res.status === true) {
-
+           console.log(res.data)
         const dataWithExpansion = res.data.map((item) => {
           // Ensure each item in jobList has the isExpanded property
           item.jobList = item.jobList.map(job => ({ ...job, isExpanded: false }));
@@ -2211,9 +2212,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       })
   }
   downloadNotepad() {
-
+debugger
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
     this.ReqData = this.requisitionFullData;
+   
     if (this.ReqData == undefined) {
       this.swal.error('Please save your data before downloading the RTO file.')
     }
@@ -2250,13 +2252,33 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     stepData += `
    
-              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount.accountCode}','','','','','${this.ReqData.orderTitle}')`;
+              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount.accountCode == this.codeAccount.accountCode ? this.codeAccount.accountCode : null}','','','','','${this.ReqData.orderTitle}')`;
 
     uniqueItems.forEach((item, index) => {
       stepData += `
             #${index + 2}=Items_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.maker}','','','','','');`;
     });
-    stepData += `
+
+    if( this.serviceTypeDataSource.length !== 0 || this.serviceTypeDataSource.length !== null ){
+
+      const jobToAdd = this.serviceTypeDataSource.map(item =>  ({
+        serviceName:item.serviceName,
+        jobList:item.jobList
+      })  
+        );  
+
+      jobToAdd.forEach((item, index) => {
+        stepData += `
+        #${index + 2}=Service_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.serviceName}'`;
+
+  // Add jobList details to the stepData
+                          item.jobList.forEach((job, jobIndex) => {
+                                                        stepData += `,
+                                                                      #${jobIndex + 1}='${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','',''`;
+                                                });
+                                              });
+       }
+        stepData += `
         ENDSEC;`;
 
     // Convert the content to a Blob
