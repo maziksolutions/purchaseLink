@@ -418,13 +418,14 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         }
         break;
       case 'Spare':
-        const SelctedSpareItems = this.spareItemDataSource.data.filter(row => this.spareItemSelection.isSelected(row));
-        if (SelctedSpareItems.length > 0) {
+        const SelectedSpareItems = this.spareItemDataSource.data.filter(row => this.spareItemSelection.isSelected(row));
+        if (SelectedSpareItems.length > 0) {
 
-          this.dataSource.data = SelctedSpareItems;
-          const spareItemDisplayValue = SelctedSpareItems
-            .map(item => `${item.spareAssembly.components.shipComponentName}-${item.spareAssembly.drawingNo}`.trim() +
-              `-${item.spareAssembly.partNo}-${item.spareAssembly.components.maker.makerName}`.trim()).join(', ');
+          this.dataSource.data = SelectedSpareItems;
+          console.log(SelectedSpareItems)
+          const spareItemDisplayValue = SelectedSpareItems
+            .map(item => `${item.spareAssembly?.components?.shipComponentName}-${item.spareAssembly?.drawingNo}`.trim() +
+              `-${item.spareAssembly?.partNo}-${item.spareAssembly?.components?.maker?.makerName}`.trim()).join(', ');
           const spareItemSaveValue = this.spareItemDataSource.data
             .filter(row => this.spareItemSelection.isSelected(row))
             .map(item => (item.shipSpareId).toString())
@@ -435,7 +436,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           if (this.orderType === 'Service') {
             const dataToSend = {
               displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType,
-              cartItems: SelctedSpareItems, defaultOrderType: this.orderType
+              cartItems: SelectedSpareItems, defaultOrderType: this.orderType
             }
             // this.requisitionService.updateSelectedItems(dataToSend);
             this.dialogRef.close({
@@ -443,7 +444,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
               dataToSend: dataToSend
             })
           } else {
-            const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, cartItems: SelctedSpareItems }
+            const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, cartItems: SelectedSpareItems }
             // this.requisitionService.updateSelectedItems(dataToSend);
             this.dialogRef.close({
               result: 'success',
