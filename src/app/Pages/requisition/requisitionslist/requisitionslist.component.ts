@@ -170,7 +170,6 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   editRequisition(row: any): void {
-
     this.route.navigate(['/Requisition/RequisitionsNew', row.requisitionId]);
   }
 

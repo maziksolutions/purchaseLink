@@ -1206,7 +1206,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   LoadProjectnameAndcode() {
     debugger
     this.selectedVesselId = this.RequisitionForm.get('header')?.value.vesselId
-    alert(this.selectedVesselId)
+    // alert(this.selectedVesselId)
     this.purchaseService.getprojectname(0)
       .subscribe(response => {
         this.projectnameAndcode = response.data;

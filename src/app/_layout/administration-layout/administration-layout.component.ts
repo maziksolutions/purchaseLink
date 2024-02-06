@@ -55,6 +55,7 @@ export class AdministrationLayoutComponent implements OnInit {
     this.loadDesignation();
   }
   get fm() { return this.changePassForm.controls };
+  
   loadRights() {
     this.userManagementService.checkAccessRightByUrlList(this.masterMenus.join(',')).subscribe((response) => {
       if (response.status) {
