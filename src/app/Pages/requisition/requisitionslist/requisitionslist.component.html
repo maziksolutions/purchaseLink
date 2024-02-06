@@ -52,24 +52,28 @@
                   data-bs-original-title="Add Attachment" aria-label=""><i
                     class="fas fa-paperclip text-primary"></i></a> -->
 
-          <button class="btn btn-secondary dropdown-toggle pe-1 me-1" type="button" data-bs-toggle="dropdown" (click)="handleButtonClick()"
-            aria-haspopup="true" aria-expanded="false"><span class="pe-1"><i class="fas fa-plus"></i></span></button>
-          <div class="dropdown-menu">
+          <!-- <button class="btn btn-secondary dropdown-toggle pe-1 me-1" type="button" data-bs-toggle="dropdown" (click)="handleButtonClick()"
+            aria-haspopup="true" aria-expanded="false"><span class="pe-1"><i class="fas fa-plus"></i></span></button> -->
+          <!-- <div class="dropdown-menu"> -->
             <!-- <a class="dropdown-item"  routerLink="/Requisition/RequisitionsNew">REQUISITION</a> -->
-            <button class="dropdown-item" (click)="clear()">REQUISITION</button>
+            <!-- <button class="dropdown-item" (click)="clear()">REQUISITION</button> -->
             <!-- <a class="dropdown-item" href="#">DIRECT PO</a>
             <a class="dropdown-item" href="#">INVOICE</a> -->
-          </div>
+          <!-- </div> -->
+
+          <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add Requisition"
+          data-bs-toggle="" (click)="clear()" data-bs-target="" aria-expanded="true"
+          aria-controls=""><i class="fas fa-plus text-primary"></i></a>
 
           <!-- <a class="px-2 m-r-1 font-medium-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
                   title="" data-bs-original-title="Export PDF" aria-label=""><i
                     class="fas fa-file-pdf text-danger"></i></a> -->
 
-          <a class="font-medium-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+          <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Excel"
             (click)="generateExcel()" data-bs-original-title="Export Excel" aria-label="">
             <i class="fas fa-file-excel text-success"></i></a>
 
-          <a class="px-2 m-r-1 font-medium-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+          <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
             matTooltip="RTO" (click)="downloadNotepad()" data-bs-original-title="List" aria-label=""><i
               class="fas fa-file-alt"></i></a>
 

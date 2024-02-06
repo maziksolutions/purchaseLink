@@ -114,6 +114,7 @@
    padding: 0;
    margin: 0;
    border-top: 0 solid transparent !important;
+   display: block !important;
  }
  .mat-input-element {
   padding-bottom: 0;
@@ -130,4 +131,7 @@
   border-radius: 0;
   border: 1px solid #ccc; 
   box-shadow: none;
+}
+.mat-cell{
+  display: block !important;
 }

@@ -23,25 +23,39 @@ export class WfgroupComponent implements OnInit {
   @ViewChild('searchInput') searchInput: ElementRef;
   deletetooltip: string;
   selectedIndex: any;
-  displayedColumns: string[] = ['checkbox', 'groupName','eventLink'];
+  selectedItems: string[] = [];
+  dropdownList: { eventId: number, tableName: string }[] = [];
+  dropdownEventSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
+
+  displayedColumns: string[] = ['checkbox', 'groupName', 'eventLink'];
   eventlist: any;
 
   constructor(private fb: FormBuilder,
     public dialog: MatDialog,
     private swal: SwalToastService,
     private exportExcelService: ExportExcelService,
-    private workflowservice : WorkflowService) { }
+    private workflowservice: WorkflowService) { }
 
   ngOnInit(): void {
     this.EventGroupForm = this.fb.group({
       groupId: [0],
       groupName: ['', [Validators.required]],
       eventId: ['', [Validators.required]],
-  
+
     });
 
+    this.dropdownEventSetting = {
+      singleSelection: false,
+      idField: 'eventId',
+      textField: 'tableName',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true
+    };
+
     this.loadData(0);
-    this. LoadEvent();
+    this.LoadEvent();
   }
 
   LoadEvent() {
@@ -64,22 +78,52 @@ export class WfgroupComponent implements OnInit {
   }
 
 
+  onSelectAll(event: any) {
+
+    if (event)
+      this.selectedItems = event.map((x: { eventId: any; }) => x.eventId);
+  }
+
+  onItemSelect(event: any) {
+
+    let isSelect = event.eventId;
+    if (isSelect) {
+      this.selectedItems.push(event.eventId);
+    }
+  }
+  onEventDeSelect(event: any) {
+
+    let rindex = this.selectedItems.findIndex(eventId => eventId == event.eventId);
+    if (rindex !== -1) {
+      this.selectedItems.splice(rindex, 1)
+    }
+  }
+
+  onEventDeSelectAll(event: any) {
+
+    this.selectedItems.length = 0;
+    // this.selectedCountries.splice(0, this.selectedCountries.length);
+  }
+
+
   onSubmit(form: any) {
-    
-  
+    debugger
+    form.value.eventId = this.selectedItems.join(',');
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
 
     this.workflowservice.addWFGroup(fmdata)
       .subscribe(data => {
-
+        debugger
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
+          this.selectedItems.length = 0
           this.loadData(0);
           this.clear();
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
+          this.selectedItems.length = 0
           this.loadData(0);
         }
         else if (data.message == "duplicate") {
@@ -118,11 +162,11 @@ export class WfgroupComponent implements OnInit {
       .subscribe(response => {
 
         this.flag = status;
-debugger
-        this.dataSource.data = response.data;       
+        debugger
+        this.dataSource.data = response.data;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
-      
+
       });
   }
 
@@ -145,7 +189,7 @@ debugger
     this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(r => this.selection.select(r));
   }
   checkboxLabel(row: any): string {
-    
+
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
@@ -159,8 +203,27 @@ debugger
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
     this.workflowservice.getWFGroupById(id)
       .subscribe((response) => {
-        
+
         if (response.status) {
+
+          this.dropdownList = [];
+          if (response.data.eventId != '' && response.data.eventId != null) {
+
+            const objProcR = response.data.eventId.split(',');
+
+            this.dropdownList = objProcR.map(item => {
+              return this.eventlist.find(x => x.eventId == item);
+            });
+            const merge4 = this.dropdownList.flat(1);
+            this.dropdownList = merge4;
+            this.selectedItems.length = 0;
+            this.dropdownList.map(item => {
+              this.selectedItems.push(item.eventId.toString());
+            })
+          }
+
+
+          response.data.eventId = this.dropdownList;
 
           this.EventGroupForm.patchValue(response.data);
 
@@ -223,10 +286,10 @@ debugger
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy,
         delete item.eventId
 
-        item.Events = item.wfEvents.tableName
-           
+      item.Events = item.wfEvents.tableName
+
     })
-   this.exportExcelService.exportAsExcelFile(data, 'WorkFlowGroup', 'Work Flow Group');
+    this.exportExcelService.exportAsExcelFile(data, 'WorkFlowGroup', 'Work Flow Group');
   }
 
 }

@@ -139,7 +139,7 @@ export class RequisitionService {
   //   return this.httpClient.get<any>(this.linkurl + 'DownloadReqAttach/' + filepath, httpOptions)
   //     .pipe(catchError(this.handleError));
   // }
-  DownloadReqAttach(fileName: any): Observable<any> {    
+  DownloadReqAttach(fileName: any): Observable<any> {
     return this.httpClient.get<any>(`${this.linkurl}downloadReqAttach/${fileName}`, { responseType: 'blob' as 'json' })
       .pipe(catchError(this.handleError));
   }
@@ -156,10 +156,14 @@ export class RequisitionService {
     return this.httpClient.get<TemplateTree[]>(this.linkurl + 'groupTemplateTree');
   }
 
-  GetStoreByShipId(shipId):Observable<any>{
-    debugger
-    return this.httpClient.get<any>(`${this.linkurl}StoreLinkedGroups/${shipId}`,httpOptions)
-    .pipe(catchError(this.handleError));
+  GetStoreByShipId(request: any): Observable<any> {    
+    const params = new HttpParams()
+      .set('ShipId', request.ShipId.toString())
+      .set('KeyWord', request.KeyWord)
+      .set('PageNumber', request.PageNumber.toString())
+      .set('PageSize', request.PageSize.toString());
+    return this.httpClient.get<any>(this.linkurl + 'StoreLinkedGroups/', { params })
+      .pipe(catchError(this.handleError));
   }
   //#endregion
 
@@ -181,6 +185,10 @@ export class RequisitionService {
 
   getServiceType(reqId): Observable<any> {
     return this.httpClient.get<any>(this.linkurl + 'GetServiceTypeById/' + reqId, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  getServiceTypefull(status): Observable<any> {
+    return this.httpClient.get<any>(`${this.linkurl}filterServiceType/${status}`, httpOptions)
       .pipe(catchError(this.handleError));
   }
   //#endregion

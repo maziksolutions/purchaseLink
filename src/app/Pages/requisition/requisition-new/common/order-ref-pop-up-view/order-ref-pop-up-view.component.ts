@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 import { OrderRefDirectPopUpComponent } from '../order-ref-direct-pop-up/order-ref-direct-pop-up.component';
 import { MatTableDataSource } from '@angular/material/table';
@@ -23,7 +23,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
   componentType: string;
   orderTypeId: number
   selectedCartItems:any
-
+  vesselId:any
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefPopUpViewComponent>, public dialog: MatDialog) { }
 
   ngOnInit(): void {   
@@ -37,14 +37,15 @@ export class OrderRefPopUpViewComponent implements OnInit {
     this.storeItemDataSource.data = this.data.storeTableData
     this.orderTypeId = this.data.orderTypeId
     this.selectedCartItems=this.data.selectedCartItems   
+    this.vesselId=this.data.vesselId
   }
 
   openModal(type: string) {
-    let dialogRef: any
+    let dialogRef: any     
     if (type === 'Component') {
 
       dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-        width: '1000px',
+        width: '800px',
         data: {
           modalTitle: "Order Reference", componentType: type, orderType: this.orderType,
           dataSourceTree: this.dataSourceTree, orderTypeId: this.orderTypeId
@@ -53,7 +54,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
     } else if (type === 'Group') {
 
       dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-        width: '1000px',
+        width: '800px',
         data: {
           modalTitle: "Order Reference", componentType: type,
           groupTableData: this.groupTableSourceTree, orderTypeId: this.orderTypeId
@@ -62,7 +63,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
     } else if (type === 'Spare') {
 
       dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-        width: '1000px',
+        width: '800px',
         data: {
           modalTitle: "Order Reference", componentType: type, orderType: this.orderType,
           spareTableData: this.spareItemDataSource.data, orderTypeId: this.orderTypeId,
@@ -72,7 +73,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
     } else if (type === 'Store') {
 
       dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
-        width: '1000px',
+        width: '800px',
         data: {
           modalTitle: "Order Reference", componentType: type,
           storeTableData: this.storeItemDataSource.data, orderTypeId: this.orderTypeId,
@@ -87,7 +88,7 @@ export class OrderRefPopUpViewComponent implements OnInit {
           debugger
           this.dialogRef.close({
             result: 'success',
-            dataToSend: result.DataToSend
+            dataToSend: result.dataToSend
           })
         }
       }else{

@@ -11,6 +11,9 @@ import { ComponentFlatNode, ComponentTemplateTree, ExampleGroupFlatNode, GroupFl
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { EMPTY } from 'rxjs';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { StoreLinkedGroupsModel } from 'src/app/Pages/Models/storeLinkedGroupsModel';
 
 
 @Component({
@@ -20,7 +23,13 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 })
 export class OrderRefDirectPopUpComponent implements OnInit {
 
-
+  pageSizeOptions: number[] = [20, 40, 60, 100];
+  pageTotal: any;
+  pageEvent: PageEvent;
+  searchForm: FormGroup;
+  pageSize = 20; currentPage = 0; page: number = 1;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   groupTableColumn: string[] = ['checkbox', 'groupName'];
   groupTableDataSource = new MatTableDataSource<any>();
   groupSelection = new SelectionModel<any>(true, []);
@@ -39,8 +48,6 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   public dataSourceTree: any;
   public groupTableSourceTree: any;
   hasChild = (_: number, node: ExampleGroupFlatNode) => node.expandable;
-
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   selectedIndex: any;
   modalTitle: string;
@@ -62,8 +69,10 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   searchString: any = "";
   activeNode: any;
   selectedCartItems: any
+  vesselId: any
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefDirectPopUpComponent>, private swal: SwalToastService,
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<OrderRefDirectPopUpComponent>,
+    private swal: SwalToastService, private fb: FormBuilder,
     public requisitionService: RequisitionService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private zone: NgZone) { }
 
   ngOnInit(): void {
@@ -74,10 +83,13 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     this.dataSourceTree = this.data.dataSourceTree
     // this.groupTableSourceTree = this.data.groupTableData
     this.groupTableDataSource.data = this.data.groupTableData
+    this.groupTableDataSource.sort = this.sort;
+    this.groupTableDataSource.paginator = this.paginator;
     this.spareItemDataSource.data = this.data.spareTableData
     this.storeItemDataSource.data = this.data.storeTableData
     this.orderTypeId = this.data.orderTypeId
     this.selectedCartItems = this.data.selectedCartItems
+    this.vesselId = parseInt(this.data.vesselId)
 
     if (this.spareItemDataSource.data && this.selectedCartItems) {
       debugger
@@ -103,20 +115,87 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       });
     }
 
-    if (this.dataSourceTree)
-      this.bindData(this.dataSourceTree);
-    if (this.groupTableSourceTree) {
-      this.bindGroup(this.groupTableSourceTree)
+    if(this.ComponentType==='Component'){
+      this.requisitionService.getTemplateTree().subscribe(res => {
+        this.dataSourceTree = res;
+        this.bindData(this.dataSourceTree);
+      })
     }
+   
+    // if (this.dataSourceTree)
+    //   this.bindData(this.dataSourceTree);
+    // if (this.groupTableSourceTree) {
+    //   this.bindGroup(this.groupTableSourceTree)
+    // }
 
-    console.log(this.groupTableDataSource.data)    
+    this.searchForm = this.fb.group({
+      shipId: this.vesselId,      
+      pageNumber: ['0'],
+      pageSize: [this.pageSize],
+      status: ['0'],
+      keyword: ['']
+    });
+
+    this.loadGroupsComponent()
+
+    this.paginator.page.subscribe((pageEvent) => {
+      debugger
+      // Update page size and load data for the new page
+      this.searchForm.patchValue({
+        pageNumber: pageEvent.pageIndex + 1,
+        pageSize: pageEvent.pageSize
+      });
+      this.loadGroupsComponent();
+    });
+   console.log(this.spareItemDataSource.data)
   }
+
+  get sfm() { return this.searchForm.controls };
 
   closeModal(): void {
     this.dialogRef.close();
   }
 
+  onPageChange(event: PageEvent) {
+    
+    const newPageIndex = event.pageIndex;
+    if (newPageIndex > this.currentPage) {
+      // Incrementing page
+      this.currentPage = newPageIndex;
+    } else {
+      // Decrementing page
+      this.currentPage = newPageIndex;
+    }
+    this.searchForm.patchValue({
+      pageNumber: this.currentPage,
+      pageSize: event.pageSize,
+
+    });
+    this.loadGroupsComponent();
+  }
+
+  loadGroupsComponent() {
+        
+    if (this.vesselId) {
+      const request = new StoreLinkedGroupsModel(
+        this.searchForm.value.shipId,
+        this.searchForm.value.keyword,
+        this.searchForm.value.pageNumber, 
+        this.searchForm.value.pageSize
+      );
+      this.requisitionService.GetStoreByShipId(request).subscribe(res => {
+        
+        this.groupTableDataSource.data=[];
+        this.groupTableDataSource.data = res.data
+        this.pageTotal = res.total;
+        // this.groupTableDataSource.sort = this.sort;
+        // this.groupTableDataSource.paginator = this.paginator;
+      })
+    }
+  }
+
   //#region this is for GroupItems Table Checkbox handling code 
+
   isAllGroupSelected() {
 
     const numSelected = this.groupSelection.selected.length;
@@ -128,7 +207,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     this.isAllGroupSelected() ? this.groupSelection.clear() : this.groupTableDataSource.data.forEach(r => this.groupSelection.select(r));
   }
   groupLabel(row: any): string {
-
+    
     if (!row) {
       return `${this.isAllGroupSelected() ? 'select' : 'deselect'} all`;
     }
@@ -268,7 +347,11 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     if (this.ComponentType === 'Group') {
       filterValue = filterValue.trim();
       filterValue = filterValue.toLowerCase();
-      this.groupTableDataSource.filter = filterValue;
+      this.searchForm.patchValue({
+        keyword: filterValue
+      });
+      this.loadGroupsComponent();
+      // this.groupTableDataSource.filter = filterValue;
     } else if (this.ComponentType === 'Spare') {
       filterValue = filterValue.trim();
       filterValue = filterValue.toLowerCase();
@@ -299,21 +382,27 @@ export class OrderRefDirectPopUpComponent implements OnInit {
             // this.requisitionService.updateSelectedItems(dataToSend);
             this.dialogRef.close({
               result: 'success',
-              DataToSend: dataToSend
+              dataToSend: dataToSend
             })
           } else {
             const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType }
             // this.requisitionService.updateSelectedItems(dataToSend);
             this.dialogRef.close({
               result: 'success',
-              DataToSend: dataToSend
+              dataToSend: dataToSend
             })
           }
         }
         break;
       case 'Group':
-        if (this.selectedGroupIds.length > 0 && this.selectedGroupName.length > 0) {
-          debugger
+        if (this.groupSelection.selected.length > 0 ) {          
+
+          const selectedGroups = this.groupSelection.selected;
+  
+          // Extracting group names and IDs from the selected groups
+          this.selectedGroupName = selectedGroups.map(group => group.groupName);
+          this.selectedGroupIds = selectedGroups.map(group => group.pmsGroupId);
+
           const selectedCom = this.selectedGroupName.map(item => item).join(', ');
           const selectedComId = this.selectedGroupIds.map(item => item).join(',');
           this.displayValue = selectedCom
@@ -324,18 +413,19 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           // this.requisitionService.updateSelectedItems(dataToSend);
           this.dialogRef.close({
             result: 'success',
-            DataToSend: dataToSend
+            dataToSend: dataToSend
           })
         }
         break;
       case 'Spare':
-        const SelctedSpareItems = this.spareItemDataSource.data.filter(row => this.spareItemSelection.isSelected(row));
-        if (SelctedSpareItems.length > 0) {
+        const SelectedSpareItems = this.spareItemDataSource.data.filter(row => this.spareItemSelection.isSelected(row));
+        if (SelectedSpareItems.length > 0) {
 
-          this.dataSource.data = SelctedSpareItems;
-          const spareItemDisplayValue = SelctedSpareItems
-            .map(item => `${item.spareAssembly.components.shipComponentName}-${item.spareAssembly.drawingNo}`.trim() +
-              `-${item.spareAssembly.partNo}-${item.spareAssembly.components.maker.makerName}`.trim()).join(', ');
+          this.dataSource.data = SelectedSpareItems;
+          console.log(SelectedSpareItems)
+          const spareItemDisplayValue = SelectedSpareItems
+            .map(item => `${item.spareAssembly?.components?.shipComponentName}-${item.spareAssembly?.drawingNo}`.trim() +
+              `-${item.spareAssembly?.partNo}-${item.spareAssembly?.components?.maker?.makerName}`.trim()).join(', ');
           const spareItemSaveValue = this.spareItemDataSource.data
             .filter(row => this.spareItemSelection.isSelected(row))
             .map(item => (item.shipSpareId).toString())
@@ -346,19 +436,19 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           if (this.orderType === 'Service') {
             const dataToSend = {
               displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType,
-              cartItems: SelctedSpareItems, defaultOrderType: this.orderType
+              cartItems: SelectedSpareItems, defaultOrderType: this.orderType
             }
             // this.requisitionService.updateSelectedItems(dataToSend);
             this.dialogRef.close({
               result: 'success',
-              DataToSend: dataToSend
+              dataToSend: dataToSend
             })
           } else {
-            const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, cartItems: SelctedSpareItems }
+            const dataToSend = { displayValue: this.displayValue, saveValue: this.saveValue, orderReferenceType: this.ComponentType, cartItems: SelectedSpareItems }
             // this.requisitionService.updateSelectedItems(dataToSend);
             this.dialogRef.close({
               result: 'success',
-              DataToSend: dataToSend
+              dataToSend: dataToSend
             })
           }
         }
@@ -382,7 +472,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
           this.dialogRef.close({
             result: 'success',
-            DataToSend: dataToSend
+            dataToSend: dataToSend
           })
         }
         break;

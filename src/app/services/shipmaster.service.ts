@@ -243,6 +243,10 @@ export class ShipmasterService {
     return this.httpClient.get<any[]>(`${this.linkurl}getComponentSpare/${ShipSpareId}`, httpOptions);
   }
 
+  GetShipSpareList(status): Observable<any> {  
+    return this.httpClient.get<any[]>(`${this.linkurl}getshipSpareList/${status}`, httpOptions);
+  }
+
 
   //#endregion
 
