@@ -536,11 +536,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         // formPart?.get('orderReference')?.setValue(displayValue);
         this.requisitionService.addRequisitionMaster(formData)
           .subscribe(data => {
-            debugger
+            
             this.reqId = data.data;
             if (this.defaultOrderType[0] !== 'Service') {
               if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
-                debugger
+                
                 this.items = []
                 this.dataSource.data.map(item => {
                   const newItem = {
@@ -597,7 +597,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               }
             }
             if (data.message == "data added") {
-              debugger
+              
               this.swal.success('Added successfully.');
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
@@ -611,7 +611,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               }
             }
             else if (data.message == "Update") {
-              debugger
+              
               this.swal.success('Data has been updated successfully.');
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
@@ -690,7 +690,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
     else if (partName == 'items') {
       if (this.reqId) {
-        debugger
+        
         const itemList = this.dataSource.data.map(item => {
 
           if (item.itemsId != 0) {
@@ -704,7 +704,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             return rest;
           }
         })
-        debugger
+        
         this.requisitionService.addItemsDataList(itemList).subscribe(res => {
 
           if (res.message == "All items added") {
@@ -741,7 +741,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //   }
   // }
   clearServiceForm(){    
-    debugger  
+      
     this.serviceTypeForm.controls.serviceName.setValue('')
     this.serviceTypeForm.controls.serviceDesc.setValue('')
     this.serviceTypeForm.controls.remarks.setValue('')
@@ -885,7 +885,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
-        debugger
+        
         const requisitionData = response.data;
         const formPart = this.RequisitionForm.get('header');
         this.approvestatus = requisitionData.approvedReq;
@@ -1001,7 +1001,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   transformSpare(item: any): any {
-    debugger
+    
     return {
       itemsId: item.itemsId || 0,
       itemCode: item.inventoryCode || '',
@@ -1171,7 +1171,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     })
   }
   // findPortByLocationName(locationName: string): any {
-  //   debugger
   //   // Splitting the locationName by comma
   //   const [_, name] = locationName.split(','); // Using '_' to ignore the first part
   //   // Finding the corresponding port object based on the locationName
@@ -1223,7 +1222,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   LoadProjectnameAndcode() {
-    debugger
+    
     this.selectedVesselId = this.RequisitionForm.get('header')?.value.vesselId
     this.purchaseService.getprojectname(0)
       .subscribe(response => {
@@ -1310,12 +1309,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   LoadVessel() {
-    debugger
+    
     this.vesselService.getVessels(0)
       .subscribe(response => {
-        debugger
+        
         if (this.targetLoc == 'Vessel') {
-          debugger
+          
           this.headsite = 'V'
           const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
           if (filteredVessels.length > 0) {
@@ -1347,7 +1346,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   loadPortList() {
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
-        debugger
+        
         this.portList = response.data.filter(data => data.countryMaster && data.countryMaster.countryName);
 
         // console.log(this.portList)
@@ -1404,9 +1403,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   loadGroupsComponent() {
-    debugger
+    
     // this.requisitionService.getGroupTemplateTree().subscribe(res => {
-    //   debugger
     //   this.groupTableSourceTree = res
     // })
     if (this.selectedVesselId) {
@@ -1415,7 +1413,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       const pageNumber = 1;
       const pageSize = 20;
       // this.requisitionService.GetStoreByShipId(shipIdUint,keyword,pageNumber,pageSize).subscribe(res => {
-      //   debugger
       //   // this.groupTableDataSource.data = res.data.map(item => {
       //   //   return {
       //   //     pmsGroupId: item.pmsGroupId,
@@ -1492,8 +1489,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (itemType === 'Component') {
       this.requisitionService.getItemsInfo(ids)
         .subscribe(res => {
-          debugger
-          console.log(res)
           const data = res.map(item => ({
             itemsId: item.shipComponentSpareId,
             spareId: item.shipSpareId || null,
@@ -1787,7 +1782,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (this.reqId)
       this.requisitionService.getItemsByReqId(this.reqId)
         .subscribe(response => {
-          debugger
           this.flag = status;
           this.dataSource.data = [];
           this.zone.run(() => {
@@ -1870,7 +1864,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //#endregion
 
   listDetails(id, indexNo) {
-    debugger
     this.selectedItemIndex = indexNo + 1
     const uniqueIds = new Set<number>();
     this.listViewItems = this.dataSource.data.filter(item => {
@@ -1886,8 +1879,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   showAttachinDetails(id){
    var status = 0;
     this.pmsService.getmattachment(status, 'Purchase Requisition Item', id)
-    .subscribe(response => {
-    debugger  
+    .subscribe(response => { 
    this.AttachlistwithID =  response.data;
     
     });
@@ -2212,7 +2204,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       })
   }
   downloadNotepad() {
-debugger
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
     this.ReqData = this.requisitionFullData;
    
@@ -2256,7 +2247,7 @@ debugger
 
     uniqueItems.forEach((item, index) => {
       stepData += `
-            #${index + 2}=Items_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.maker}','','','','','');`;
+            #${index + 2}=Items_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
     });
 
     if( this.serviceTypeDataSource.length !== 0 || this.serviceTypeDataSource.length !== null ){
@@ -2545,7 +2536,6 @@ debugger
 
   // Attachment End
   openModal() {
-    debugger
     let dialogRef: any
     const orderType = this.defaultOrderType[0]
     if (orderType != undefined) {
@@ -2562,7 +2552,7 @@ debugger
               }
             });
           } else {
-            debugger
+          
             const selectedCartItems = this.dataSource.data
             dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
               width: '400px',
@@ -2595,7 +2585,7 @@ debugger
       } else {
         const isStoreDataEmpty = this.storeItemDataSource.data.length === 0;
         if (isStoreDataEmpty) {
-          debugger
+          
           dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
             width: '800px',
             data: {
@@ -2624,7 +2614,6 @@ debugger
         const data = result.dataToSend
         if (data != null && data.displayValue !== '' && data.saveValue !== '') {
           this.zone.run(() => {
-            debugger
             this.displayValue = ''
             this.saveValue = ''
            this.displayValue = data.displayValue;
@@ -2645,7 +2634,6 @@ debugger
               this.autoSave('header')
             }
             else if (data.orderReferenceType === 'Spare') {
-              debugger
               // this.leftTableDataSource.data = []
               // this.dataSource.data = [];
               const cartItemIds = this.dataSource.data?.map((item: any) => item.spareId) || []; // Get shipspareIds from cartItems
@@ -2655,7 +2643,6 @@ debugger
               this.autoSave('header')
             }
             else if (data.orderReferenceType === 'Store') {
-              debugger
               // this.leftTableDataSource.data = []
               // this.dataSource.data = [];
               this.dataSource.data = data.cartItems?.map((item: any) => this.transformStore(item)) || [];
@@ -2975,7 +2962,6 @@ debugger
     this.pmsService.getmattachment(status, 'Purchase Requisition Item', this.GetItemId)
       .subscribe(response => {
         this.flag = status;
-        debugger
         this.attachmentItemdataSource.data = response.data;
         this.attachmentItemdataSource.sort = this.sort;
         this.attachmentItemdataSource.paginator = this.paginator;
