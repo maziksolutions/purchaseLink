@@ -23,7 +23,7 @@
 </div>
 
 <div class="card mb-3">
-    
+<form  [formGroup]="VendorMasterForm">
     <div class="card-header bg-light">
         <div class="row">
             <div class="col-xl-6 col-lg-12">
@@ -51,40 +51,80 @@
         </div>
     </div>
     <hr class="m-0">
-    <div class="card-body">
-        <div class="row g-3 mb-3">
-            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Company Name</label>
+    <div class="card-body" formGroupName="vendorInfo">
+       
+
+        <div class="row g-3 mb-3">    
+            <label class="col-sm-2 col-form-label py-0 font-small-3" >Company Name</label>          
             <div class="col-sm-4">
-                <input type="text" class="form-control form-small">
-            </div>
-            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Company Short Name</label>
-            <div class="col-sm-4">
-                <input type="text" class="form-control form-small">
-            </div>
+                <fieldset >
+                <input type="text" class="form-control form-small" placeholder="Company Name" required>
+            </fieldset>
+        </div>     
+            
+             <label class="col-sm-2 col-form-label py-0 font-small-3">Company Short Name</label> 
+                <div class="col-sm-4">
+                    <fieldset>
+                    <input type="text" class="form-control form-small" placeholder="Company Short Name" required>
+                 </fieldset>
+              </div>
+                
+
         </div>
         <div class="row g-3 mb-3">
             <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Address</label>
             <div class="col-sm-10">
-                <textarea class="form-control" rows="5"></textarea>
+                <fieldset>
+                <textarea class="form-control" placeholder="Address.." rows="5"></textarea>
+                </fieldset>
             </div>
         </div>
         <div class="row g-3 mb-3">
-            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">City</label>
+           
+            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Search</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control form-small">
+                <fieldset>
+                <input type="text" placeholder="Search" class="form-control form-small"  [matAutocomplete]="auto" [formControl]="searchEngCtrl">
+
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
+                (optionSelected)="getEngPosts($event.option.value)">
+                <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
+                <ng-container *ngIf="!isLoading">
+                  <mat-option *ngFor="let loc of LocationList" [value]="loc" class=" form-small form-select ng-dirty ng-valid ng-touched" style="font-size: 13px;">
+                    <span>{{loc.locationName}}({{loc.location}}),&nbsp; {{loc.countryMaster?.countryName}}({{loc.countryMaster?.countryCode}}) </span>
+                  </mat-option>
+                </ng-container>
+              </mat-autocomplete>
+
+            </fieldset>
             </div>
+
+            <label class="col-sm-2 col-form-label py-0 font-small-3 text-right" for="inputPassword">City</label>
+            <div class="col-sm-4">
+                <fieldset>
+                <input type="text" readonly formControlName="city" placeholder="City" class="form-control form-small">
+            </fieldset>
+            </div>
+
+            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Country</label>
+            <div class="col-sm-4">
+                <fieldset>
+                <input type="text" readonly formControlName="country" placeholder="Country" class="form-control form-small">
+            </fieldset>
+            </div>
+          
+
             <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Postal Code</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control form-small">
+                <fieldset>
+                <input type="text" placeholder="Postal Code" class="form-control form-small">
+            </fieldset>
             </div>
         </div>
-        <div class="row g-3 mb-3">
-            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Country</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control form-small">
-            </div>
-        </div>
+
     </div>
+
+
     <div class="card-header bg-200">
         <div class="row">
             <div class="col-xl-6 col-lg-12">
@@ -771,4 +811,5 @@
         </div>
 
     </div>
+</form>
 </div>

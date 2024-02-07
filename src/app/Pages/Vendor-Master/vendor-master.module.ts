@@ -13,6 +13,11 @@ import { DirectivesModule } from 'src/app/directives.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AppMaterialModule } from 'src/app/app.material.module';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { AppMaterialModule } from 'src/app/app.material.module';
+import { DirectivesModule } from 'src/app/directives.module';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 
 @NgModule({
@@ -28,8 +33,11 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     MatInputModule,
     VendorMasterRoutingModule,   
     SharedModule,
-    FormsModule, HttpClientModule, AppMaterialModule,
-    NgMultiSelectDropDownModule.forRoot()
+
+     FormsModule,HttpClientModule,AppMaterialModule,
+    ReactiveFormsModule,
+  DirectivesModule,
+    NgMultiSelectDropDownModule.forRoot() 
   ]
 })
 export class VendorMasterModule { }

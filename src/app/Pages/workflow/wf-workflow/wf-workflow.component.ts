@@ -532,7 +532,7 @@ else{
   openModalWorkQT(){
     this.selectedIndexQueueTransition = null;
     if(this.workqueuestateId != null){
-debugger
+
     this.WorkQTForm.reset();
     this.WorkQTForm.controls.workQueueTransitionId.setValue(0);
     this.WorkQTForm.controls.workQueueStateId.setValue('');
@@ -551,7 +551,7 @@ debugger
   }
 
   getTargetWorkQueue(action){
-debugger
+
 const selectedValue = (action.target as HTMLSelectElement).value;
     if(selectedValue == 'Approve'){
       this.TargetWorkQueueStateData = this.WQstatusdata.filter(x=>x.groupId == this.currentworkstate[0].groupId && x.eventId == this.currentworkstate[0].eventId
