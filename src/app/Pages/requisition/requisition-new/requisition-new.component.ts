@@ -225,6 +225,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   selectedItemIndex: number = -1;
   AttachlistwithID: any;
   dataJobList: any;
+  jobListAttachmentForm: FormGroup
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -259,14 +260,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       remarks: ['', Validators.required],
       jobList: this.fb.array([]),
       pmReqId: [],
-    }),
+    })
 
-      this.RequisitionForm.valueChanges
-        .pipe(debounceTime(1000), distinctUntilChanged())
-        .subscribe(() => {
-          // Trigger auto-save here
-          this.autoSave('items'); // Assuming 'items' is the group you want to save
-        });
+    this.RequisitionForm.valueChanges
+      .pipe(debounceTime(1000), distinctUntilChanged())
+      .subscribe(() => {
+        // Trigger auto-save here
+        this.autoSave('items'); // Assuming 'items' is the group you want to save
+      });
 
     this.deliveryForm = this.fb.group({
       delInfoId: [0],
@@ -369,8 +370,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   get fmd() { return this.deliveryForm.controls };
   get atfm() { return this.attachmentfrm.controls };
   get atIfm() { return this.attachmentItemfrm.controls };
-
   get serviceType() { return this.serviceTypeForm.controls }
+  get jobListAttachment() { return this.jobListAttachmentForm.controls }
+  get jobListControls() {
+    return (this.serviceTypeForm.get('jobList') as FormArray).controls;
+  }
 
   generateTempNumber() {
 
@@ -408,22 +412,34 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     })
   }
 
-  get jobListControls() {
-    return (this.serviceTypeForm.get('jobList') as FormArray).controls;
-  }
-
   addJob() {
+    const attachment = this.fb.group({
+      attachmentId: [0],
+      attachmentTypeId: ['', [Validators.required]],
+      tableName: ['tblPMReqServiceJobList'],
+      tablePkeyId: [],
+      pageName: ['Requisition Service Job List'],
+      attachmentFile: [''],
+      description: [''],
+      vesselId: [],
+    });
+
     const job = this.fb.group({
       jobId: [0],
       jobDescription: ['', Validators.required],
       qty: [0, Validators.required],
       unit: [0, Validators.required],
       remarks: ['', Validators.required],
-      attachment: ['',],
+      attachment: ['']
     });
 
     const jobListFormArray = this.serviceTypeForm.get('jobList') as FormArray;
     jobListFormArray.push(job);
+  }
+  getAttachmentFormGroup(jobIndex: number): FormGroup {
+    const jobListFormArray = this.serviceTypeForm.get('jobList') as FormArray;
+    const jobFormGroup = jobListFormArray.at(jobIndex) as FormGroup;
+    return jobFormGroup.get('attachment') as FormGroup;
   }
 
   initForm(): void {
@@ -536,12 +552,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         // formPart?.get('orderReference')?.setValue(displayValue);
         this.requisitionService.addRequisitionMaster(formData)
           .subscribe(data => {
-            
+
             this.reqId = data.data;
-            formPart.patchValue({requisitionId:data.data})
+            formPart.patchValue({ requisitionId: data.data })
             if (this.defaultOrderType[0] !== 'Service') {
               if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
-                
+
                 this.items = []
                 this.dataSource.data.map(item => {
                   const newItem = {
@@ -598,7 +614,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               }
             }
             if (data.message == "data added") {
-              
+
               this.swal.success('Added successfully.');
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
@@ -612,7 +628,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               }
             }
             else if (data.message == "Update") {
-              
+
               this.swal.success('Data has been updated successfully.');
               if (this.defaultOrderType[0] !== 'Service') {
                 if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
@@ -691,7 +707,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
     else if (partName == 'items') {
       if (this.reqId) {
-        
+
         const itemList = this.dataSource.data.map(item => {
 
           if (item.itemsId != 0) {
@@ -705,7 +721,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             return rest;
           }
         })
-        
+
         this.requisitionService.addItemsDataList(itemList).subscribe(res => {
 
           if (res.message == "All items added") {
@@ -741,8 +757,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //     this.autoSave('header');
   //   }
   // }
-  clearServiceForm(){    
-      
+  clearServiceForm() {
+
     this.serviceTypeForm.controls.serviceName.setValue('')
     this.serviceTypeForm.controls.serviceDesc.setValue('')
     this.serviceTypeForm.controls.remarks.setValue('')
@@ -753,22 +769,51 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.serviceTypeForm.reset();
   }
 
-  onSubmit(form: any) {
+  onFileChange(event: any, index: number) {
+    debugger
+    const file = event.target.files[0];
+    const jobListFormArray = this.serviceTypeForm.get('jobList') as FormArray;
+    const jobFormGroup = jobListFormArray.at(index) as FormGroup;
+    jobFormGroup.get('attachment')?.setValue(file);
+  }
+
+  getAttachmentFile(jobIndex: number): FormGroup {
+    const jobListFormArray = this.serviceTypeForm.get('jobList') as FormArray;
+    const jobFormGroup = jobListFormArray.at(jobIndex) as FormGroup;
+    return jobFormGroup.get('attachment') as FormGroup;
+  }
+
+  onSubmit() {
+    debugger
+
+    const formValues = this.serviceTypeForm.value;
+    const formData = new FormData();
+
+    // formValues.jobList.forEach((job: any, index: number) => {
+    //   const attachmentFormGroup = this.getAttachmentFormGroup(index);
+    //   const attachmentFile = attachmentFormGroup.get('attachmentFile')?.value;
+    //   if (attachmentFile) {
+    //     formData.append(`attachment${index}`, attachmentFile);
+    //   }
+    // });
+
+    // Append other form data
+    formData.append('data', JSON.stringify(formValues));
 
     this.serviceTypeForm.patchValue({ pmReqId: this.reqId })
     if (this.serviceTypeForm.valid) {
-      this.requisitionService.addServiceType(form.value).subscribe(data => {
-
+      this.requisitionService.addServiceType(formData).subscribe(data => {
+        debugger
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
-          if (this.reqId){
+          if (this.reqId) {
             this.clearServiceForm();
-            this.loadServiceType(this.reqId);            
-          }            
+            this.loadServiceType(this.reqId);
+          }
         } else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
           this.clearServiceForm();
-          this.loadServiceType(this.reqId);   
+          this.loadServiceType(this.reqId);
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -797,7 +842,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.requisitionService.getServiceType(id).subscribe(res => {
 
       if (res.status === true) {
-           console.log(res.data)
+        console.log(res.data)
         const dataWithExpansion = res.data.map((item) => {
           // Ensure each item in jobList has the isExpanded property
           item.jobList = item.jobList.map(job => ({ ...job, isExpanded: false }));
@@ -886,7 +931,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
-        
+
         const requisitionData = response.data;
         const formPart = this.RequisitionForm.get('header');
         this.approvestatus = requisitionData.approvedReq;
@@ -1002,7 +1047,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   transformSpare(item: any): any {
-    
+
     return {
       itemsId: item.itemsId || 0,
       itemCode: item.inventoryCode || '',
@@ -1050,7 +1095,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   transformStore(item: any): any {
     return {
-      itemsId: item.itemsId || 0, 
+      itemsId: item.itemsId || 0,
       itemCode: item.inventoryCode || '',
       itemName: item.inventoryName || '',
       partNo: item.partNo || '',
@@ -1223,7 +1268,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   LoadProjectnameAndcode() {
-    
+
     this.selectedVesselId = this.RequisitionForm.get('header')?.value.vesselId
     this.purchaseService.getprojectname(0)
       .subscribe(response => {
@@ -1310,12 +1355,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   LoadVessel() {
-    
+
     this.vesselService.getVessels(0)
       .subscribe(response => {
-        
+
         if (this.targetLoc == 'Vessel') {
-          
+
           this.headsite = 'V'
           const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
           if (filteredVessels.length > 0) {
@@ -1347,7 +1392,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   loadPortList() {
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
-        
+
         this.portList = response.data.filter(data => data.countryMaster && data.countryMaster.countryName);
 
         // console.log(this.portList)
@@ -1404,7 +1449,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   loadGroupsComponent() {
-    
+
     // this.requisitionService.getGroupTemplateTree().subscribe(res => {
     //   this.groupTableSourceTree = res
     // })
@@ -1557,8 +1602,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         });
     } else if (itemType === 'Group') {
       this.requisitionService.getGroupsInfo(ids).subscribe(res => {
-        debugger 
-        console.log('groupItems :- ',res)
+        debugger
+        console.log('groupItems :- ', res)
         const data = res.map(item => ({
           itemsId: item.shipStoreId,
           spareId: item.shipSpareId || null,
@@ -1879,13 +1924,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     });
   }
 
-  showAttachinDetails(id){
-   var status = 0;
+  showAttachinDetails(id) {
+
+    var status = 0;
     this.pmsService.getmattachment(status, 'Purchase Requisition Item', id)
-    .subscribe(response => { 
-   this.AttachlistwithID =  response.data;
-    
-    });
+      .subscribe(response => {
+        debugger
+        this.AttachlistwithID = response.data;
+
+      });
   }
 
   applyFilter(filterValue: string) {
@@ -2209,7 +2256,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   downloadNotepad() {
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
     this.ReqData = this.requisitionFullData;
-   
+
     if (this.ReqData == undefined) {
       this.swal.error('Please save your data before downloading the RTO file.')
     }
@@ -2253,26 +2300,26 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             #${index + 2}=Items_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
     });
 
-    if( this.serviceTypeDataSource.length !== 0 || this.serviceTypeDataSource.length !== null ){
+    if (this.serviceTypeDataSource.length !== 0 || this.serviceTypeDataSource.length !== null) {
 
-      const jobToAdd = this.serviceTypeDataSource.map(item =>  ({
-        serviceName:item.serviceName,
-        jobList:item.jobList
-      })  
-        );  
+      const jobToAdd = this.serviceTypeDataSource.map(item => ({
+        serviceName: item.serviceName,
+        jobList: item.jobList
+      })
+      );
 
       jobToAdd.forEach((item, index) => {
         stepData += `
         #${index + 2}=Service_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.serviceName}'`;
 
-  // Add jobList details to the stepData
-                          item.jobList.forEach((job, jobIndex) => {
-                                                        stepData += `,
+        // Add jobList details to the stepData
+        item.jobList.forEach((job, jobIndex) => {
+          stepData += `,
                                                                       #${jobIndex + 1}='${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','',''`;
-                                                });
-                                              });
-       }
-        stepData += `
+        });
+      });
+    }
+    stepData += `
         ENDSEC;`;
 
     // Convert the content to a Blob
@@ -2555,7 +2602,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               }
             });
           } else {
-          
+
             const selectedCartItems = this.dataSource.data
             dialogRef = this.dialog.open(OrderRefPopUpViewComponent, {
               width: '400px',
@@ -2588,7 +2635,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       } else {
         const isStoreDataEmpty = this.storeItemDataSource.data.length === 0;
         if (isStoreDataEmpty) {
-          
+
           dialogRef = this.dialog.open(OrderRefDirectPopUpComponent, {
             width: '800px',
             data: {
@@ -2610,18 +2657,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     }
     dialogRef.afterClosed().subscribe(result => {
-      
+
       if (result.result === 'success') {
-        
+
         console.log(result)
         const data = result.dataToSend
         if (data != null && data.displayValue !== '' && data.saveValue !== '') {
           this.zone.run(() => {
             this.displayValue = ''
             this.saveValue = ''
-           this.displayValue = data.displayValue;
+            this.displayValue = data.displayValue;
             this.saveValue = data.saveValue;
-            
+
           })
           const orderType = data.defaultOrderType
           this.RequisitionForm.get('header')?.patchValue({ orderReferenceType: data.orderReferenceType })
@@ -2640,7 +2687,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               // this.leftTableDataSource.data = []
               // this.dataSource.data = [];
               const cartItemIds = this.dataSource.data?.map((item: any) => item.spareId) || []; // Get shipspareIds from cartItems
-              data.cartItems = data.cartItems?.filter((item:any)=>!cartItemIds.includes(item.shipSpareId))
+              data.cartItems = data.cartItems?.filter((item: any) => !cartItemIds.includes(item.shipSpareId))
               const newItemsData = data.cartItems?.map((item: any) => this.transformSpare(item)) || [];
               this.dataSource.data = [...this.dataSource.data, ...newItemsData];
               this.autoSave('header')
@@ -2931,6 +2978,36 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         }, 10);
       }
     }
+  }
+
+  //#region ServiceType Attachment Items
+  openServiceItem(id) {
+    this.GetItemId = id;
+    $("#openAttachmentItem").modal('show');
+    this.loadServiceAttachement(0);
+  }
+  loadServiceAttachement(status: number) {
+    if (status == 1) {
+      this.deletetooltip = 'UnArchive';
+      if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
+        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
+        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
+      }
+    }
+    else {
+      this.deletetooltip = 'Archive';
+      if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement) != null) {
+        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
+        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
+      }
+    }
+    this.pmsService.getmattachment(status, 'ServiceType Requisition Item', this.GetItemId)
+      .subscribe(response => {
+        this.flag = status;
+        this.attachmentItemdataSource.data = response.data;
+        this.attachmentItemdataSource.sort = this.sort;
+        this.attachmentItemdataSource.paginator = this.paginator;
+      });
   }
 
   //#region AttachmentItem

@@ -29,6 +29,7 @@ export class RequisitionService {
 
   //Get Maintenance Type data
   getRequisitionMaster(status): Observable<any> {
+    debugger
     return this.httpClient.get<any[]>(`${this.linkurl}filterRequisitionMaster/${status}`, httpOptions);
   }
 
