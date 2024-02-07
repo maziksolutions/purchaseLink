@@ -508,7 +508,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   autoSave(partName: string): void {
 
     if (partName == 'header') {
-      debugger
+      
       const formPart = this.RequisitionForm.get(partName);
       if (this.isRequisitionApproved) {
         const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -797,7 +797,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.requisitionService.getServiceType(id).subscribe(res => {
 
       if (res.status === true) {
-           console.log(res.data)
+    
         const dataWithExpansion = res.data.map((item) => {
           // Ensure each item in jobList has the isExpanded property
           item.jobList = item.jobList.map(job => ({ ...job, isExpanded: false }));
@@ -1350,7 +1350,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         
         this.portList = response.data.filter(data => data.countryMaster && data.countryMaster.countryName);
 
-        // console.log(this.portList)
         this.filteredPorts = this.myControl.valueChanges.pipe(
           startWith(''),
           map(value => this._filterPorts(value))
@@ -1549,16 +1548,13 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                 }
               });
               this.leftTableDataSource.data = data;
-              console.log('leftTableData :- ', this.leftTableDataSource.data)
             })
           } else
             this.leftTableDataSource.data = data;
-          console.log('leftTableData :- ', this.leftTableDataSource.data)
         });
     } else if (itemType === 'Group') {
       this.requisitionService.getGroupsInfo(ids).subscribe(res => {
-        debugger 
-        console.log('groupItems :- ',res)
+         
         const data = res.map(item => ({
           itemsId: item.shipStoreId,
           spareId: item.shipSpareId || null,
@@ -2613,7 +2609,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       
       if (result.result === 'success') {
         
-        console.log(result)
         const data = result.dataToSend
         if (data != null && data.displayValue !== '' && data.saveValue !== '') {
           this.zone.run(() => {

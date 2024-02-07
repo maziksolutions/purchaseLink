@@ -4,6 +4,11 @@ import { VendorMasterRoutingModule } from './vendor-master-routing.module';
 import { VendorDetailsComponent } from './vendor-details/vendor-details.component';
 import { VendorRegistrationComponent } from './vendor-registration/vendor-registration.component';
 import { SharedModule } from '../Shared/shared.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { AppMaterialModule } from 'src/app/app.material.module';
+import { DirectivesModule } from 'src/app/directives.module';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 
 @NgModule({
@@ -14,7 +19,12 @@ import { SharedModule } from '../Shared/shared.module';
   imports: [
     CommonModule,
     VendorMasterRoutingModule,   
-    SharedModule
+    SharedModule,
+
+     FormsModule,HttpClientModule,AppMaterialModule,
+    ReactiveFormsModule,
+  DirectivesModule,
+    NgMultiSelectDropDownModule.forRoot() 
   ]
 })
 export class VendorMasterModule { }
