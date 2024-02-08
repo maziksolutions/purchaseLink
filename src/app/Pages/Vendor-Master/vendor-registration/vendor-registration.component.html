@@ -58,14 +58,14 @@
             <label class="col-sm-2 col-form-label py-0 font-small-3" >Company Name</label>          
             <div class="col-sm-4">
                 <fieldset >
-                <input type="text" class="form-control form-small" placeholder="Company Name" required>
+                <input type="text" class="form-control form-small" (change)="autoSave('vendorInfo')" formControlName="companyName" placeholder="Company Name" required>
             </fieldset>
         </div>     
             
              <label class="col-sm-2 col-form-label py-0 font-small-3">Company Short Name</label> 
                 <div class="col-sm-4">
                     <fieldset>
-                    <input type="text" class="form-control form-small" placeholder="Company Short Name" required>
+                    <input type="text" class="form-control form-small" (change)="autoSave('vendorInfo')"  formControlName="companyShortName" placeholder="Company Short Name" required>
                  </fieldset>
               </div>
                 
@@ -75,7 +75,7 @@
             <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Address</label>
             <div class="col-sm-10">
                 <fieldset>
-                <textarea class="form-control" placeholder="Address.." rows="5"></textarea>
+                <textarea class="form-control" (change)="autoSave('vendorInfo')" formControlName="address" placeholder="Address.." rows="5"></textarea>
                 </fieldset>
             </div>
         </div>
@@ -102,7 +102,7 @@
             <label class="col-sm-2 col-form-label py-0 font-small-3 text-right" for="inputPassword">City</label>
             <div class="col-sm-4">
                 <fieldset>
-                <input type="text" readonly formControlName="city" placeholder="City" class="form-control form-small">
+                <input type="text" readonly formControlName="city"  placeholder="City" class="form-control form-small">
             </fieldset>
             </div>
 
@@ -117,7 +117,7 @@
             <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Postal Code</label>
             <div class="col-sm-4">
                 <fieldset>
-                <input type="text" placeholder="Postal Code" class="form-control form-small">
+                <input type="text" formControlName="postalCode" (change)="autoSave('vendorInfo')" placeholder="Postal Code" class="form-control form-small">
             </fieldset>
             </div>
         </div>
@@ -187,11 +187,14 @@
     <div class="card-body">
         <div class="row g-3 mb-3">
             <div class="col-sm">
-                <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#branch-office"><i
+                <a class="btn btn-primary" type="button" (click)="openbranchoffice(vendorInfoId)" aria-expanded="true"
+                aria-controls="" data-bs-toggle="modal" data-bs-target=""><i
                         class="fas fa-plus"></i> Add Branch Office</a>
+
                 <div class="modal fade" id="branch-office" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-xl mt-6" role="document">
                         <div class="modal-content border-0">
+                            <form (ngSubmit)="onSubmitbranchoffice(vendorBranchInfo)" [formGroup]="vendorBranchInfo">
                             <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
                                 <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
                                     data-bs-dismiss="modal" aria-label="Close"></button>
@@ -203,63 +206,75 @@
                             <div class="modal-body mt-0 scrollbar-visible">
                                 <div class="row g-3 mb-3">
                                     <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                        for="inputPassword">Name</label>
+                                      for="inputPassword">Branch Name</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control form-small">
+                                        <input type="text"  formControlName="branchName" placeholder="Branch Name" class="form-control form-small">
                                     </div>
                                     <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                        for="inputPassword">Location</label>
+                                        for="inputPassword">Search</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control form-small">
+                                        <fieldset>
+                                            <input type="text" placeholder="Search" class="form-control form-small"  [matAutocomplete]="auto2" [formControl]="searchEngCtrl2">
+
+                                        <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayFn"
+                                        (optionSelected)="getCCBranch($event.option.value)">
+                                        <mat-option *ngIf="twoisLoading" class="is-loading">Loading...</mat-option>
+                                        <ng-container *ngIf="!twoisLoading">
+                                          <mat-option *ngFor="let locs of LocationListTwo" [value]="locs" class=" form-small form-select ng-dirty ng-valid ng-touched" style="font-size: 13px;">
+                                            <span>{{locs.locationName}}({{locs.location}}),&nbsp; {{locs.countryMaster?.countryName}}({{locs.countryMaster?.countryCode}}) </span>
+                                          </mat-option>
+                                        </ng-container>
+                                      </mat-autocomplete>
+                                    </fieldset>
                                     </div>
                                 </div>
                                 <div class="row g-3 mb-3">
                                     <label class="col-sm-2 col-form-label py-0 font-small-3"
                                         for="inputPassword">City</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control form-small">
+                                        <input type="text" readonly formControlName="city" placeholder="City" class="form-control form-small">
                                     </div>
+
                                     <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                        for="inputPassword">Address</label>
-                                    <div class="col-sm-4">
-                                        <input type="text" class="form-control form-small">
-                                    </div>
+                                    for="inputPassword">Country</label>
+                                <div class="col-sm-4">
+                                    <input type="text" readonly formControlName="country" placeholder="Country" class="form-control form-small">
+                                </div>
+
                                 </div>
                                 <div class="row g-3 mb-3">
                                     <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Contact
                                         Person Name</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control form-small">
+                                        <input type="text" formControlName="contPersonName" placeholder="Contact Person Name" class="form-control form-small">
                                     </div>
                                     <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Contact
                                         Person Email</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control form-small">
+                                        <input type="text" formControlName="email" placeholder="Contact Person Email" class="form-control form-small">
                                     </div>
                                 </div>
                                 <div class="row g-3 mb-3">
                                     <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Contact
                                         Persone No</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control form-small">
-                                    </div>
+                                        <input type="text" formControlName="contactNo" placeholder="Contact Persone No" class="form-control form-small">
+                                    </div> 
                                     <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                        for="inputPassword">Address</label>
-                                    <div class="col-sm-4">
-                                        <input type="text" class="form-control form-small">
-                                    </div>
+                                    for="inputPassword">Address</label>
+                                <div class="col-sm-4">
+                                    <input type="text" formControlName="address" placeholder="Address" class="form-control form-small">
                                 </div>
+                                    
+                                </div>
+                              
                                 <div class="row g-3 mb-3">
                                     <label class="col-sm-2 col-form-label py-0 font-small-3"
                                         for="inputPassword">Convenient Ports</label>
                                     <div class="col-sm-4">
-                                        <input type="text" class="form-control form-small">
+                                        <input type="text" formControlName="convenientPorts" placeholder="Convenient Ports" class="form-control form-small">
                                     </div>
-                                    <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                        for="inputPassword">Country</label>
-                                    <div class="col-sm-4">
-                                        <input type="text" class="form-control form-small">
-                                    </div>
+                                  
                                 </div>
 
                             </div>
@@ -267,6 +282,7 @@
                                 <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button> <button
                                     type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
                             </div>
+                        </form>
                         </div>
                     </div>
                 </div>

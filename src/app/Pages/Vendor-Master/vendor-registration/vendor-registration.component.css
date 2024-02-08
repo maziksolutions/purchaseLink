@@ -1,0 +1,8 @@
+.mat-autocomplete-panel
+{
+  z-index: 999999 !important;
+}
+
+::ng-deep .cdk-overlay-container {
+  z-index: 9999 !important;
+}
