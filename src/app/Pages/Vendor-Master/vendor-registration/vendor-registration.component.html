@@ -12,9 +12,10 @@
                     Registration</span>
             </div>
             <div class="col-auto ms-auto">
-                <a routerLink="/Vendor-Master/VendorDetails" class="btn btn-pms-primary" type="button" data-index="0"
-                    data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Back"
-                    aria-label="Back"><i class="fas fa-angle-double-left back-btn"></i></a>
+                <a routerLink="/Vendor-Master/VendorDetails" class="btn btn-pms-primary" type="button"
+                    data-index="0" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Back" aria-label="Back"><i
+                        class="fas fa-angle-double-left back-btn"></i></a>
             </div>
         </div>
     </div>
@@ -22,36 +23,36 @@
 </div>
 
 <div class="card mb-3">
-    <form [formGroup]="VendorMasterForm">
-        <div class="card-header bg-light">
-            <div class="row">
-                <div class="col-xl-6 col-lg-12">
-                    <h4 class="card-title proper-case">Company Information</h4>
-                </div>
-                <div class="col-xl-6 col-lg-12">
-                    <div class="float-end">
+<form  [formGroup]="VendorMasterForm">
+    <div class="card-header bg-light">
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <h4 class="card-title proper-case">Company Information</h4>
+            </div>
+            <div class="col-xl-6 col-lg-12">
+                <div class="float-end">
 
-                        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                            data-bs-original-title="Save" aria-label=""><i class="fas fa-save text-primary"></i></a>
-                        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                            data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit text-primary"></i></a>
-                        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                            data-bs-original-title="Send for Approval" aria-label=""><i
-                                class="fas fa-share-square text-primary"></i></a>
+                    <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                        data-bs-original-title="Save" aria-label=""><i class="fas fa-save text-primary"></i></a>
+                    <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                        data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit text-primary"></i></a>
+                    <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                        data-bs-original-title="Send for Approval" aria-label=""><i
+                            class="fas fa-share-square text-primary"></i></a>
 
-                        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                            data-bs-original-title="Approved" aria-label=""> <i
-                                class="fas fa-check text-primary"></i></a>
+                    <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                        data-bs-original-title="Approved" aria-label=""> <i class="fas fa-check text-primary"></i></a>
 
-                        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                            data-bs-original-title="Vendor Appraisal" aria-label=""><i
-                                class="fas fa-user-check text-primary"></i></a>
-                    </div>
+                    <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                        data-bs-original-title="Vendor Appraisal" aria-label=""><i
+                            class="fas fa-user-check text-primary"></i></a>
                 </div>
             </div>
         </div>
-        <hr class="m-0">
-        <div class="card-body" formGroupName="vendorInfo">
+    </div>
+    <hr class="m-0">
+    <div class="card-body" formGroupName="vendorInfo">
+       
 
         <div class="row g-3 mb-3">    
             <label class="col-sm-2 col-form-label py-0 font-small-3" >Company Name</label>          
@@ -124,51 +125,79 @@
     </div>
 
 
+    <div class="card-header bg-200">
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <h4 class="card-title proper-case">Business Details</h4>
             </div>
             <div class="col-xl-6 col-lg-12">
 
             </div>
         </div>
     </div>
-    <div class="card-body">
+    <div class="card-body" formGroupName="vendorBusinessInfo">
         <div class="row g-3 mb-3">
             <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Service Category</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control form-small">
+                <fieldset class="form-group mb-0">
+                    <ng-multiselect-dropdown [placeholder]="'Select Category Type'" class="multiselect-dropdown"
+                        [settings]="dropdownCategorySetting" [data]="serviceCategory"
+                        [(ngModel)]="categoryDropdownList" (onSelect)="onItemSelectCat($event)"
+                        (onSelectAll)="onSelectAllCat($event)" formControlName="serviceCategory"
+                        (onDeSelect)="onCategoryDeSelect($event)" (onDeSelectAll)="onCategoryDeSelectAll($event)"
+                        (change)="autoSave('vendorBusinessInfo')">
+                    </ng-multiselect-dropdown>
+                </fieldset>
+                <!-- <input type="text" formControlName="serviceCategory" placeholder="serviceCategory" class="form-control form-small"> -->
             </div>
 
             <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Service Type</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control form-small">
+                <fieldset class="form-group mb-0">
+                    <ng-multiselect-dropdown [placeholder]="'Select Service Type'" class="multiselect-dropdown"
+                        [settings]="dropdownServiceSetting" [data]="serviceTypes" [(ngModel)]="dropdownList"
+                        (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
+                        formControlName="serviceType" (onDeSelect)="onOrderTypeDeSelect($event)"
+                        (onDeSelectAll)="onOrderTypeDeSelectAll($event)" (change)="autoSave('vendorBusinessInfo')">
+                    </ng-multiselect-dropdown>
+                </fieldset>
+                <!-- <input type="text" formControlName="serviceType" placeholder="serviceType" class="form-control form-small"> -->
             </div>
         </div>
         <div class="row g-3 mb-3">
-            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Other, Please specify</label>
+            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Other, Please
+                specify</label>
             <div class="col-sm-10">
-                <textarea class="form-control" rows="5"></textarea>
+                <textarea class="form-control" rows="5" formControlName="otherSpec"
+                    placeholder="Enter Specification Details" (change)="autoSave('vendorBusinessInfo')"></textarea>
             </div>
         </div>
         <div class="row g-3 mb-3">
             <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Class Approval's</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control form-small">
+                <input type="text" class="form-control form-small" formControlName="classApproval"
+                    placeholder="classApproval" (change)="autoSave('vendorBusinessInfo')">
             </div>
             <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Maker Approval's</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control form-small">
+                <input type="text" class="form-control form-small" formControlName="makerApproval"
+                    (change)="autoSave('vendorBusinessInfo')" placeholder="makerApproval">
             </div>
         </div>
         <div class="row g-3 mb-3">
             <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">ISO Certification's</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control form-small">
+                <input type="text" class="form-control form-small" formControlName="isoCertification"
+                    (change)="autoSave('vendorBusinessInfo')" placeholder="isoCertification">
             </div>
             <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Other Certification</label>
             <div class="col-sm-4">
-                <input type="text" class="form-control form-small">
+                <input type="text" class="form-control form-small" formControlName="otherCertification"
+                    (change)="autoSave('vendorBusinessInfo')" placeholder="otherCertification">
             </div>
         </div>
     </div>
+
     <div class="card-header bg-200">
         <div class="row">
             <div class="col-xl-6 col-lg-12">
@@ -282,785 +311,545 @@
                     </div>
                 </div>
             </div>
-            <div class="row g-3 mb-3">
-
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Search</label>
-                <div class="col-sm-4">
-                    <fieldset>
-                        <input type="text" placeholder="Search" class="form-control form-small" [matAutocomplete]="auto"
-                            [formControl]="searchEngCtrl">
-
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
-                            (optionSelected)="getEngPosts($event.option.value)">
-                            <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
-                            <ng-container *ngIf="!isLoading">
-                                <mat-option *ngFor="let loc of LocationList" [value]="loc"
-                                    class=" form-small form-select ng-dirty ng-valid ng-touched"
-                                    style="font-size: 13px;">
-                                    <span>{{loc.locationName}}({{loc.location}}),&nbsp;
-                                        {{loc.countryMaster?.countryName}}({{loc.countryMaster?.countryCode}}) </span>
-                                </mat-option>
-                            </ng-container>
-                        </mat-autocomplete>
-
-                    </fieldset>
-                </div>
-
-                <label class="col-sm-2 col-form-label py-0 font-small-3 text-right" for="inputPassword">City</label>
-                <div class="col-sm-4">
-                    <fieldset>
-                        <input type="text" readonly formControlName="city" placeholder="City"
-                            class="form-control form-small">
-                    </fieldset>
-                </div>
-
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Country</label>
-                <div class="col-sm-4">
-                    <fieldset>
-                        <input type="text" readonly formControlName="country" placeholder="Country"
-                            class="form-control form-small">
-                    </fieldset>
-                </div>
-
-
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Postal Code</label>
-                <div class="col-sm-4">
-                    <fieldset>
-                        <input type="text" placeholder="Postal Code" class="form-control form-small">
-                    </fieldset>
-                </div>
-            </div>
-
-        </div>
-
-
-        <div class="card-header bg-200">
-            <div class="row">
-                <div class="col-xl-6 col-lg-12">
-                    <h4 class="card-title proper-case">Business Details</h4>
-                </div>
-                <div class="col-xl-6 col-lg-12">
-
-                </div>
+            <div class="table-responsive scrollbar">
+                <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                    <thead class="bg-200">
+                        <tr>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>City</th>
+                            <th>Address</th>
+                            <th>Contact Person Name</th>
+                            <th>Email</th>
+                            <th>Contact No.</th>
+                            <th>Address</th>
+                            <th>Convenient Ports</th>
+                            <th>Country</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
+                                        class="fas fa-edit"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="card-body" formGroupName="vendorBusinessInfo">
-            <div class="row g-3 mb-3">
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Service Category</label>
-                <div class="col-sm-4">
-                    <fieldset class="form-group mb-0">
-                        <ng-multiselect-dropdown [placeholder]="'Select Category Type'" class="multiselect-dropdown"
-                            [settings]="dropdownCategorySetting" [data]="serviceCategory"
-                            [(ngModel)]="categoryDropdownList" (onSelect)="onItemSelectCat($event)"
-                            (onSelectAll)="onSelectAllCat($event)" formControlName="serviceCategory"
-                            (onDeSelect)="onCategoryDeSelect($event)" (onDeSelectAll)="onCategoryDeSelectAll($event)"
-                            (change)="autoSave('vendorBusinessInfo')">
-                        </ng-multiselect-dropdown>
-                    </fieldset>
-                    <!-- <input type="text" formControlName="serviceCategory" placeholder="serviceCategory" class="form-control form-small"> -->
-                </div>
+    </div>
+    <div class="card-header bg-200">
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <h4 class="card-title proper-case">Sales Department</h4>
+            </div>
+            <div class="col-xl-6 col-lg-12">
 
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Service Type</label>
-                <div class="col-sm-4">
-                    <fieldset class="form-group mb-0">
-                        <ng-multiselect-dropdown [placeholder]="'Select Service Type'" class="multiselect-dropdown"
-                            [settings]="dropdownServiceSetting" [data]="serviceTypes" [(ngModel)]="dropdownList"
-                            (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
-                            formControlName="serviceType" (onDeSelect)="onOrderTypeDeSelect($event)"
-                            (onDeSelectAll)="onOrderTypeDeSelectAll($event)" (change)="autoSave('vendorBusinessInfo')">
-                        </ng-multiselect-dropdown>
-                    </fieldset>
-                    <!-- <input type="text" formControlName="serviceType" placeholder="serviceType" class="form-control form-small"> -->
-                </div>
-            </div>
-            <div class="row g-3 mb-3">
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Other, Please
-                    specify</label>
-                <div class="col-sm-10">
-                    <textarea class="form-control" rows="5" formControlName="otherSpec"
-                        placeholder="Enter Specification Details" (change)="autoSave('vendorBusinessInfo')"></textarea>
-                </div>
-            </div>
-            <div class="row g-3 mb-3">
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Class Approval's</label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control form-small" formControlName="classApproval"
-                        placeholder="classApproval" (change)="autoSave('vendorBusinessInfo')">
-                </div>
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Maker Approval's</label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control form-small" formControlName="makerApproval"
-                        (change)="autoSave('vendorBusinessInfo')" placeholder="makerApproval">
-                </div>
-            </div>
-            <div class="row g-3 mb-3">
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">ISO Certification's</label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control form-small" formControlName="isoCertification"
-                        (change)="autoSave('vendorBusinessInfo')" placeholder="isoCertification">
-                </div>
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Other Certification</label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control form-small" formControlName="otherCertification"
-                        (change)="autoSave('vendorBusinessInfo')" placeholder="otherCertification">
-                </div>
             </div>
         </div>
-        <div class="card-header bg-200">
-            <div class="row">
-                <div class="col-xl-6 col-lg-12">
-                    <h4 class="card-title proper-case">Branch Offices</h4>
-                </div>
-                <div class="col-xl-6 col-lg-12">
+    </div>
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            <div class="col-sm">
+                <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#sales-contact"><i
+                        class="fas fa-plus"></i> Add Contact</a>
+                <div class="modal fade" id="sales-contact" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl mt-6" role="document">
+                        <div class="modal-content border-0">
+                            <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="">Add Sales Department</h5>
 
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row g-3 mb-3">
-                <div class="col-sm">
-                    <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#branch-office"><i
-                            class="fas fa-plus"></i> Add Branch Office</a>
-                    <div class="modal fade" id="branch-office" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-xl mt-6" role="document">
-                            <div class="modal-content border-0">
-                                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body mt-0 scrollbar-visible">
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Contact
+                                        Person</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
                                 </div>
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="">Add Branch Office</h5>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Designation</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Sales
+                                        Dept. Email</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Sales
+                                        Dept. Contact No.</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
 
-                                </div>
-                                <div class="modal-body mt-0 scrollbar-visible">
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Name</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Location</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">City</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Address</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Contact
-                                            Person Name</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Contact
-                                            Person Email</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Contact
-                                            Persone No</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Address</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Convenient Ports</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Country</label>
-                                        <div class="col-sm-4">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                    <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button> <button
+                                    type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="table-responsive scrollbar">
-                    <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
-                        <thead class="bg-200">
-                            <tr>
-                                <th>Name</th>
-                                <th>Location</th>
-                                <th>City</th>
-                                <th>Address</th>
-                                <th>Contact Person Name</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th>Address</th>
-                                <th>Convenient Ports</th>
-                                <th>Country</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
-                                            class="fas fa-edit"></i></a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            </div>
+            <div class="table-responsive scrollbar">
+                <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                    <thead class="bg-200">
+                        <tr>
+                            <th>Contact Person</th>
+                            <th>Designation</th>
+                            <th>Email</th>
+                            <th>Contact No.</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
+                                        class="fas fa-edit"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="card-header bg-200">
-            <div class="row">
-                <div class="col-xl-6 col-lg-12">
-                    <h4 class="card-title proper-case">Sales Department</h4>
-                </div>
-                <div class="col-xl-6 col-lg-12">
+    </div>
+    <div class="card-header bg-200">
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <h4 class="card-title proper-case">Service/Repair Department</h4>
+            </div>
+            <div class="col-xl-6 col-lg-12">
 
-                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="row g-3 mb-3">
-                <div class="col-sm">
-                    <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#sales-contact"><i
-                            class="fas fa-plus"></i> Add Contact</a>
-                    <div class="modal fade" id="sales-contact" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-xl mt-6" role="document">
-                            <div class="modal-content border-0">
-                                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="">Add Sales Department</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            <div class="col-sm">
+                <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#service-contact"><i
+                        class="fas fa-plus"></i> Add Contact</a>
+                <div class="modal fade" id="service-contact" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl mt-6" role="document">
+                        <div class="modal-content border-0">
+                            <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="">Add Service/Repair Department</h5>
 
+                            </div>
+                            <div class="modal-body mt-0 scrollbar-visible">
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Contact
+                                        Person</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
                                 </div>
-                                <form (ngSubmit)="onAddSales()" [formGroup]="VendorSalesDepartFrom">
-                                    <div class="modal-body mt-0 scrollbar-visible">
-                                        <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Contact
-                                                Person</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Designation</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Sales
-                                                Dept. Email</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Sales
-                                                Dept. Contact No.</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
-                                            </div>
-                                        </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Designation</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Service
+                                        Dept. Email</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Service
+                                        Dept. Contact No.</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
 
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                        <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-                                    </div>
-                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button> <button
+                                    type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="table-responsive scrollbar">
-                    <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
-                        <thead class="bg-200">
-                            <tr>
-                                <th>Contact Person</th>
-                                <th>Designation</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
-                                            class="fas fa-edit"></i></a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            </div>
+            <div class="table-responsive scrollbar">
+                <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                    <thead class="bg-200">
+                        <tr>
+                            <th>Contact Person</th>
+                            <th>Designation</th>
+                            <th>Email</th>
+                            <th>Contact No.</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
+                                        class="fas fa-edit"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="card-header bg-200">
-            <div class="row">
-                <div class="col-xl-6 col-lg-12">
-                    <h4 class="card-title proper-case">Service/Repair Department</h4>
-                </div>
-                <div class="col-xl-6 col-lg-12">
+    </div>
+    <div class="card-header bg-200">
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <h4 class="card-title proper-case">Accounts Department</h4>
+            </div>
+            <div class="col-xl-6 col-lg-12">
 
-                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="row g-3 mb-3">
-                <div class="col-sm">
-                    <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#service-contact"><i
-                            class="fas fa-plus"></i> Add Contact</a>
-                    <div class="modal fade" id="service-contact" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-xl mt-6" role="document">
-                            <div class="modal-content border-0">
-                                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="">Add Service/Repair Department</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            <div class="col-sm">
+                <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#accounts-contact"><i
+                        class="fas fa-plus"></i> Add Contact</a>
+                <div class="modal fade" id="accounts-contact" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl mt-6" role="document">
+                        <div class="modal-content border-0">
+                            <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="">Add Accounts Department</h5>
 
+                            </div>
+                            <div class="modal-body mt-0 scrollbar-visible">
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Contact
+                                        Person</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
                                 </div>
-                                <div class="modal-body mt-0 scrollbar-visible">
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Contact
-                                            Person</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Designation</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
                                     </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Designation</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Accounts Dept. Email</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
                                     </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Service
-                                            Dept. Email</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Accounts Dept. Contact No.</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
                                     </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Service
-                                            Dept. Contact No.</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
+                                </div>
 
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                    <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button> <button
+                                    type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="table-responsive scrollbar">
-                    <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
-                        <thead class="bg-200">
-                            <tr>
-                                <th>Contact Person</th>
-                                <th>Designation</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
-                                            class="fas fa-edit"></i></a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            </div>
+            <div class="table-responsive scrollbar">
+                <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                    <thead class="bg-200">
+                        <tr>
+                            <th>Contact Person</th>
+                            <th>Designation</th>
+                            <th>Email</th>
+                            <th>Contact No.</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
+                                        class="fas fa-edit"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="card-header bg-200">
-            <div class="row">
-                <div class="col-xl-6 col-lg-12">
-                    <h4 class="card-title proper-case">Accounts Department</h4>
-                </div>
-                <div class="col-xl-6 col-lg-12">
+    </div>
+    <div class="card-header bg-200">
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <h4 class="card-title proper-case">Bank Information</h4>
+            </div>
+            <div class="col-xl-6 col-lg-12">
 
-                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="row g-3 mb-3">
-                <div class="col-sm">
-                    <a class="btn btn-primary" type="button" data-bs-toggle="modal"
-                        data-bs-target="#accounts-contact"><i class="fas fa-plus"></i> Add Contact</a>
-                    <div class="modal fade" id="accounts-contact" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-xl mt-6" role="document">
-                            <div class="modal-content border-0">
-                                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="">Add Accounts Department</h5>
+    </div>
+    <div class="card-body">
+        <div class="row g-3 mb-3">
+            <div class="col-sm">
+                <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#bank-details"><i
+                        class="fas fa-plus"></i> Add Bank Details</a>
+                <div class="modal fade" id="bank-details" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl mt-6" role="document">
+                        <div class="modal-content border-0">
+                            <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="">Add Accounts Department</h5>
 
+                            </div>
+                            <div class="modal-body mt-0 scrollbar-visible">
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Company
+                                        Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
                                 </div>
-                                <div class="modal-body mt-0 scrollbar-visible">
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Contact
-                                            Person</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Company
+                                        Short Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
                                     </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Designation</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Preferred Currency</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
                                     </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Accounts Dept. Email</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Bank
+                                        Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
                                     </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Accounts Dept. Contact No.</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Bank
+                                        Address</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
                                     </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Branch
+                                        Office</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Beneficiary Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Account
+                                        Number</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Iban/Swift Code</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Vat
+                                        No.</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Remarks</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control form-small">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
 
+                                    <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Add
+                                        Attachments</label>
+                                    <div class="col-sm-4">
+                                        <input class="form-control" type="file" id="formFile">
+                                    </div>
+                                    <div class="col-sm">
+                                        <div class="form-check mb-0">
+                                            <input class="form-check-input" id="" type="checkbox" value="">
+                                            <label class="form-check-label mb-0" for="">Banking Details Confirmed Over
+                                                Call</label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                    <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button> <button
+                                    type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="table-responsive scrollbar">
-                    <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
-                        <thead class="bg-200">
-                            <tr>
-                                <th>Contact Person</th>
-                                <th>Designation</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
-                                            class="fas fa-edit"></i></a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            </div>
+            <div class="table-responsive scrollbar">
+                <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+                    <thead class="bg-200">
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Company Short Name</th>
+                            <th>Preferred Currency</th>
+                            <th>Bank Name</th>
+                            <th>Bank Address</th>
+                            <th>Branch Office</th>
+                            <th>Beneficiary Name</th>
+                            <th>Account Number</th>
+                            <th>Iban/Swift Code</th>
+                            <th>Vat No.</th>
+                            <th>Remarks</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td>-----</td>
+                            <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
+                                        class="fas fa-edit"></i></a></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-        <div class="card-header bg-200">
-            <div class="row">
-                <div class="col-xl-6 col-lg-12">
-                    <h4 class="card-title proper-case">Bank Information</h4>
-                </div>
-                <div class="col-xl-6 col-lg-12">
+    </div>
+    <div class="card-header bg-200">
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <h4 class="card-title proper-case">For Office only</h4>
+            </div>
+            <div class="col-xl-6 col-lg-12">
 
-                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="row g-3 mb-3">
-                <div class="col-sm">
-                    <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#bank-details"><i
-                            class="fas fa-plus"></i> Add Bank Details</a>
-                    <div class="modal fade" id="bank-details" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog modal-xl mt-6" role="document">
-                            <div class="modal-content border-0">
-                                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="">Add Accounts Department</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <h4 class="card-title proper-case mb-0">Referral Details</h4>
+            </div>
+            <div class="col-xl-6 col-lg-12">
 
-                                </div>
-                                <div class="modal-body mt-0 scrollbar-visible">
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Company
-                                            Name</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Company
-                                            Short Name</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Preferred Currency</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Bank
-                                            Name</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Bank
-                                            Address</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Branch
-                                            Office</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Beneficiary Name</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Account
-                                            Number</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Iban/Swift Code</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Vat
-                                            No.</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Remarks</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Add
-                                            Attachments</label>
-                                        <div class="col-sm-4">
-                                            <input class="form-control" type="file" id="formFile">
-                                        </div>
-                                        <div class="col-sm">
-                                            <div class="form-check mb-0">
-                                                <input class="form-check-input" id="" type="checkbox" value="">
-                                                <label class="form-check-label mb-0" for="">Banking Details Confirmed
-                                                    Over
-                                                    Call</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                    <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-responsive scrollbar">
-                    <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
-                        <thead class="bg-200">
-                            <tr>
-                                <th>Company Name</th>
-                                <th>Company Short Name</th>
-                                <th>Preferred Currency</th>
-                                <th>Bank Name</th>
-                                <th>Bank Address</th>
-                                <th>Branch Office</th>
-                                <th>Beneficiary Name</th>
-                                <th>Account Number</th>
-                                <th>Iban/Swift Code</th>
-                                <th>Vat No.</th>
-                                <th>Remarks</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
-                                            class="fas fa-edit"></i></a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
-        <div class="card-header bg-200">
-            <div class="row">
-                <div class="col-xl-6 col-lg-12">
-                    <h4 class="card-title proper-case">For Office only</h4>
-                </div>
-                <div class="col-xl-6 col-lg-12">
-
-                </div>
+        <hr class="mb-3">
+        <div class="row g-3 mb-3">
+            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Date of Referral</label>
+            <div class="col-sm-3">
+                <input type="date" class="form-control form-small">
+            </div>
+            <label class="col-sm-1 col-form-label py-0 font-small-3" for="inputPassword">Preference</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control form-small">
+            </div>
+            <label class="col-sm-1 col-form-label py-0 font-small-3" for="inputPassword">Single use</label>
+            <div class="col-sm-1">
+                <input type="checkbox">
             </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-xl-6 col-lg-12">
-                    <h4 class="card-title proper-case mb-0">Referral Details</h4>
-                </div>
-                <div class="col-xl-6 col-lg-12">
-
-                </div>
+        <div class="row g-3 mb-3">
+            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Referrer Comments</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5"></textarea>
             </div>
-            <hr class="mb-3">
-            <div class="row g-3 mb-3">
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Date of Referral</label>
-                <div class="col-sm-3">
-                    <input type="date" class="form-control form-small">
-                </div>
-                <label class="col-sm-1 col-form-label py-0 font-small-3" for="inputPassword">Preference</label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control form-small">
-                </div>
-                <label class="col-sm-1 col-form-label py-0 font-small-3" for="inputPassword">Single use</label>
-                <div class="col-sm-1">
-                    <input type="checkbox">
-                </div>
-            </div>
-            <div class="row g-3 mb-3">
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Referrer Comments</label>
-                <div class="col-sm-10">
-                    <textarea class="form-control" rows="5"></textarea>
-                </div>
-            </div>
-            <div class="row g-3 mb-3">
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Referred by</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control form-small">
-                </div>
-            </div>
-
-            <div class="row g-3 mb-3">
-
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">First Approver</label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control form-small">
-                </div>
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Second Approver</label>
-                <div class="col-sm-4">
-                    <input type="text" class="form-control form-small">
-                </div>
-            </div>
-
         </div>
-    </form>
+        <div class="row g-3 mb-3">
+            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Referred by</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control form-small">
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+
+            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">First Approver</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control form-small">
+            </div>
+            <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Second Approver</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control form-small">
+            </div>
+        </div>
+
+    </div>
+</form>
 </div>
