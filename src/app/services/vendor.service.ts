@@ -18,7 +18,7 @@ export class VendorService {
   constructor(private httpClient: HttpClient) { }
 
   //#region Vendor Master Info
-  getVenforInfo(status): Observable<any> {    
+  getVenforInfo(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterVendorInfoMaster/${status}`, httpOptions);
   }
   
@@ -31,6 +31,15 @@ export class VendorService {
     return this.httpClient.post<any>(this.linkurl + 'addVendorMaster', formData)
       .pipe(catchError(this.handleError));
   }
+
+  //#endregion
+
+  //#region Vendor Business Info
+  addbusinessInfo(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addBusinessInfo', formData)
+      .pipe(catchError(this.handleError));
+  }
+  //#endregion
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
