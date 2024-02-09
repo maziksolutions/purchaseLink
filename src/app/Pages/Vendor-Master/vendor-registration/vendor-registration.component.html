@@ -374,14 +374,16 @@
                                                 for="inputPassword">Contact
                                                 Person</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
+                                                <input type="text" formControlName="contactPerson"
+                                                    placeholder="Contact Person Name" class="form-control form-small">
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
                                                 for="inputPassword">Designation</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
+                                                <input type="text" formControlName="designation"
+                                                    placeholder="Enter Designation" class="form-control form-small">
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
@@ -389,7 +391,8 @@
                                                 for="inputPassword">Sales
                                                 Dept. Email</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
+                                                <input type="text" formControlName="email" placeholder="Enter Email"
+                                                    class="form-control form-small">
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
@@ -397,13 +400,13 @@
                                                 for="inputPassword">Sales
                                                 Dept. Contact No.</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
+                                                <input type="text" formControlName="contactNo"
+                                                    placeholder="Enter Contact Number" class="form-control form-small">
                                             </div>
                                         </div>
-
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button>
+                                        <button type="submit" class="btn btn-primary me-1" aria-label="">Submit</button>
                                         <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
                                     </div>
                                 </form>
@@ -412,6 +415,7 @@
                     </div>
                 </div>
                 <div class="table-responsive scrollbar">
+                    <!-- <mat-table #table [dataSource]="vendorSalesData" -->
                     <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                         <thead class="bg-200">
                             <tr>
@@ -423,14 +427,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
-                                            class="fas fa-edit"></i></a></td>
+                            <tr *ngFor="let item of vendorSalesData">
+                                <td>{{ item.contactPerson }}</td>
+                                <td>{{ item.designation }}</td>
+                                <td>{{ item.email }}</td>
+                                <td>{{ item.contactNo }}</td>
+                                <td>
+                                    <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                        (click)="editSalesData(item.vendorSalesId)" [attr.data-bs-toggle]="modal"
+                                        [attr.data-bs-target]="modalTarget" data-bs-placement="top" title=""
+                                        data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -463,44 +471,49 @@
                                     <h5 class="modal-title" id="">Add Service/Repair Department</h5>
 
                                 </div>
-                                <div class="modal-body mt-0 scrollbar-visible">
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Contact
-                                            Person</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                <form (ngSubmit)="onAddService()" [formGroup]="VendorServiceDepartForm">
+                                    <div class="modal-body mt-0 scrollbar-visible">
+                                        <div class="row g-3 mb-3">
+                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                                for="inputPassword">Contact
+                                                Person</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" formControlName="contactPerson"
+                                                    placeholder="Contact Person Name" class="form-control form-small">
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 mb-3">
+                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                                for="inputPassword">Designation</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" formControlName="designation"
+                                                    placeholder="Enter Designation" class="form-control form-small">
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 mb-3">
+                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                                for="inputPassword">Sales
+                                                Dept. Email</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" formControlName="email" placeholder="Enter Email"
+                                                    class="form-control form-small">
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 mb-3">
+                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                                for="inputPassword">Sales
+                                                Dept. Contact No.</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" formControlName="contactNo"
+                                                    placeholder="Enter Contact Number" class="form-control form-small">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Designation</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary me-1" aria-label="">Submit</button>
+                                        <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
                                     </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Service
-                                            Dept. Email</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                            for="inputPassword">Service
-                                            Dept. Contact No.</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                    <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -517,14 +530,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
-                                            class="fas fa-edit"></i></a></td>
+                            <tr *ngFor="let item of vendorServiceData">
+                                <td>{{ item.contactPerson }}</td>
+                                <td>{{ item.designation }}</td>
+                                <td>{{ item.email }}</td>
+                                <td>{{ item.contactNo }}</td>
+                                <td>
+                                    <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                        (click)="editServiceData(item.vendorServiceId)" [attr.data-bs-toggle]="serviceModal"
+                                        [attr.data-bs-target]="serviceModalTarget" data-bs-placement="top" title=""
+                                        data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit"></i>
+                                    </a> &nbsp; &nbsp;
+                                    <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                        (click)="deleteServiceData(item.vendorServiceId)" [attr.data-bs-toggle]="serviceModal"
+                                        [attr.data-bs-target]="serviceModalTarget" data-bs-placement="top" title="Archive" data-bs-tooltip="Archive"
+                                        data-bs-original-title="Delete" aria-label=""><i class="fas fa-trash text-danger"></i>
+                                    </a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

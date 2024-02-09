@@ -31,6 +31,36 @@ export class VendorService {
   }
   //#endregion
 
+  //#region  Vendor Sales Department
+  addSalesInfo(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addSalesInfo', formData)
+      .pipe(catchError(this.handleError));
+  }
+  getSalesInfoById(id):Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getSalesInfoById/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  getSalesInfoByVendorId(vendorId): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getSalesInfoByVendorId/' + vendorId, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  //#endregion
+
+  //#region Vendor Service Department
+  addServiceInfo(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addServiceInfo', formData)
+      .pipe(catchError(this.handleError));
+  }
+  getServiceInfoById(id):Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getServiceInfoById/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  getServiceInfoByVendorId(vendorId): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getServiceInfoByVendorId/' + vendorId, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  //#endregion
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('An error occurred:', error.error.message);
