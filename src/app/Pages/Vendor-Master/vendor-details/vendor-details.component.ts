@@ -23,7 +23,7 @@ export class VendorDetailsComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   deletetooltip: any;
 
-  constructor(private sideNavService: SideNavService, private route: Router, private vendorService:VendorService) {
+  constructor(private sideNavService: SideNavService, private route: Router, private vendorService: VendorService) {
     this.route.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.sideNavService.initSidenav()
@@ -46,8 +46,7 @@ export class VendorDetailsComponent implements OnInit {
     document.body.appendChild(script)
   }
 
-  loadData(status: number) {
-    debugger
+  loadData(status: number) {   
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -62,9 +61,8 @@ export class VendorDetailsComponent implements OnInit {
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
-    this.vendorService.getVenforInfo(status)
-      .subscribe(response => {
-        debugger
+    this.vendorService.getVendorInfo(status)
+      .subscribe(response => {        
         this.flag = status;
         // this.documentHeaderList =response.data.map(x=>x.documentHeader.replace(/\D/g, '')) 
 
@@ -89,6 +87,10 @@ export class VendorDetailsComponent implements OnInit {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.vendorId + 1}`;
+  }
+
+  editVendorMaster(row: any): void {    
+    this.route.navigate(['/Vendor-Master/VendorRegistration', row.vendorId]);
   }
 
 }

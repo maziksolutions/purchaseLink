@@ -7,9 +7,12 @@ import { SiteLayoutComponent } from 'src/app/_layout/site-layout/site-layout.com
 const routes: Routes = [
   {
     path: '', component: SiteLayoutComponent,
-    children:[
+    children: [
       { path: 'VendorDetails', component: VendorDetailsComponent },
       { path: 'VendorRegistration', component: VendorRegistrationComponent },
+      {
+        path: 'VendorRegistration/:vendorId', component: VendorRegistrationComponent
+      },
     ]
   }
 ];

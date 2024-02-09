@@ -224,10 +224,10 @@
         <div class="card-body">
             <div class="row g-3 mb-3">
                 <div class="col-sm">
-                    <a class="btn btn-primary" type="button" (click)="openbranchoffice(vendorInfoId)" aria-expanded="true"
-                    aria-controls="" data-bs-toggle="modal" data-bs-target=""><i
-                            class="fas fa-plus"></i> Add Branch Office</a>
-    
+                    <a class="btn btn-primary" type="button" aria-expanded="true" aria-controls=""
+                        data-bs-toggle="modal" data-bs-target="#branch-office"><i class="fas fa-plus"></i> Add Branch
+                        Office</a>
+
                     <div class="modal fade" id="branch-office" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-xl mt-6" role="document">
                             <div class="modal-content border-0">
@@ -399,7 +399,7 @@
                                     <h5 class="modal-title" id="">Add Sales Department</h5>
 
                                 </div>
-                                <form (ngSubmit)="onAddSales()" [formGroup]="VendorSalesDepartFrom">
+                                <form (ngSubmit)="onAddSales()" [formGroup]="VendorSalesDepartForm">
                                     <div class="modal-body mt-0 scrollbar-visible">
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
@@ -517,7 +517,7 @@
                                     <div class="modal-body mt-0 scrollbar-visible">
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Contact
+                                                for="contactPerson">Contact
                                                 Person</label>
                                             <div class="col-sm-10">
                                                 <input type="text" formControlName="contactPerson"
@@ -526,15 +526,14 @@
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Designation</label>
+                                                for="designation">Designation</label>
                                             <div class="col-sm-10">
                                                 <input type="text" formControlName="designation"
                                                     placeholder="Enter Designation" class="form-control form-small">
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Sales
+                                            <label class="col-sm-2 col-form-label py-0 font-small-3" for="email">Sales
                                                 Dept. Email</label>
                                             <div class="col-sm-10">
                                                 <input type="text" formControlName="email" placeholder="Enter Email"
@@ -543,7 +542,7 @@
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Sales
+                                                for="contactNo">Sales
                                                 Dept. Contact No.</label>
                                             <div class="col-sm-10">
                                                 <input type="text" formControlName="contactNo"
@@ -627,39 +626,41 @@
                                     <div class="modal-body mt-0 scrollbar-visible">
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Contact
+                                                for="contactPerson">Contact
                                                 Person</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
+                                                <input type="text" formControlName="contactPerson"
+                                                    placeholder="Contact Person Name" class="form-control form-small">
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Designation</label>
+                                                for="designation">Designation</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
+                                                <input type="text" formControlName="designation"
+                                                    placeholder="Enter Designation" class="form-control form-small">
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Accounts
+                                            <label class="col-sm-2 col-form-label py-0 font-small-3" for="email">Sales
                                                 Dept. Email</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
+                                                <input type="text" formControlName="email" placeholder="Enter Email"
+                                                    class="form-control form-small">
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Accounts
+                                                for="contactNo">Sales
                                                 Dept. Contact No.</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control form-small">
+                                                <input type="text" formControlName="contactNo"
+                                                    placeholder="Enter Contact Number" class="form-control form-small">
                                             </div>
                                         </div>
-
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button>
+                                        <button type="submit" class="btn btn-primary me-1" aria-label="">Submit</button>
                                         <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
                                     </div>
                                 </form>
@@ -679,14 +680,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
-                                            class="fas fa-edit"></i></a></td>
+                            <tr *ngFor="let item of vendorAccountData">
+                                <td>{{ item.contactPerson }}</td>
+                                <td>{{ item.designation }}</td>
+                                <td>{{ item.email }}</td>
+                                <td>{{ item.contactNo }}</td>
+                                <td>
+                                    <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                        (click)="editAccountData(item.vendorAccountId)" data-bs-placement="top" title=""
+                                        data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit"></i>
+                                    </a> &nbsp; &nbsp;
+                                    <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                        (click)="deleteAccountData(item.vendorAccountId)" data-bs-placement="top"
+                                        title="Archive" data-bs-tooltip="Archive" data-bs-original-title="Delete"
+                                        aria-label=""><i class="fas fa-trash text-danger"></i>
+                                    </a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
