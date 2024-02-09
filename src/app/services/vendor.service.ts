@@ -21,6 +21,16 @@ export class VendorService {
   getVenforInfo(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterVendorInfoMaster/${status}`, httpOptions);
   }
+  
+  addvendorInfo(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addVendorMaster', formData)
+      .pipe(catchError(this.handleError));
+  }
+
+  addBranchoffice(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addVendorMaster', formData)
+      .pipe(catchError(this.handleError));
+  }
 
   //#endregion
 

@@ -5,13 +5,13 @@ import { NavigationEnd, Router } from '@angular/router';
 import { SideNavService } from 'src/app/services/sidenavi-service';
 import { environment } from 'src/environments/environment';
 import { debounceTime, tap, switchMap, finalize } from 'rxjs/operators';
-import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
 import { VendorService } from 'src/app/services/vendor.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { MatTableDataSource } from '@angular/material/table';
+import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
 
-declare var $: any;
-declare let Swal;
+declare let Swal, $: any;
+
 
 @Component({
   selector: 'app-vendor-registration',
@@ -19,10 +19,16 @@ declare let Swal;
   styleUrls: ['./vendor-registration.component.css']
 })
 export class VendorRegistrationComponent implements OnInit {
-  VendorMasterForm: FormGroup; VendorSalesDepartFrom: FormGroup; VendorServiceDepartForm: FormGroup; flag; pkey: number = 0;
+  VendorMasterForm: FormGroup; flags; pkeys: number = 0;
+  vendorBranchInfo: FormGroup; 
+  VendorSalesDepartFrom: FormGroup; VendorServiceDepartForm: FormGroup;
   searchEngCtrl: FormControl = new FormControl();
+  searchEngCtrl2: FormControl = new FormControl();
   LocationList: any;
   isLoading: boolean;
+  LocationListTwo: any;
+  twoisLoading: boolean;
+  vendorInfoId: any;
 
   dropdownCategorySetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
   categoryDropdownList: { serviceCategoryId: number, serviceCategory: string }[] = [];
@@ -102,6 +108,10 @@ export class VendorRegistrationComponent implements OnInit {
       contactNo: ['', Validators.required],
       vendorId: [0, [Validators.required]],
     })
+
+    // this.VendorMasterForm.get('vendorInfo')?.valueChanges.subscribe(() => {
+    //   this.autoSave('vendorInfo');  
+    // })
   }
 
   get vm() { return this.VendorMasterForm.controls };
@@ -133,7 +143,7 @@ export class VendorRegistrationComponent implements OnInit {
         vendorId: [0],
         companyName: ['', [Validators.required]],
         companyShortName: ['', [Validators.required]],
-        address: ['0', [Validators.required]],
+        address: ['', [Validators.required]],
         city: ['', [Validators.required]],
         postalCode: ['', [Validators.required]],
         country: ['', [Validators.required]]
@@ -149,26 +159,27 @@ export class VendorRegistrationComponent implements OnInit {
         otherCertification: ['', [Validators.required]],
         vendorId: [1, [Validators.required]],
       }),
-      // vendorBranchInfo:this.fb.group({
-      //   vendorBranchId: [0],
-      //   branchName: ['', [Validators.required]],
-      //   location: ['', [Validators.required]],
-      //   otherSpec: ['0', [Validators.required]],
-      //   classApproval: ['0', [Validators.required]],
-      //   makerApproval: ['', [Validators.required]],
-      //   isoCertification: ['', [Validators.required]],
-      //   otherCertification: ['', [Validators.required]],
-      //   vendorId:[0, [Validators.required]],
-      // }),
-    })
-
-
-    this.VendorMasterForm.get('vendorInfo')?.valueChanges.subscribe(() => {
-
 
     })
 
-    this.FillLocation();
+    this.vendorBranchInfo = this.fb.group({
+        vendorBranchId: [0],
+        branchName: ['', [Validators.required]],
+        city: ['', [Validators.required]],
+        address: ['', [Validators.required]],
+        contPersonName: ['', [Validators.required]],
+        email: ['', [Validators.required]],
+        contactNo: ['', [Validators.required]],
+        convenientPorts: ['', [Validators.required]],
+        country: ['', [Validators.required]],
+        vendorId:[0, [Validators.required]],
+      }),
+    
+
+  
+
+      this.FillLocation();
+ this.FillLocationTwo();
   }
 
   private loadScript(scriptUrl: string): void {
@@ -179,13 +190,14 @@ export class VendorRegistrationComponent implements OnInit {
     document.body.appendChild(script);
   }
 
-  FillLocation() {
+  FillLocation() {  
     this.searchEngCtrl.valueChanges
       .pipe(
         debounceTime(500),
         tap(() => {
           this.LocationList = [];
           this.isLoading = true;
+         
         }),
         switchMap(value => this.http.get(environment.apiurl + "categoryMaster/searchLocation?search=" + value)
           .pipe(
@@ -199,7 +211,37 @@ export class VendorRegistrationComponent implements OnInit {
         if (data == undefined) {
           this.LocationList = [];
         } else {
+          debugger
           this.LocationList = data;
+
+        }
+      });
+  }
+
+  FillLocationTwo() {       
+    this.searchEngCtrl2.valueChanges
+      .pipe(
+        debounceTime(500),
+        tap(() => {
+          this.twoisLoading = true;
+          this.LocationListTwo = [];
+         
+        }),
+        switchMap(value => this.http.get(environment.apiurl + "categoryMaster/searchLocation?search=" + value)
+          .pipe(
+            finalize(() => {
+              this.twoisLoading = false
+            }),
+          )
+        )
+      )
+      .subscribe(data => {
+     
+        if (data == undefined) {
+          this.LocationListTwo = [];
+        } else {
+        debugger
+          this.LocationListTwo = data;
         }
       });
   }
@@ -216,14 +258,18 @@ export class VendorRegistrationComponent implements OnInit {
     const vendorform = this.VendorMasterForm.get('vendorInfo');
 
     vendorform?.patchValue({
-      // vendorId: 0,
-      // address: 'fdf',
       city: City.locationName + ',' + City.state,
-      // postalCode: 23,
       country: City.countryMaster?.countryName,
 
     });
   }
+
+  getCCBranch(City) {
+
+    this.vendorBranchInfo.controls.city.setValue(City.locationName + ',' + City.state);
+    this.vendorBranchInfo.controls.country.setValue(City.countryMaster?.countryName);
+  }
+
 
   autoSave(partName: string): void {
     if (partName == 'vendorBusinessInfo') {
@@ -269,10 +315,94 @@ export class VendorRegistrationComponent implements OnInit {
 
           }
         })
-      }
+      }      
+    }
 
+    if(partName == 'vendorInfo'){
+      debugger
+      const vendorform = this.VendorMasterForm.get(partName);
+      
+      vendorform?.patchValue({
+         vendorId: vendorform.value.vendorId,
+         companyName: vendorform.value.companyName,
+         companyShortName: vendorform.value.companyShortName,
+         address: vendorform.value.address,
+         city: vendorform.value.city,
+         postalCode: vendorform.value.postalCode,
+         country: vendorform.value.country,
+        
+      });
+      
+      if (partName == 'vendorInfo' && vendorform != null && vendorform.valid) {
+        const formData = new FormData();
+        debugger
+        formData.append('data', JSON.stringify(vendorform.value))
+
+        this.vendorService.addvendorInfo(formData)
+        .subscribe(data => {
+          this.vendorInfoId = data.data
+          if (data.message == "data added") {
+            this.swal.success('Added successfully.');
+
+          }
+          else if (data.message == "updated") {
+            this.swal.success('Data has been updated successfully.');
+          
+          }
+          else if (data.message == "duplicate") {
+            this.swal.info('Data already exist. Please enter new data');
+            
+          }
+          else if (data.message == "not found") {
+            this.swal.info('Data exist not exist');
+            
+          }
+          else {
+  
+          }
+  
+        });
+      }
     }
   }
+
+  openbranchoffice(id){
+    alert(id)
+  
+    $("#branch-office").modal('show');
+  }
+
+  onSubmitbranchoffice(form: any)
+  {
+    
+  const fmdata = new FormData();
+    fmdata.append('data', JSON.stringify(form.value));
+
+    this.vendorService.addBranchoffice(fmdata)
+      .subscribe(data => {
+
+        if (data.message == "data added") {
+          this.swal.success('Added successfully.');
+      
+        }
+        else if (data.message == "updated") {
+          this.swal.success('Data has been updated successfully.');
+         
+        }
+        else if (data.message == "duplicate") {
+          this.swal.info('Data already exist. Please enter new data');
+
+        }
+        else if (data.message == "not found") {
+          this.swal.info('Data exist not exist');
+           
+        }
+        else {
+
+        }
+
+      });
+}
 
   //#region Service Category Dropdown 
   onSelectAllCat(event: any) {
