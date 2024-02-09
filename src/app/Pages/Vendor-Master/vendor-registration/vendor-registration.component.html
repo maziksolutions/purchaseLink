@@ -770,7 +770,12 @@
                                             for="inputPassword">Branch
                                             Office</label>
                                         <div class="col-sm-10">
-                                            <input type="text" formControlName="branchOffice" class="form-control form-small">
+                                            <select class="form-control form-small form-select" 
+                                            formControlName="vendorBranchId" required>
+                                            <option value="" disabled>Select Branch Office</option>
+                                            <option *ngFor="let item of dataBranchOffice" value="{{item.vendorBranchId}}">{{item.branchName}}</option> 
+                                        </select>
+
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
@@ -870,7 +875,7 @@
                                 <td>{{items.preferredCurrency}}</td>
                                 <td>{{items.bankName}}</td>
                                 <td>{{items.bankAddress}}</td>
-                                <td>{{items.branchOffice}}</td>
+                                <td>{{items.branchOffice.branchName}}</td>
                                 <td>{{items.beneficiaryName}}</td>
                                 <td>{{items.accountNumber}}</td>
                                 <td>{{items.ibanSwiftCode}}</td>

@@ -141,13 +141,13 @@ export class VendorRegistrationComponent implements OnInit {
       preferredCurrency: ['', Validators.required],
       bankName: ['', Validators.required],
       bankAddress: ['', Validators.required],
-      branchOffice: ['', Validators.required],
+      vendorBranchId: ['', Validators.required],
       beneficiaryName: ['', Validators.required],
       accountNumber: ['', Validators.required],
       ibanSwiftCode: ['', Validators.required],
       vatNo: ['', Validators.required],
       remarks: ['', Validators.required],
-      confirmOnCall: ['', Validators.required],
+      confirmOnCall: [''],
       attachments:[''],
       vendorId:[ 0, Validators.required],
     })
@@ -794,7 +794,7 @@ ClearBankInfoModal(){
   this.BankInformationForm.controls.preferredCurrency.setValue('');
   this.BankInformationForm.controls.bankName.setValue('');
   this.BankInformationForm.controls.bankAddress.setValue('');
-  this.BankInformationForm.controls.branchOffice.setValue('');
+  this.BankInformationForm.controls.vendorBranchId.setValue('');
   this.BankInformationForm.controls.beneficiaryName.setValue('');
   this.BankInformationForm.controls.accountNumber.setValue('');
   this.BankInformationForm.controls.ibanSwiftCode.setValue('');
@@ -810,15 +810,8 @@ ClearBankInfoModal(){
 
   onSubmitBankInformation(form: any){
 debugger
-const files = document.getElementById('formFile') as HTMLInputElement;
 
-     if (files !== null) { 
-         const file = files.files;
-         if (file) {         
-          const fileName = file[0].name;
-          form.value.attachments = fileName;
-         } 
-     }
+     form.value.attachments = this.FileName;
      form.value.vendorId = 1;
      const fmdata = new FormData();
      fmdata.append('data', JSON.stringify(form.value));
