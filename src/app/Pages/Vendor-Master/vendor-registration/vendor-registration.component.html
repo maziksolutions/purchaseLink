@@ -217,7 +217,7 @@
                     <h4 class="card-title proper-case">Branch Offices</h4>
                 </div>
                 <div class="col-xl-6 col-lg-12">
-
+    
                 </div>
             </div>
         </div>
@@ -231,116 +231,106 @@
                     <div class="modal fade" id="branch-office" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-xl mt-6" role="document">
                             <div class="modal-content border-0">
-                                <form (ngSubmit)="onSubmitbranchoffice(vendorBranchInfo)"
-                                    [formGroup]="vendorBranchInfo">
-                                    <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                                        <button
-                                            class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                               
+                                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="">{{this.vendorBranchId == null ? 'Add Branch Office':'Edit Branch Office'}}</h5>
+    
+                                </div>
+                                <div class="modal-body mt-0">
+                                    <form (ngSubmit)="onSubmitbranchoffice(vendorBranchInfo)" [formGroup]="vendorBranchInfo">
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                          for="inputPassword">Branch Name</label>
+                                        <div class="col-sm-4">
+                                            <input type="text"  formControlName="branchName" placeholder="Branch Name" class="form-control form-small">
+                                        </div>
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Search</label>
+                                        <div class="col-sm-4">
+                                            <fieldset>
+                                                <input type="text" placeholder="Search" class="form-control form-small"  [matAutocomplete]="auto2" [formControl]="searchEngCtrl2">
+    
+                                            <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayFn"
+                                            (optionSelected)="getCCBranch($event.option.value)">
+                                            <mat-option *ngIf="twoisLoading" class="is-loading">Loading...</mat-option>
+                                            <ng-container *ngIf="!twoisLoading">
+                                              <mat-option *ngFor="let locs of LocationListTwo" [value]="locs" class=" form-small form-select ng-dirty ng-valid ng-touched" style="font-size: 13px;">
+                                                <span>{{locs.locationName}}({{locs.location}}),&nbsp; {{locs.countryMaster?.countryName}}({{locs.countryMaster?.countryCode}}) </span>
+                                              </mat-option>
+                                            </ng-container>
+                                          </mat-autocomplete>
+                                        </fieldset>
+                                        </div>
                                     </div>
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="">Add Branch Office</h5>
-
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">City</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" readonly formControlName="city" placeholder="City" class="form-control form-small">
+                                        </div>
+    
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Country</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" readonly formControlName="country" placeholder="Country" class="form-control form-small">
                                     </div>
-                                    <div class="modal-body mt-0 scrollbar-visible">
-                                        <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Branch Name</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" formControlName="branchName"
-                                                    placeholder="Branch Name" class="form-control form-small">
-                                            </div>
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Search</label>
-                                            <div class="col-sm-4">
-                                                <fieldset>
-                                                    <input type="text" placeholder="Search"
-                                                        class="form-control form-small" [matAutocomplete]="auto2"
-                                                        [formControl]="searchEngCtrl2">
-
-                                                    <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayFn"
-                                                        (optionSelected)="getCCBranch($event.option.value)">
-                                                        <mat-option *ngIf="twoisLoading"
-                                                            class="is-loading">Loading...</mat-option>
-                                                        <ng-container *ngIf="!twoisLoading">
-                                                            <mat-option *ngFor="let locs of LocationListTwo"
-                                                                [value]="locs"
-                                                                class=" form-small form-select ng-dirty ng-valid ng-touched"
-                                                                style="font-size: 13px;">
-                                                                <span>{{locs.locationName}}({{locs.location}}),&nbsp;
-                                                                    {{locs.countryMaster?.countryName}}({{locs.countryMaster?.countryCode}})
-                                                                </span>
-                                                            </mat-option>
-                                                        </ng-container>
-                                                    </mat-autocomplete>
-                                                </fieldset>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">City</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" readonly formControlName="city" placeholder="City"
-                                                    class="form-control form-small">
-                                            </div>
-
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Country</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" readonly formControlName="country"
-                                                    placeholder="Country" class="form-control form-small">
-                                            </div>
-
-                                        </div>
-                                        <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Contact
-                                                Person Name</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" formControlName="contPersonName"
-                                                    placeholder="Contact Person Name" class="form-control form-small">
-                                            </div>
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Contact
-                                                Person Email</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" formControlName="email"
-                                                    placeholder="Contact Person Email" class="form-control form-small">
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Contact
-                                                Persone No</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" formControlName="contactNo"
-                                                    placeholder="Contact Persone No" class="form-control form-small">
-                                            </div>
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Address</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" formControlName="address" placeholder="Address"
-                                                    class="form-control form-small">
-                                            </div>
-
-                                        </div>
-
-                                        <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Convenient Ports</label>
-                                            <div class="col-sm-4">
-                                                <input type="text" formControlName="convenientPorts"
-                                                    placeholder="Convenient Ports" class="form-control form-small">
-                                            </div>
-
-                                        </div>
-
+    
                                     </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Contact
+                                            Person Name</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" formControlName="contPersonName" placeholder="Contact Person Name" class="form-control form-small">
+                                        </div>
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Contact
+                                            Person Email</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" formControlName="email" placeholder="Contact Person Email" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Contact
+                                            Persone No</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" formControlName="contactNo" placeholder="Contact Persone No" class="form-control form-small">
+                                        </div> 
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                        for="inputPassword">Address</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" formControlName="address" placeholder="Address" class="form-control form-small">
+                                    </div>
+                                        
+                                    </div>
+                                  
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Convenient Ports</label>
+                                        <div class="col-sm-4">
+                                            <!-- <input type="text" formControlName="convenientPorts" placeholder="Convenient Ports" class="form-control form-small"> -->
+    
+                                            <ng-multiselect-dropdown [placeholder]="'Select Convenient Ports'" class="multiselect-dropdown"
+                                            [settings]="dropdownLocationPortSetting" [data]="LocationPortList" [(ngModel)]="selectLocationPort"
+                                            (onSelect)="onLocationPortSelect($event)" (onSelectAll)="onLocationPortSelectAll($event)"
+                                            formControlName="convenientPorts" (onDeSelect)="onLocationPortDeSelect($event)"
+                                            (onDeSelectAll)="onLocationPortDeSelectAll($event)">
+                                        </ng-multiselect-dropdown>
+    
+                                        </div>
+                                      
+                                    </div>
+    
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                        <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
+                                        <button type="submit" class="btn btn-primary me-1" aria-label="" [disabled]="vendorBranchInfo.invalid">Submit</button> 
+                                        <button type="button" class="btn btn-danger me-1" (click)="Closebranchoffice()" aria-label="">Clear</button>
                                     </div>
                                 </form>
+    
+                                </div>
+                               
                             </div>
                         </div>
                     </div>
@@ -349,32 +339,29 @@
                     <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                         <thead class="bg-200">
                             <tr>
-                                <th>Name</th>
-                                <th>Location</th>
+                                <th>Name</th> 
                                 <th>City</th>
                                 <th>Address</th>
                                 <th>Contact Person Name</th>
                                 <th>Email</th>
                                 <th>Contact No.</th>
-                                <th>Address</th>
                                 <th>Convenient Ports</th>
                                 <th>Country</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                            <tr *ngFor="let item of dataBranchOffice">
+                               
+                                <td>{{item.branchName}}</td>
+                                <td>{{item.city}}</td>
+                                <td>{{item.address}}</td>
+                                <td>{{item.contPersonName}}</td>
+                                <td>{{item.email}}</td>
+                                <td>{{item.contactNo}}</td>
+                                <td>{{item.convenientPortNames}}</td>
+                                <td>{{item.country}}</td>
+                                <td><a  class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip" (click)="UpdateBranchoffice(item.vendorBranchId)"
                                         data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
                                             class="fas fa-edit"></i></a></td>
                             </tr>
@@ -731,8 +718,9 @@
         <div class="card-body">
             <div class="row g-3 mb-3">
                 <div class="col-sm">
-                    <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#bank-details"><i
-                            class="fas fa-plus"></i> Add Bank Details</a>
+                    <a class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="" 
+                    (click)="ClearBankInfoModal()">
+                    <i class="fas fa-plus"></i> Add Bank Details</a>
                     <div class="modal fade" id="bank-details" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-xl mt-6" role="document">
                             <div class="modal-content border-0">
@@ -745,12 +733,13 @@
 
                                 </div>
                                 <div class="modal-body mt-0 scrollbar-visible">
+                                    <form (ngSubmit)="onSubmitBankInformation(BankInformationForm)" [formGroup]="BankInformationForm">
                                     <div class="row g-3 mb-3">
                                         <label class="col-sm-2 col-form-label py-0 font-small-3"
                                             for="inputPassword">Company
                                             Name</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="companyName" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
@@ -758,7 +747,7 @@
                                             for="inputPassword">Company
                                             Short Name</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="companyShortName" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
@@ -766,7 +755,7 @@
                                             for="inputPassword">Preferred
                                             Currency</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="preferredCurrency" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
@@ -774,7 +763,7 @@
                                             for="inputPassword">Bank
                                             Name</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="bankName" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
@@ -782,7 +771,7 @@
                                             for="inputPassword">Bank
                                             Address</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="bankAddress" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
@@ -790,7 +779,7 @@
                                             for="inputPassword">Branch
                                             Office</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="branchOffice" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
@@ -798,7 +787,7 @@
                                             for="inputPassword">Beneficiary
                                             Name</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="beneficiaryName" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
@@ -806,7 +795,7 @@
                                             for="inputPassword">Account
                                             Number</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="accountNumber" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
@@ -814,33 +803,39 @@
                                             for="inputPassword">Iban/Swift
                                             Code</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="ibanSwiftCode" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
                                         <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Vat
                                             No.</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="vatNo" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
                                         <label class="col-sm-2 col-form-label py-0 font-small-3"
                                             for="inputPassword">Remarks</label>
                                         <div class="col-sm-10">
-                                            <input type="text" class="form-control form-small">
+                                            <input type="text" formControlName="remarks" class="form-control form-small">
                                         </div>
                                     </div>
                                     <div class="row g-3 mb-3">
 
                                         <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Add
                                             Attachments</label>
-                                        <div class="col-sm-4">
-                                            <input class="form-control" type="file" id="formFile">
+                                        <div class="col-sm-6">
+
+                                            <a class="btn btn-primary form-small" (click)="fileInput.click()"> <i class="fas fa-paperclip"></i>
+                                                Select File</a>
+                                              <input style="display: none" #attachments type="file" (change)="FileSelect($event)" #fileInput
+                                                multiple="true" />&nbsp;&nbsp;{{FileName == null ? " " : FileName}}
+                              
+                                       
                                         </div>
                                         <div class="col-sm">
                                             <div class="form-check mb-0">
-                                                <input class="form-check-input" id="" type="checkbox" value="">
+                                                <input class="form-check-input" formControlName="confirmOnCall" id=""  [checked]="ConfirmOnCallCheck == true" type="checkbox" value="">
                                                 <label class="form-check-label mb-0" for="">Banking Details Confirmed
                                                     Over
                                                     Call</label>
@@ -848,11 +843,13 @@
                                         </div>
                                     </div>
 
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary me-1" aria-label="">Submit</button>
+                                        <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
+                                    </div>
+                                </form>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                    <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-                                </div>
+                               
                             </div>
                         </div>
                     </div>
@@ -876,19 +873,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td>-----</td>
-                                <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                            <tr *ngFor="let items of vendorBankInfoData">
+                                <td>{{items.companyName}}</td>
+                                <td>{{items.companyShortName}}</td>
+                                <td>{{items.preferredCurrency}}</td>
+                                <td>{{items.bankName}}</td>
+                                <td>{{items.bankAddress}}</td>
+                                <td>{{items.branchOffice}}</td>
+                                <td>{{items.beneficiaryName}}</td>
+                                <td>{{items.accountNumber}}</td>
+                                <td>{{items.ibanSwiftCode}}</td>
+                                <td>{{items.vatNo}}</td>
+                                <td>{{items.remarks}}</td>
+                                <td><a (click)="editvendorBankInfo(items.vendorBankInfoId)" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
                                             class="fas fa-edit"></i></a></td>
                             </tr>

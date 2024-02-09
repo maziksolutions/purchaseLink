@@ -6,3 +6,27 @@
 ::ng-deep .cdk-overlay-container {
   z-index: 9999 !important;
 }
+::ng-deep multiselect-item-checkbox
+{
+width: 11px !important;
+height: 11px !important;
+}
+::ng-deep .dropdown-multiselect__caret
+{
+  line-height: 13px !important;
+}
+::ng-deep .ng-multiselect-dropdown span{
+  font-size: 13px !important;
+}
+::ng-deep .dropdown-btn
+{
+  padding: 3px 15px !important;
+  border: 1px solid var(--pms-input-border-color)  !important;
+  background: #fff !important;
+}
+::ng-deep span{
+  font-size: 13px !important;
+}
+::ng-deep .selected-item {
+  max-width:250px !important;
+}

@@ -33,10 +33,18 @@ export class VendorService {
   }
 
   addBranchoffice(formData): Observable<any> {
-    return this.httpClient.post<any>(this.linkurl + 'addVendorMaster', formData)
+    return this.httpClient.post<any>(this.linkurl + 'addbranchoffice', formData)
       .pipe(catchError(this.handleError));
   }
 
+  getBranchoffice(id): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterbranchoffice/${id}`, httpOptions);
+  }
+
+  getBranchofficeId(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getBranchOfficeById/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
   //#endregion
 
   //#region Vendor Business Info
@@ -102,6 +110,23 @@ export class VendorService {
   }
   archiveAccountInfo(id): Observable<any> {
     return this.httpClient.delete<any>(`${this.linkurl}removeAccountInfo/` + id, httpOptions);
+  }
+  //#endregion
+
+  //#region BankInformation
+
+  addBankInformation(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addBankInformation', formData)
+      .pipe(catchError(this.handleError));
+  }
+
+  getBankInformation(id): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterbankInformation/${id}`, httpOptions);
+  }
+
+  getBankInformationId(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getBankInformationById/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
   }
   //#endregion
 
