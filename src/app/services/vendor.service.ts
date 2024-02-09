@@ -79,6 +79,23 @@ export class VendorService {
   }
   //#endregion
 
+  //#region BankInformation
+
+  addBankInformation(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addBankInformation', formData)
+      .pipe(catchError(this.handleError));
+  }
+
+  getBankInformation(id): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterbankInformation/${id}`, httpOptions);
+  }
+
+  getBankInformationId(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getBankInformationById/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  //#endregion
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('An error occurred:', error.error.message);

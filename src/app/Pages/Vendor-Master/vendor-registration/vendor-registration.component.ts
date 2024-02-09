@@ -23,6 +23,7 @@ export class VendorRegistrationComponent implements OnInit {
   VendorMasterForm: FormGroup; flags; pkeys: number = 0;
   vendorBranchInfo: FormGroup; 
   VendorSalesDepartFrom: FormGroup; VendorServiceDepartForm: FormGroup;
+  VendorAccountDeptForm: FormGroup; BankInformationForm: FormGroup;
   searchEngCtrl: FormControl = new FormControl();
   searchEngCtrl2: FormControl = new FormControl();
   LocationList: any;
@@ -56,6 +57,11 @@ export class VendorRegistrationComponent implements OnInit {
   dataBranchOffice: any;
   vendorBranchId: any;
   ConvenientPortsList: { locationId: number, fullName: string }[] = [];
+  vendorBankInfoData: any[];
+  ConfirmOnCallCheck: boolean;
+  BankInfoAttachments: string ="";
+  fileToUpload: File;
+  FileName: string = "";
 
   constructor(private fb: FormBuilder, private sideNavService: SideNavService, private route: Router, private http: HttpClient,
     private purchaseService: PurchaseMasterService, private vendorService: VendorService, private swal: SwalToastService, 
@@ -129,6 +135,24 @@ export class VendorRegistrationComponent implements OnInit {
       vendorId: [0, [Validators.required]],
     })
 
+    this.BankInformationForm = this.fb.group({
+      vendorBankInfoId: [0],
+      companyName: ['', Validators.required],
+      companyShortName: ['', Validators.required],
+      preferredCurrency: ['', Validators.required],
+      bankName: ['', Validators.required],
+      bankAddress: ['', Validators.required],
+      branchOffice: ['', Validators.required],
+      beneficiaryName: ['', Validators.required],
+      accountNumber: ['', Validators.required],
+      ibanSwiftCode: ['', Validators.required],
+      vatNo: ['', Validators.required],
+      remarks: ['', Validators.required],
+      confirmOnCall: ['', Validators.required],
+      attachments:[''],
+      vendorId:[ 0, Validators.required],
+    })
+
     // this.VendorMasterForm.get('vendorInfo')?.valueChanges.subscribe(() => {
     //   this.autoSave('vendorInfo');  
     // })
@@ -195,13 +219,22 @@ export class VendorRegistrationComponent implements OnInit {
         vendorId:[0],
       }),
     
-
+      this.VendorAccountDeptForm = this.fb.group({
+        vendorAccountId: [0],
+        contactPerson: ['', Validators.required],
+        designation: ['', Validators.required],
+        email: ['', Validators.required],
+        contactNo: ['', Validators.required],
+        vendorId: [0, [Validators.required]],
+      })
+  
   
 
       this.FillLocation();
       this.FillLocationTwo();
       this.loadPortList();
       this.loadData();
+      this.loadBankInformation();
   }
 
   private loadScript(scriptUrl: string): void {
@@ -516,6 +549,7 @@ UpdateBranchoffice(id){
 
  
     this.vendorBranchId = id;
+    alert(  this.vendorBranchId)
     $("#branch-office").modal('show');
     this.vendorService.getBranchofficeId(id)
       .subscribe((response) => {
@@ -540,9 +574,6 @@ UpdateBranchoffice(id){
     })       
   }
   
-  // var serviceTypeIds = response.data.serviceTypeId.split(',');
-  // const selectedServices = this.dropdownList.filter(item => serviceTypeIds.includes((item.serviceTypeId).toString()));
-
   response.data.convenientPorts = this.ConvenientPortsList;
 
           this.vendorBranchInfo.controls.country.setValue(response.data.country);
@@ -745,4 +776,136 @@ UpdateBranchoffice(id){
   }
   //#endregion
 
+  onAddAccount(){
+
+  }
+
+  deleteSalesData(id){
+
+  }
+
+  //#region Bank Information
+
+
+ClearBankInfoModal(){
+  this.BankInformationForm.reset();
+  this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
+  this.BankInformationForm.controls.companyName.setValue('');
+  this.BankInformationForm.controls.companyShortName.setValue('');
+  this.BankInformationForm.controls.preferredCurrency.setValue('');
+  this.BankInformationForm.controls.bankName.setValue('');
+  this.BankInformationForm.controls.bankAddress.setValue('');
+  this.BankInformationForm.controls.branchOffice.setValue('');
+  this.BankInformationForm.controls.beneficiaryName.setValue('');
+  this.BankInformationForm.controls.accountNumber.setValue('');
+  this.BankInformationForm.controls.ibanSwiftCode.setValue('');
+  this.BankInformationForm.controls.vatNo.setValue('');
+  this.BankInformationForm.controls.remarks.setValue('');
+  this.BankInformationForm.controls.confirmOnCall.setValue('');
+  this.BankInformationForm.controls.attachments.setValue('');
+  this.BankInformationForm.controls.vendorId.setValue(this.vendorInfoId);
+  this.FileName=""
+  $("#bank-details").modal('show');
+
+}
+
+  onSubmitBankInformation(form: any){
+debugger
+const files = document.getElementById('formFile') as HTMLInputElement;
+
+     if (files !== null) { 
+         const file = files.files;
+         if (file) {         
+          const fileName = file[0].name;
+          form.value.attachments = fileName;
+         } 
+     }
+     form.value.vendorId = 1;
+     const fmdata = new FormData();
+     fmdata.append('data', JSON.stringify(form.value));
+ 
+     this.vendorService.addBankInformation(fmdata)
+       .subscribe(data => {
+ 
+         if (data.message == "data added") {
+           this.swal.success('Added successfully.');
+           this.ClearBankInfoModal();
+          this.loadBankInformation();
+         }
+         else if (data.message == "updated") {
+           this.swal.success('Data has been updated successfully.');
+           this.ClearBankInfoModal();
+           this.loadBankInformation();
+         }
+         else if (data.message == "duplicate") {
+           this.swal.info('Data already exist. Please enter new data');
+           this.ClearBankInfoModal();
+           this.loadBankInformation();
+         }
+         else if (data.message == "not found") {
+           this.swal.info('Data exist not exist');
+           this.ClearBankInfoModal();
+           this.loadBankInformation();
+         }
+         else {
+ 
+         }
+ 
+       });
+
+  }
+
+  loadBankInformation() {
+    
+    this.vendorService.getBankInformation(1).subscribe(res => {
+      if (res.status == true) {
+        debugger
+        // this.zone.run(() => {
+          debugger
+          this.vendorBankInfoData = []
+          this.vendorBankInfoData = res.data;
+        // })
+      }
+    });
+  }
+
+  editvendorBankInfo(id){
+    $("#bank-details").modal('show');
+    this.vendorService.getBankInformationId(id).subscribe(res => {
+      if (res.status == true) {
+        debugger
+        if(res.data.confirmOnCall == true){
+          this.ConfirmOnCallCheck = true;
+          
+        }
+        this.FileName = res.data.attachments  
+        this.BankInformationForm.patchValue(res.data)
+      
+       
+      }
+    })
+  }
+
+  onImageFileSelect(event){
+debugger
+const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+        this.BankInfoAttachments = fileInput.files[0].name;
+    } else {
+        this.BankInfoAttachments = '';
+    }
+  }
+
+  FileSelect(event) {  
+
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.fileToUpload = file;   
+      this.FileName = file.name; 
+      
+    } else {
+      this.FileName = "Choose file";
+    }
+  }
+  //#endregion
 }
