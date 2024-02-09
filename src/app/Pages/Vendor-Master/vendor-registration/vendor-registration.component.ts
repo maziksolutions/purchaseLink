@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { SideNavService } from 'src/app/services/sidenavi-service';
@@ -7,9 +7,11 @@ import { environment } from 'src/environments/environment';
 import { debounceTime, tap, switchMap, finalize } from 'rxjs/operators';
 import { VendorService } from 'src/app/services/vendor.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
-declare let Swal, $: any;
+import { MatTableDataSource } from '@angular/material/table';
 import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
 import { RequisitionService } from 'src/app/services/requisition.service';
+
+declare let Swal, $: any;
 
 
 @Component({
@@ -20,7 +22,7 @@ import { RequisitionService } from 'src/app/services/requisition.service';
 export class VendorRegistrationComponent implements OnInit {
   VendorMasterForm: FormGroup; flags; pkeys: number = 0;
   vendorBranchInfo: FormGroup; 
-  VendorSalesDepartFrom:FormGroup; flag; pkey: number = 0;
+  VendorSalesDepartFrom: FormGroup; VendorServiceDepartForm: FormGroup;
   searchEngCtrl: FormControl = new FormControl();
   searchEngCtrl2: FormControl = new FormControl();
   LocationList: any;
@@ -29,7 +31,13 @@ export class VendorRegistrationComponent implements OnInit {
   twoisLoading: boolean;
   vendorInfoId: any;
   deletetooltip: string;
+  vendorSalesData: any
+  modalTarget: string = '';
+  modal: string = '';
 
+  vendorServiceData: any
+  serviceModalTarget: string = ''
+  serviceModal: string = '';
 
   dropdownCategorySetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
   categoryDropdownList: { serviceCategoryId: number, serviceCategory: string }[] = [];
@@ -51,7 +59,7 @@ export class VendorRegistrationComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private sideNavService: SideNavService, private route: Router, private http: HttpClient,
     private purchaseService: PurchaseMasterService, private vendorService: VendorService, private swal: SwalToastService, 
-    private requisitionService: RequisitionService,) {
+    private requisitionService: RequisitionService,private zone : NgZone) {
     this.route.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.sideNavService.initSidenav();
@@ -108,7 +116,16 @@ export class VendorRegistrationComponent implements OnInit {
       contactPerson: ['', Validators.required],
       designation: ['', Validators.required],
       email: ['', Validators.required],
-      contactNo: ['', Validators.required],      
+      contactNo: ['', Validators.required],
+      vendorId: [0, [Validators.required]],
+    })
+
+    this.VendorServiceDepartForm = this.fb.group({
+      vendorServiceId: [0],
+      contactPerson: ['', Validators.required],
+      designation: ['', Validators.required],
+      email: ['', Validators.required],
+      contactNo: ['', Validators.required],
       vendorId: [0, [Validators.required]],
     })
 
@@ -328,10 +345,10 @@ debugger
         const serviceTypeIds = this.selectedItems.join(',')
         const formValue = formPart.value;
         formValue.serviceCategory = categoryIds
-        formValue.serviceType = serviceTypeIds        
-      }    
+        formValue.serviceType = serviceTypeIds
+      }
 
-      console.log('form Value :- ', formPart?.value)     
+      console.log('form Value :- ', formPart?.value)
 
       // formPart?.patchValue({
       //   serviceCategory: categoryIds,
@@ -361,8 +378,7 @@ debugger
 
           }
         })
-      }
-      console.log(formPart?.value)
+      }      
     }
 
     if(partName == 'vendorInfo'){
@@ -588,7 +604,145 @@ UpdateBranchoffice(id){
   //#endregion
 
   //#region Vendor Sales Department
-  onAddSales(){
-
+  onAddSales() {
+    debugger
+    this.VendorSalesDepartFrom.patchValue({ vendorId: 1 })
+    const formValues = this.VendorSalesDepartFrom.value;
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(formValues));
+    if (this.VendorSalesDepartFrom != null && this.VendorSalesDepartFrom.valid) {
+      this.vendorService.addSalesInfo(formData).subscribe(data => {
+        debugger
+        if (data.message == "data added") {
+          this.swal.success('Added successfully.');
+          this.loadVendorSalesData();
+        }
+        else if (data.message == "updated") {
+          this.swal.success('Data has been updated successfully.');
+          this.loadVendorSalesData();
+        }
+        else if (data.message == "duplicate") {
+          this.swal.info('Data already exist. Please enter new data');
+        }
+        else if (data.message == "not found") {
+          this.swal.info('Data exist not exist');
+        }
+        $("#sales-contact").modal('hide');
+      })
+    }
   }
+
+  loadVendorSalesData() {
+    this.vendorService.getSalesInfoByVendorId(1).subscribe(res => {
+      if (res.status == true) {
+        debugger
+        this.zone.run(() => {
+          this.vendorSalesData = []
+          this.vendorSalesData = res.data;
+        })
+      }
+    });
+  }
+
+  editSalesData(id) {
+    debugger
+    this.vendorService.getSalesInfoById(id).subscribe(res => {
+      if (res.status == true) {
+        debugger
+        const data = res.data;
+        this.VendorSalesDepartFrom.reset()
+        this.VendorSalesDepartFrom.patchValue({
+          vendorSalesId: data.vendorSalesId,
+          contactPerson: data.contactPerson,
+          designation: data.designation,
+          email: data.email,
+          contactNo: data.contactNo,
+        })
+        $("#sales-contact").modal('show');
+      }
+    })
+  }
+  //#endregion
+
+  //#region Vendor Service Department
+  onAddService() {
+    debugger
+    this.VendorServiceDepartForm.patchValue({ vendorId: 1 })
+    const formValues = this.VendorServiceDepartForm.value;
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(formValues));
+    if (this.VendorServiceDepartForm != null && this.VendorServiceDepartForm.valid) {
+      this.vendorService.addServiceInfo(formData).subscribe(data => {
+        debugger
+        if (data.message == "data added") {
+          this.swal.success('Added successfully.');
+          this.loadVendorServiceData();
+        }
+        else if (data.message == "updated") {
+          this.swal.success('Data has been updated successfully.');
+          this.loadVendorServiceData();
+        }
+        else if (data.message == "duplicate") {
+          this.swal.info('Data already exist. Please enter new data');
+        }
+        else if (data.message == "not found") {
+          this.swal.info('Data exist not exist');
+        }
+        $("#service-contact").modal('hide');
+      })
+    }
+  }
+
+  loadVendorServiceData() {
+    debugger
+    this.vendorService.getServiceInfoByVendorId(1).subscribe(res => {
+      if (res.status == true) {
+        debugger
+        this.zone.run(() => {
+          debugger
+          this.vendorServiceData = []
+          this.vendorServiceData = res.data;
+        })
+      }
+    });
+  }
+
+  editServiceData(id) {
+    debugger    
+    this.vendorService.getServiceInfoById(id).subscribe(res => {
+      if (res.status == true) {
+        debugger
+        const data = res.data;
+        this.VendorServiceDepartForm.reset()
+        this.VendorServiceDepartForm.patchValue({
+          vendorServiceId: data.vendorServiceId,
+          contactPerson: data.contactPerson,
+          designation: data.designation,
+          email: data.email,
+          contactNo: data.contactNo,
+        })
+        $("#service-contact").modal('show');
+      }
+    })
+  }
+  deleteServiceData(id){
+    debugger    
+    this.vendorService.getServiceInfoById(id).subscribe(res => {
+      if (res.status == true) {
+        debugger
+        const data = res.data;
+        this.VendorServiceDepartForm.reset()
+        this.VendorServiceDepartForm.patchValue({
+          vendorServiceId: data.vendorServiceId,
+          contactPerson: data.contactPerson,
+          designation: data.designation,
+          email: data.email,
+          contactNo: data.contactNo,
+        })
+        $("#service-contact").modal('show');
+      }
+    })
+  }
+  //#endregion
+
 }
