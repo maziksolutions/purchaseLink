@@ -218,7 +218,7 @@
                 <div class="modal fade" id="branch-office" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-xl mt-6" role="document">
                         <div class="modal-content border-0">
-                            <form (ngSubmit)="onSubmitbranchoffice(vendorBranchInfo)" [formGroup]="vendorBranchInfo">
+                           
                             <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
                                 <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
                                     data-bs-dismiss="modal" aria-label="Close"></button>
@@ -227,7 +227,8 @@
                                 <h5 class="modal-title" id="">Add Branch Office</h5>
 
                             </div>
-                            <div class="modal-body mt-0 scrollbar-visible">
+                            <div class="modal-body mt-0">
+                                <form (ngSubmit)="onSubmitbranchoffice(vendorBranchInfo)" [formGroup]="vendorBranchInfo">
                                 <div class="row g-3 mb-3">
                                     <label class="col-sm-2 col-form-label py-0 font-small-3"
                                       for="inputPassword">Branch Name</label>
@@ -296,17 +297,27 @@
                                     <label class="col-sm-2 col-form-label py-0 font-small-3"
                                         for="inputPassword">Convenient Ports</label>
                                     <div class="col-sm-4">
-                                        <input type="text" formControlName="convenientPorts" placeholder="Convenient Ports" class="form-control form-small">
+                                        <!-- <input type="text" formControlName="convenientPorts" placeholder="Convenient Ports" class="form-control form-small"> -->
+
+                                        <ng-multiselect-dropdown [placeholder]="'Select Convenient Ports'" class="multiselect-dropdown"
+                                        [settings]="dropdownLocationPortSetting" [data]="LocationPortList" [(ngModel)]="selectLocationPort"
+                                        (onSelect)="onLocationPortSelect($event)" (onSelectAll)="onLocationPortSelectAll($event)"
+                                        formControlName="convenientPorts" (onDeSelect)="onLocationPortDeSelect($event)"
+                                        (onDeSelectAll)="onLocationPortDeSelectAll($event)">
+                                    </ng-multiselect-dropdown>
+
                                     </div>
                                   
                                 </div>
 
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary me-1" aria-label="" [disabled]="vendorBranchInfo.invalid">Submit</button> 
+                                    <button type="button" class="btn btn-danger me-1" (click)="Closebranchoffice()" aria-label="">Clear</button>
+                                </div>
+                            </form>
+
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary me-1" aria-label="">Submit</button> <button
-                                    type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
-                            </div>
-                        </form>
+                           
                         </div>
                     </div>
                 </div>
@@ -315,32 +326,29 @@
                 <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                     <thead class="bg-200">
                         <tr>
-                            <th>Name</th>
-                            <th>Location</th>
+                            <th>Name</th> 
                             <th>City</th>
                             <th>Address</th>
                             <th>Contact Person Name</th>
                             <th>Email</th>
                             <th>Contact No.</th>
-                            <th>Address</th>
                             <th>Convenient Ports</th>
                             <th>Country</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>-----</td>
-                            <td>-----</td>
-                            <td>-----</td>
-                            <td>-----</td>
-                            <td>-----</td>
-                            <td>-----</td>
-                            <td>-----</td>
-                            <td>-----</td>
-                            <td>-----</td>
-                            <td>-----</td>
-                            <td><a href="#" class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                        <tr *ngFor="let item of dataBranchOffice">
+                           
+                            <td>{{item.branchName}}</td>
+                            <td>{{item.city}}</td>
+                            <td>{{item.address}}</td>
+                            <td>{{item.contPersonName}}</td>
+                            <td>{{item.email}}</td>
+                            <td>{{item.contactNo}}</td>
+                            <td>{{item.convenientPortNames}}</td>
+                            <td>{{item.country}}</td>
+                            <td><a  class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip" (click)="UpdateBranchoffice(item.vendorBranchId)"
                                     data-bs-placement="top" title="" data-bs-original-title="Edit" aria-label=""><i
                                         class="fas fa-edit"></i></a></td>
                         </tr>

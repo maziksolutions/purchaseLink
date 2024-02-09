@@ -9,6 +9,7 @@ import { VendorService } from 'src/app/services/vendor.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 declare let Swal, $: any;
 import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
+import { RequisitionService } from 'src/app/services/requisition.service';
 
 
 @Component({
@@ -27,6 +28,8 @@ export class VendorRegistrationComponent implements OnInit {
   LocationListTwo: any;
   twoisLoading: boolean;
   vendorInfoId: any;
+  deletetooltip: string;
+
 
   dropdownCategorySetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
   categoryDropdownList: { serviceCategoryId: number, serviceCategory: string }[] = [];
@@ -38,8 +41,17 @@ export class VendorRegistrationComponent implements OnInit {
   selectedItems: string[] = [];
   serviceTypes: any;
 
+  dropdownLocationPortSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
+  LocationPortList: any;
+  selectedLocationPort: string[] = [];
+  selectLocationPort: string[] = [];
+  dataBranchOffice: any;
+  vendorBranchId: any;
+  ConvenientPortsList: { locationId: number, fullName: string }[] = [];
+
   constructor(private fb: FormBuilder, private sideNavService: SideNavService, private route: Router, private http: HttpClient,
-    private purchaseService: PurchaseMasterService, private vendorService: VendorService, private swal: SwalToastService,) {
+    private purchaseService: PurchaseMasterService, private vendorService: VendorService, private swal: SwalToastService, 
+    private requisitionService: RequisitionService,) {
     this.route.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.sideNavService.initSidenav();
@@ -73,6 +85,16 @@ export class VendorRegistrationComponent implements OnInit {
       singleSelection: false,
       idField: 'serviceCategoryId',
       textField: 'serviceCategory',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true
+    };
+
+    this.dropdownLocationPortSetting = {
+      singleSelection: false,
+      idField: 'locationId',
+      textField: 'fullName',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       itemsShowLimit: 1,
@@ -147,20 +169,22 @@ export class VendorRegistrationComponent implements OnInit {
         vendorBranchId: [0],
         branchName: ['', [Validators.required]],
         city: ['', [Validators.required]],
+        country: ['', [Validators.required]],
         address: ['', [Validators.required]],
         contPersonName: ['', [Validators.required]],
         email: ['', [Validators.required]],
         contactNo: ['', [Validators.required]],
-        convenientPorts: ['', [Validators.required]],
-        country: ['', [Validators.required]],
-        vendorId:[0, [Validators.required]],
+        convenientPorts: ['', [Validators.required]],     
+        vendorId:[0],
       }),
     
 
   
 
       this.FillLocation();
- this.FillLocationTwo();
+      this.FillLocationTwo();
+      this.loadPortList();
+      this.loadData();
   }
 
   private loadScript(scriptUrl: string): void {
@@ -170,6 +194,7 @@ export class VendorRegistrationComponent implements OnInit {
     script.async = true;
     document.body.appendChild(script);
   }
+
 
   FillLocation() {  
     this.searchEngCtrl.valueChanges
@@ -197,6 +222,46 @@ export class VendorRegistrationComponent implements OnInit {
 
         }
       });
+  }
+
+  loadPortList() {
+    this.requisitionService.GetPortList(0)
+      .subscribe(response => {
+debugger
+        this.LocationPortList= response.data.map(item => ({
+          locationId: item.locationId,
+          fullName: `${item.locationName} ${item.countryMaster.countryName}`,
+
+        }));
+
+     
+      });
+  }
+
+  onLocationPortSelect(event: any) {
+    debugger
+    let isSelect = event.locationId;
+    if (isSelect) {
+      this.selectedLocationPort.push(event.locationId);
+
+    }
+  }
+
+  onLocationPortSelectAll(event: any) {
+    if (event)
+      this.selectedLocationPort = event.map((x: { locationId: any; }) => x.locationId);
+  }
+
+  onLocationPortDeSelect(event: any) {
+
+    let rindex = this.selectLocationPort.findIndex(locationId => locationId == event.locationId);
+    if (rindex !== -1) {
+      this.selectedLocationPort.splice(rindex, 1)
+    }
+  }
+  onLocationPortDeSelectAll(event: any) {
+
+    this.selectedLocationPort.length = 0;
   }
 
   FillLocationTwo() {       
@@ -350,13 +415,42 @@ export class VendorRegistrationComponent implements OnInit {
 
   openbranchoffice(id){
     alert(id)
-  
+    this.vendorBranchInfo.reset();
+    this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
+    this.vendorBranchInfo.controls.branchName.setValue('');
+    this.vendorBranchInfo.controls.city.setValue('');
+    this.vendorBranchInfo.controls.address.setValue('');
+    this.vendorBranchInfo.controls.contPersonName.setValue('');
+    this.vendorBranchInfo.controls.email.setValue('');
+    this.vendorBranchInfo.controls.contactNo.setValue('');
+    this.vendorBranchInfo.controls.convenientPorts.setValue('');
+    this.vendorBranchInfo.controls.country.setValue('');
+    this.vendorBranchInfo.controls.vendorId.setValue(id);
+
     $("#branch-office").modal('show');
+  }
+
+  Closebranchoffice(){
+    this.vendorBranchInfo.reset();
+    this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
+    this.vendorBranchInfo.controls.branchName.setValue('');
+    this.vendorBranchInfo.controls.city.setValue('');
+    this.vendorBranchInfo.controls.address.setValue('');
+    this.vendorBranchInfo.controls.contPersonName.setValue('');
+    this.vendorBranchInfo.controls.email.setValue('');
+    this.vendorBranchInfo.controls.contactNo.setValue('');
+    this.vendorBranchInfo.controls.convenientPorts.setValue('');
+    this.vendorBranchInfo.controls.country.setValue('');
+    this.vendorBranchInfo.controls.vendorId.setValue(this.vendorInfoId);
+
+    $("#branch-office").modal('hide');
   }
 
   onSubmitbranchoffice(form: any)
   {
-    
+    debugger
+    form.value.vendorId = 1;
+    form.value.convenientPorts = this.selectedLocationPort.join(',')
   const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
 
@@ -365,25 +459,85 @@ export class VendorRegistrationComponent implements OnInit {
 
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
-      
+         this.Closebranchoffice();
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
-         
+          this.Closebranchoffice();
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
-
+          this.Closebranchoffice();
         }
         else if (data.message == "not found") {
           this.swal.info('Data exist not exist');
-           
+          this.Closebranchoffice();
         }
         else {
 
         }
 
       });
+}
+
+
+loadData() {
+ let id= 1;
+ alert(id)
+  this.vendorService.getBranchoffice(id)
+    .subscribe(response => {
+
+      debugger
+      this.dataBranchOffice = response.data;
+
+      // this.dataSource.sort = this.sort;
+      // this.dataSource.paginator = this.paginator;
+
+    });
+}
+
+UpdateBranchoffice(id){
+
+ 
+    this.vendorBranchId = id;
+    $("#branch-office").modal('show');
+    this.vendorService.getBranchofficeId(id)
+      .subscribe((response) => {
+        
+        if (response.status) {
+  debugger
+
+  
+  this.ConvenientPortsList = [];
+  if (response.data.convenientPorts != '' && response.data.convenientPorts != null) {
+    
+    const objProcR = response.data.convenientPorts.split(',');
+
+    this.ConvenientPortsList = objProcR.map(item => {
+      return this.LocationPortList.find(x => x.locationId == item);
+    });
+    const merge4 = this.ConvenientPortsList.flat(1);
+    this.ConvenientPortsList = merge4;  
+    this.selectedLocationPort.length=0; 
+    this.ConvenientPortsList.map(item=>{
+      this.selectedLocationPort.push(item.locationId.toString());
+    })       
+  }
+  
+  // var serviceTypeIds = response.data.serviceTypeId.split(',');
+  // const selectedServices = this.dropdownList.filter(item => serviceTypeIds.includes((item.serviceTypeId).toString()));
+
+  response.data.convenientPorts = this.ConvenientPortsList;
+
+          this.vendorBranchInfo.controls.country.setValue(response.data.country);
+          this.vendorBranchInfo.patchValue(response.data);
+        
+        }
+      },
+        (error) => {
+  
+        });
+  
 }
 
   //#region Service Category Dropdown 

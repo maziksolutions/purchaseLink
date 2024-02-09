@@ -28,10 +28,18 @@ export class VendorService {
   }
 
   addBranchoffice(formData): Observable<any> {
-    return this.httpClient.post<any>(this.linkurl + 'addVendorMaster', formData)
+    return this.httpClient.post<any>(this.linkurl + 'addbranchoffice', formData)
       .pipe(catchError(this.handleError));
   }
 
+  getBranchoffice(id): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterbranchoffice/${id}`, httpOptions);
+  }
+
+  getBranchofficeId(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getBranchOfficeById/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
   //#endregion
 
   //#region Vendor Business Info

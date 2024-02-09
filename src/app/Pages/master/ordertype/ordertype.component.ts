@@ -156,7 +156,7 @@ export class OrdertypeComponent implements OnInit {
       });
   }
   onSubmit(form: any) {
-    debugger
+    
     form.value.serviceTypeId = this.selectedItems.join(',');
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
