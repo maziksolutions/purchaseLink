@@ -59,7 +59,6 @@ export class VendorRegistrationComponent implements OnInit {
   ConvenientPortsList: { locationId: number, fullName: string }[] = [];
   vendorBankInfoData: any[];
   ConfirmOnCallCheck: boolean;
-  BankInfoAttachments: string ="";
   fileToUpload: File;
   FileName: string = "";
 
@@ -884,16 +883,6 @@ const files = document.getElementById('formFile') as HTMLInputElement;
        
       }
     })
-  }
-
-  onImageFileSelect(event){
-debugger
-const fileInput = event.target as HTMLInputElement;
-    if (fileInput.files && fileInput.files[0]) {
-        this.BankInfoAttachments = fileInput.files[0].name;
-    } else {
-        this.BankInfoAttachments = '';
-    }
   }
 
   FileSelect(event) {  
