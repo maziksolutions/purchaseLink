@@ -755,15 +755,117 @@
 
                                 </div>
                                 <div class="modal-body mt-0 scrollbar-visible">
-                                    <form (ngSubmit)="onSubmitBankInformation(BankInformationForm)"
-                                        [formGroup]="BankInformationForm">
-                                        <div class="row g-3 mb-3">
-                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Company
-                                                Name</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" formControlName="companyName"
-                                                    class="form-control form-small">
+                                    <form (ngSubmit)="onSubmitBankInformation(BankInformationForm)" [formGroup]="BankInformationForm">
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Company
+                                            Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="companyName" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Company
+                                            Short Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="companyShortName" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Preferred
+                                            Currency</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="preferredCurrency" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Bank
+                                            Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="bankName" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Bank
+                                            Address</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="bankAddress" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Branch
+                                            Office</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control form-small form-select" 
+                                            formControlName="vendorBranchId" required>
+                                            <option value="" disabled>Select Branch Office</option>
+                                            <option *ngFor="let item of dataBranchOffice" value="{{item.vendorBranchId}}">{{item.branchName}}</option> 
+                                        </select>
+
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Beneficiary
+                                            Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="beneficiaryName" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Account
+                                            Number</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="accountNumber" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Iban/Swift
+                                            Code</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="ibanSwiftCode" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Vat
+                                            No.</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="vatNo" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">Remarks</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="remarks" class="form-control form-small">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+
+                                        <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Add
+                                            Attachments</label>
+                                        <div class="col-sm-6">
+
+                                            <a class="btn btn-primary form-small" (click)="fileInput.click()"> <i class="fas fa-paperclip"></i>
+                                                Select File</a>
+                                              <input style="display: none" #attachments type="file" (change)="FileSelect($event)" #fileInput
+                                                multiple="true" />&nbsp;&nbsp;{{FileName == null ? " " : FileName}}
+                              
+                                       
+                                        </div>
+                                        <div class="col-sm">
+                                            <div class="form-check mb-0">
+                                                <input class="form-check-input" formControlName="confirmOnCall" id=""  [checked]="ConfirmOnCallCheck == true" type="checkbox" value="">
+                                                <label class="form-check-label mb-0" for="">Banking Details Confirmed
+                                                    Over
+                                                    Call</label>
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
@@ -922,7 +1024,7 @@
                                 <td>{{items.preferredCurrency}}</td>
                                 <td>{{items.bankName}}</td>
                                 <td>{{items.bankAddress}}</td>
-                                <td>{{items.branchOffice}}</td>
+                                <td>{{items.branchOffice.branchName}}</td>
                                 <td>{{items.beneficiaryName}}</td>
                                 <td>{{items.accountNumber}}</td>
                                 <td>{{items.ibanSwiftCode}}</td>

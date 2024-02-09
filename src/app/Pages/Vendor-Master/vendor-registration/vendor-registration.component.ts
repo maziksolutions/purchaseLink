@@ -164,15 +164,15 @@ export class VendorRegistrationComponent implements OnInit {
       preferredCurrency: ['', Validators.required],
       bankName: ['', Validators.required],
       bankAddress: ['', Validators.required],
-      branchOffice: ['', Validators.required],
+      vendorBranchId: ['', Validators.required],
       beneficiaryName: ['', Validators.required],
       accountNumber: ['', Validators.required],
       ibanSwiftCode: ['', Validators.required],
       vatNo: ['', Validators.required],
       remarks: ['', Validators.required],
-      confirmOnCall: ['', Validators.required],
-      attachments: [''],
-      vendorId: [0, Validators.required],
+      confirmOnCall: [''],
+      attachments:[''],
+      vendorId:[ 0, Validators.required],
     })
 
     // this.VendorMasterForm.get('vendorInfo')?.valueChanges.subscribe(() => {
@@ -1006,27 +1006,20 @@ export class VendorRegistrationComponent implements OnInit {
 
   }
 
-  onSubmitBankInformation(form: any) {
-    debugger
-    const files = document.getElementById('formFile') as HTMLInputElement;
+  onSubmitBankInformation(form: any){
+debugger
 
-    if (files !== null) {
-      const file = files.files;
-      if (file) {
-        const fileName = file[0].name;
-        form.value.attachments = fileName;
-      }
-    }
-    form.value.vendorId = 1;
-    const fmdata = new FormData();
-    fmdata.append('data', JSON.stringify(form.value));
-
-    this.vendorService.addBankInformation(fmdata)
-      .subscribe(data => {
-
-        if (data.message == "data added") {
-          this.swal.success('Added successfully.');
-          this.ClearBankInfoModal();
+     form.value.attachments = this.FileName;
+     form.value.vendorId = 1;
+     const fmdata = new FormData();
+     fmdata.append('data', JSON.stringify(form.value));
+ 
+     this.vendorService.addBankInformation(fmdata)
+       .subscribe(data => {
+ 
+         if (data.message == "data added") {
+           this.swal.success('Added successfully.');
+           this.ClearBankInfoModal();
           this.loadBankInformation();
         }
         else if (data.message == "updated") {
