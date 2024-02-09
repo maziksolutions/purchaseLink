@@ -50,7 +50,7 @@ export class VendorRegistrationComponent implements OnInit {
   selectedItems: string[] = [];
   serviceTypes: any;
 
-  
+
   vendorAccountData: any
 
   vendorId: any
@@ -66,11 +66,11 @@ export class VendorRegistrationComponent implements OnInit {
   ConfirmOnCallCheck: boolean;
   fileToUpload: File;
   FileName: string = "";
-  
+
 
   constructor(private fb: FormBuilder, private sideNavService: SideNavService, private route: Router, private http: HttpClient,
-    private purchaseService: PurchaseMasterService, private vendorService: VendorService, private swal: SwalToastService, private roote: ActivatedRoute, 
-    private requisitionService: RequisitionService,private zone : NgZone) {
+    private purchaseService: PurchaseMasterService, private vendorService: VendorService, private swal: SwalToastService, private roote: ActivatedRoute,
+    private requisitionService: RequisitionService, private zone: NgZone) {
     this.route.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.sideNavService.initSidenav();
@@ -171,8 +171,8 @@ export class VendorRegistrationComponent implements OnInit {
       vatNo: ['', Validators.required],
       remarks: ['', Validators.required],
       confirmOnCall: ['', Validators.required],
-      attachments:[''],
-      vendorId:[ 0, Validators.required],
+      attachments: [''],
+      vendorId: [0, Validators.required],
     })
 
     // this.VendorMasterForm.get('vendorInfo')?.valueChanges.subscribe(() => {
@@ -232,18 +232,18 @@ export class VendorRegistrationComponent implements OnInit {
     })
 
     this.vendorBranchInfo = this.fb.group({
-        vendorBranchId: [0],
-        branchName: ['', [Validators.required]],
-        city: ['', [Validators.required]],
-        country: ['', [Validators.required]],
-        address: ['', [Validators.required]],
-        contPersonName: ['', [Validators.required]],
-        email: ['', [Validators.required]],
-        contactNo: ['', [Validators.required]],
-        convenientPorts: ['', [Validators.required]],     
-        vendorId:[0],
-      }),
-    
+      vendorBranchId: [0],
+      branchName: ['', [Validators.required]],
+      city: ['', [Validators.required]],
+      country: ['', [Validators.required]],
+      address: ['', [Validators.required]],
+      contPersonName: ['', [Validators.required]],
+      email: ['', [Validators.required]],
+      contactNo: ['', [Validators.required]],
+      convenientPorts: ['', [Validators.required]],
+      vendorId: [0],
+    }),
+
       this.VendorAccountDeptForm = this.fb.group({
         vendorAccountId: [0],
         contactPerson: ['', Validators.required],
@@ -252,14 +252,14 @@ export class VendorRegistrationComponent implements OnInit {
         contactNo: ['', Validators.required],
         vendorId: [0, [Validators.required]],
       })
-  
-  
 
-      this.FillLocation();
-      this.FillLocationTwo();
-      this.loadPortList();
-      // this.loadData();
-      // this.loadBankInformation();
+
+
+    this.FillLocation();
+    this.FillLocationTwo();
+    this.loadPortList();
+    // this.loadData();
+    // this.loadBankInformation();
   }
 
   private loadScript(scriptUrl: string): void {
@@ -302,14 +302,11 @@ export class VendorRegistrationComponent implements OnInit {
   loadPortList() {
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
-debugger
-        this.LocationPortList= response.data.map(item => ({
+        debugger
+        this.LocationPortList = response.data.map(item => ({
           locationId: item.locationId,
           fullName: `${item.locationName} ${item.countryMaster.countryName}`,
-
         }));
-
-     
       });
   }
 
@@ -318,7 +315,6 @@ debugger
     let isSelect = event.locationId;
     if (isSelect) {
       this.selectedLocationPort.push(event.locationId);
-
     }
   }
 
@@ -391,7 +387,7 @@ debugger
     this.vendorBranchInfo.controls.country.setValue(City.countryMaster?.countryName);
   }
 
-
+  //#region  Save Vendor Master Form
   autoSave(partName: string): void {
     if (partName == 'vendorBusinessInfo') {
       debugger
@@ -459,7 +455,7 @@ debugger
 
         this.vendorService.addvendorInfo(formData)
           .subscribe(data => {
-            this.vendorInfoId = data.data
+            this.vendorId = data.data
             if (data.message == "data added") {
               this.swal.success('Added successfully.');
 
@@ -484,25 +480,16 @@ debugger
       }
     }
   }
+  //#endregion
 
-  openbranchoffice(id){
-    alert(id)
-    this.vendorBranchInfo.reset();
-    this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
-    this.vendorBranchInfo.controls.branchName.setValue('');
-    this.vendorBranchInfo.controls.city.setValue('');
-    this.vendorBranchInfo.controls.address.setValue('');
-    this.vendorBranchInfo.controls.contPersonName.setValue('');
-    this.vendorBranchInfo.controls.email.setValue('');
-    this.vendorBranchInfo.controls.contactNo.setValue('');
-    this.vendorBranchInfo.controls.convenientPorts.setValue('');
-    this.vendorBranchInfo.controls.country.setValue('');
-    this.vendorBranchInfo.controls.vendorId.setValue(id);
+  openbranchoffice(id) {
+
+
 
     $("#branch-office").modal('show');
   }
 
-  Closebranchoffice(){
+  Closebranchoffice() {
     this.vendorBranchInfo.reset();
     this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
     this.vendorBranchInfo.controls.branchName.setValue('');
@@ -518,95 +505,86 @@ debugger
     $("#branch-office").modal('hide');
   }
 
-  onSubmitbranchoffice(form: any)
-  {
+  onSubmitbranchoffice(form: any) {
     debugger
-    form.value.vendorId = 1;
+    form.value.vendorId = this.vendorId
     form.value.convenientPorts = this.selectedLocationPort.join(',')
-  const fmdata = new FormData();
+    const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
 
     this.vendorService.addBranchoffice(fmdata)
       .subscribe(data => {
-
+        debugger
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
-         this.Closebranchoffice();
+          this.vendorBranchInfo.reset();
+          this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
+          this.loadVendorBranchData()
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
-          this.Closebranchoffice();
+          this.vendorBranchInfo.reset();
+          this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
+          this.loadVendorBranchData()
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
-          this.Closebranchoffice();
         }
         else if (data.message == "not found") {
           this.swal.info('Data exist not exist');
-          this.Closebranchoffice();
         }
         $("#branch-office").modal('hide');
-
       });
-}
+  }
 
 
-loadData() {
- let id= 1;
- alert(id)
-  this.vendorService.getBranchoffice(id)
-    .subscribe(response => {
+  loadVendorBranchData() {
+    this.vendorService.getAccountInfoByVendorId(this.vendorId)
+      .subscribe(response => {
+        debugger
+        this.dataBranchOffice = []
+        this.dataBranchOffice = response.data;
+      });
+  }
 
-      debugger
-      this.dataBranchOffice = response.data;
-
-      // this.dataSource.sort = this.sort;
-      // this.dataSource.paginator = this.paginator;
-
-    });
-}
-
-UpdateBranchoffice(id){
-
- 
+  UpdateBranchoffice(id) {
     this.vendorBranchId = id;
-    alert(  this.vendorBranchId)
     $("#branch-office").modal('show');
     this.vendorService.getBranchofficeId(id)
       .subscribe((response) => {
-        
+
         if (response.status) {
-  debugger
+          debugger
 
-  
-  this.ConvenientPortsList = [];
-  if (response.data.convenientPorts != '' && response.data.convenientPorts != null) {
-    
-    const objProcR = response.data.convenientPorts.split(',');
 
-    this.ConvenientPortsList = objProcR.map(item => {
-      return this.LocationPortList.find(x => x.locationId == item);
-    });
-    const merge4 = this.ConvenientPortsList.flat(1);
-    this.ConvenientPortsList = merge4;  
-    this.selectedLocationPort.length=0; 
-    this.ConvenientPortsList.map(item=>{
-      this.selectedLocationPort.push(item.locationId.toString());
-    })       
-  }
-  
-  response.data.convenientPorts = this.ConvenientPortsList;
+          this.ConvenientPortsList = [];
+          if (response.data.convenientPorts != '' && response.data.convenientPorts != null) {
+
+            const objProcR = response.data.convenientPorts.split(',');
+
+            this.ConvenientPortsList = objProcR.map(item => {
+              return this.LocationPortList.find(x => x.locationId == item);
+            });
+            const merge4 = this.ConvenientPortsList.flat(1);
+            this.ConvenientPortsList = merge4;
+            this.selectedLocationPort.length = 0;
+            this.ConvenientPortsList.map(item => {
+              this.selectedLocationPort.push(item.locationId.toString());
+            })
+          }
+
+          response.data.convenientPorts = this.ConvenientPortsList;
 
           this.vendorBranchInfo.controls.country.setValue(response.data.country);
           this.vendorBranchInfo.patchValue(response.data);
-        
+
         }
       },
         (error) => {
-  
+
         });
-  
-}
+
+  }
 
   //#region Service Category Dropdown 
   onSelectAllCat(event: any) {
@@ -658,35 +636,45 @@ UpdateBranchoffice(id){
   //#region Vendor Sales Department
   onAddSales() {
     debugger
-    this.VendorSalesDepartForm.patchValue({ vendorId: 1 })
-    const formValues = this.VendorSalesDepartForm.value;
-    const formData = new FormData();
-    formData.append('data', JSON.stringify(formValues));
-    if (this.VendorSalesDepartForm != null && this.VendorSalesDepartForm.valid) {
-      this.vendorService.addSalesInfo(formData).subscribe(data => {
-        debugger
-        if (data.message == "data added") {
-          this.swal.success('Added successfully.');
-          this.loadVendorSalesData();
-          this.VendorSalesDepartForm.reset();
-        }
-        else if (data.message == "updated") {
-          this.swal.success('Data has been updated successfully.');
-          this.loadVendorSalesData();
-        }
-        else if (data.message == "duplicate") {
-          this.swal.info('Data already exist. Please enter new data');
-        }
-        else if (data.message == "not found") {
-          this.swal.info('Data exist not exist');
-        }
-        $("#sales-contact").modal('hide');
-      })
+    if (this.vendorId > 0) {
+      this.VendorSalesDepartForm.patchValue({ vendorId: this.vendorId })
+      const formValues = this.VendorSalesDepartForm.value;
+      const formData = new FormData();
+      formData.append('data', JSON.stringify(formValues));
+      if (this.VendorSalesDepartForm != null && this.VendorSalesDepartForm.valid) {
+        this.vendorService.addSalesInfo(formData).subscribe(data => {
+          debugger
+          if (data.message == "data added") {
+            this.swal.success('Added successfully.');
+            this.loadVendorSalesData(this.vendorId);
+            this.VendorSalesDepartForm.reset();
+            this.VendorSalesDepartForm.controls.vendorSalesId.setValue(0)
+          }
+          else if (data.message == "updated") {
+            this.swal.success('Data has been updated successfully.');
+            this.loadVendorSalesData(this.vendorId);
+            this.VendorSalesDepartForm.reset();
+            this.VendorSalesDepartForm.controls.vendorSalesId.setValue(0)
+          }
+          else if (data.message == "duplicate") {
+            this.swal.info('Data already exist. Please enter new data');
+          }
+          else if (data.message == "not found") {
+            this.swal.info('Data exist not exist');
+          }
+          $("#sales-contact").modal('hide');
+        })
+      }
     }
   }
 
-  loadVendorSalesData() {
-    this.vendorService.getSalesInfoByVendorId(1).subscribe(res => {
+  clearSalesForm() {
+    this.VendorSalesDepartForm.reset();
+    this.VendorSalesDepartForm.controls.vendorSalesId.setValue(0)
+  }
+
+  loadVendorSalesData(id) {
+    this.vendorService.getSalesInfoByVendorId(id).subscribe(res => {
       if (res.status == true) {
         debugger
         this.zone.run(() => {
@@ -717,52 +705,60 @@ UpdateBranchoffice(id){
   }
   deleteSalesData(id) {
     debugger
-    this.vendorService.archiveSalesInfo(id).subscribe(res => {
-      if (res) {
-        debugger
-        this.loadVendorSalesData()
-        $("#sales-contact").modal('hide')
-      }
-    })
+    if (this.vendorId > 0) {
+      this.vendorService.archiveSalesInfo(id).subscribe(res => {
+        if (res) {
+          debugger
+          this.loadVendorSalesData(this.vendorId)
+        }
+      })
+    }
   }
   //#endregion
 
   //#region Vendor Service Department
   onAddService() {
     debugger
-    this.VendorServiceDepartForm.patchValue({ vendorId: 1 })
-    const formValues = this.VendorServiceDepartForm.value;
-    const formData = new FormData();
-    formData.append('data', JSON.stringify(formValues));
-    if (this.VendorServiceDepartForm != null && this.VendorServiceDepartForm.valid) {
-      this.vendorService.addServiceInfo(formData).subscribe(data => {
-        debugger
-        if (data.message == "data added") {
-          this.swal.success('Added successfully.');
-          this.loadVendorServiceData();
-          this.VendorServiceDepartForm.reset();
-          this.VendorServiceDepartForm.controls.vendorServiceId.setValue(0)
-        }
-        else if (data.message == "updated") {
-          this.swal.success('Data has been updated successfully.');
-          this.loadVendorServiceData();
-          this.VendorServiceDepartForm.reset();
-          this.VendorServiceDepartForm.controls.vendorServiceId.setValue(0)
-        }
-        else if (data.message == "duplicate") {
-          this.swal.info('Data already exist. Please enter new data');
-        }
-        else if (data.message == "not found") {
-          this.swal.info('Data exist not exist');
-        }
-        $("#service-contact").modal('hide');
-      })
+    if (this.vendorId > 0) {
+      this.VendorServiceDepartForm.patchValue({ vendorId: this.vendorId })
+      const formValues = this.VendorServiceDepartForm.value;
+      const formData = new FormData();
+      formData.append('data', JSON.stringify(formValues));
+      if (this.VendorServiceDepartForm != null && this.VendorServiceDepartForm.valid) {
+        this.vendorService.addServiceInfo(formData).subscribe(data => {
+          debugger
+          if (data.message == "data added") {
+            this.swal.success('Added successfully.');
+            this.loadVendorServiceData(this.vendorId);
+            this.VendorServiceDepartForm.reset();
+            this.VendorServiceDepartForm.controls.vendorServiceId.setValue(0)
+          }
+          else if (data.message == "updated") {
+            this.swal.success('Data has been updated successfully.');
+            this.loadVendorServiceData(this.vendorId);
+            this.VendorServiceDepartForm.reset();
+            this.VendorServiceDepartForm.controls.vendorServiceId.setValue(0)
+          }
+          else if (data.message == "duplicate") {
+            this.swal.info('Data already exist. Please enter new data');
+          }
+          else if (data.message == "not found") {
+            this.swal.info('Data exist not exist');
+          }
+          $("#service-contact").modal('hide');
+        })
+      }
     }
   }
 
-  loadVendorServiceData() {
+  clearServiceForm() {
+    this.VendorServiceDepartForm.reset();
+    this.VendorServiceDepartForm.controls.vendorServiceId.setValue(0)
+  }
+
+  loadVendorServiceData(id) {
     debugger
-    this.vendorService.getServiceInfoByVendorId(1).subscribe(res => {
+    this.vendorService.getServiceInfoByVendorId(id).subscribe(res => {
       if (res.status == true) {
         debugger
         this.zone.run(() => {
@@ -775,7 +771,7 @@ UpdateBranchoffice(id){
   }
 
   editServiceData(id) {
-    debugger    
+    debugger
     this.vendorService.getServiceInfoById(id).subscribe(res => {
       if (res.status == true) {
         debugger
@@ -792,11 +788,77 @@ UpdateBranchoffice(id){
       }
     })
   }
-  deleteServiceData(id){
+  deleteServiceData(id) {    
     debugger
-    this.modal = 'modal'
-    this.modalTarget = '#service-contact'
-    this.vendorService.getServiceInfoById(id).subscribe(res => {
+    if (this.vendorId > 0) {
+      this.vendorService.archiveServiceInfo(id).subscribe(res => {
+        if (res) {
+          debugger
+          this.loadVendorServiceData(this.vendorId)
+        }
+      })
+    }
+  }
+  //#endregion
+
+  //#region Vendor Account Department
+  onAddAccount() {
+    debugger
+    if (this.vendorId > 0) {
+      this.VendorAccountDeptForm.patchValue({ vendorId: this.vendorId })
+      const formValues = this.VendorAccountDeptForm.value;
+      const formData = new FormData();
+      formData.append('data', JSON.stringify(formValues));
+      if (this.VendorAccountDeptForm != null && this.VendorAccountDeptForm.valid) {
+        this.vendorService.addAccountInfo(formData).subscribe(data => {
+          debugger
+          if (data.message == "data added") {
+            this.swal.success('Added successfully.');
+            this.loadVendorAccountData(this.vendorId);
+            this.VendorAccountDeptForm.reset()
+            this.VendorAccountDeptForm.controls.vendorAccountId.setValue(0)
+          }
+          else if (data.message == "updated") {
+            this.swal.success('Data has been updated successfully.');
+            this.VendorAccountDeptForm.reset()
+            this.VendorAccountDeptForm.controls.vendorAccountId.setValue(0)
+            this.loadVendorAccountData(this.vendorId);
+          }
+          else if (data.message == "duplicate") {
+            this.swal.info('Data already exist. Please enter new data');
+          }
+          else if (data.message == "not found") {
+            this.swal.info('Data exist not exist');
+          }
+          $("#accounts-contact").modal('hide');
+        })
+      }
+    }
+  }
+
+  clearAccountform() {
+    this.VendorAccountDeptForm.reset()
+    this.VendorAccountDeptForm.controls.vendorAccountId.setValue(0)
+  }
+
+  loadVendorAccountData(id) {
+    this.vendorService.getAccountInfoByVendorId(id).subscribe(res => {
+      if (res.status == true) {
+        debugger
+        this.zone.run(() => {
+          debugger
+          this.vendorAccountData = []
+          this.vendorAccountData = res.data;
+        })
+      }
+    });
+  }
+
+  editAccountData(id) {
+    debugger
+    // this.modal = 'modal'
+    // this.modalTarget = '#service-contact'
+    this.vendorService.getAccountInfoById(id).subscribe(res => {
       if (res.status == true) {
         debugger
         const data = res.data;
@@ -814,15 +876,14 @@ UpdateBranchoffice(id){
   }
   deleteAccountData(id) {
     debugger
-    this.vendorService.archiveAccountInfo(id).subscribe(res => {
-      if (res) {
-        debugger
-        // this.loadVendorAccountData();
-        this.VendorAccountDeptForm.reset()
-        this.VendorAccountDeptForm.controls.vendorAccountId.setValue(0)
-        $("#accounts-contact").modal('hide');
-      }
-    })
+    if (this.vendorId > 0) {
+      this.vendorService.archiveAccountInfo(id).subscribe(res => {
+        if (res) {
+          debugger
+          this.loadVendorAccountData(this.vendorId)
+        }
+      })
+    }     
   }
   //#endregion
 
@@ -888,128 +949,147 @@ UpdateBranchoffice(id){
               }
             }
           })
+          this.vendorService.getBranchOfficeByVendorId(id).subscribe(res => {
+            if (res.status === true) {
+              this.dataBranchOffice = []
+              this.dataBranchOffice = res.data;
+            }
+          })
+          this.vendorService.getSalesInfoByVendorId(id).subscribe(res => {
+            debugger
+            if (res.status === true) {
+              this.vendorSalesData = []
+              this.vendorSalesData = res.data;
+            }
+          })
+          this.vendorService.getServiceInfoByVendorId(id).subscribe(res => {
+            debugger
+            if (res.status === true) {
+              this.vendorServiceData = []
+              this.vendorServiceData = res.data;
+            }
+          })
+          this.vendorService.getAccountInfoByVendorId(id).subscribe(res => {
+            debugger
+            if (res.status === true) {
+              this.vendorAccountData = []
+              this.vendorAccountData = res.data;
+            }
+          })
         }
       }
     })
   }
 
-  onAddAccount(){
-
-  }
-
-  // deleteSalesData(id){
-
-  // }
-
   //#region Bank Information
 
 
-ClearBankInfoModal(){
-  this.BankInformationForm.reset();
-  this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
-  this.BankInformationForm.controls.companyName.setValue('');
-  this.BankInformationForm.controls.companyShortName.setValue('');
-  this.BankInformationForm.controls.preferredCurrency.setValue('');
-  this.BankInformationForm.controls.bankName.setValue('');
-  this.BankInformationForm.controls.bankAddress.setValue('');
-  this.BankInformationForm.controls.branchOffice.setValue('');
-  this.BankInformationForm.controls.beneficiaryName.setValue('');
-  this.BankInformationForm.controls.accountNumber.setValue('');
-  this.BankInformationForm.controls.ibanSwiftCode.setValue('');
-  this.BankInformationForm.controls.vatNo.setValue('');
-  this.BankInformationForm.controls.remarks.setValue('');
-  this.BankInformationForm.controls.confirmOnCall.setValue('');
-  this.BankInformationForm.controls.attachments.setValue('');
-  this.BankInformationForm.controls.vendorId.setValue(this.vendorInfoId);
-  this.FileName=""
-  $("#bank-details").modal('show');
+  ClearBankInfoModal() {
+    this.BankInformationForm.reset();
+    this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
+    // this.BankInformationForm.controls.companyName.setValue('');
+    // this.BankInformationForm.controls.companyShortName.setValue('');
+    // this.BankInformationForm.controls.preferredCurrency.setValue('');
+    // this.BankInformationForm.controls.bankName.setValue('');
+    // this.BankInformationForm.controls.bankAddress.setValue('');
+    // this.BankInformationForm.controls.branchOffice.setValue('');
+    // this.BankInformationForm.controls.beneficiaryName.setValue('');
+    // this.BankInformationForm.controls.accountNumber.setValue('');
+    // this.BankInformationForm.controls.ibanSwiftCode.setValue('');
+    // this.BankInformationForm.controls.vatNo.setValue('');
+    // this.BankInformationForm.controls.remarks.setValue('');
+    // this.BankInformationForm.controls.confirmOnCall.setValue('');
+    // this.BankInformationForm.controls.attachments.setValue('');
+    // this.BankInformationForm.controls.vendorId.setValue(this.vendorInfoId);
+    this.FileName = ""
+    $("#bank-details").modal('show');
 
-}
+  }
 
-  onSubmitBankInformation(form: any){
-debugger
-const files = document.getElementById('formFile') as HTMLInputElement;
+  onSubmitBankInformation(form: any) {
+    debugger
+    const files = document.getElementById('formFile') as HTMLInputElement;
 
-     if (files !== null) { 
-         const file = files.files;
-         if (file) {         
-          const fileName = file[0].name;
-          form.value.attachments = fileName;
-         } 
-     }
-     form.value.vendorId = 1;
-     const fmdata = new FormData();
-     fmdata.append('data', JSON.stringify(form.value));
- 
-     this.vendorService.addBankInformation(fmdata)
-       .subscribe(data => {
- 
-         if (data.message == "data added") {
-           this.swal.success('Added successfully.');
-           this.ClearBankInfoModal();
+    if (files !== null) {
+      const file = files.files;
+      if (file) {
+        const fileName = file[0].name;
+        form.value.attachments = fileName;
+      }
+    }
+    form.value.vendorId = 1;
+    const fmdata = new FormData();
+    fmdata.append('data', JSON.stringify(form.value));
+
+    this.vendorService.addBankInformation(fmdata)
+      .subscribe(data => {
+
+        if (data.message == "data added") {
+          this.swal.success('Added successfully.');
+          this.ClearBankInfoModal();
           this.loadBankInformation();
-         }
-         else if (data.message == "updated") {
-           this.swal.success('Data has been updated successfully.');
-           this.ClearBankInfoModal();
-           this.loadBankInformation();
-         }
-         else if (data.message == "duplicate") {
-           this.swal.info('Data already exist. Please enter new data');
-           this.ClearBankInfoModal();
-           this.loadBankInformation();
-         }
-         else if (data.message == "not found") {
-           this.swal.info('Data exist not exist');
-           this.ClearBankInfoModal();
-           this.loadBankInformation();
-         }
-         else {
- 
-         }
- 
-       });
+        }
+        else if (data.message == "updated") {
+          this.swal.success('Data has been updated successfully.');
+          this.ClearBankInfoModal();
+          this.loadBankInformation();
+        }
+        else if (data.message == "duplicate") {
+          this.swal.info('Data already exist. Please enter new data');
+          this.ClearBankInfoModal();
+          this.loadBankInformation();
+        }
+        else if (data.message == "not found") {
+          this.swal.info('Data exist not exist');
+          this.ClearBankInfoModal();
+          this.loadBankInformation();
+        }
+        else {
+
+        }
+
+      });
 
   }
 
   loadBankInformation() {
-    
+
     this.vendorService.getBankInformation(1).subscribe(res => {
       if (res.status == true) {
         debugger
         // this.zone.run(() => {
-          debugger
-          this.vendorBankInfoData = []
-          this.vendorBankInfoData = res.data;
+        debugger
+        this.vendorBankInfoData = []
+        this.vendorBankInfoData = res.data;
         // })
       }
     });
   }
 
-  editvendorBankInfo(id){
+  editvendorBankInfo(id) {
     $("#bank-details").modal('show');
     this.vendorService.getBankInformationId(id).subscribe(res => {
       if (res.status == true) {
         debugger
-        if(res.data.confirmOnCall == true){
+        if (res.data.confirmOnCall == true) {
           this.ConfirmOnCallCheck = true;
-          
+
         }
-        this.FileName = res.data.attachments  
+        this.FileName = res.data.attachments
         this.BankInformationForm.patchValue(res.data)
-      
-       
+
+
       }
     })
   }
 
-  FileSelect(event) {  
+  FileSelect(event) {
 
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
-      this.fileToUpload = file;   
-      this.FileName = file.name; 
-      
+      this.fileToUpload = file;
+      this.FileName = file.name;
+
     } else {
       this.FileName = "Choose file";
     }

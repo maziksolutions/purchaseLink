@@ -37,8 +37,8 @@ export class VendorService {
       .pipe(catchError(this.handleError));
   }
 
-  getBranchoffice(id): Observable<any> {
-    return this.httpClient.get<any[]>(`${this.linkurl}filterbranchoffice/${id}`, httpOptions);
+  getBranchOfficeByVendorId(id): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}getBranchOfficeByVendorId/${id}`, httpOptions);
   }
 
   getBranchofficeId(id): Observable<any> {
