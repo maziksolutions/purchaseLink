@@ -197,8 +197,9 @@
                     data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
                       class="fas fa-save text-primary"></i></button>-->
 
-                  <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Cancel" (click)="CancelRequisition()" aria-label=""><i class="fas fa-ban text-danger"></i></a> 
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+              data-bs-original-title="Cancel" (click)="CancelRequisition()" aria-label=""><i
+                class="fas fa-ban text-danger"></i></a>
 
             <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Export PDF" aria-label="" [class.disabled]="!isRequisitionApproved"><i class="fas fa-file-pdf text-danger"></i></a>
@@ -864,8 +865,9 @@
           <button class="btn btn-sm" data-bs-toggle="pill" data-bs-target="#detail-view" type="button" role="tab"><i
               class="fas fa-th"></i> Details View</button>
         </div>
-        <a class="form-small text-primary float-end" type="button" data-bs-toggle="tooltip" data-bs-placement="top" (click)="openModifyPopUp()"
-          title="Modify Column" data-bs-original-title="Modify Column" aria-label=""><i class="fas fa-columns"></i>
+        <a class="form-small text-primary float-end" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+          (click)="openModifyPopUp()" title="Modify Column" data-bs-original-title="Modify Column" aria-label=""><i
+            class="fas fa-columns"></i>
         </a>
       </div>
     </div>
@@ -954,12 +956,12 @@
             <ng-container matColumnDef="Unit">
               <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
               <mat-cell *matCellDef="let row">
-              <select class="form-control form-small form-select"  (change)="updateunit($event ,row.itemsId)" required>
-              <option value="" disabled>Select unit</option>
-              <option *ngFor="let item of unitmasterlist" value="item.shortCode">{{item.shortCode}}</option>
-                
-          </select>
-        </mat-cell>
+                <select class="form-control form-small form-select" (change)="updateunit($event ,row.itemsId)" required>
+                  <option value="" disabled>Select unit</option>
+                  <option *ngFor="let item of unitmasterlist" value="{{item.shortCode}}">{{item.shortCode}}</option>
+
+                </select>
+              </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Item Specs" hidden>

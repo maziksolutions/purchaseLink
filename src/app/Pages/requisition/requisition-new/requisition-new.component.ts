@@ -3318,10 +3318,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateunit(value ,id)
+  updateunit(value: any, id: any)
   {
     debugger
-    const selectedValue = (value.target as HTMLSelectElement).value;
+    const selectedValue = value.target.value;
 
     this.requisitionService.updateUnitinItem(selectedValue ,id)
     .subscribe(response => {
