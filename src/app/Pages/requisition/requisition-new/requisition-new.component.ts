@@ -2116,8 +2116,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       .subscribe(response => {
         if (response.message != undefined) {
 
-          let ss = response.message;
-          this.swal.error(ss)
+          this.swal.error('After saving the data, proceed with the approval.')
         }
 
         if (response.message == undefined) {
@@ -3249,6 +3248,22 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.swal.info('No attachment found');
     }
     $('.tooltip').remove();
+  }
+
+  CancelRequisition(){
+
+      let DataRequisitionMaster =  this.requisitiondata.filter(x=>x.documentHeader == this.finallyHeader);
+
+     if(DataRequisitionMaster.length != 0){
+      this.requisitionService.archiveRequisitionMaster(DataRequisitionMaster).subscribe(result => {
+        this.router.navigate(['/Requisition/Requisitionslist']);
+      })
+     }
+     else{
+      this.router.navigate(['/Requisition/Requisitionslist']);
+     }
+    
+
   }
 
 }

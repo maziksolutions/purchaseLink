@@ -45,6 +45,10 @@ export class RequisitionService {
     return this.httpClient.post<any>(this.linkurl + 'addRequisitionMaster', formData)
       .pipe(catchError(this.handleError));
   }
+  archiveRequisitionMaster(jobType: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveRequisitionMaster/`, jobType, httpOptions);
+  }
+
   archiveOrderType(jobType: any[]): Observable<string> {
     return this.httpClient.post<string>(`${this.linkurl}archiveOrderType/`, jobType, httpOptions);
   }
