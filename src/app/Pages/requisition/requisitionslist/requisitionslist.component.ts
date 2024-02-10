@@ -106,7 +106,6 @@ export class RequisitionslistComponent implements OnInit {
       this.VesselId = environment.vesselId;
     }
     this.loadUserFleetData();
-    this.loadData(0);
     this.LoadVessel();
     this.Loadgroup();
     this.LoadComponent();
@@ -198,6 +197,7 @@ export class RequisitionslistComponent implements OnInit {
     this.vesselService.getVessels(0)
       .subscribe(response => {
         if (this.targetLoc == 'Vessel') {
+          
           const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
           if (filteredVessels.length > 0) {
             this.Vessels = filteredVessels;
@@ -208,6 +208,7 @@ export class RequisitionslistComponent implements OnInit {
         else {
           this.Vessels = response.data;
           this.fullVesselList = response.data;
+          this.loadData(0);
         }
       })
   }
@@ -217,11 +218,18 @@ export class RequisitionslistComponent implements OnInit {
 
         this.flag = status;
 
-        this.dataSource.data = response.data;
+if (this.targetLoc == 'Vessel') {
+        this.dataSource.data = response.data.filter(x=>x.originSite == 'Vessel');
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
 
         (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+}
+if (this.targetLoc == 'Office'){
+  this.dataSource.data = response.data;
+  this.dataSource.sort = this.sort;
+  this.dataSource.paginator = this.paginator;
+}
       });
   }
   applyFilter(filterValue: string) {

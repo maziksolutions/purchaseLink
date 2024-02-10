@@ -226,11 +226,11 @@
 
           </div>
           <div class="col-lg mb-3">
-            <h6 class="text-900 mb-1">Site Required at</h6>
+            <h6 class="text-900 mb-1">Vessel</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="vesselId"
                 [(ngModel)]="selectedVesselId" required (change)="LoadProjectnameAndcode()">
-                <option value="0" selected disabled>Select Site Required at</option>
+                <option value="0" selected disabled>Select Vessel</option>
                 <option *ngFor="let item of  Vessels" id="abc" value="{{item.vesselId}}">
                   {{item.vesselName | titlecase}}
 
@@ -240,11 +240,11 @@
           </div>
 
           <div class="col-lg mb-3">
-            <h6 class="text-900 mb-1">Project Name / Code</h6>
+            <h6 class="text-900 mb-1">Purpose</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="projectNameCodeId"
                 (change)="selectProjectCode($event)" required>
-                <option value="" selected disabled>Select </option>
+                <option value="" selected disabled>Select Purpose</option>
                 <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
                   {{item.projectName|titlecase }}-{{item.projectCode}}
                 </option>
@@ -253,11 +253,11 @@
           </div>
 
           <div class="col-lg mb-3">
-            <h6 class="text-900 mb-1">Request Order Type</h6>
+            <h6 class="text-900 mb-1">Order Type</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="orderTypeId"
                 [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
-                <option value="0" selected disabled>Select OrderTypes</option>
+                <option value="0" selected disabled>Select Order Type</option>
                 <option *ngFor="let item of filteredOrderTypes" value="{{item.orderTypeId}}">
                   {{item.orderTypes | titlecase}}
                 </option>
@@ -340,7 +340,7 @@
 <!--Header Form End Here -->
 
 <!--Account Form Start Here -->
-<!-- <div class="card mb-3">
+<div class="card mb-3" *ngIf="reqId !== undefined">
   <div class="card-header bg-light">
     <div class="row flex-between-end">
       <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#account"
@@ -400,7 +400,7 @@
       </div>
     </div>
   </div>
-</div> -->
+</div>
 <!--Account Form End Here -->
 
 <!--Delivery Form Start Here -->
@@ -475,7 +475,7 @@
             (change)="autoSave('delivery')" />
         </div>
         <div class="col-lg mb-3">
-          <h6 class="text-900 mb-2">Vessel ETB</h6>
+          <h6 class="text-900 mb-2">Vessel ETD</h6>
           <input type="date" class="mb-0 fs--2 text-500 form-control" formControlName="vesselETB"
             (change)="autoSave('delivery')" />
         </div>
