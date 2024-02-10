@@ -173,7 +173,7 @@ export class RequisitionService {
 
   updateUnitinItem(unitvalue: string,id: number): Observable<any> {
 
-    return this.httpClient.get<any[]>(`${this.linkurl}updateUnitinItem/${unitvalue}/${id}`, httpOptions);
+    return this.httpClient.post<any>(`${this.linkurl}updateUnitinItem/${unitvalue}/${id}`, httpOptions);
   }
   //#endregion
 
