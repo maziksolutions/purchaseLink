@@ -1366,7 +1366,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.saveValue = ''
           this.displayValue = ''
           // this.LoadUserDetails();
-          // this.LoadOrdertype();
+           this.LoadOrdertype();
           this.LoadPriority();
           this.LoadVessel();
           this.LoadDepartment();
@@ -1389,14 +1389,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             this.Vessels = filteredVessels;
             this.selectedVesselId = filteredVessels[0].vesselId;     
             this.LoadProjectnameAndcode()
-            this.LoadOrdertype();
+           
           }
         }
         else {
           this.headsite = 'O'
           this.Vessels = response.data;
           this.LoadProjectnameAndcode();
-          this.LoadOrdertype();
+         
         }
       })
   }
