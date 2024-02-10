@@ -19,6 +19,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { SideNavService } from 'src/app/services/sidenavi-service';
 import { SharedModule } from '../Shared/shared.module';
+import { ModifyColumnsPopUpComponent } from './requisition-new/common/modify-columns-pop-up/modify-columns-pop-up.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { SharedModule } from '../Shared/shared.module';
     RequisitionTrackingComponent,
     OrderRefPopUpViewComponent,
     OrderRefDirectPopUpComponent,
-    EditReqQtyComponent
+    EditReqQtyComponent,
+    ModifyColumnsPopUpComponent
   ],
   imports: [
     CommonModule,

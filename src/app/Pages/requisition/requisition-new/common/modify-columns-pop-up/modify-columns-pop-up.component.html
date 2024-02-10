@@ -1,0 +1,41 @@
+<h2 mat-dialog-title class="d-flex justify-content-between align-items-center">
+    <span>{{ data.modalTitle }}</span>
+    <div class="col-xl-6 col-lg-12">
+        <div class="float-end">
+            <button class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" (click)="saveAndClose()"
+                data-bs-original-title="Save" aria-label=""><i
+                    class="fas fa-save"></i></button>
+
+            <button class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                data-bs-original-title="Close" aria-label=""  (click)="closeModal()"><i
+                    class="fas fa-ban"></i></button>   
+                    
+        </div>
+        
+    </div>
+</h2>
+<mat-dialog-content>
+    <form >
+        <table id="tblStockReconciliation"
+            class="table table-hover table-striped scrollbar-visible table-sm small table-bordered overflow-hidden table-striped">
+            <thead>
+                <tr style="background-color: #1C3451; color: #fff;">
+                    <th>Column Name</th>
+                    <th>Show</th>  
+                    <th>Hide</th>                   
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let column of displayedColumns; let i = index">
+                    <td>{{ column }}</td>
+                    <td>
+                        <mat-checkbox [checked]="visibleColumns[i]" (change)="toggleVisibility(i)"></mat-checkbox>
+                      </td>
+                      <td>
+                        <mat-checkbox [checked]="!visibleColumns[i]"  (change)="toggleVisibility(i)"></mat-checkbox>
+                      </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>   
+</mat-dialog-content>

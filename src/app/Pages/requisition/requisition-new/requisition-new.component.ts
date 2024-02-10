@@ -35,6 +35,7 @@ import { HostListener } from '@angular/core';
 import { ReqItemsModel, ServiceTypeData } from '../../Models/reqItems-model';
 import { SideNavService } from 'src/app/services/sidenavi-service';
 import { UnitmasterService } from 'src/app/services/unitmaster.service';
+import { ModifyColumnsPopUpComponent } from './common/modify-columns-pop-up/modify-columns-pop-up.component';
 
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
@@ -81,7 +82,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   serviceObject: any = {}; isEditMode = false;
-  displayedColumns: string[] = ['checkbox', 'index', 'itemName', 'itemCode', 'part', 'dwg', 'make', 'model', 'lastDlDt', 'lastDlQty', 'rob', 'enterQuantity', 'unit', 'itemSpec', 'itemRemarks', 'attachments'];
+  displayedColumns: string[]
+  ItemsColumns: string[] = ['checkbox', 'Index', 'Item Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date', 
+  'Last Delivered Qty', 'ROB', 'Enter Quantity', 'Unit', 'Item Specs', 'Remarks', 'Attachments'];
+  visibleColumns: boolean[] = [true, true, true, false, true, true, false, false, false, false, true, true, true, false, true, true];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
   leftTableColumn: string[] = ['checkbox', 'inventoryName', 'partNo', 'dwg', 'quantity', 'availableQty', 'minRequired', 'reorderLevel'];
   rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];
@@ -222,7 +226,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   portList: Port[] = [];
   filteredPorts: Observable<Port[]>;
   showSearchInput: boolean = true;
-  myPlaceholder: string = this.defaultOrderType[0] === 'Service' ? 'Expected Port' : 'Expected Delivery Port';
+  myPlaceholder: string = 'Port/Country';
   selectedItemIndex: number = -1;
   AttachlistwithID: any;
   dataJobList: any;
@@ -364,6 +368,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.LoadStore();
     this.LoadSpare();
     this.GetunitList();
+
+    this.displayedColumns = this.ItemsColumns.filter((column, index) => this.visibleColumns[index]);
   }
 
   ngOnDestroy(): void {
@@ -461,7 +467,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         departmentId: ['', [Validators.required]],
         priorityId: ['', [Validators.required]],
         projectNameCodeId: ['', [Validators.required]],
-        remarks: ['', [Validators.required]]
+        remarks: ['']
       }),
 
       account: this.fb.group({
@@ -529,7 +535,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   autoSave(partName: string): void {
 
     if (partName == 'header') {
-      
+
       const formPart = this.RequisitionForm.get(partName);
       if (this.isRequisitionApproved) {
         const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -847,7 +853,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.requisitionService.getServiceType(id).subscribe(res => {
 
       if (res.status === true) {
-    
+
         const dataWithExpansion = res.data.map((item) => {
           // Ensure each item in jobList has the isExpanded property
           item.jobList = item.jobList.map(job => ({ ...job, isExpanded: false }));
@@ -1618,7 +1624,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         });
     } else if (itemType === 'Group') {
       this.requisitionService.getGroupsInfo(ids).subscribe(res => {
-         
+
         const data = res.map(item => ({
           itemsId: item.shipStoreId,
           spareId: item.shipSpareId || null,
@@ -2673,14 +2679,19 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
 
       if (result.result === 'success') {
-        
-        console.log(result)
         const data = result.dataToSend
         if (data != null && data.displayValue !== '' && data.saveValue !== '') {
           this.zone.run(() => {
             this.displayValue = ''
             this.saveValue = ''
-            this.displayValue = data.displayValue;
+            if (data.orderReferenceType === 'Component') {
+              this.requisitionService.getDisplayComponent(data.saveValue).subscribe(res => {
+                this.displayValue = res.data.map(item => `${item.componentName}/${item.componentCode}/${item.serialNo}/${item.makerName}/${item.modelNo}`)
+                  .join(', ')
+              })
+            } else {
+              this.displayValue = data.displayValue;
+            }
             this.saveValue = data.saveValue;
 
           })
@@ -3254,6 +3265,30 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
     $('.tooltip').remove();
   }
+
+  //#region Modify Columns of Items Pop Up View
+  openModifyPopUp() {
+    let dialogRef: any
+    dialogRef = this.dialog.open(ModifyColumnsPopUpComponent, {
+      width: '800px',
+      data: {
+        modalTitle: "Modify Columns",
+        visibleColumns: this.visibleColumns,
+        displayedColumns: this.ItemsColumns,
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      debugger
+      if (result.result === 'success') {
+        const data = result.data
+        console.log(data)
+        this.zone.run(()=>{
+          this.displayedColumns = this.ItemsColumns.filter((column, index) => data[index]);
+        })        
+      }
+    });
+  }
+  //#endregion
 
   CancelRequisition(){
 
