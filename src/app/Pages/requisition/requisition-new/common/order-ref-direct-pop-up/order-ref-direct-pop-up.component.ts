@@ -115,13 +115,13 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       });
     }
 
-    if(this.ComponentType==='Component'){
+    if (this.ComponentType === 'Component') {
       this.requisitionService.getTemplateTree().subscribe(res => {
         this.dataSourceTree = res;
         this.bindData(this.dataSourceTree);
       })
     }
-   
+
     // if (this.dataSourceTree)
     //   this.bindData(this.dataSourceTree);
     // if (this.groupTableSourceTree) {
@@ -129,7 +129,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     // }
 
     this.searchForm = this.fb.group({
-      shipId: this.vesselId,      
+      shipId: this.vesselId,
       pageNumber: ['0'],
       pageSize: [this.pageSize],
       status: ['0'],
@@ -147,7 +147,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       });
       this.loadGroupsComponent();
     });
-   console.log(this.spareItemDataSource.data)
+    console.log(this.spareItemDataSource.data)
   }
 
   get sfm() { return this.searchForm.controls };
@@ -157,7 +157,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   }
 
   onPageChange(event: PageEvent) {
-    
+
     const newPageIndex = event.pageIndex;
     if (newPageIndex > this.currentPage) {
       // Incrementing page
@@ -175,17 +175,17 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   }
 
   loadGroupsComponent() {
-        
+
     if (this.vesselId) {
       const request = new StoreLinkedGroupsModel(
         this.searchForm.value.shipId,
         this.searchForm.value.keyword,
-        this.searchForm.value.pageNumber, 
+        this.searchForm.value.pageNumber,
         this.searchForm.value.pageSize
       );
       this.requisitionService.GetStoreByShipId(request).subscribe(res => {
-        
-        this.groupTableDataSource.data=[];
+
+        this.groupTableDataSource.data = [];
         this.groupTableDataSource.data = res.data
         this.pageTotal = res.total;
         // this.groupTableDataSource.sort = this.sort;
@@ -207,7 +207,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     this.isAllGroupSelected() ? this.groupSelection.clear() : this.groupTableDataSource.data.forEach(r => this.groupSelection.select(r));
   }
   groupLabel(row: any): string {
-    
+
     if (!row) {
       return `${this.isAllGroupSelected() ? 'select' : 'deselect'} all`;
     }
@@ -395,10 +395,10 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         }
         break;
       case 'Group':
-        if (this.groupSelection.selected.length > 0 ) {          
+        if (this.groupSelection.selected.length > 0) {
 
           const selectedGroups = this.groupSelection.selected;
-  
+
           // Extracting group names and IDs from the selected groups
           this.selectedGroupName = selectedGroups.map(group => group.groupName);
           this.selectedGroupIds = selectedGroups.map(group => group.pmsGroupId);
@@ -420,12 +420,14 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       case 'Spare':
         const SelectedSpareItems = this.spareItemDataSource.data.filter(row => this.spareItemSelection.isSelected(row));
         if (SelectedSpareItems.length > 0) {
-
+          debugger
           this.dataSource.data = SelectedSpareItems;
           console.log(SelectedSpareItems)
-          const spareItemDisplayValue = SelectedSpareItems
-            .map(item => `${item.spareAssembly?.components?.shipComponentName}-${item.spareAssembly?.drawingNo}`.trim() +
-              `-${item.spareAssembly?.partNo}-${item.spareAssembly?.components?.maker?.makerName}`.trim()).join(', ');
+          const uniqueSpareItems = [...new Set(SelectedSpareItems.map(item =>
+            `${item.spareAssembly?.components?.shipComponentName ?? ""}/${item.spareAssembly?.components?.serialNo ?? ""}`.trim() +
+            `/${item.spareAssembly?.components?.modelNo ?? ""}/${item.spareAssembly?.components?.maker?.makerName ?? ""}`.trim()
+          ))].map(value => value === "null" ? "" : value);
+          const spareItemDisplayValue = uniqueSpareItems.join(', ');
           const spareItemSaveValue = this.spareItemDataSource.data
             .filter(row => this.spareItemSelection.isSelected(row))
             .map(item => (item.shipSpareId).toString())

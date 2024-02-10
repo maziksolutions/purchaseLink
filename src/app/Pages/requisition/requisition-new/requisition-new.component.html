@@ -315,7 +315,7 @@
             <h6 class="text-900 mb-1">Remarks</h6>
             <fieldset class="form-group mb-0">
               <input type="text" class="form-control form-small" formControlName="remarks" placeholder="Remarks"
-                (change)="autoSave('header')" maxlength="100" required>
+                (change)="autoSave('header')" maxlength="100">
             </fieldset>
           </div>
 
@@ -651,17 +651,17 @@
       </div>
       <div class="col-auto ms-auto">
         <a class="px-1 m-r-5" type="button" data-bs-toggle="modal" data-bs-target="#ship-items" data-bs-placement="top"
-          title="Add RFQ" data-bs-original-title="Add RFQ" aria-label=""><i class="fas fa-plus text-primary"></i></a>
+          title="Add Items" data-bs-original-title="Add Items" aria-label=""><i
+            class="fas fa-plus text-primary"></i></a>
         <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" (click)="deleteItems()" data-bs-placement="top"
-          matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""><i
-            class="fas fa-trash text-danger"></i></a>
-        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-          data-bs-original-title="Approve Items" aria-label=""><i class="far fa-check-circle text-primary"></i></a>
+          title="Delete" data-bs-original-title="Delete" aria-label=""><i class="fas fa-trash text-danger"></i></a>
+        <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Approve Items"
+          data-bs-original-title="Approve Items" aria-label=""><i class="far fa-check-circle text-primary"></i></a> -->
 
-        <button class="btn btn-primary form-small m-r-5" type="button" data-bs-toggle="tooltip"
+        <!-- <button class="btn btn-primary form-small m-r-5" type="button" data-bs-toggle="tooltip"
           *ngIf="this.approvestatus == 'Waiting For Approval' || approvestatus == 'Approved'" data-bs-placement="top"
           title="" data-bs-original-title="Copy Requisition Quantity to Approved Quantity" aria-label="">
-          <i class="fas fa-copy"></i></button>
+          <i class="fas fa-copy"></i></button> -->
 
         <!--Strat here Items Pop Up View-->
         <div class="modal fade" id="ship-items" tabindex="-1" aria-hidden="true" role="dialog"
@@ -840,14 +840,33 @@
           </div>
         </div>
         <!--End here Items Pop Up View-->
+
+        <!--Start Here Modify Columns Pop Up View-->
+        <div class="modal fade" id="modify-Items" tabindex="-1" aria-hidden="true" role="dialog"
+          aria-labelledby="authentication-modal-label">
+          <div class="modal-dialog modal-xl mt-6" role="document">
+            <div class="modal-content border-0">
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
+                  data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-header">
+                <h5 class="modal-title" id="">Modify-Columns</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--End Here Modify Columns Pop Up View-->
+
         <div class="nav nav-pills nav-pills-pms flex-grow-1 d-inline-block m-r-5" role="tablist">
           <button class="btn btn-sm active" data-bs-toggle="pill" data-bs-target="#list-view" type="button"
             role="tab"><i class="fas fa-list"></i> List View</button>
           <button class="btn btn-sm" data-bs-toggle="pill" data-bs-target="#detail-view" type="button" role="tab"><i
               class="fas fa-th"></i> Details View</button>
-        </div> <a class="form-small text-primary float-end" type="button" data-bs-toggle="tooltip"
-          data-bs-placement="top" title="" data-bs-original-title="Modify Column" aria-label=""><i
-            class="fas fa-columns"></i></a>
+        </div>
+        <a class="form-small text-primary float-end" type="button" data-bs-toggle="tooltip" data-bs-placement="top" (click)="openModifyPopUp()"
+          title="Modify Column" data-bs-original-title="Modify Column" aria-label=""><i class="fas fa-columns"></i>
+        </a>
       </div>
     </div>
   </div>
@@ -876,52 +895,52 @@
                   [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>
               </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="index" style="width: 50px;">
-              <mat-header-cell class="mat-column-index" *matHeaderCellDef>#</mat-header-cell>
-              <mat-cell class="mat-column-index" style="width: 50px;" *matCellDef="let row; let i = index">{{ i +
+            <ng-container matColumnDef="Index" style="width: 60px;">
+              <mat-header-cell class="mat-column-index" *matHeaderCellDef>Line No</mat-header-cell>
+              <mat-cell class="mat-column-index" style="width: 60px;" *matCellDef="let row; let i = index">{{ i +
                 1 }}</mat-cell>
             </ng-container>
-            <ng-container matColumnDef="itemName">
+            <ng-container matColumnDef="Item Name">
               <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
               <mat-cell class="ellipsis-text" title="{{row.itemName}}" *matCellDef="let row">{{ row.itemName
                 }}</mat-cell>
             </ng-container>
-            <ng-container class="rightTableCode" matColumnDef="itemCode">
+            <ng-container class="rightTableCode" matColumnDef="Item Code">
               <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
               <mat-cell class="ellipsis-text" title="{{row.itemCode}}" *matCellDef="let row">{{ row.itemCode
                 }}</mat-cell>
             </ng-container>
-            <ng-container matColumnDef="part">
-              <mat-header-cell *matHeaderCellDef>Part</mat-header-cell>
+            <ng-container matColumnDef="Part No">
+              <mat-header-cell *matHeaderCellDef>Part No</mat-header-cell>
               <mat-cell class="ellipsis-text" title="{{row.partNo}}" *matCellDef="let row">{{ row.partNo }}</mat-cell>
             </ng-container>
-            <ng-container matColumnDef="dwg">
-              <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
+            <ng-container matColumnDef="DWG" hidden>
+              <mat-header-cell *matHeaderCellDef>DWG Ref.</mat-header-cell>
               <mat-cell class="ellipsis-text" title="{{row.dwg}}" *matCellDef="let row">{{ row.dwg }}</mat-cell>
             </ng-container>
-            <ng-container matColumnDef="make">
+            <ng-container matColumnDef="Make" hidden>
               <mat-header-cell *matHeaderCellDef>Make</mat-header-cell>
               <mat-cell class="ellipsis-text" *matCellDef="let row" title="{{row.maker}}">{{ row.maker }}</mat-cell>
             </ng-container>
-            <ng-container matColumnDef="model">
+            <ng-container matColumnDef="Model" hidden>
               <mat-header-cell *matHeaderCellDef>Model</mat-header-cell>
               <mat-cell class="ellipsis-text" title="{{row.model}}" *matCellDef="let row">{{ row.model }}</mat-cell>
             </ng-container>
-            <ng-container matColumnDef="lastDlDt">
-              <mat-header-cell *matHeaderCellDef>Last Dl Date</mat-header-cell>
+            <ng-container matColumnDef="last Delivery Date" hidden>
+              <mat-header-cell *matHeaderCellDef title="Last delivery date">LDD</mat-header-cell>
               <mat-cell *matCellDef="let row">{{ row.lastDlDt }}</mat-cell>
             </ng-container>
-            <ng-container matColumnDef="lastDlQty">
-              <mat-header-cell *matHeaderCellDef>Last Dl Qty</mat-header-cell>
+            <ng-container matColumnDef="Last Delivered Qty" hidden>
+              <mat-header-cell *matHeaderCellDef title="Last delivered qty.">LDQ</mat-header-cell>
               <mat-cell *matCellDef="let row">{{ row.lastDlQty }}</mat-cell>
             </ng-container>
-            <ng-container matColumnDef="rob">
+            <ng-container matColumnDef="ROB">
               <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
               <mat-cell class="ellipsis-text" title="{{row.rob}}" *matCellDef="let row" (click)="openEditModal(row)">{{
                 row.rob }}</mat-cell>
             </ng-container>
 
-            <ng-container matColumnDef="enterQuantity">
+            <ng-container matColumnDef="Enter Quantity">
               <mat-header-cell *matHeaderCellDef>Req Qty</mat-header-cell>
               <mat-cell *matCellDef="let row; let i = index" #reqQty>
                 <span *ngIf="!row.editMode" (click)="toggleEditMode(row)" style="cursor: pointer">{{ row.reqQty
@@ -932,13 +951,13 @@
               </mat-cell>
             </ng-container>
 
-            <ng-container matColumnDef="unit">
+            <ng-container matColumnDef="Unit">
               <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
               <mat-cell *matCellDef="let row">{{ row.unit }} (PCS)</mat-cell>
             </ng-container>
 
-            <ng-container matColumnDef="itemSpec">
-              <mat-header-cell *matHeaderCellDef>Item Spec</mat-header-cell>
+            <ng-container matColumnDef="Item Specs" hidden>
+              <mat-header-cell *matHeaderCellDef>Other Specs</mat-header-cell>
               <mat-cell class="ellipsis-text" *matCellDef="let row" title="{{ row.makerReference ? row.makerReference + '-' : '' }}
               {{ row.material ? row.material + '-' : '' }}
               {{ row.description ? row.description + '-' : '' }}
@@ -948,7 +967,7 @@
                 {{ row.remarks ? row.remarks : '' }} </mat-cell>
             </ng-container>
 
-            <ng-container style="min-width: 80px; width: 80px; max-width: 80px;" matColumnDef="itemRemarks">
+            <ng-container style="min-width: 80px; width: 80px; max-width: 80px;" matColumnDef="Remarks">
               <mat-header-cell style="min-width: 80px; width: 80px; max-width: 80px;"
                 *matHeaderCellDef>Remarks</mat-header-cell>
               <mat-cell #reqQty style="min-width: 80px; width: 80px; max-width: 80px;"
@@ -956,7 +975,7 @@
                 <input matInput placeholder="Enter data" (change)="autoSave('items')" [(ngModel)]="row.itemRemarks">
               </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="attachments">
+            <ng-container matColumnDef="Attachments">
               <mat-header-cell *matHeaderCellDef>Attachments</mat-header-cell>
               <mat-cell class="text-center" *matCellDef="let row"><a class="px-1 m-r-5 text-center" type="button"
                   data-bs-toggle="tooltip" data-bs-placement="top" title="" (click)="openAttachmentItem(row.itemsId)"
@@ -1067,7 +1086,7 @@
           <div class="col-lg-9" *ngFor="let item of listViewItems;">
             <div class="row mb-4">
               <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Line #</h6>
+                <h6 class="text-900 mb-2">Line No</h6>
                 <h6 class="mb-0 fs--2 text-500">{{ selectedItemIndex }}</h6>
               </div>
               <div class="col-lg-2">
@@ -1083,7 +1102,7 @@
                 <h6 class="mb-0 fs--2 text-500">{{item.componentName}}</h6>
               </div>
               <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Drawing #</h6>
+                <h6 class="text-900 mb-2">DWG Ref.</h6>
                 <h6 class="mb-0 fs--2 text-500">{{item.dwg}}</h6>
               </div>
               <div class="col-lg-2">
@@ -1094,7 +1113,7 @@
 
             <div class="row mb-4">
               <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Part #</h6>
+                <h6 class="text-900 mb-2">Part No</h6>
                 <h6 class="mb-0 fs--2 text-500">{{item.partNo}}</h6>
               </div>
               <div class="col-lg-2">
