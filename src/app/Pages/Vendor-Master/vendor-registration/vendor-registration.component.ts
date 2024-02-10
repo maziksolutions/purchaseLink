@@ -171,8 +171,8 @@ export class VendorRegistrationComponent implements OnInit {
       vatNo: ['', Validators.required],
       remarks: ['', Validators.required],
       confirmOnCall: [''],
-      attachments:[''],
-      vendorId:[ 0, Validators.required],
+      attachments: [''],
+      vendorId: [0, Validators.required],
     })
 
     // this.VendorMasterForm.get('vendorInfo')?.valueChanges.subscribe(() => {
@@ -507,39 +507,42 @@ export class VendorRegistrationComponent implements OnInit {
 
   onSubmitbranchoffice(form: any) {
     debugger
-    form.value.vendorId = this.vendorId
-    form.value.convenientPorts = this.selectedLocationPort.join(',')
-    const fmdata = new FormData();
-    fmdata.append('data', JSON.stringify(form.value));
+    if (this.vendorId) {
+      form.value.vendorId = this.vendorId
+      form.value.convenientPorts = this.selectedLocationPort.join(',')
+      const fmdata = new FormData();
+      fmdata.append('data', JSON.stringify(form.value));
 
-    this.vendorService.addBranchoffice(fmdata)
-      .subscribe(data => {
-        debugger
-        if (data.message == "data added") {
-          this.swal.success('Added successfully.');
-          this.vendorBranchInfo.reset();
-          this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
-          this.loadVendorBranchData()
-        }
-        else if (data.message == "updated") {
-          this.swal.success('Data has been updated successfully.');
-          this.vendorBranchInfo.reset();
-          this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
-          this.loadVendorBranchData()
-        }
-        else if (data.message == "duplicate") {
-          this.swal.info('Data already exist. Please enter new data');
-        }
-        else if (data.message == "not found") {
-          this.swal.info('Data exist not exist');
-        }
-        $("#branch-office").modal('hide');
-      });
+      this.vendorService.addBranchoffice(fmdata)
+        .subscribe(data => {
+          debugger
+          if (data.message == "data added") {
+            this.swal.success('Added successfully.');
+            this.vendorBranchInfo.reset();
+            this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
+            this.loadVendorBranchData(this.vendorId)
+          }
+          else if (data.message == "updated") {
+            this.swal.success('Data has been updated successfully.');
+            this.vendorBranchInfo.reset();
+            this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
+            this.loadVendorBranchData(this.vendorId)
+          }
+          else if (data.message == "duplicate") {
+            this.swal.info('Data already exist. Please enter new data');
+          }
+          else if (data.message == "not found") {
+            this.swal.info('Data exist not exist');
+          }
+          $("#branch-office").modal('hide');
+        });
+    }
+
   }
 
 
-  loadVendorBranchData() {
-    this.vendorService.getAccountInfoByVendorId(this.vendorId)
+  loadVendorBranchData(id) {
+    this.vendorService.getAccountInfoByVendorId(id)
       .subscribe(response => {
         debugger
         this.dataBranchOffice = []
@@ -552,11 +555,8 @@ export class VendorRegistrationComponent implements OnInit {
     $("#branch-office").modal('show');
     this.vendorService.getBranchofficeId(id)
       .subscribe((response) => {
-
         if (response.status) {
           debugger
-
-
           this.ConvenientPortsList = [];
           if (response.data.convenientPorts != '' && response.data.convenientPorts != null) {
 
@@ -583,7 +583,6 @@ export class VendorRegistrationComponent implements OnInit {
         (error) => {
 
         });
-
   }
 
   //#region Service Category Dropdown 
@@ -788,7 +787,7 @@ export class VendorRegistrationComponent implements OnInit {
       }
     })
   }
-  deleteServiceData(id) {    
+  deleteServiceData(id) {
     debugger
     if (this.vendorId > 0) {
       this.vendorService.archiveServiceInfo(id).subscribe(res => {
@@ -883,7 +882,7 @@ export class VendorRegistrationComponent implements OnInit {
           this.loadVendorAccountData(this.vendorId)
         }
       })
-    }     
+    }
   }
   //#endregion
 
@@ -984,77 +983,57 @@ export class VendorRegistrationComponent implements OnInit {
   //#region Bank Information
 
 
-  ClearBankInfoModal() {
+  clearBankForm() {
     this.BankInformationForm.reset();
     this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
-    // this.BankInformationForm.controls.companyName.setValue('');
-    // this.BankInformationForm.controls.companyShortName.setValue('');
-    // this.BankInformationForm.controls.preferredCurrency.setValue('');
-    // this.BankInformationForm.controls.bankName.setValue('');
-    // this.BankInformationForm.controls.bankAddress.setValue('');
-    // this.BankInformationForm.controls.branchOffice.setValue('');
-    // this.BankInformationForm.controls.beneficiaryName.setValue('');
-    // this.BankInformationForm.controls.accountNumber.setValue('');
-    // this.BankInformationForm.controls.ibanSwiftCode.setValue('');
-    // this.BankInformationForm.controls.vatNo.setValue('');
-    // this.BankInformationForm.controls.remarks.setValue('');
-    // this.BankInformationForm.controls.confirmOnCall.setValue('');
-    // this.BankInformationForm.controls.attachments.setValue('');
-    // this.BankInformationForm.controls.vendorId.setValue(this.vendorInfoId);
     this.FileName = ""
-    $("#bank-details").modal('show');
-
   }
 
-  onSubmitBankInformation(form: any){
-debugger
+  onSubmitBankInformation(form: any) {
+    debugger
+    if (this.vendorId > 0) {
+      form.value.attachments = this.FileName;
+      form.value.vendorId = this.vendorId;
+      const fmdata = new FormData();
+      fmdata.append('data', JSON.stringify(form.value));
+      this.vendorService.addBankInformation(fmdata)
+        .subscribe(data => {
 
-     form.value.attachments = this.FileName;
-     form.value.vendorId = 1;
-     const fmdata = new FormData();
-     fmdata.append('data', JSON.stringify(form.value));
- 
-     this.vendorService.addBankInformation(fmdata)
-       .subscribe(data => {
- 
-         if (data.message == "data added") {
-           this.swal.success('Added successfully.');
-           this.ClearBankInfoModal();
-          this.loadBankInformation();
-        }
-        else if (data.message == "updated") {
-          this.swal.success('Data has been updated successfully.');
-          this.ClearBankInfoModal();
-          this.loadBankInformation();
-        }
-        else if (data.message == "duplicate") {
-          this.swal.info('Data already exist. Please enter new data');
-          this.ClearBankInfoModal();
-          this.loadBankInformation();
-        }
-        else if (data.message == "not found") {
-          this.swal.info('Data exist not exist');
-          this.ClearBankInfoModal();
-          this.loadBankInformation();
-        }
-        else {
-
-        }
-
-      });
-
+          if (data.message == "data added") {
+            this.swal.success('Added successfully.');
+            this.BankInformationForm.reset();
+            this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
+            this.FileName = ""
+            this.loadBankInformation(this.vendorId);
+          }
+          else if (data.message == "updated") {
+            this.swal.success('Data has been updated successfully.');
+            this.BankInformationForm.reset();
+            this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
+            this.FileName = ""
+            this.loadBankInformation(this.vendorId);
+          }
+          else if (data.message == "duplicate") {
+            this.swal.info('Data already exist. Please enter new data');
+            // this.ClearBankInfoModal();
+            // this.loadBankInformation();
+          }
+          else if (data.message == "not found") {
+            this.swal.info('Data exist not exist');
+          }
+          $("#bank-details").modal('hide');
+        });
+    }
   }
 
-  loadBankInformation() {
+  loadBankInformation(id) {
 
-    this.vendorService.getBankInformation(1).subscribe(res => {
+    this.vendorService.getBankInformation(id).subscribe(res => {
       if (res.status == true) {
-        debugger
-        // this.zone.run(() => {
-        debugger
-        this.vendorBankInfoData = []
-        this.vendorBankInfoData = res.data;
-        // })
+        this.zone.run(() => {
+          this.vendorBankInfoData = []
+          this.vendorBankInfoData = res.data;
+        })
       }
     });
   }
@@ -1066,23 +1045,18 @@ debugger
         debugger
         if (res.data.confirmOnCall == true) {
           this.ConfirmOnCallCheck = true;
-
         }
         this.FileName = res.data.attachments
         this.BankInformationForm.patchValue(res.data)
-
-
       }
     })
   }
 
   FileSelect(event) {
-
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
       this.fileToUpload = file;
       this.FileName = file.name;
-
     } else {
       this.FileName = "Choose file";
     }
