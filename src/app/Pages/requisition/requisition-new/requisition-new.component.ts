@@ -3326,7 +3326,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.requisitionService.updateUnitinItem(selectedValue ,id)
     .subscribe(response => {
     
-      alert('hi')
+      
     });
   }
 
