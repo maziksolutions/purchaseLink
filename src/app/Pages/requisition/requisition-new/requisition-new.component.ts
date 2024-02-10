@@ -3252,16 +3252,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   CancelRequisition(){
 
-      let DataRequisitionMaster =  this.requisitiondata.filter(x=>x.documentHeader == this.finallyHeader);
+    //   let DataRequisitionMaster =  this.requisitiondata.filter(x=>x.documentHeader == this.finallyHeader);
 
-     if(DataRequisitionMaster.length != 0){
-      this.requisitionService.archiveRequisitionMaster(DataRequisitionMaster).subscribe(result => {
-        this.router.navigate(['/Requisition/Requisitionslist']);
-      })
-     }
-     else{
+    //  if(DataRequisitionMaster.length != 0){
+    //   this.requisitionService.archiveRequisitionMaster(DataRequisitionMaster).subscribe(result => {
+    //     this.router.navigate(['/Requisition/Requisitionslist']);
+    //   })
+    //  }
+    //  else{
       this.router.navigate(['/Requisition/Requisitionslist']);
-     }
+    //  }
     
 
   }
