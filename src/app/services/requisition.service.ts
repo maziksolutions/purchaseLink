@@ -170,6 +170,11 @@ export class RequisitionService {
     return this.httpClient.get<any>(this.linkurl + 'StoreLinkedGroups/', { params })
       .pipe(catchError(this.handleError));
   }
+
+  updateUnitinItem(unitvalue: string,id: number): Observable<any> {
+
+    return this.httpClient.get<any[]>(`${this.linkurl}updateUnitinItem/${unitvalue}/${id}`, httpOptions);
+  }
   //#endregion
 
   editRobData(data: any): Observable<any> {

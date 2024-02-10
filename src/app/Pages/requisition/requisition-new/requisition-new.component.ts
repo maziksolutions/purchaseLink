@@ -34,6 +34,7 @@ import { EditReqQtyComponent } from './common/edit-req-qty/edit-req-qty.componen
 import { HostListener } from '@angular/core';
 import { ReqItemsModel, ServiceTypeData } from '../../Models/reqItems-model';
 import { SideNavService } from 'src/app/services/sidenavi-service';
+import { UnitmasterService } from 'src/app/services/unitmaster.service';
 
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
@@ -226,12 +227,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   AttachlistwithID: any;
   dataJobList: any;
   jobListAttachmentForm: FormGroup
+  unitmasterlist: any;
+  
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
     private authStatusService: AuthStatusService, private userService: UserManagementService, private autoSaveService: AutoSaveService, public dialog: MatDialog,
     private vesselService: VesselManagementService, private shipmasterService: ShipmasterService, private requisitionService: RequisitionService,
-    private datePipe: DatePipe, private typemasterService: TypemasterService, private sanitizer: DomSanitizer, private http: HttpClient
+    private datePipe: DatePipe, private typemasterService: TypemasterService, private sanitizer: DomSanitizer, private http: HttpClient,
+   private unitmasterservice :UnitmasterService
   ) { }
 
   ngOnInit(): void {
@@ -359,6 +363,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.LoadComponent();
     this.LoadStore();
     this.LoadSpare();
+    this.GetunitList();
   }
 
   ngOnDestroy(): void {
@@ -3264,6 +3269,30 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     //  }
     
 
+  }
+
+  GetunitList(){
+    this.unitmasterservice.GetunitList(0)
+    .subscribe(response => {
+    
+     
+    
+      this.unitmasterlist = response.data;
+
+    
+    });
+  }
+
+  updateunit(value ,id)
+  {
+    debugger
+    const selectedValue = (value.target as HTMLSelectElement).value;
+
+    this.requisitionService.updateUnitinItem(selectedValue ,id)
+    .subscribe(response => {
+    
+      alert('hi')
+    });
   }
 
 }

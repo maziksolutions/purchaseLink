@@ -934,7 +934,13 @@
 
             <ng-container matColumnDef="unit">
               <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
-              <mat-cell *matCellDef="let row">{{ row.unit }} (PCS)</mat-cell>
+              <mat-cell *matCellDef="let row">
+              <select class="form-control form-small form-select"  (change)="updateunit($event ,row.itemsId)" required>
+              <option value="" disabled>Select unit</option>
+              <option *ngFor="let item of unitmasterlist" value="item.shortCode">{{item.shortCode}}</option>
+                
+          </select>
+        </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="itemSpec">
