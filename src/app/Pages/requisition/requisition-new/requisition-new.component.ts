@@ -776,7 +776,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   onFileChange(event: any, index: number) {
-    debugger
+    
     const file = event.target.files[0];
     const jobListFormArray = this.serviceTypeForm.get('jobList') as FormArray;
     const jobFormGroup = jobListFormArray.at(index) as FormGroup;
@@ -790,7 +790,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    debugger
+    
 
     const formValues = this.serviceTypeForm.value;
     const formData = new FormData();
@@ -809,7 +809,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.serviceTypeForm.patchValue({ pmReqId: this.reqId })
     if (this.serviceTypeForm.valid) {
       this.requisitionService.addServiceType(formData).subscribe(data => {
-        debugger
+        
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
           if (this.reqId) {
@@ -1274,11 +1274,23 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   LoadProjectnameAndcode() {
-
-    this.selectedVesselId = this.RequisitionForm.get('header')?.value.vesselId
+    
+    // this.selectedVesselId =this.RequisitionForm.get('header')?.value.vesselId
+   
     this.purchaseService.getprojectname(0)
       .subscribe(response => {
-        this.projectnameAndcode = response.data;
+        if(this.selectedVesselId != "0"){
+          const Vesselset = this.RequisitionForm.get('header')
+          if (Vesselset) {
+            Vesselset.value.vesselId = this.selectedVesselId
+          }
+          this.projectnameAndcode = response.data; 
+
+        }
+        else{
+          this.projectnameAndcode = [];
+        }
+  
       })
   }
 
@@ -1339,7 +1351,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         if (this.reqGetId) {
           // this.loadItemByReqId(this.reqGetId);
           this.LoadVessel();
-          this.LoadProjectnameAndcode();
+          // this.LoadProjectnameAndcode();
           this.LoadPriority();
           this.LoadDepartment();
           this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
@@ -1349,7 +1361,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.saveValue = ''
           this.displayValue = ''
           // this.LoadUserDetails();
-          this.LoadOrdertype();
+          // this.LoadOrdertype();
           this.LoadPriority();
           this.LoadVessel();
           this.LoadDepartment();
@@ -1366,18 +1378,20 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       .subscribe(response => {
 
         if (this.targetLoc == 'Vessel') {
-
           this.headsite = 'V'
           const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
           if (filteredVessels.length > 0) {
             this.Vessels = filteredVessels;
-            this.selectedVesselId = filteredVessels[0].vesselId;
+            this.selectedVesselId = filteredVessels[0].vesselId;     
             this.LoadProjectnameAndcode()
+            this.LoadOrdertype();
           }
         }
         else {
           this.headsite = 'O'
           this.Vessels = response.data;
+          this.LoadProjectnameAndcode();
+          this.LoadOrdertype();
         }
       })
   }
@@ -1931,7 +1945,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     var status = 0;
     this.pmsService.getmattachment(status, 'Purchase Requisition Item', id)
       .subscribe(response => {
-        debugger
+        
         this.AttachlistwithID = response.data;
 
       });
@@ -2108,8 +2122,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       .subscribe(response => {
         if (response.message != undefined) {
 
-          let ss = response.message;
-          this.swal.error(ss)
+          this.swal.error('After saving the data, proceed with the approval.')
         }
 
         if (response.message == undefined) {
@@ -3271,6 +3284,22 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     });
   }
   //#endregion
+
+  CancelRequisition(){
+
+    //   let DataRequisitionMaster =  this.requisitiondata.filter(x=>x.documentHeader == this.finallyHeader);
+
+    //  if(DataRequisitionMaster.length != 0){
+    //   this.requisitionService.archiveRequisitionMaster(DataRequisitionMaster).subscribe(result => {
+    //     this.router.navigate(['/Requisition/Requisitionslist']);
+    //   })
+    //  }
+    //  else{
+      this.router.navigate(['/Requisition/Requisitionslist']);
+    //  }
+    
+
+  }
 
 }
 
