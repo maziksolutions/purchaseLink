@@ -1388,8 +1388,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           if (filteredVessels.length > 0) {
             this.Vessels = filteredVessels;
             this.selectedVesselId = filteredVessels[0].vesselId;     
-            this.LoadProjectnameAndcode()
-           
+            this.LoadProjectnameAndcode()       
           }
         }
         else {
