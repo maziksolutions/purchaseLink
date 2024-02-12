@@ -537,7 +537,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
               }
             }
             else {
-              this.matchingAccountCodes.push(node.groupAccountCode.toString())
+              this.matchingAccountCodes.push(accountCodeToCheck.toString())
               this.handleSelectedComponent(node, node.selected ?? false);
             }
           }
