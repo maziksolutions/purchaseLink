@@ -1000,6 +1000,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         });
 
         this.loadOrderTypeByEditReq().subscribe(res => {
+          debugger
           this.orderTypes = res;
           debugger
           const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == requisitionData.projectNameCodeId).map(item => item.serviceTypeId)
@@ -1363,7 +1364,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.LoadVessel();
           // this.LoadProjectnameAndcode();
           this.LoadPriority();
-          this.LoadDepartment();
+          this.LoadDepartment();         
           this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
           // this.LoadUserDetails();
           this.getReqData();
@@ -1371,7 +1372,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.saveValue = ''
           this.displayValue = ''
           // this.LoadUserDetails();
-          // this.LoadOrdertype();
+           this.LoadOrdertype();
           this.LoadPriority();
           this.LoadVessel();
           this.LoadDepartment();
@@ -1393,15 +1394,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           if (filteredVessels.length > 0) {
             this.Vessels = filteredVessels;
             this.selectedVesselId = filteredVessels[0].vesselId;     
-            this.LoadProjectnameAndcode()
-            this.LoadOrdertype();
+            this.LoadProjectnameAndcode()       
           }
         }
         else {
           this.headsite = 'O'
           this.Vessels = response.data;
           this.LoadProjectnameAndcode();
-          this.LoadOrdertype();
+         
         }
       })
   }

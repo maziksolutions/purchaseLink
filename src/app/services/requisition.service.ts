@@ -171,8 +171,8 @@ export class RequisitionService {
       .pipe(catchError(this.handleError));
   }
 
-  updateUnitinItem(unitvalue: string, id: number): Observable<any> {
-    
+  updateUnitinItem(unitvalue: string,id: number): Observable<any> {
+
     return this.httpClient.post<any>(`${this.linkurl}updateUnitinItem/${unitvalue}/${id}`, httpOptions);
   }
   //#endregion
