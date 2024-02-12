@@ -146,8 +146,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         pageSize: pageEvent.pageSize
       });
       this.loadGroupsComponent();
-    });
-    console.log(this.spareItemDataSource.data)
+    });    
   }
 
   get sfm() { return this.searchForm.controls };

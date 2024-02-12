@@ -390,35 +390,39 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.requisitionService.getTempNumber(0).subscribe(res => {
       if (res.data != null) {
-        var formattedNumber = parseInt(res.data.documentHeader)
-        formattedNumber++;
+        debugger
+        this.temporaryNumber=res.data;
+        this.RequisitionForm.get('header')?.patchValue({documentHeader:this.temporaryNumber})
 
-        let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let text = '';
-        length = 3;
-        for (var i = 0; i < length; i++) {
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
+        // var formattedNumber = parseInt(res.data.documentHeader)
+        // formattedNumber++;
 
-        this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
-        this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+        // let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        // let text = '';
+        // length = 3;
+        // for (var i = 0; i < length; i++) {
+        //   text += possible.charAt(Math.floor(Math.random() * possible.length));
+        // }
 
-      }
-      if (res.data == null) {
-        var formattedNumber = parseInt('000');
-        formattedNumber++;
-
-        let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let text = '';
-        length = 3;
-        for (var i = 0; i < length; i++) {
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-
-        this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
-        this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+        // this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+        // this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
 
       }
+      // if (res.data == null) {
+      //   var formattedNumber = parseInt('000');
+      //   formattedNumber++;
+
+      //   let possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      //   let text = '';
+      //   length = 3;
+      //   for (var i = 0; i < length; i++) {
+      //     text += possible.charAt(Math.floor(Math.random() * possible.length));
+      //   }
+
+      //   this.temporaryNumber = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+      //   this.temporaryNODataBase = formattedNumber.toString().padStart(3, '0') + ' - ' + text;
+
+      // }
     })
   }
 
@@ -534,7 +538,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   autoSave(partName: string): void {
 
     if (partName == 'header') {
-
+        debugger
       const formPart = this.RequisitionForm.get(partName);
       if (this.isRequisitionApproved) {
         const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -998,11 +1002,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.loadOrderTypeByEditReq().subscribe(res => {
           
           this.orderTypes = res;
-
+          debugger
           const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == requisitionData.projectNameCodeId).map(item => item.serviceTypeId)
           if (selectedProjectCode[0] != null) {
             const serviceTypeIds: string[] = selectedProjectCode[0].split(',');
-
+              debugger
             // Filter order types based on service type IDs
             this.filteredOrderTypes = this.orderTypes.filter(orderType => {
               const orderTypeServiceTypeIds: string[] = orderType.serviceTypeId.split(',');
@@ -1264,7 +1268,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       )
   }
   selectProjectCode(event: any) {
-
+    debugger
     const selectedId = event.target.value;
     const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == selectedId).map(item => item.serviceTypeId)
     if (selectedProjectCode[0] != null) {
@@ -1285,6 +1289,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     
     this.purchaseService.getProjectNCForReq(0)
       .subscribe(response => {
+        debugger
         if(this.selectedVesselId != "0"){
           const Vesselset = this.RequisitionForm.get('header')
           if (Vesselset) {

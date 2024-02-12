@@ -161,7 +161,7 @@ export class RequisitionService {
     return this.httpClient.get<TemplateTree[]>(this.linkurl + 'groupTemplateTree');
   }
 
-  GetStoreByShipId(request: any): Observable<any> {    
+  GetStoreByShipId(request: any): Observable<any> {
     const params = new HttpParams()
       .set('ShipId', request.ShipId.toString())
       .set('KeyWord', request.KeyWord)
