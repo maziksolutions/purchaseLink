@@ -996,6 +996,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         });
 
         this.loadOrderTypeByEditReq().subscribe(res => {
+          debugger
           this.orderTypes = res;
 
           const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == requisitionData.projectNameCodeId).map(item => item.serviceTypeId)
@@ -1356,12 +1357,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         if (this.reqGetId) {
           // this.loadItemByReqId(this.reqGetId);
           this.LoadVessel();
+          this.LoadOrdertype();
           // this.LoadProjectnameAndcode();
           this.LoadPriority();
-          this.LoadDepartment();
+          this.LoadDepartment(); 
+          this.getReqData();
           this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
           // this.LoadUserDetails();
-          this.getReqData();
+         
         } else {
           this.saveValue = ''
           this.displayValue = ''
