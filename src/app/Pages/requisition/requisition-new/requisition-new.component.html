@@ -672,7 +672,7 @@
                 <h5 class="modal-title" id="">Add Items</h5>
 
               </div>
-              <div class="modal-body mt-0" style="height: 70vh;">
+              <div class="modal-body mt-0" style="height: 70vh; overflow-y: auto;">
                 <div class="form-inline mb-3">
                   <input type="text" class="form-control form-small m-r-5 mb-d3 m-r-d0" placeholder="Search"
                     (keyup)="applyFilter($any($event.target).value)" #searchInput>
@@ -827,7 +827,7 @@
                   </div>
                 </div>
               </div>
-              <div class="modal-footer">
+              <div class="modal-footer" style="margin-top: 0.6rem;">
                 <button type="button" class="btn btn-primary me-1" aria-label="" [disabled]="!reqId"
                   (click)="storeTableData()">Ok</button>
                 <!-- <button type="button" data-bs-dismiss="modal" class="btn btn-danger me-1" aria-label="">Cancel</button> -->
@@ -836,23 +836,6 @@
           </div>
         </div>
         <!--End here Items Pop Up View-->
-
-        <!--Start Here Modify Columns Pop Up View-->
-        <div class="modal fade" id="modify-Items" tabindex="-1" aria-hidden="true" role="dialog"
-          aria-labelledby="authentication-modal-label">
-          <div class="modal-dialog modal-xl mt-6" role="document">
-            <div class="modal-content border-0">
-              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                  data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-header">
-                <h5 class="modal-title" id="">Modify-Columns</h5>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!--End Here Modify Columns Pop Up View-->
 
         <div class="nav nav-pills nav-pills-pms flex-grow-1 d-inline-block m-r-5" role="tablist">
           <button class="btn btn-sm active" data-bs-toggle="pill" data-bs-target="#list-view" type="button"

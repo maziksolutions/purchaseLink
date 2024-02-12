@@ -539,7 +539,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   autoSave(partName: string): void {
 
     if (partName == 'header') {
-        debugger
+       
       const formPart = this.RequisitionForm.get(partName);
       if (this.isRequisitionApproved) {
         const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
@@ -549,7 +549,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
       formPart?.patchValue({
         requisitionId: formPart?.value.requisitionId,
-        documentHeader: formPart?.value.documentHeader || this.temporaryNODataBase,
+        documentHeader: formPart?.value.documentHeader || this.temporaryNumber,
         originSite: this.location,
         vesselId: formPart?.value.vesselId,
         orderTypeId: formPart?.value.orderTypeId,
@@ -946,7 +946,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
-
+        debugger
         const requisitionData = response.data;
         const formPart = this.RequisitionForm.get('header');
         this.approvestatus = requisitionData.approvedReq;
@@ -1856,6 +1856,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (this.reqId)
       this.requisitionService.getItemsByReqId(this.reqId)
         .subscribe(response => {
+          debugger
+          if(this.unitmasterlist.length > 0){
+            response.data.forEach(element => {
+              debugger
+              const unitData =this.unitmasterlist.find(t=>t.shortCode==element.unit)
+            });
+            
+          }
           this.flag = status;
           this.dataSource.data = [];
           this.zone.run(() => {
@@ -3313,13 +3321,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   GetunitList(){
     this.unitmasterservice.GetunitList(0)
-    .subscribe(response => {
-    
-     
-    
-      this.unitmasterlist = response.data;
-
-    
+    .subscribe(response => {          
+      this.unitmasterlist = response.data;    
     });
   }
 
