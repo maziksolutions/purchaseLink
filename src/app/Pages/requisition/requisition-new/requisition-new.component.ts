@@ -545,10 +545,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.temporaryNumber = documentHeaderElement.textContent;
       }
       // formPart?.get('orderReference')?.setValue(displayValue);
-
+      debugger
       formPart?.patchValue({
         requisitionId: formPart?.value.requisitionId,
-        documentHeader: formPart?.value.documentHeader || this.temporaryNumber,
+        documentHeader: formPart?.value.documentHeader || '0',
         originSite: this.location,
         vesselId: formPart?.value.vesselId,
         orderTypeId: formPart?.value.orderTypeId,
@@ -567,8 +567,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.requisitionService.addRequisitionMaster(formData)
           .subscribe(data => {
 
-            this.reqId = data.data;
-            formPart.patchValue({ requisitionId: data.data })
+            this.reqId = data.data; 
+            this.temporaryNumber = data.documentHeader          
+            formPart.patchValue({ requisitionId: data.data, documentHeader:data.documentHeader})
             if (this.defaultOrderType[0] !== 'Service') {
               if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
 
@@ -1381,7 +1382,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.LoadDepartment();
           this.loadPortList();
           this.GetunitList();
-          this.generateTempNumber();
+          // this.generateTempNumber();
         }
         // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });

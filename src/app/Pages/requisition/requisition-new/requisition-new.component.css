@@ -135,3 +135,7 @@
 .mat-cell{
   display: block !important;
 }
+.table-sm > :not(caption) > * > *
+{
+  padding: 0.1rem !important;
+}

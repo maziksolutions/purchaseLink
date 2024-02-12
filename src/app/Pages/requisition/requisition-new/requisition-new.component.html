@@ -915,17 +915,17 @@
               <mat-cell *matCellDef="let row">{{ row.lastDlQty }}</mat-cell>
             </ng-container>
             <ng-container matColumnDef="ROB">
-              <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
-              <mat-cell class="ellipsis-text" title="{{row.rob}}" *matCellDef="let row" (click)="openEditModal(row)">{{
-                row.rob }}</mat-cell>
+              <mat-header-cell  *matHeaderCellDef>ROB</mat-header-cell>
+              <mat-cell title="{{row.rob}}" *matCellDef="let row" (click)="openEditModal(row)">
+               <div class="border-1 border-400 form-control w-97 p-1">{{row.rob }}</div></mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Enter Quantity">
               <mat-header-cell *matHeaderCellDef>Req Qty</mat-header-cell>
               <mat-cell *matCellDef="let row; let i = index" #reqQty>
-                <span *ngIf="!row.editMode" (click)="toggleEditMode(row)" style="cursor: pointer">{{ row.reqQty
-                  }}</span>
-                <input #reqQtyElements *ngIf="row.editMode" type="number" [(ngModel)]="row.reqQty"
+                <div class="border-1 border-400 form-control w-97 p-1" *ngIf="!row.editMode" (click)="toggleEditMode(row)" style="cursor: pointer;">{{ row.reqQty
+                  }}</div>
+                <input class="border-1 border-400 form-control w-97 p-1" #reqQtyElements *ngIf="row.editMode" type="text" [(ngModel)]="row.reqQty"
                   (blur)="saveChanges(row)" (keydown)="handleKeyDown($event, row)"
                   [id]="'reqQty_' + i + '_' + row.ids" />
               </mat-cell>
@@ -934,7 +934,7 @@
             <ng-container matColumnDef="Unit">
               <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
               <mat-cell *matCellDef="let row">
-                <select class="form-control form-small form-select" (change)="updateunit($event ,row.itemsId)" [(ngModel)]="row.unit" required>
+                <select class="form-control form-small form-select border-1 border-400 w-97 p-1" (change)="updateunit($event ,row.itemsId)" [(ngModel)]="row.unit" required>
                   <option value="" disabled>Select unit</option>
                   <option *ngFor="let item of unitmasterlist" value="{{item.shortCode}}">{{item.shortCode}}</option>
 
@@ -953,12 +953,14 @@
                 {{ row.remarks ? row.remarks : '' }} </mat-cell>
             </ng-container>
 
-            <ng-container style="min-width: 80px; width: 80px; max-width: 80px;" matColumnDef="Remarks">
-              <mat-header-cell style="min-width: 80px; width: 80px; max-width: 80px;"
+            <ng-container  matColumnDef="Remarks">
+              <mat-header-cell 
                 *matHeaderCellDef>Remarks</mat-header-cell>
-              <mat-cell #reqQty style="min-width: 80px; width: 80px; max-width: 80px;"
-                *matCellDef="let row; let i = index" [ngClass]="{'highlight': isHighlighted(row)}">
-                <input matInput placeholder="Enter data" (change)="autoSave('items')" [(ngModel)]="row.itemRemarks">
+              <mat-cell #reqQty 
+                *matCellDef="let row; let i = index"><div class="border-1 border-400 form-control w-97 p-1">
+                  <input  matInput placeholder="Enter data" (change)="autoSave('items')"
+                  [(ngModel)]="row.itemRemarks">
+                </div>                
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Attachments">
@@ -969,8 +971,7 @@
                     class="fas fa-paperclip text-primary"></i></a></mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
-              [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.ids==selectedIndex))}"></mat-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"></mat-row>
           </mat-table>
           <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
             [pageSizeOptions]="[20, 40, 60, 100]">
