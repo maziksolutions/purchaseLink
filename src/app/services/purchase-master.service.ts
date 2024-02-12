@@ -124,6 +124,9 @@ export class PurchaseMasterService {
   getprojectname(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterprojectname/${status}`, httpOptions);
   }
+  getProjectNCForReq(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}getProjectNCForReq/${status}`, httpOptions);
+  }
   getProjectnameById(id): Observable<any> {
     return this.httpClient.get<any>(this.linkurl + 'getprojectnamebyid/' + id, httpOptions)
       .pipe(catchError(this.handleError));

@@ -367,7 +367,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.LoadComponent();
     this.LoadStore();
     this.LoadSpare();
-    this.GetunitList();
 
     this.displayedColumns = this.ItemsColumns.filter((column, index) => this.visibleColumns[index]);
   }
@@ -574,6 +573,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
               if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
 
                 this.items = []
+                
                 this.dataSource.data.map(item => {
                   const newItem = {
                     itemsId: item.itemsId || 0,
@@ -596,7 +596,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                     lpp: item.lpp || 0,
                     lpd: item.lpd || 0,
                     aq: item.aq || 0,
-                    unit: item.unit || 0,
+                    unit: item.unit || '',
                     uc: item.uc || 0,
                     qu: item.qu || 0,
                     dt: item.dt || '',
@@ -1000,7 +1000,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         });
 
         this.loadOrderTypeByEditReq().subscribe(res => {
-          debugger
+          
           this.orderTypes = res;
           debugger
           const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == requisitionData.projectNameCodeId).map(item => item.serviceTypeId)
@@ -1286,8 +1286,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   LoadProjectnameAndcode() {
     
     // this.selectedVesselId =this.RequisitionForm.get('header')?.value.vesselId
-   
-    this.purchaseService.getprojectname(0)
+    
+    this.purchaseService.getProjectNCForReq(0)
       .subscribe(response => {
         debugger
         if(this.selectedVesselId != "0"){
@@ -1295,11 +1295,13 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           if (Vesselset) {
             Vesselset.value.vesselId = this.selectedVesselId
           }
+          
           this.projectnameAndcode = response.data; 
 
         }
         else{
-          this.projectnameAndcode = [];
+          
+          this.projectnameAndcode =  response.data;
         }
   
       })
@@ -1362,9 +1364,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         if (this.reqGetId) {
           // this.loadItemByReqId(this.reqGetId);
           this.LoadVessel();
-          // this.LoadProjectnameAndcode();
+          this.LoadProjectnameAndcode();
           this.LoadPriority();
-          this.LoadDepartment();         
+          this.LoadDepartment(); 
+          this.GetunitList();        
           this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
           // this.LoadUserDetails();
           this.getReqData();
@@ -1377,6 +1380,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.LoadVessel();
           this.LoadDepartment();
           this.loadPortList();
+          this.GetunitList();
           this.generateTempNumber();
         }
         // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
@@ -1564,6 +1568,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (itemType === 'Component') {
       this.requisitionService.getItemsInfo(ids)
         .subscribe(res => {
+          
           const data = res.map(item => ({
             itemsId: item.shipComponentSpareId,
             spareId: item.shipSpareId || null,
@@ -1582,7 +1587,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             lpp: item.lpp || 0,
             lpd: item.lpd || 0,
             aq: item.aq || 0,
-            unit: item.unit || 0,
+            unit: item.unit || '',
             uc: item.uc || 0,
             qu: item.qu || 0,
             dt: item.dt || '',
@@ -1856,14 +1861,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (this.reqId)
       this.requisitionService.getItemsByReqId(this.reqId)
         .subscribe(response => {
-          debugger
-          if(this.unitmasterlist.length > 0){
-            response.data.forEach(element => {
-              debugger
-              const unitData =this.unitmasterlist.find(t=>t.shortCode==element.unit)
-            });
-            
-          }
+         
           this.flag = status;
           this.dataSource.data = [];
           this.zone.run(() => {
@@ -1886,6 +1884,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
           this.itemdata = response;
+
+          // const unitset = this.RequisitionForm.get('items')
+          // if (unitset) {
+          //   unitset.value.unit = response[0].unit
+          // }
           // this.clear();
           // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
         });
@@ -2743,6 +2746,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   openEditModal(row) {
+    
     const dialogConfig = new MatDialogConfig();
     dialogConfig.position = { top: '70px' };
     const dialogRef = this.dialog.open(EditReqQtyComponent, {
@@ -3291,7 +3295,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-      debugger
+      
       if (result.result === 'success') {
         const data = result.data
         console.log(data)
@@ -3328,9 +3332,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   updateunit(value: any, id: any)
   {
-    debugger
     const selectedValue = value.target.value;
-
     this.requisitionService.updateUnitinItem(selectedValue ,id)
     .subscribe(response => {
     
