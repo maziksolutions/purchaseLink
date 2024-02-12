@@ -161,7 +161,7 @@ export class RequisitionService {
     return this.httpClient.get<TemplateTree[]>(this.linkurl + 'groupTemplateTree');
   }
 
-  GetStoreByShipId(request: any): Observable<any> {    
+  GetStoreByShipId(request: any): Observable<any> {
     const params = new HttpParams()
       .set('ShipId', request.ShipId.toString())
       .set('KeyWord', request.KeyWord)
@@ -171,9 +171,9 @@ export class RequisitionService {
       .pipe(catchError(this.handleError));
   }
 
-  updateUnitinItem(unitvalue: string,id: number): Observable<any> {
-
-    return this.httpClient.get<any[]>(`${this.linkurl}updateUnitinItem/${unitvalue}/${id}`, httpOptions);
+  updateUnitinItem(unitvalue: string, id: number): Observable<any> {
+    
+    return this.httpClient.post<any>(`${this.linkurl}updateUnitinItem/${unitvalue}/${id}`, httpOptions);
   }
   //#endregion
 
