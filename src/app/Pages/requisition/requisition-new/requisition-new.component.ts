@@ -1357,14 +1357,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         if (this.reqGetId) {
           // this.loadItemByReqId(this.reqGetId);
           this.LoadVessel();
-          this.LoadOrdertype();
           // this.LoadProjectnameAndcode();
           this.LoadPriority();
-          this.LoadDepartment(); 
-          this.getReqData();
+          this.LoadDepartment();         
           this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
           // this.LoadUserDetails();
-         
+          this.getReqData();
         } else {
           this.saveValue = ''
           this.displayValue = ''
