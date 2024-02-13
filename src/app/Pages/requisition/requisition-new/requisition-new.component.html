@@ -351,9 +351,9 @@
       </div>
       <div class="col-auto ms-auto">
         <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-          data-bs-original-title="Variance Grid" aria-label=""><i class="fas fa-th text-primary"></i></a> <a
+          data-bs-original-title="Variance Grid" aria-label=""><i class="fas fa-th text-primary disabled"></i></a> <a
           class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-          data-bs-original-title="Variance Chart" aria-label=""><i class="fas fa-chart-pie text-primary"></i></a>
+          data-bs-original-title="Variance Chart" aria-label=""><i class="fas fa-chart-pie text-primary disabled"></i></a>
       </div>
     </div>
   </div>
@@ -363,9 +363,9 @@
       <div class="col-lg-3 mb-3">
         <h6 class="text-900 mb-1">Account Code</h6>
         <fieldset class="form-group mb-0">
-          <select class="form-control form-small form-select" id="" onchange="location = this.value;">
+          <select class="form-control form-small form-select" id="">
             <option>Select</option>
-            <option value="purchase-link-account.html">Account Code / Name</option>
+            <option value="">Account Code / Name</option>
           </select>
         </fieldset>
       </div>
@@ -462,17 +462,17 @@
           <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
             Expected Delivery Date</h6>
           <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Service'">Expected Date</h6>
-          <input type="date" class="mb-0 fs--2 text-500 form-control" formControlName="expectedDeliveryDate"
+          <input type="date" class="mb-0 fs--2 form-control" formControlName="expectedDeliveryDate"
             (change)="autoSave('delivery')" />
         </div>
         <div class="col-lg mb-3">
           <h6 class="text-900 mb-2">Vessel ETA</h6>
-          <input type="date" class="mb-0 fs--2 text-500 form-control" formControlName="vesselETA"
+          <input type="date" class="mb-0 fs--2  form-control" formControlName="vesselETA"
             (change)="autoSave('delivery')" />
         </div>
         <div class="col-lg mb-3">
           <h6 class="text-900 mb-2">Vessel ETD</h6>
-          <input type="date" class="mb-0 fs--2 text-500 form-control" formControlName="vesselETB"
+          <input type="date" class="mb-0 fs--2 form-control" formControlName="vesselETB"
             (change)="autoSave('delivery')" />
         </div>
         <!-- <div class="col-lg mb-3">
@@ -743,8 +743,7 @@
                             </ng-container>
                             <mat-header-row class="bg-300"
                               *matHeaderRowDef="leftTableColumn; sticky:true"></mat-header-row>
-                            <mat-row *matRowDef="let row; columns: leftTableColumn; let i = index"
-                              [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.shipComponentSpareId==selectedIndex))}"></mat-row>
+                            <mat-row *matRowDef="let row; columns: leftTableColumn; let i = index"></mat-row>
                           </mat-table>
                         </thead>
                       </table>
@@ -796,7 +795,7 @@
                               <mat-header-cell style="min-width: 50px; width: 50px; max-width: 50px;"
                                 *matHeaderCellDef>Qty</mat-header-cell>
                               <mat-cell #reqQty style="min-width: 50px; width: 50px; max-width: 50px;"
-                                *matCellDef="let row; let i = index" [ngClass]="{'highlight': isHighlighted(row)}">
+                                *matCellDef="let row; let i = index">
                                 <span *ngIf="!row.editMode" (click)="toggleEditModeItem(row)" style="cursor: pointer">{{
                                   row.reqQty }}</span>
                                 <input #reqQtyElements *ngIf="row.editMode" matInput placeholder="Enter data"
@@ -818,8 +817,7 @@
                             </ng-container>
                             <mat-header-row class="bg-300"
                               *matHeaderRowDef="rightTableColumn; sticky:true"></mat-header-row>
-                            <mat-row *matRowDef="let row; columns: rightTableColumn; let i = index"
-                              [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.shipComponentSpareId==selectedIndex))}"></mat-row>
+                            <mat-row *matRowDef="let row; columns: rightTableColumn; let i = index"></mat-row>
                           </mat-table>
                         </thead>
                       </table>
@@ -974,7 +972,7 @@
               <mat-header-cell style="min-width: 80px; width: 80px; max-width: 80px;"
                 *matHeaderCellDef>Remarks</mat-header-cell>
               <mat-cell #reqQty style="min-width: 80px; width: 80px; max-width: 80px;"
-                *matCellDef="let row; let i = index" [ngClass]="{'highlight': isHighlighted(row)}">
+                *matCellDef="let row; let i = index">
                 <input matInput placeholder="Enter data" (change)="autoSave('items')" [(ngModel)]="row.itemRemarks">
               </mat-cell>
             </ng-container>
@@ -986,8 +984,7 @@
                     class="fas fa-paperclip text-primary"></i></a></mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
-              [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.ids==selectedIndex))}"></mat-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"></mat-row>
           </mat-table>
           <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
             [pageSizeOptions]="[20, 40, 60, 100]">
