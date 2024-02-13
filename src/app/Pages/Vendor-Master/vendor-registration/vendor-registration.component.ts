@@ -234,7 +234,7 @@ export class VendorRegistrationComponent implements OnInit {
       branchName: ['', [Validators.required]],
       city: ['', [Validators.required]],
       country: ['', [Validators.required]],
-      address: ['', [Validators.required]],
+      address: [''],
       contPersonName: ['', [Validators.required]],
       email: ['', [Validators.required]],
       contactNo: ['', [Validators.required]],
@@ -510,19 +510,20 @@ export class VendorRegistrationComponent implements OnInit {
       fmdata.append('data', JSON.stringify(form.value));
 
       this.vendorService.addBranchoffice(fmdata)
-        .subscribe(data => {
-          
+        .subscribe(data => {      
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
+            this.loadVendorBranchData(this.vendorId)
             this.vendorBranchInfo.reset();
             this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
-            this.loadVendorBranchData(this.vendorId)
+           
           }
           else if (data.message == "updated") {
             this.swal.success('Data has been updated successfully.');
+            this.loadVendorBranchData(this.vendorId)
             this.vendorBranchInfo.reset();
             this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
-            this.loadVendorBranchData(this.vendorId)
+           
           }
           else if (data.message == "duplicate") {
             this.swal.info('Data already exist. Please enter new data');
@@ -538,10 +539,10 @@ export class VendorRegistrationComponent implements OnInit {
 
 
   loadVendorBranchData(id) {
-    this.vendorService.getAccountInfoByVendorId(id)
+    this.vendorService.getBranchOfficeByVendorId(id)
       .subscribe(response => {
         
-        this.dataBranchOffice = []
+        // this.dataBranchOffice = []
         this.dataBranchOffice = response.data;
       });
   }
