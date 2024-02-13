@@ -79,7 +79,6 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    debugger
     this.sideNavService.setActiveComponent(false)
     this.sideNavService.initSidenav()
     this.loadScript('assets/js/SideNavi.js')
@@ -198,7 +197,6 @@ export class VendorRegistrationComponent implements OnInit {
   loadCategoryType() {
     this.purchaseService.getServiceCategories(0)
       .subscribe(response => {
-        debugger
         this.serviceCategory = response.data.map(item => ({
           serviceCategoryId: item.serviceCategoryId,
           serviceCategory: item.serviceCategory
@@ -292,7 +290,7 @@ export class VendorRegistrationComponent implements OnInit {
         if (data == undefined) {
           this.LocationList = [];
         } else {
-          debugger
+          
           this.LocationList = data;
 
         }
@@ -302,7 +300,6 @@ export class VendorRegistrationComponent implements OnInit {
   loadPortList() {
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
-        debugger
         this.LocationPortList = response.data.map(item => ({
           locationId: item.locationId,
           fullName: `${item.locationName} ${item.countryMaster.countryName}`,
@@ -311,7 +308,6 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   onLocationPortSelect(event: any) {
-    debugger
     let isSelect = event.locationId;
     if (isSelect) {
       this.selectedLocationPort.push(event.locationId);
@@ -357,7 +353,7 @@ export class VendorRegistrationComponent implements OnInit {
         if (data == undefined) {
           this.LocationListTwo = [];
         } else {
-          debugger
+          
           this.LocationListTwo = data;
         }
       });
@@ -390,13 +386,13 @@ export class VendorRegistrationComponent implements OnInit {
   //#region  Save Vendor Master Form
   autoSave(partName: string): void {
     if (partName == 'vendorBusinessInfo') {
-      debugger
+      
       if (this.vendorId != null) {
-        debugger
+        
         const formPart = this.VendorMasterForm.get(partName)
 
         if (formPart) {
-          debugger
+          
           const categoryIds = this.categorySelectedItems.join(',');
           const serviceTypeIds = this.selectedItems.join(',')
           const formValue = formPart.value;
@@ -409,7 +405,7 @@ export class VendorRegistrationComponent implements OnInit {
         fmdata.append('data', JSON.stringify(formPart?.value));
         if (formPart != null && formPart.valid) {
           this.vendorService.addbusinessInfo(fmdata).subscribe(data => {
-            debugger
+            
             if (data.message == "data added") {
               this.swal.success('Added successfully.');
             }
@@ -434,7 +430,7 @@ export class VendorRegistrationComponent implements OnInit {
     }
 
     if (partName == 'vendorInfo') {
-      debugger
+      
       const vendorform = this.VendorMasterForm.get(partName);
 
       vendorform?.patchValue({
@@ -450,7 +446,7 @@ export class VendorRegistrationComponent implements OnInit {
 
       if (partName == 'vendorInfo' && vendorform != null && vendorform.valid) {
         const formData = new FormData();
-        debugger
+        
         formData.append('data', JSON.stringify(vendorform.value))
 
         this.vendorService.addvendorInfo(formData)
@@ -506,7 +502,7 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   onSubmitbranchoffice(form: any) {
-    debugger
+    
     if (this.vendorId) {
       form.value.vendorId = this.vendorId
       form.value.convenientPorts = this.selectedLocationPort.join(',')
@@ -515,7 +511,7 @@ export class VendorRegistrationComponent implements OnInit {
 
       this.vendorService.addBranchoffice(fmdata)
         .subscribe(data => {
-          debugger
+          
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
             this.vendorBranchInfo.reset();
@@ -544,7 +540,7 @@ export class VendorRegistrationComponent implements OnInit {
   loadVendorBranchData(id) {
     this.vendorService.getAccountInfoByVendorId(id)
       .subscribe(response => {
-        debugger
+        
         this.dataBranchOffice = []
         this.dataBranchOffice = response.data;
       });
@@ -556,7 +552,7 @@ export class VendorRegistrationComponent implements OnInit {
     this.vendorService.getBranchofficeId(id)
       .subscribe((response) => {
         if (response.status) {
-          debugger
+          
           this.ConvenientPortsList = [];
           if (response.data.convenientPorts != '' && response.data.convenientPorts != null) {
 
@@ -591,7 +587,7 @@ export class VendorRegistrationComponent implements OnInit {
       this.categorySelectedItems = event.map((x: { serviceCategoryId: any; }) => x.serviceCategoryId);
   }
   onItemSelectCat(event: any) {
-    debugger
+    
     let isSelect = event.serviceCategoryId;
     if (isSelect) {
       this.categorySelectedItems.push(event.serviceCategoryId);
@@ -614,14 +610,14 @@ export class VendorRegistrationComponent implements OnInit {
       this.selectedItems = event.map((x: { serviceTypeId: any; }) => x.serviceTypeId);
   }
   onItemSelect(event: any) {
-    debugger
+    
     let isSelect = event.serviceTypeId;
     if (isSelect) {
       this.selectedItems.push(event.serviceTypeId);
     }
   }
   onOrderTypeDeSelect(event: any) {
-    debugger
+    
     let rindex = this.selectedItems.findIndex(orderTypeId => orderTypeId == event.serviceTypeId);
     if (rindex !== -1) {
       this.selectedItems.splice(rindex, 1)
@@ -634,7 +630,7 @@ export class VendorRegistrationComponent implements OnInit {
 
   //#region Vendor Sales Department
   onAddSales() {
-    debugger
+    
     if (this.vendorId > 0) {
       this.VendorSalesDepartForm.patchValue({ vendorId: this.vendorId })
       const formValues = this.VendorSalesDepartForm.value;
@@ -642,7 +638,7 @@ export class VendorRegistrationComponent implements OnInit {
       formData.append('data', JSON.stringify(formValues));
       if (this.VendorSalesDepartForm != null && this.VendorSalesDepartForm.valid) {
         this.vendorService.addSalesInfo(formData).subscribe(data => {
-          debugger
+          
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
             this.loadVendorSalesData(this.vendorId);
@@ -675,7 +671,7 @@ export class VendorRegistrationComponent implements OnInit {
   loadVendorSalesData(id) {
     this.vendorService.getSalesInfoByVendorId(id).subscribe(res => {
       if (res.status == true) {
-        debugger
+        
         this.zone.run(() => {
           this.vendorSalesData = []
           this.vendorSalesData = res.data;
@@ -685,10 +681,10 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   editSalesData(id) {
-    debugger
+    
     this.vendorService.getSalesInfoById(id).subscribe(res => {
       if (res.status == true) {
-        debugger
+        
         const data = res.data;
         this.VendorSalesDepartForm.reset()
         this.VendorSalesDepartForm.patchValue({
@@ -703,11 +699,11 @@ export class VendorRegistrationComponent implements OnInit {
     })
   }
   deleteSalesData(id) {
-    debugger
+    
     if (this.vendorId > 0) {
       this.vendorService.archiveSalesInfo(id).subscribe(res => {
         if (res) {
-          debugger
+          
           this.loadVendorSalesData(this.vendorId)
         }
       })
@@ -717,7 +713,7 @@ export class VendorRegistrationComponent implements OnInit {
 
   //#region Vendor Service Department
   onAddService() {
-    debugger
+    
     if (this.vendorId > 0) {
       this.VendorServiceDepartForm.patchValue({ vendorId: this.vendorId })
       const formValues = this.VendorServiceDepartForm.value;
@@ -725,7 +721,7 @@ export class VendorRegistrationComponent implements OnInit {
       formData.append('data', JSON.stringify(formValues));
       if (this.VendorServiceDepartForm != null && this.VendorServiceDepartForm.valid) {
         this.vendorService.addServiceInfo(formData).subscribe(data => {
-          debugger
+          
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
             this.loadVendorServiceData(this.vendorId);
@@ -756,12 +752,12 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   loadVendorServiceData(id) {
-    debugger
+    
     this.vendorService.getServiceInfoByVendorId(id).subscribe(res => {
       if (res.status == true) {
-        debugger
+        
         this.zone.run(() => {
-          debugger
+          
           this.vendorServiceData = []
           this.vendorServiceData = res.data;
         })
@@ -770,10 +766,10 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   editServiceData(id) {
-    debugger
+    
     this.vendorService.getServiceInfoById(id).subscribe(res => {
       if (res.status == true) {
-        debugger
+        
         const data = res.data;
         this.VendorServiceDepartForm.reset()
         this.VendorServiceDepartForm.patchValue({
@@ -788,11 +784,11 @@ export class VendorRegistrationComponent implements OnInit {
     })
   }
   deleteServiceData(id) {
-    debugger
+    
     if (this.vendorId > 0) {
       this.vendorService.archiveServiceInfo(id).subscribe(res => {
         if (res) {
-          debugger
+          
           this.loadVendorServiceData(this.vendorId)
         }
       })
@@ -802,7 +798,7 @@ export class VendorRegistrationComponent implements OnInit {
 
   //#region Vendor Account Department
   onAddAccount() {
-    debugger
+    
     if (this.vendorId > 0) {
       this.VendorAccountDeptForm.patchValue({ vendorId: this.vendorId })
       const formValues = this.VendorAccountDeptForm.value;
@@ -810,7 +806,7 @@ export class VendorRegistrationComponent implements OnInit {
       formData.append('data', JSON.stringify(formValues));
       if (this.VendorAccountDeptForm != null && this.VendorAccountDeptForm.valid) {
         this.vendorService.addAccountInfo(formData).subscribe(data => {
-          debugger
+          
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
             this.loadVendorAccountData(this.vendorId);
@@ -843,9 +839,9 @@ export class VendorRegistrationComponent implements OnInit {
   loadVendorAccountData(id) {
     this.vendorService.getAccountInfoByVendorId(id).subscribe(res => {
       if (res.status == true) {
-        debugger
+        
         this.zone.run(() => {
-          debugger
+          
           this.vendorAccountData = []
           this.vendorAccountData = res.data;
         })
@@ -854,12 +850,12 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   editAccountData(id) {
-    debugger
+    
     // this.modal = 'modal'
     // this.modalTarget = '#service-contact'
     this.vendorService.getAccountInfoById(id).subscribe(res => {
       if (res.status == true) {
-        debugger
+        
         const data = res.data;
         this.VendorAccountDeptForm.reset()
         this.VendorAccountDeptForm.patchValue({
@@ -874,11 +870,11 @@ export class VendorRegistrationComponent implements OnInit {
     })
   }
   deleteAccountData(id) {
-    debugger
+    
     if (this.vendorId > 0) {
       this.vendorService.archiveAccountInfo(id).subscribe(res => {
         if (res) {
-          debugger
+          
           this.loadVendorAccountData(this.vendorId)
         }
       })
@@ -889,7 +885,7 @@ export class VendorRegistrationComponent implements OnInit {
   //#region Edit VendorMaster Method
   getVendorMaster(id) {
     this.vendorService.getVendorInfoById(id).subscribe(res => {
-      debugger
+      
       if (res.status === true) {
         const vendorMasterData = res.data;
         const formPart = this.VendorMasterForm.get('vendorInfo');
@@ -905,7 +901,6 @@ export class VendorRegistrationComponent implements OnInit {
           });
           this.vendorService.getBusinessInfoByVendorId(id).subscribe(res => {
             if (res.status === true) {
-              debugger
               const vendorBusinessData = res.data;
               const businessform = this.VendorMasterForm.get('vendorBusinessInfo');
               if (businessform) {
@@ -955,21 +950,18 @@ export class VendorRegistrationComponent implements OnInit {
             }
           })
           this.vendorService.getSalesInfoByVendorId(id).subscribe(res => {
-            debugger
             if (res.status === true) {
               this.vendorSalesData = []
               this.vendorSalesData = res.data;
             }
           })
           this.vendorService.getServiceInfoByVendorId(id).subscribe(res => {
-            debugger
             if (res.status === true) {
               this.vendorServiceData = []
               this.vendorServiceData = res.data;
             }
           })
           this.vendorService.getAccountInfoByVendorId(id).subscribe(res => {
-            debugger
             if (res.status === true) {
               this.vendorAccountData = []
               this.vendorAccountData = res.data;
@@ -990,7 +982,7 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   onSubmitBankInformation(form: any) {
-    debugger
+    
     if (this.vendorId > 0) {
       form.value.attachments = this.FileName;
       form.value.vendorId = this.vendorId;
@@ -1042,7 +1034,6 @@ export class VendorRegistrationComponent implements OnInit {
     $("#bank-details").modal('show');
     this.vendorService.getBankInformationId(id).subscribe(res => {
       if (res.status == true) {
-        debugger
         if (res.data.confirmOnCall == true) {
           this.ConfirmOnCallCheck = true;
         }

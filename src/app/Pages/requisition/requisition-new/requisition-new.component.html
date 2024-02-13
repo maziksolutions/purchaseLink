@@ -442,9 +442,9 @@
             Expected Delivery Port</h6>-->
           <h6 class="text-900 mb-2">Port/Country</h6> 
 
-          <fieldset class="form-control mb-0 serarch-container">
+          <!-- <fieldset > -->
           
-              <input type="text" [placeholder]="myPlaceholder" aria-label="Port" matInput [formControl]="myControl"
+              <input type="text" class="border-1 border-400 form-control w-97 p-1 serarch-container" style="border: 1px solid;" [placeholder]="myPlaceholder" aria-label="Port" matInput [formControl]="myControl"
                 [matAutocomplete]="auto">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                 <mat-option *ngFor="let port of filteredPorts | async" [value]="port">
@@ -454,7 +454,7 @@
          
 
 
-          </fieldset> 
+          <!-- </fieldset>  -->
 
 
         </div>
@@ -796,9 +796,9 @@
                                 *matHeaderCellDef>Qty</mat-header-cell>
                               <mat-cell #reqQty style="min-width: 50px; width: 50px; max-width: 50px;"
                                 *matCellDef="let row; let i = index">
-                                <span *ngIf="!row.editMode" (click)="toggleEditModeItem(row)" style="cursor: pointer">{{
-                                  row.reqQty }}</span>
-                                <input #reqQtyElements *ngIf="row.editMode" matInput placeholder="Enter data"
+                                <div class="border-1 border-400 form-control p-1" *ngIf="!row.editMode" (click)="toggleEditModeItem(row)" style="cursor: pointer">{{
+                                  row.reqQty }}</div>
+                                <input class="border-1 border-400 form-control p-1 " #reqQtyElements *ngIf="row.editMode" matInput
                                   [(ngModel)]="row.reqQty" (blur)="saveChanges(row)"
                                   (keydown)="handleKeyDown($event, row)"
                                   [id]="'reqQty_' + i + '_' + row.shipComponentSpareId" />
@@ -915,13 +915,13 @@
             <ng-container matColumnDef="ROB">
               <mat-header-cell  *matHeaderCellDef>ROB</mat-header-cell>
               <mat-cell title="{{row.rob}}" *matCellDef="let row" (click)="openEditModal(row)">
-               <div class="border-1 border-400 form-control w-97 p-1">{{row.rob }}</div></mat-cell>
+               <div class="border-1 border-400 form-control w-97 p-1" style="cursor: pointer;">{{row.rob }}</div></mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Enter Quantity">
               <mat-header-cell *matHeaderCellDef>Req Qty</mat-header-cell>
               <mat-cell *matCellDef="let row; let i = index" #reqQty>
-                <div class="border-1 border-400 form-control w-97 p-1" *ngIf="!row.editMode" (click)="toggleEditMode(row)" style="cursor: pointer;">{{ row.reqQty
+                <div class="border-1 border-400 form-control w-97 p-1" *ngIf="!row.editMode" (click)="toggleEditMode(row)">{{ row.reqQty
                   }}</div>
                 <input class="border-1 border-400 form-control w-97 p-1" #reqQtyElements *ngIf="row.editMode" type="text" [(ngModel)]="row.reqQty"
                   (blur)="saveChanges(row)" (keydown)="handleKeyDown($event, row)"
@@ -933,7 +933,7 @@
               <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
               <mat-cell *matCellDef="let row">
                 <select class="form-control form-small form-select border-1 border-400 w-97 p-1" (change)="updateunit($event ,row.itemsId)" [(ngModel)]="row.unit" required>
-                  <option value="" disabled>Select unit</option>
+                  <option value="0" disabled>Select unit</option>
                   <option *ngFor="let item of unitmasterlist" value="{{item.shortCode}}">{{item.shortCode}}</option>
 
                 </select>
