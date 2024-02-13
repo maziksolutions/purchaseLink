@@ -152,11 +152,11 @@ h5{
 {
   -webkit-box-shadow:none !important;
 }
-.table-sm > :not(caption) > * > *
+/*.table-sm > :not(caption) > * > *
 {
   padding: 0.1rem !important;
 }
-/* .card-body
+ .card-body
 {
   padding: 1rem 1rem !important;
 } */
@@ -196,3 +196,7 @@ textarea.ng-invalid
 }
 
 /* .btn{padding: 0.3rem 0.5rem !important;} */
+
+.w-97 {
+  width: 97%;
+}

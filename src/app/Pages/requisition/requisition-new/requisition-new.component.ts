@@ -538,17 +538,17 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   autoSave(partName: string): void {
 
     if (partName == 'header') {
-        debugger
+       
       const formPart = this.RequisitionForm.get(partName);
       if (this.isRequisitionApproved) {
         const documentHeaderElement = document.getElementById('documentHeader') as HTMLHeadingElement;
         this.temporaryNumber = documentHeaderElement.textContent;
       }
       // formPart?.get('orderReference')?.setValue(displayValue);
-
+      debugger
       formPart?.patchValue({
         requisitionId: formPart?.value.requisitionId,
-        documentHeader: formPart?.value.documentHeader || this.temporaryNODataBase,
+        documentHeader: formPart?.value.documentHeader || '0',
         originSite: this.location,
         vesselId: formPart?.value.vesselId,
         orderTypeId: formPart?.value.orderTypeId,
@@ -567,8 +567,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.requisitionService.addRequisitionMaster(formData)
           .subscribe(data => {
 
-            this.reqId = data.data;
-            formPart.patchValue({ requisitionId: data.data })
+            this.reqId = data.data; 
+            this.temporaryNumber = data.documentHeader          
+            formPart.patchValue({ requisitionId: data.data, documentHeader:data.documentHeader})
             if (this.defaultOrderType[0] !== 'Service') {
               if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
 
@@ -946,7 +947,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
-
+        debugger
         const requisitionData = response.data;
         const formPart = this.RequisitionForm.get('header');
         this.approvestatus = requisitionData.approvedReq;
@@ -1381,7 +1382,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.LoadDepartment();
           this.loadPortList();
           this.GetunitList();
-          this.generateTempNumber();
+          // this.generateTempNumber();
         }
         // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
@@ -1861,7 +1862,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (this.reqId)
       this.requisitionService.getItemsByReqId(this.reqId)
         .subscribe(response => {
-          
+         
           this.flag = status;
           this.dataSource.data = [];
           this.zone.run(() => {
@@ -3325,13 +3326,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   GetunitList(){
     this.unitmasterservice.GetunitList(0)
-    .subscribe(response => {
-    
-     
-    
-      this.unitmasterlist = response.data;
-
-    
+    .subscribe(response => {          
+      this.unitmasterlist = response.data;    
     });
   }
 
