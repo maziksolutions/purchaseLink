@@ -10,14 +10,14 @@ const routes: Routes = [
   {
     path: '', component: SiteLayoutComponent,
     children: [
-      { path: 'Requisitionslist', component: RequisitionslistComponent },
-      { path: 'RequisitionsNew', component: RequisitionNewComponent },
+      { path: 'Requisitionslist', component: RequisitionslistComponent ,pathMatch:'full'},
+      { path: 'RequisitionsNew', component: RequisitionNewComponent ,pathMatch:'full'},
       {
         path: 'RequisitionsNew/:requisitionId',
-        component: RequisitionNewComponent
+        component: RequisitionNewComponent,pathMatch:'full'
       },
-      { path: 'Rfqlist', component: RfqlistComponent },
-      { path: 'RequisitionTracking', component: RequisitionTrackingComponent }
+      { path: 'Rfqlist', component: RfqlistComponent,pathMatch:'full' },
+      { path: 'RequisitionTracking', component: RequisitionTrackingComponent ,pathMatch:'full'}
     ]
   }
 

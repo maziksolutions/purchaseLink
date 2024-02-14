@@ -18,7 +18,7 @@
       <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
         <div class="navbar-vertical-content scrollbar">
           <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
-            <li class="nav-item">
+            <li class="nav-item" routerLinkActive="active">
               <!-- parent pages--><a class="nav-link" href="welcome" role="button" aria-expanded="false">
                 <div class="d-flex align-items-center"><span class="nav-link-icon"><span
                       class="fas fa-home"></span></span><span class="nav-link-text ps-1">Home</span>
@@ -41,10 +41,6 @@
                       class="fas fa-link"></i></span><span class="nav-link-text ps-1">Purchase Link</span>
                 </div>
               </a>
-
-
-
-
 
 
               <ul class="nav collapse" id="purchase-link">
@@ -107,13 +103,13 @@
                   <hr class="mb-0 navbar-vertical-divider" />
                 </div>
               </div>
-              <a class="nav-link dropdown-indicator active" href="#master" role="button" data-bs-toggle="collapse"
-                aria-expanded="true" aria-controls="register">
+              <a class="nav-link dropdown-indicator" href="#master" role="button" data-bs-toggle="collapse"
+                aria-expanded="false" aria-controls="register">
                 <div class="d-flex align-items-center"><span class="nav-link-icon"><i
                       class="fas fa-cog"></i></span><span class="nav-link-text ps-1">Master</span>
                 </div>
               </a>
-              <ul class="nav collapse show" id="master">
+              <ul class="nav collapse" id="master">
                 <!-- <li class="nav-item"><a class="nav-link active" href="purchase-link-order-type.html" aria-expanded="false">
               <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Order Type</span>
               </div>
@@ -182,8 +178,6 @@
                     </div>
                   </a>
                 </li>
-
-
 
               </ul>
             </li>

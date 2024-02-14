@@ -36,6 +36,7 @@ import { ReqItemsModel, ServiceTypeData } from '../../Models/reqItems-model';
 import { SideNavService } from 'src/app/services/sidenavi-service';
 import { UnitmasterService } from 'src/app/services/unitmaster.service';
 import { ModifyColumnsPopUpComponent } from './common/modify-columns-pop-up/modify-columns-pop-up.component';
+import { RouteService } from 'src/app/services/route.service';
 
 declare var $: any;
 declare let Swal, PerfectScrollbar: any;
@@ -232,21 +233,25 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   dataJobList: any;
   jobListAttachmentForm: FormGroup
   unitmasterlist: any;
-
+  currentRoute: string;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
     private authStatusService: AuthStatusService, private userService: UserManagementService, private autoSaveService: AutoSaveService, public dialog: MatDialog,
     private vesselService: VesselManagementService, private shipmasterService: ShipmasterService, private requisitionService: RequisitionService,
     private datePipe: DatePipe, private typemasterService: TypemasterService, private sanitizer: DomSanitizer, private http: HttpClient,
-    private unitmasterservice: UnitmasterService
+    private unitmasterservice: UnitmasterService, private routeService: RouteService
   ) { }
 
   ngOnInit(): void {
+    debugger
     this.targetLoc = environment.location;
     this.sideNavService.initSidenav();
     this.userId = this.authStatusService.userId();
     this.reqGetId = this.route.snapshot.paramMap.get('requisitionId')
+    this.routeService.getCurrentRoute().subscribe(route => {
+      this.currentRoute = route;
+    });
 
     this.initForm();
 
@@ -3049,7 +3054,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   //#endregion
 
-  
+
   //#region AttachmentItem  
   openAttachmentItem(id, pageName, tableName) {
     this.GetItemId = id;
