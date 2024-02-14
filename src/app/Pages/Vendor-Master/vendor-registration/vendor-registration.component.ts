@@ -129,50 +129,7 @@ export class VendorRegistrationComponent implements OnInit {
 
     this.initForm()
 
-    this.VendorSalesDepartForm = this.fb.group({
-      vendorSalesId: [0],
-      contactPerson: ['', Validators.required],
-      designation: ['', Validators.required],
-      email: ['', Validators.required],
-      contactNo: ['', Validators.required],
-      vendorId: [0, [Validators.required]],
-    })
-
-    this.VendorServiceDepartForm = this.fb.group({
-      vendorServiceId: [0],
-      contactPerson: ['', Validators.required],
-      designation: ['', Validators.required],
-      email: ['', Validators.required],
-      contactNo: ['', Validators.required],
-      vendorId: [0, [Validators.required]],
-    })
-
-    this.VendorAccountDeptForm = this.fb.group({
-      vendorAccountId: [0],
-      contactPerson: ['', Validators.required],
-      designation: ['', Validators.required],
-      email: ['', Validators.required],
-      contactNo: ['', Validators.required],
-      vendorId: [0, [Validators.required]],
-    })
-
-    this.BankInformationForm = this.fb.group({
-      vendorBankInfoId: [0],
-      companyName: ['', Validators.required],
-      companyShortName: ['', Validators.required],
-      preferredCurrency: ['', Validators.required],
-      bankName: ['', Validators.required],
-      bankAddress: ['', Validators.required],
-      vendorBranchId: ['', Validators.required],
-      beneficiaryName: ['', Validators.required],
-      accountNumber: ['', Validators.required],
-      ibanSwiftCode: ['', Validators.required],
-      vatNo: ['', Validators.required],
-      remarks: ['', Validators.required],
-      confirmOnCall: [''],
-      attachments: [''],
-      vendorId: [0, Validators.required],
-    })
+  
 
     // this.VendorMasterForm.get('vendorInfo')?.valueChanges.subscribe(() => {
     //   this.autoSave('vendorInfo');  
@@ -219,11 +176,11 @@ export class VendorRegistrationComponent implements OnInit {
         vendorBusinessId: [0],
         serviceType: ['', [Validators.required]],
         serviceCategory: ['', [Validators.required]],
-        otherSpec: ['', [Validators.required]],
-        classApproval: ['', [Validators.required]],
-        makerApproval: ['', [Validators.required]],
-        isoCertification: ['', [Validators.required]],
-        otherCertification: ['', [Validators.required]],
+        otherSpec: [''],
+        classApproval: [''],
+        makerApproval: [''],
+        isoCertification: [''],
+        otherCertification: [''],
         vendorId: [0, [Validators.required]],
       }),
 
@@ -236,7 +193,7 @@ export class VendorRegistrationComponent implements OnInit {
       country: ['', [Validators.required]],
       address: [''],
       contPersonName: ['', [Validators.required]],
-      email: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       contactNo: ['', [Validators.required]],
       convenientPorts: ['', [Validators.required]],
       vendorId: [0],
@@ -246,9 +203,54 @@ export class VendorRegistrationComponent implements OnInit {
         vendorAccountId: [0],
         contactPerson: ['', Validators.required],
         designation: ['', Validators.required],
-        email: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
         contactNo: ['', Validators.required],
         vendorId: [0, [Validators.required]],
+      })
+
+      this.VendorSalesDepartForm = this.fb.group({
+        vendorSalesId: [0],
+        contactPerson: ['', Validators.required],
+        designation: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        contactNo: ['', Validators.required],
+        vendorId: [0, [Validators.required]],
+      })
+  
+      this.VendorServiceDepartForm = this.fb.group({
+        vendorServiceId: [0],
+        contactPerson: ['', Validators.required],
+        designation: ['', Validators.required],
+        email: ['',[Validators.required, Validators.email]],
+        contactNo: ['', Validators.required],
+        vendorId: [0, [Validators.required]],
+      })
+  
+      this.VendorAccountDeptForm = this.fb.group({
+        vendorAccountId: [0],
+        contactPerson: ['', Validators.required],
+        designation: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        contactNo: ['', Validators.required],
+        vendorId: [0, [Validators.required]],
+      })
+  
+      this.BankInformationForm = this.fb.group({
+        vendorBankInfoId: [0],
+        companyName: ['', Validators.required],
+        companyShortName: ['', Validators.required],
+        preferredCurrency: ['', Validators.required],
+        bankName: ['', Validators.required],
+        bankAddress: ['', Validators.required],
+        vendorBranchId: ['', Validators.required],
+        beneficiaryName: ['', Validators.required],
+        accountNumber: ['', Validators.required],
+        ibanSwiftCode: ['', Validators.required],
+        vatNo: ['', Validators.required],
+        remarks: ['', Validators.required],
+        confirmOnCall: [''],
+        attachments: [''],
+        vendorId: [0, Validators.required],
       })
 
 
@@ -582,6 +584,17 @@ export class VendorRegistrationComponent implements OnInit {
         });
   }
 
+  deleteBranchoffice(id){
+    if (this.vendorId > 0) {
+      this.vendorService.archiveBranchoffice(id).subscribe(res => {
+        if (res) {
+          
+          this.loadVendorBranchData(this.vendorId)
+        }
+      })
+    }
+  }
+
   //#region Service Category Dropdown 
   onSelectAllCat(event: any) {
     if (event)
@@ -855,6 +868,7 @@ export class VendorRegistrationComponent implements OnInit {
     // this.modal = 'modal'
     // this.modalTarget = '#service-contact'
     this.vendorService.getAccountInfoById(id).subscribe(res => {
+      debugger
       if (res.status == true) {
         
         const data = res.data;
@@ -941,6 +955,13 @@ export class VendorRegistrationComponent implements OnInit {
                   isoCertification: vendorBusinessData.isoCertification,
                   otherCertification: vendorBusinessData.otherCertification,
                 })
+                this.loadBankInformation(id);
+                this.loadVendorAccountData(id);
+                this.loadVendorServiceData(id);
+                this.loadVendorSalesData(id);
+                this.loadVendorBranchData(id);
+
+
               }
             }
           })
@@ -1029,6 +1050,16 @@ export class VendorRegistrationComponent implements OnInit {
         })
       }
     });
+  }
+  deletevendorBankInfo(id){
+    if (this.vendorId > 0) {
+      this.vendorService.archiveBankInformation(id).subscribe(res => {
+        if (res) {
+          
+          this.loadBankInformation(this.vendorId)
+        }
+      })
+    }
   }
 
   editvendorBankInfo(id) {

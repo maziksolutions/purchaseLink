@@ -310,11 +310,10 @@
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="contactNo">Contact
-                                                Persone No</label>
+                                                for="contactNo">Contact No</label>
                                             <div class="col-sm-4">
                                                 <input type="text" formControlName="contactNo"
-                                                    placeholder="Contact Persone No" class="form-control form-small">
+                                                    placeholder="Contact No" class="form-control form-small">
                                             </div>
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
                                                 for="address">Address</label>
@@ -384,7 +383,15 @@
                                 <td><a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
                                         (click)="UpdateBranchoffice(item.vendorBranchId)" data-bs-placement="top"
                                         title="" data-bs-original-title="Edit" aria-label=""><i
-                                            class="fas fa-edit"></i></a></td>
+                                            class="fas fa-edit"></i></a>
+
+                                            <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                            (click)="deleteBranchoffice(item.vendorBranchId)" data-bs-placement="top"
+                                            title="Archive" data-bs-tooltip="Archive" data-bs-original-title="Delete"
+                                            aria-label=""><i class="fas fa-trash text-danger"></i>
+                                        </a>
+                                        </td>
+                                           
                             </tr>
                         </tbody>
                     </table>
@@ -932,9 +939,18 @@
                                 <td>{{items.ibanSwiftCode}}</td>
                                 <td>{{items.vatNo}}</td>
                                 <td>{{items.remarks}}</td>
-                                <td><a (click)="editvendorBankInfo(items.vendorBankInfoId)" class="px-1 font-medium-1"
+                                <td>
+                                    <a (click)="editvendorBankInfo(items.vendorBankInfoId)" class="px-1 font-medium-1"
                                         type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                        data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit"></i></a></td>
+                                        data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit"></i>
+                                    </a>
+                                        <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                        (click)="deletevendorBankInfo(items.vendorBankInfoId)" data-bs-placement="top"
+                                        title="Archive" data-bs-tooltip="Archive" data-bs-original-title="Delete"
+                                        aria-label=""><i class="fas fa-trash text-danger"></i>
+                                    </a>
+                                    
+                                    </td>
                             </tr>
                         </tbody>
                     </table>

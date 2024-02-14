@@ -45,6 +45,9 @@ export class VendorService {
     return this.httpClient.get<any>(this.linkurl + 'getBranchOfficeById/' + id, httpOptions)
       .pipe(catchError(this.handleError));
   }
+  archiveBranchoffice(id): Observable<any> {
+    return this.httpClient.delete<any>(`${this.linkurl}removeBranchOffice/` + id, httpOptions);
+  }
   //#endregion
 
   //#region Vendor Business Info
@@ -127,6 +130,9 @@ export class VendorService {
   getBankInformationId(id): Observable<any> {
     return this.httpClient.get<any>(this.linkurl + 'getBankInformationById/' + id, httpOptions)
       .pipe(catchError(this.handleError));
+  }
+  archiveBankInformation(id): Observable<any> {
+    return this.httpClient.delete<any>(`${this.linkurl}removeBankInformation/` + id, httpOptions);
   }
   //#endregion
 
