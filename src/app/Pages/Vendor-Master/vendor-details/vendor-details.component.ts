@@ -17,7 +17,7 @@ export class VendorDetailsComponent implements OnInit {
   selectedIndex: any;
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
-  displayedColumns: string[] = ['checkbox', 'vendorName', 'vendorId', 'vendorLocation', 'status', 'serviceType',
+  displayedColumns: string[] = ['checkbox', 'vendorName', 'vendorLocation', 'status', 'serviceType',
     'serviceCategory', 'branchOffices', 'convenientPorts', 'classApproval', 'makerApproval'];
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
