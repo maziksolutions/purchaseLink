@@ -2741,10 +2741,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   openEditModal(row) {
 
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.position = { top: '70px' };
+    // dialogConfig.position = { top: '70px' };
     const dialogRef = this.dialog.open(EditReqQtyComponent, {
-      width: '700px',
-      height: '200px',
+      // width: '700px',
+      // height: '200px',
       data: {
         modalTitle: "Stock Reconciliation",
         data: row,
@@ -3294,7 +3294,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   openModifyPopUp() {
     let dialogRef: any
     dialogRef = this.dialog.open(ModifyColumnsPopUpComponent, {
-      width: '800px',
+      width: '600px',
       data: {
         modalTitle: "Modify Columns",
         visibleColumns: this.visibleColumns,

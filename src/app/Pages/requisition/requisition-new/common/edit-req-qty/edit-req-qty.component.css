@@ -1,7 +1,8 @@
 .mat-dialog-content .row span {
     display: inline-block;
-    margin-right: 20px; /* Adjust the margin as needed */
+    margin-right: 20px; 
     font-weight: bold;
+    
 }
 .mat-dialog-actions {
     padding: 4px;
@@ -10,4 +11,8 @@
     height: 20px! important; 
     min-height: 20px! important; 
     max-height: 30px! important; 
+  }
+  .table-sm > :not(caption) > * > *
+  {
+    padding: 0.1rem !important;
   }
