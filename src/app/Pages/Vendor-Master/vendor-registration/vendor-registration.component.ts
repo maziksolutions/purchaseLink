@@ -20,7 +20,7 @@ declare let Swal, $: any;
   styleUrls: ['./vendor-registration.component.css']
 })
 export class VendorRegistrationComponent implements OnInit {
-  VendorMasterForm: FormGroup; flags; pkeys: number = 0;
+  VendorMasterForm: FormGroup; flags; pkeys: number = 0; status: boolean = false;
   vendorBranchInfo: FormGroup;
   VendorSalesDepartForm: FormGroup; VendorServiceDepartForm: FormGroup;
   VendorAccountDeptForm: FormGroup; BankInformationForm: FormGroup;
@@ -377,6 +377,7 @@ export class VendorRegistrationComponent implements OnInit {
       country: City.countryMaster?.countryName,
 
     });
+    this.autoSave('vendorInfo')
   }
 
   getCCBranch(City) {
@@ -389,7 +390,9 @@ export class VendorRegistrationComponent implements OnInit {
   autoSave(partName: string): void {
     if (partName == 'vendorBusinessInfo') {
       
+      
       if (this.vendorId != null) {
+        
         
         const formPart = this.VendorMasterForm.get(partName)
 
@@ -449,24 +452,26 @@ export class VendorRegistrationComponent implements OnInit {
       if (partName == 'vendorInfo' && vendorform != null && vendorform.valid) {
         const formData = new FormData();
         
+        
         formData.append('data', JSON.stringify(vendorform.value))
 
         this.vendorService.addvendorInfo(formData)
           .subscribe(data => {
+            debugger
             this.vendorId = data.data
             if (data.message == "data added") {
               this.swal.success('Added successfully.');
 
             }
-            else if (data.message == "updated") {
+            else if (data.message == "Update") {
               this.swal.success('Data has been updated successfully.');
 
             }
-            else if (data.message == "duplicate") {
+            else if (data.message == "Duplicate") {
               this.swal.info('Data already exist. Please enter new data');
 
             }
-            else if (data.message == "not found") {
+            else if (data.message == "Not Found") {
               this.swal.info('Data exist not exist');
 
             }
