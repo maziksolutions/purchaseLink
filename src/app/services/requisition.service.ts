@@ -212,6 +212,12 @@ export class RequisitionService {
     return this.httpClient.get<any[]>(`${this.linkurl}getDisplayCartItems/${data}`, httpOptions);
   }
 
+  // archive Maintenance Classification Society
+archiveAttachments(attachments: any[]): Observable < string > {   
+  return this.httpClient.post<string> (`${this.linkurl}archiveAttachment/`, attachments, httpOptions);  
+} 
+//#endregion
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       console.error('An error occurred:', error.error.message);

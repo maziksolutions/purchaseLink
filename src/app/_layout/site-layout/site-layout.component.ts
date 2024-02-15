@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, NavigationEnd, NavigationStart, RouteConfigLoadStart } from '@angular/router';
 import { RightsModel } from 'src/app/Pages/Models/page-rights';
@@ -17,12 +17,13 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-site-layout',
   templateUrl: './site-layout.component.html',
   styleUrls: ['./site-layout.component.css']
 })
-export class SiteLayoutComponent implements OnInit {
+export class SiteLayoutComponent implements OnInit {  
   userId: any;
   moduleAccess: any;
   PMS_View: boolean = false;
@@ -38,7 +39,7 @@ export class SiteLayoutComponent implements OnInit {
   userName: any;
   designation: any;
   changePassForm: FormGroup;
-  userFleetForm:FormGroup;
+  userFleetForm: FormGroup;
   mouse_Enter: boolean = false;
   fullName: any;
   JoiningDate: any;
@@ -56,16 +57,16 @@ export class SiteLayoutComponent implements OnInit {
   currentPath: string = '';
   targetLoc: string;
   VesselId: any;
-  vesselsName:any;
+  vesselsName: any;
   Vessels: any;
   selectedVesselId: number = 0;
   dropdownVesselSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
   userFleetdataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  selectVessel:string[] = [];
+  selectVessel: string[] = [];
   displayedColumns: string[] = ['fleetName', 'vessels'];
-  selectedVessel:any;
+  selectedVessel: any;
 
   constructor(private authStatusService: AuthStatusService, private userManagementService: UserManagementService, private activeRoute: RouteService,
     private swal: SwalToastService, private router: Router, private fb: FormBuilder, private route: ActivatedRoute,
@@ -75,19 +76,20 @@ export class SiteLayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    debugger
     this.targetLoc = environment.location;
     if (this.targetLoc == 'Vessel') {
       this.VesselId = environment.vesselId;
     }
 
     this.userFleetForm = this.fb.group({
-      userFleetId:[0],
+      userFleetId: [0],
       userId: [this.userId],
-      fleetName:['', [Validators.required]],
-      vessels:[''],      
+      fleetName: ['', [Validators.required]],
+      vessels: [''],
     });
 
-    this.userId= this.authStatusService.userId();
+    this.userId = this.authStatusService.userId();
     this.changePassForm = this.fb.group({
       userId: [this.userId],
       oldPass: ['', Validators.required],
@@ -100,6 +102,7 @@ export class SiteLayoutComponent implements OnInit {
     this.loadDesignation();
 
     this.activeRoute.getCurrentRoute().subscribe((currentRoute) => {
+
       this.activeRouteResult = this.router.url === '/Requisition/Requisitionslist' ||
         this.router.url === '/Requisition/RequisitionTracking' || this.router.url === '/Requisition/Rfqlist';
     })
@@ -112,8 +115,7 @@ export class SiteLayoutComponent implements OnInit {
       unSelectAllText: 'UnSelect All',
       itemsShowLimit: 1,
       allowSearchFilter: true
-    };
-
+    };  
   }
   get fm() { return this.changePassForm.controls };
   get uflfm() { return this.userFleetForm.controls };
@@ -137,37 +139,37 @@ export class SiteLayoutComponent implements OnInit {
         })
   }
   loadUserFleetData(status: number) {
-    this.userManagementService.loadUserFleet(0,this.userId)
-    .subscribe(response => {     
-      this.userFleetdataSource.data = response.data;
-      this.userFleetdataSource.sort = this.sort;
-      this.userFleetdataSource.paginator = this.paginator;
-      
-      // var objProcR = [];
-      // this.selectVessel = [];
-      // objProcR = response.data.vessels.split(',');
-      // console.log(objProcR)
-      // objProcR.forEach((item)=>{
-      //   this.selectVessel.push(this.vesselss.filter(x => x.vesselId == item));
-      // })
-      // this.vesselNames = 
-      
-    
-       this.clear();
-      (document.getElementById('collapseFleet') as HTMLElement).classList.remove("show");
-    });
+    this.userManagementService.loadUserFleet(0, this.userId)
+      .subscribe(response => {
+        this.userFleetdataSource.data = response.data;
+        this.userFleetdataSource.sort = this.sort;
+        this.userFleetdataSource.paginator = this.paginator;
+
+        // var objProcR = [];
+        // this.selectVessel = [];
+        // objProcR = response.data.vessels.split(',');
+        // console.log(objProcR)
+        // objProcR.forEach((item)=>{
+        //   this.selectVessel.push(this.vesselss.filter(x => x.vesselId == item));
+        // })
+        // this.vesselNames = 
+
+
+        this.clear();
+        (document.getElementById('collapseFleet') as HTMLElement).classList.remove("show");
+      });
   }
   onSubmitUserFleet(form: any) {
-    debugger
+    
     this.uflfm.userId.setValue(this.userId);
-   this.uflfm.vessels.setValue(this.selectVessel.join(','));
-     let formValues = form.value;
+    this.uflfm.vessels.setValue(this.selectVessel.join(','));
+    let formValues = form.value;
     //   formValues.vessels = this.selectVessel.join(',');
-      const fmdata = new FormData();
-      fmdata.append('data', JSON.stringify(formValues));
+    const fmdata = new FormData();
+    fmdata.append('data', JSON.stringify(formValues));
     this.userManagementService.addUserFleet(fmdata)
       .subscribe(data => {
-       
+
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
           // this.clear();
@@ -178,70 +180,68 @@ export class SiteLayoutComponent implements OnInit {
           this.swal.success('Data has been updated successfully.');
           // this.clear();
           (document.getElementById('collapseFleet') as HTMLElement).classList.remove("show");
-        this.loadUserFleetData(0);
+          this.loadUserFleetData(0);
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
-       this.loadUserFleetData(0);
+          this.loadUserFleetData(0);
         }
         else if (data.message == "not found") {
           this.swal.info('Data exist not exist');
-      this.loadUserFleetData(0);
+          this.loadUserFleetData(0);
         }
         else {
-  
+
         }
       });
   }
-  getvessels(ids){
-    var vesselData:any[]=ids.split(',');
-    var vessel=this.Vessels.filter(x =>vesselData.includes(x.vesselId.toString()));
-    return vessel.map(x=>x.vesselName).join(',');
+  getvessels(ids) {
+    var vesselData: any[] = ids.split(',');
+    var vessel = this.Vessels.filter(x => vesselData.includes(x.vesselId.toString()));
+    return vessel.map(x => x.vesselName).join(',');
   }
-  Updatedata(id)
-  {
-       (document.getElementById('collapseFleet') as HTMLElement).classList.remove("collapse");
-       (document.getElementById('collapseFleet') as HTMLElement).classList.add("show");
-       this.userManagementService.getUserFleetById(id)
- 
-         .subscribe((response) => {
-           if (response.status) {          
-             this.userFleetForm.patchValue(response.data);            
-             var objDocR = [];         
-             this.selectedVessel = [];
-           if (response.data.vessels != '' && response.data.vessels != null) {
-             objDocR = response.data.vessels.split(',');
-             this.selectVessel = response.data.vessels.split(',');
-             objDocR.forEach((item) => {              
-               this.selectedVessel.push(this.Vessels.filter(x => x.vesselId.toString() == item));
-             })           
-             const merge3 = this.selectedVessel.flat(1);
-             this.selectedVessel = merge3;          
-             }  
-           }
-         },
-           (error) => {
-   
-           });
-     }
-     close() {
-      this.clear();
-      this.userFleetForm.reset();
-      this.userFleetForm.controls.userFleetId.setValue(0);
-      this.selectVessel= [];
-      //this.userFleetForm.controls.vessels.setValue('');
-      (document.getElementById('collapseFleet') as HTMLElement).classList.add("collapse");
-      (document.getElementById('collapseFleet') as HTMLElement).classList.remove("show");
-    }
+  Updatedata(id) {
+    (document.getElementById('collapseFleet') as HTMLElement).classList.remove("collapse");
+    (document.getElementById('collapseFleet') as HTMLElement).classList.add("show");
+    this.userManagementService.getUserFleetById(id)
+
+      .subscribe((response) => {
+        if (response.status) {
+          this.userFleetForm.patchValue(response.data);
+          var objDocR = [];
+          this.selectedVessel = [];
+          if (response.data.vessels != '' && response.data.vessels != null) {
+            objDocR = response.data.vessels.split(',');
+            this.selectVessel = response.data.vessels.split(',');
+            objDocR.forEach((item) => {
+              this.selectedVessel.push(this.Vessels.filter(x => x.vesselId.toString() == item));
+            })
+            const merge3 = this.selectedVessel.flat(1);
+            this.selectedVessel = merge3;
+          }
+        }
+      },
+        (error) => {
+
+        });
+  }
+  close() {
+    this.clear();
+    this.userFleetForm.reset();
+    this.userFleetForm.controls.userFleetId.setValue(0);
+    this.selectVessel = [];
+    //this.userFleetForm.controls.vessels.setValue('');
+    (document.getElementById('collapseFleet') as HTMLElement).classList.add("collapse");
+    (document.getElementById('collapseFleet') as HTMLElement).classList.remove("show");
+  }
   onvesselSelect(event: any) {
-    debugger
+    
     let isSelect = event.vesselId;
     if (isSelect) {
       this.selectVessel.push(event.vesselId);
     }
   }
   onVesselSelectAll(event: any) {
-    debugger
     if (event)
       this.selectVessel = event.map((x: { vesselId: any; }) => x.vesselId);
   }
@@ -259,10 +259,10 @@ export class SiteLayoutComponent implements OnInit {
     this.userFleetForm.reset();
     this.userFleetForm.controls.userFleetId.setValue(0);
     this.uflfm.vessels.setValue('');
-    this.selectVessel.length=0;
-    this.selectVessel=[];
-    this.selectedVessel=[];
-   // (document.getElementById('abc') as HTMLElement).focus();
+    this.selectVessel.length = 0;
+    this.selectVessel = [];
+    this.selectedVessel = [];
+    // (document.getElementById('abc') as HTMLElement).focus();
   }
   // filterVessel() {
   //   this.reqService.filterRequisitionMasterwithvessel(this.selectedVesselId)

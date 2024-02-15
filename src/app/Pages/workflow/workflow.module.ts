@@ -8,13 +8,17 @@ import { AppMaterialModule } from 'src/app/app.material.module';
 import { WfgroupComponent } from './wfgroup/wfgroup.component';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { WfWorkflowComponent } from './wf-workflow/wf-workflow.component';
+import { PagesComponent } from './pages/pages.component';
+import { PageCategoryComponent } from './page-category/page-category.component';
 
 
 @NgModule({
   declarations: [
     WfeventComponent,
     WfgroupComponent,
-    WfWorkflowComponent
+    WfWorkflowComponent,
+    PagesComponent,
+    PageCategoryComponent
   ],
   imports: [
     CommonModule,

@@ -35,12 +35,12 @@
                             data-bs-original-title="Save" aria-label=""><i class="fas fa-save text-primary"></i></a> -->
                         <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                             data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit text-primary"></i></a> -->
-                        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Send For Approval"
-                            data-bs-original-title="Send for Approval" aria-label=""><i
+                        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="Send For Approval" data-bs-original-title="Send for Approval" aria-label=""><i
                                 class="fas fa-share-square text-primary"></i></a>
 
-                        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Approved"
-                            data-bs-original-title="Approved" aria-label=""  *ngIf="status==true"> <i
+                        <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="Approved" data-bs-original-title="Approved" aria-label="" *ngIf="status==true"> <i
                                 class="fas fa-check text-primary"></i></a>
 
                         <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
@@ -172,11 +172,10 @@
                             (onDeSelectAll)="onOrderTypeDeSelectAll($event)" (change)="autoSave('vendorBusinessInfo')">
                         </ng-multiselect-dropdown>
                     </fieldset>
-                    <!-- <input type="text" formControlName="serviceType" placeholder="serviceType" class="form-control form-small"> -->
                 </div>
             </div>
             <div class="row g-3 mb-3">
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Other, Please
+                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Others, Please
                     specify</label>
                 <div class="col-sm-10">
                     <textarea class="form-control" rows="5" formControlName="otherSpec"
@@ -184,19 +183,37 @@
                 </div>
             </div>
             <div class="row g-3 mb-3">
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Class Approval's</label>
+                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Class Approvals</label>
                 <div class="col-sm-4">
+                    <!-- <fieldset class="form-group mb-0">
+                        <select class="form-control form-small form-select" formControlName="classApproval">
+                          <option value="0" selected disabled>Select Class Approvals</option>
+                          <option *ngFor="let item of  approvalList" id="abc" value="{{item.vesselId}}">
+                            {{item.vesselName | titlecase}}
+          
+                          </option>
+                        </select>
+                      </fieldset> -->
                     <input type="text" class="form-control form-small" formControlName="classApproval"
                         placeholder="classApproval" (change)="autoSave('vendorBusinessInfo')">
                 </div>
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Maker Approval's</label>
+                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Maker Approvals</label>
                 <div class="col-sm-4">
+                    <!-- <fieldset class="form-group mb-0">
+                        <select class="form-control form-small form-select" formControlName="makerApproval">
+                          <option value="0" selected disabled>Select Maker Approvals</option>
+                          <option *ngFor="let item of  approvalList" id="abc" value="{{item.vesselId}}">
+                            {{item.vesselName | titlecase}}
+          
+                          </option>
+                        </select>
+                      </fieldset> -->
                     <input type="text" class="form-control form-small" formControlName="makerApproval"
                         (change)="autoSave('vendorBusinessInfo')" placeholder="makerApproval">
                 </div>
             </div>
             <div class="row g-3 mb-3">
-                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">ISO Certification's</label>
+                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">ISO Certifications</label>
                 <div class="col-sm-4">
                     <input type="text" class="form-control form-small" formControlName="isoCertification"
                         (change)="autoSave('vendorBusinessInfo')" placeholder="isoCertification">
@@ -234,7 +251,7 @@
 
                                 <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
                                     <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                        data-bs-dismiss="modal" (click)="clearBranchForm()" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="">{{this.vendorBranchId == null ? 'Add Branch
@@ -312,8 +329,8 @@
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
                                                 for="contactNo">Contact No</label>
                                             <div class="col-sm-4">
-                                                <input type="text" formControlName="contactNo"
-                                                    placeholder="Contact No" class="form-control form-small">
+                                                <input type="text" formControlName="contactNo" placeholder="Contact No"
+                                                    class="form-control form-small">
                                             </div>
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
                                                 for="address">Address</label>
@@ -344,7 +361,7 @@
                                             <button type="submit" class="btn btn-primary me-1" aria-label=""
                                                 [disabled]="vendorBranchInfo.invalid">Submit</button>
                                             <button type="button" class="btn btn-danger me-1"
-                                                (click)="Closebranchoffice()" aria-label="">Clear</button>
+                                                (click)="clearBranchForm()" aria-label="">Clear</button>
                                         </div>
                                     </form>
 
@@ -358,40 +375,40 @@
                     <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                         <thead class="bg-200">
                             <tr>
-                                <th>Name</th>
-                                <th>City</th>
-                                <th>Address</th>
-                                <th>Contact Person Name</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th>Convenient Ports</th>
-                                <th>Country</th>
-                                <th></th>
+                                <th style="width: 10%;">Name</th>
+                                <th style="width: 10%;">City</th>
+                                <th style="width: 15%;">Address</th>
+                                <th style="width: 15%;">Contact Person Name</th>
+                                <th style="width: 10%;">Email</th>
+                                <th style="width: 10%;">Contact No.</th>
+                                <th style="width: 12%;">Convenient Ports</th>
+                                <th style="width: 8%;">Country</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of dataBranchOffice">
 
-                                <td>{{item.branchName}}</td>
-                                <td>{{item.city}}</td>
-                                <td>{{item.address}}</td>
-                                <td>{{item.contPersonName}}</td>
-                                <td>{{item.email}}</td>
-                                <td>{{item.contactNo}}</td>
-                                <td>{{item.convenientPortNames}}</td>
-                                <td>{{item.country}}</td>
-                                <td><a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                <td class="ellipsis-text">{{item.branchName}}</td>
+                                <td class="ellipsis-text">{{item.city}}</td>
+                                <td class="ellipsis-text">{{item.address}}</td>
+                                <td class="ellipsis-text">{{item.contPersonName}}</td>
+                                <td class="ellipsis-text">{{item.email}}</td>
+                                <td class="ellipsis-text">{{item.contactNo}}</td>
+                                <td class="ellipsis-text">{{item.convenientPortNames}}</td>
+                                <td class="ellipsis-text">{{item.country}}</td>
+                                <td>
+                                    <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
                                         (click)="UpdateBranchoffice(item.vendorBranchId)" data-bs-placement="top"
                                         title="" data-bs-original-title="Edit" aria-label=""><i
                                             class="fas fa-edit"></i></a>
 
-                                            <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
-                                            (click)="deleteBranchoffice(item.vendorBranchId)" data-bs-placement="top"
-                                            title="Archive" data-bs-tooltip="Archive" data-bs-original-title="Delete"
-                                            aria-label=""><i class="fas fa-trash text-danger"></i>
-                                        </a>
-                                        </td>
-                                           
+                                    <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                        (click)="deleteBranchoffice(item.vendorBranchId)" data-bs-placement="top"
+                                        title="Archive" data-bs-tooltip="Archive" data-bs-original-title="Delete"
+                                        aria-label=""><i class="fas fa-trash text-danger"></i>
+                                    </a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -471,7 +488,8 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                        <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
+                                        <button type="button" class="btn btn-danger me-1" aria-label=""
+                                            (click)="clearSalesForm()">Clear</button>
                                     </div>
                                 </form>
                             </div>
@@ -482,11 +500,11 @@
                     <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                         <thead class="bg-200">
                             <tr>
-                                <th>Contact Person</th>
-                                <th>Designation</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th></th>
+                                <th style="width: 25%;">Contact Person</th>
+                                <th style="width: 20%;">Designation</th>
+                                <th style="width: 25%;">Email</th>
+                                <th style="width: 20%;">Contact No.</th>
+                                <th style="width: 10%;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -581,7 +599,8 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                        <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
+                                        <button type="button" class="btn btn-danger me-1" aria-label=""
+                                            (click)="clearServiceForm()">Clear</button>
                                     </div>
                                 </form>
                             </div>
@@ -592,11 +611,11 @@
                     <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                         <thead class="bg-200">
                             <tr>
-                                <th>Contact Person</th>
-                                <th>Designation</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th></th>
+                                <th style="width: 25%;">Contact Person</th>
+                                <th style="width: 20%;">Designation</th>
+                                <th style="width: 25%;">Email</th>
+                                <th style="width: 20%;">Contact No.</th>
+                                <th style="width: 10%;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -691,7 +710,8 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="submit" class="btn btn-primary me-1" aria-label="">Submit</button>
-                                        <button type="button" class="btn btn-danger me-1" aria-label="">Clear</button>
+                                        <button type="button" class="btn btn-danger me-1" aria-label=""
+                                            (click)="clearAccountform()">Clear</button>
                                     </div>
                                 </form>
                             </div>
@@ -702,11 +722,11 @@
                     <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                         <thead class="bg-200">
                             <tr>
-                                <th>Contact Person</th>
-                                <th>Designation</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th></th>
+                                <th style="width: 25%;">Contact Person</th>
+                                <th style="width: 20%;">Designation</th>
+                                <th style="width: 25%;">Email</th>
+                                <th style="width: 20%;">Contact No.</th>
+                                <th style="width: 10%;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -755,7 +775,7 @@
                             <div class="modal-content border-0">
                                 <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
                                     <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                                    (click)="clearBankForm()"  data-bs-dismiss="modal" aria-label="Close"></button>
+                                        (click)="clearBankForm()" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="">Add Accounts Department</h5>
@@ -769,8 +789,9 @@
                                                 for="inputPassword">Company
                                                 Name</label>
                                             <div class="col-sm-10">
-                                                <input type="text" formControlName="companyName"
-                                                    class="form-control form-small">
+                                                <input type="text" [(ngModel)]="CompanyName"
+                                                    formControlName="companyName" class="form-control form-small"
+                                                    readonly>
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
@@ -778,8 +799,9 @@
                                                 for="inputPassword">Company
                                                 Short Name</label>
                                             <div class="col-sm-10">
-                                                <input type="text" formControlName="companyShortName"
-                                                    class="form-control form-small">
+                                                <input type="text" [(ngModel)]="CompanyShortName"
+                                                    formControlName="companyShortName" class="form-control form-small"
+                                                    readonly>
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
@@ -787,6 +809,15 @@
                                                 for="inputPassword">Preferred
                                                 Currency</label>
                                             <div class="col-sm-10">
+                                                <!-- <fieldset class="form-group mb-0">
+                                                    <select class="form-control form-small form-select" formControlName="makerApproval">
+                                                      <option value="0" selected disabled>Select Currency</option>
+                                                      <option *ngFor="let item of  approvalList" id="abc" value="{{item.vesselId}}">
+                                                        {{item.vesselName | titlecase}}
+                                      
+                                                      </option>
+                                                    </select>
+                                                  </fieldset> -->
                                                 <input type="text" formControlName="preferredCurrency"
                                                     class="form-control form-small">
                                             </div>
@@ -899,8 +930,8 @@
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-primary me-1"
                                                 aria-label="">Submit</button>
-                                            <button type="button" class="btn btn-danger me-1"
-                                                aria-label="">Clear</button>
+                                            <button type="button" class="btn btn-danger me-1" aria-label=""
+                                                (click)="clearBankForm()">Clear</button>
                                         </div>
                                     </div>
                                 </form>
@@ -944,13 +975,13 @@
                                         type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                                         data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit"></i>
                                     </a>
-                                        <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
+                                    <a class="px-1 font-medium-1" type="button" data-bs-toggle="tooltip"
                                         (click)="deletevendorBankInfo(items.vendorBankInfoId)" data-bs-placement="top"
                                         title="Archive" data-bs-tooltip="Archive" data-bs-original-title="Delete"
                                         aria-label=""><i class="fas fa-trash text-danger"></i>
                                     </a>
-                                    
-                                    </td>
+
+                                </td>
                             </tr>
                         </tbody>
                     </table>

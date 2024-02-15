@@ -21,6 +21,7 @@ import { PmsgroupService } from 'src/app/services/pmsgroup.service';
 import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
 import { SideNavService } from 'src/app/services/sidenavi-service';
 import { filter } from 'rxjs/operators';
+import { RouteService } from 'src/app/services/route.service';
 
 
 @Component({
@@ -56,9 +57,9 @@ export class RequisitionslistComponent implements OnInit {
   myFleet: any;
   fullVesselList: any;
   serviceTypeDataSource: any;
+  currentRoute: string;
 
-
-  constructor(private sideNavService: SideNavService, private route: Router, private authStatusService: AuthStatusService,
+  constructor(private sideNavService: SideNavService, private route: Router, private authStatusService: AuthStatusService, private routeService: RouteService,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService, private elRef: ElementRef,
     private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe, private shipmasterService: ShipmasterService,
     private exportExcelService: ExportExcelService, private pmsgroupService: PmsgroupService) {
@@ -82,10 +83,13 @@ export class RequisitionslistComponent implements OnInit {
   // }
 
   ngOnInit(): void {
-    
+    debugger
     this.targetLoc = environment.location;
     this.sideNavService.setActiveComponent(false);
     this.sideNavService.initSidenav();
+    this.routeService.getCurrentRoute().subscribe(route => {
+      this.currentRoute = route;
+    });
 
     this.RequisitionForm = this.fb.group({
       requisitionId: [0],
@@ -115,7 +119,7 @@ export class RequisitionslistComponent implements OnInit {
 
     this.loadScript('assets/js/SideNavi.js');
 
-    this.loadServiceType();
+    this.loadServiceType();    
   }
 
   ngAfterViewInit(): void {

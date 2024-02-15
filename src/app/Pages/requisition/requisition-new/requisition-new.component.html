@@ -1001,59 +1001,8 @@
                 </div>
               </div>
             </div>
-          </div> -->
-
-          <div class="modal fade" id="attachents-list-02" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog mt-6" role="document">
-              <div class="modal-content border-0">
-                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                  <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                    data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-header">
-                  <h5 class="modal-title" id="">Attachents</h5>
-
-                </div>
-                <div class="modal-body mt-0">
-                  <div class="d-flex mb-3 align-items-center">
-                    <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
-                    </div>
-                    <div class="ms-3 flex-shrink-1 flex-grow-1">
-                      <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item 02</a>
-                      </h6>
-                      <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal fade" id="attachents-list-03" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog mt-6" role="document">
-              <div class="modal-content border-0">
-                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                  <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                    data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-header">
-                  <h5 class="modal-title" id="">Attachents</h5>
-
-                </div>
-                <div class="modal-body mt-0">
-                  <div class="d-flex mb-3 align-items-center">
-                    <div class="file-thumbnail"><img class="img-fluid" src="assets/img/icons/docs.png" alt="" />
-                    </div>
-                    <div class="ms-3 flex-shrink-1 flex-grow-1">
-                      <h6 class="mb-1"><a class="stretched-link text-900 fw-semi-bold" href="#!">Item 03</a>
-                      </h6>
-                      <div class="fs--1"><span class="fw-medium text-600">1 Oct at 4:30 PM</span></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          </div> -->       
+         
         </div>
       </div>
       <div class="tab-pane code-tab-pane" role="tabpanel" id="detail-view">
@@ -1508,8 +1457,8 @@
 
             <div class="col-xl-6 col-lg-12">
               <div class="form-inline float-end">
-                <select class="form-control form-small form-select" #docStatus>
-                  <!-- (change)="loadItemAttachment($any($event.target).value)"> -->
+                <select class="form-control form-small form-select" #docStatus
+                  (change)="loadAttachment($any($event.target).value)">
                   <option selected="" value="0">Active Data</option>
                   <option value="1">Archive Data</option>
                 </select>
@@ -1529,7 +1478,7 @@
           <hr class="mb-3">
           <div class="accordion-collapse collapse mb-3" id="collapse10" aria-labelledby="heading1"
             data-bs-parent="#accordionExample">
-            <form (ngSubmit)="submitItemAttachmentfrm(attachmentItemfrm)" [formGroup]="attachmentItemfrm">
+            <form (ngSubmit)="submitItemAttachmentfrm(attachmentfrm)" [formGroup]="attachmentfrm">
               <div class="row mb-3">
                 <div class="col">
                   <fieldset class="form-group mb-0">
@@ -1560,7 +1509,7 @@
                   <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
                     data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
                       class="fas fa-save"></i></button>
-                  <button type="button" (click)="clearItemAttachmentfrm()" (click)="CloseAttachmentItemFrm()"
+                  <button type="button" (click)="clearItemAttachmentfrm()" (click)="CloseAttachmentForm()"
                     class="btn btn-danger form-small" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban"></i></button>
                 </div>
