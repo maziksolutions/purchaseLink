@@ -394,9 +394,7 @@ export class VendorRegistrationComponent implements OnInit {
   autoSave(partName: string): void {
     if (partName == 'vendorBusinessInfo') {
 
-
       if (this.vendorId != null) {
-
 
         const formPart = this.VendorMasterForm.get(partName)
 
@@ -489,27 +487,13 @@ export class VendorRegistrationComponent implements OnInit {
   }
   //#endregion
 
-  openbranchoffice(id) {
 
-
-
-    $("#branch-office").modal('show');
-  }
-
-  Closebranchoffice() {
+  //#region Vendor Bank Info ----
+  clearBranchForm() {
     this.vendorBranchInfo.reset();
+    this.searchEngCtrl2.setValue('');
     this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
-    this.vendorBranchInfo.controls.branchName.setValue('');
-    this.vendorBranchInfo.controls.city.setValue('');
-    this.vendorBranchInfo.controls.address.setValue('');
-    this.vendorBranchInfo.controls.contPersonName.setValue('');
-    this.vendorBranchInfo.controls.email.setValue('');
-    this.vendorBranchInfo.controls.contactNo.setValue('');
-    this.vendorBranchInfo.controls.convenientPorts.setValue('');
-    this.vendorBranchInfo.controls.country.setValue('');
     this.vendorBranchInfo.controls.vendorId.setValue(this.vendorInfoId);
-
-    $("#branch-office").modal('hide');
   }
 
   onSubmitbranchoffice(form: any) {
@@ -520,77 +504,70 @@ export class VendorRegistrationComponent implements OnInit {
       const fmdata = new FormData();
       fmdata.append('data', JSON.stringify(form.value));
 
-      this.vendorService.addBranchoffice(fmdata)
-        .subscribe(data => {
-          if (data.message == "data added") {
-            this.swal.success('Added successfully.');
-            this.loadVendorBranchData(this.vendorId)
-            this.vendorBranchInfo.reset();
-            this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
+      this.vendorService.addBranchoffice(fmdata).subscribe(data => {
+        if (data.message == "data added") {
+          this.swal.success('Added successfully.');
+          this.loadVendorBranchData(this.vendorId)
+          this.vendorBranchInfo.reset();
+          this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
 
-          }
-          else if (data.message == "updated") {
-            this.swal.success('Data has been updated successfully.');
-            this.loadVendorBranchData(this.vendorId)
-            this.vendorBranchInfo.reset();
-            this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
+        }
+        else if (data.message == "updated") {
+          this.swal.success('Data has been updated successfully.');
+          this.loadVendorBranchData(this.vendorId)
+          this.vendorBranchInfo.reset();
+          this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
 
-          }
-          else if (data.message == "duplicate") {
-            this.swal.info('Data already exist. Please enter new data');
-          }
-          else if (data.message == "not found") {
-            this.swal.info('Data exist not exist');
-          }
-          $("#branch-office").modal('hide');
-        });
+        }
+        else if (data.message == "duplicate") {
+          this.swal.info('Data already exist. Please enter new data');
+        }
+        else if (data.message == "not found") {
+          this.swal.info('Data exist not exist');
+        }
+        $("#branch-office").modal('hide');
+      });
     }
-
   }
 
-
   loadVendorBranchData(id) {
-    this.vendorService.getBranchOfficeByVendorId(id)
-      .subscribe(response => {
-
-        // this.dataBranchOffice = []
-        this.dataBranchOffice = response.data;
-      });
+    this.vendorService.getBranchOfficeByVendorId(id).subscribe(response => {
+      // this.dataBranchOffice = []
+      this.dataBranchOffice = response.data;
+    });
   }
 
   UpdateBranchoffice(id) {
     this.vendorBranchId = id;
     $("#branch-office").modal('show');
-    this.vendorService.getBranchofficeId(id)
-      .subscribe((response) => {
-        if (response.status) {
+    this.vendorService.getBranchofficeId(id).subscribe((response) => {
+      if (response.status) {
 
-          this.ConvenientPortsList = [];
-          if (response.data.convenientPorts != '' && response.data.convenientPorts != null) {
+        this.ConvenientPortsList = [];
+        if (response.data.convenientPorts != '' && response.data.convenientPorts != null) {
 
-            const objProcR = response.data.convenientPorts.split(',');
+          const objProcR = response.data.convenientPorts.split(',');
 
-            this.ConvenientPortsList = objProcR.map(item => {
-              return this.LocationPortList.find(x => x.locationId == item);
-            });
-            const merge4 = this.ConvenientPortsList.flat(1);
-            this.ConvenientPortsList = merge4;
-            this.selectedLocationPort.length = 0;
-            this.ConvenientPortsList.map(item => {
-              this.selectedLocationPort.push(item.locationId.toString());
-            })
-          }
-
-          response.data.convenientPorts = this.ConvenientPortsList;
-
-          this.vendorBranchInfo.controls.country.setValue(response.data.country);
-          this.vendorBranchInfo.patchValue(response.data);
-
+          this.ConvenientPortsList = objProcR.map(item => {
+            return this.LocationPortList.find(x => x.locationId == item);
+          });
+          const merge4 = this.ConvenientPortsList.flat(1);
+          this.ConvenientPortsList = merge4;
+          this.selectedLocationPort.length = 0;
+          this.ConvenientPortsList.map(item => {
+            this.selectedLocationPort.push(item.locationId.toString());
+          })
         }
-      },
-        (error) => {
 
-        });
+        response.data.convenientPorts = this.ConvenientPortsList;
+
+        this.vendorBranchInfo.controls.country.setValue(response.data.country);
+        this.vendorBranchInfo.patchValue(response.data);
+
+      }
+    }, (error) => {
+
+    });
   }
 
   deleteBranchoffice(id) {
@@ -603,6 +580,7 @@ export class VendorRegistrationComponent implements OnInit {
       })
     }
   }
+  //#endregion
 
   //#region Service Category Dropdown 
   onSelectAllCat(event: any) {
@@ -1011,7 +989,7 @@ export class VendorRegistrationComponent implements OnInit {
 
 
   clearBankForm() {
-    debugger   
+    debugger
     this.vbif.vendorBankInfoId.setValue(0)
     this.vbif.preferredCurrency.setValue('')
     this.vbif.bankName.setValue('')
@@ -1027,7 +1005,7 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   onSubmitBankInformation(form: any) {
-
+    debugger
     if (this.vendorId > 0) {
       form.value.attachments = this.FileName;
       form.value.vendorId = this.vendorId;

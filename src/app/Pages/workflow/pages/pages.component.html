@@ -1,0 +1,206 @@
+<div class="card mb-3">
+    <div class="card-body bg-light p-2">
+          <ul class="nav nav-pills font-small-2">
+            <li  class="nav-item"><a class="nav-link"  routerLinkActive="active"  routerLink="/master/pagecategory">Page Category</a></li>
+            <li class="nav-item"><a class="nav-link" routerLinkActive="active" routerLink="/master/pages"><strong>Pages</strong></a></li>        
+          </ul>
+    </div>
+</div> 
+
+<div class="card px-3 py-2 mb-1">
+    <div class="position-relative">
+        <div class="row">
+            <div class="col-lg-3">
+                <!-- <ul class="navbar-nav" data-top-nav-dropdowns="data-top-nav-dropdowns">
+                    <li class="nav-item dropdown"><a class="dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="typeMaster">Page
+                            Master</a>
+                        <div class="dropdown-menu dropdown-menu-card border-0 mt-0" aria-labelledby="typeMaster">
+                            <div class="bg-white dark__bg-1000 rounded-3 py-2">
+                                <a class="dropdown-item link-600 fw-medium" href="/master/pagecategory">Page
+                                    Category</a>
+                                <a class="dropdown-item link-600 fw-medium" href="/master/pages"> Pages </a>
+                            </div>
+                        </div>
+                    </li>
+                </ul> -->
+                <span class="btn-sm ps-0 text-primary fw-bold">Master<span
+                        class="fas fa-chevron-right ms-1 fs--2"></span></span><span
+                    class="btn-sm p-0">Configuration<span class="fas fa-chevron-right ms-1 fs--2"></span></span>
+                &nbsp;<span class="btn-sm p-0"><b>Pages</b></span>
+            </div>
+            <div class="col-lg-9">
+                <form [formGroup]="searchForm" >
+                <div class="form-inline float-end mt-2">  <!-- <select class="form-control form-small mb-d3 form-select-dark bg-primary text-white"
+                    onchange="location = this.value;" style="width:175px;">
+                    <option value="" selected="">Select Page</option>
+                    <option value="/master/pagecategory">Page Category</option>    
+                    <option value="/master/pages">Pages</option>                   
+                  </select>
+                  <span class="p-l-10 p-r-10 mm-t-3">|</span>
+                   -->
+
+
+                    <select class="form-control form-small form-select" #docStatus
+                    formControlName="status" (change)="loadData($any($event.target).value)">
+                        <option selected="" value="0">Active Data</option>
+                        <option value="1">Archive Data</option>
+                    </select>
+                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
+                    <input type="text" class="form-control form-small" (keydown.enter)="applyFilter()" formControlName="keyword"
+                        placeholder="Search" style="border-top-right-radius: 0; border-bottom-right-radius: 0px">
+                    <button class="btn btn-primary form-small m-r-5" (click)="applyFilter()"
+                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title=""  matTooltip="Search"
+                        aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
+                        
+                       
+                        <button class="btn btn-primary form-small m-r-5"
+                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button" data-bs-toggle="tooltip"
+                        data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
+                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
+
+                    <a class="accordion-btn collapsed px-2 m-r-1"  type="button" data-bs-toggle="collapse"
+                        (click)="clear()" data-bs-target="#collapse1" matTooltip="Add" aria-expanded="true" aria-controls="collapse1"><i
+                            class="fas fa-plus text-primary"></i></a>
+
+                    <a class="px-2 m-r-1" type="button" *ngIf="userName=='superit'"  (click)="DeleteData()" data-bs-toggle="tooltip"
+                        data-bs-placement="top" matTooltip="{{deletetooltip}}" aria-label=""><i
+                            class="fas fa-trash text-danger"></i></a>
+
+                    <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip"
+                        data-bs-placement="top" matTooltip="Excel" (click)="generateExcel()" 
+                        aria-label=""><i class="fas fa-file-excel"></i></a>
+
+
+                    <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Export load data sheet"
+                        (click)="exportLoadSheet()" aria-label=""><i
+                            class="fas fa-file-export text-primary"></i></a>
+
+                    <a class="" (click)="openModal()" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                    matTooltip="Import data" aria-label=""><i
+                            class="fas fa-file-download text-primary"></i></a>
+
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card mb-2 bg-light">
+    <div class="accordion-collapse collapse" id="collapse1" aria-labelledby="heading1"
+        data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            <form (ngSubmit)="onSubmit(pageForm)" [formGroup]="pageForm">
+                <div class="row">
+                    <div class="col-4">
+                        <fieldset class="form-group mb-0">
+                            <input type="text" formControlName="page" class="form-control form-small" id="abc"
+                                placeholder="Page name" appUppercase required noWhiteSpace>
+                        </fieldset>
+                    </div>
+                    <div class="col-4">
+                        <fieldset class="form-group mb-0">
+                            <input type="text" formControlName="url" class="form-control form-small"
+                                placeholder="Page URL" noWhiteSpace required>
+                        </fieldset>
+                    </div>
+                    <div class="col-sm">
+                        <fieldset class="form-group mb-0">
+                            <select class="form-control form-small form-select" formControlName="pageCategoryId" required>
+                                <option value="" disabled>Select page category</option>
+                                <option *ngFor="let item of pageCategory" value="{{item.pageCategoryId}}">
+                                    {{item.pageCategory | titlecase}}
+                                </option>
+                            </select>
+                        </fieldset>
+                    </div>
+
+                    <div class="col-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input m-r-5" id="" type="checkbox"  formControlName="specialFields">  <label class="text-bold-600" for="">Special Permissions Required? </label> 
+                            
+                            </div>
+                    </div>
+                    <div class="col-sm">
+                        <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
+                            data-bs-placement="top"  matTooltip="Save" aria-label=""
+                            [disabled]="pageForm.invalid || !pageForm.dirty"><i class="fas fa-save"></i></button>
+                        <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip"
+                            (click)="close()" data-bs-placement="top" matTooltip="Cancel"
+                            aria-label=""><i class="fas fa-ban"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card mb-3">
+
+    <div class="card-body">
+        <div class="table-responsive scrollbar">
+            <mat-table #table [dataSource]="dataSource" matSort  #mainSort="matSort"
+                class="table table-hover table-striped scrollbar-visible table-sm small table-bordered">
+                <ng-container matColumnDef="checkbox" >
+                    <mat-header-cell *matHeaderCellDef  mat-sort-header>
+                        <!-- <mat-checkbox (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()">
+                        </mat-checkbox> -->
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <!-- <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
+                            [aria-label]="checkboxLabel(row)"></mat-checkbox> -->
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="page">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Pages</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <a (click)="Updatedata(row.pageId)" class="accordion-btn show px-2 m-r-5" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapse1" type="button" aria-expanded="true"
+                            aria-controls="collapse1" matTooltip={{row.page}}> {{row.page}}</a>
+                    </mat-cell>`
+                </ng-container>
+                <ng-container matColumnDef="url">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Page URL</mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip={{row.url}}>
+                        {{row.url}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="pageCategory">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Page Category</mat-header-cell>
+                    <mat-cell *matCellDef="let row" matTooltip={{row.pageCategories?.pageCategory}}>
+                        {{row.pageCategories?.pageCategory}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="specialFields">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Special Permissions Required?</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        {{row.specialFields==true?'Yes':'No'}}
+                    </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="icon">
+                        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <a href="javascript:void(0)" *ngIf="userName=='superit'"
+                            (click)="openModalPage(row.pageId,row.page)"><i class="fas fa-exclamation-circle fa-lg"></i></a>
+                            <a href="javascript:void(0)" *ngIf="checkAlerts(row.pageId)"  
+                                (click)="OpenModalPopup(row.pageId)"><i class="fas fa-solid fa-bell m-r-5  fa-lg"></i></a> 
+    
+                           
+                        </mat-cell>
+                    </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.pageId==selectedIndex))}"></mat-row>
+            </mat-table>
+            <!-- <mat-paginator  [length]="pageTotal" [pageIndex]="currentPage" [pageSizeOptions]="pageSizeOptions" (page)="pageChanged($event)" showFirstLastButtons>
+            </mat-paginator> -->
+        </div>
+    </div>
+</div>

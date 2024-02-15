@@ -251,7 +251,7 @@
 
                                 <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
                                     <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                        data-bs-dismiss="modal" (click)="clearBranchForm()" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="">{{this.vendorBranchId == null ? 'Add Branch
@@ -361,7 +361,7 @@
                                             <button type="submit" class="btn btn-primary me-1" aria-label=""
                                                 [disabled]="vendorBranchInfo.invalid">Submit</button>
                                             <button type="button" class="btn btn-danger me-1"
-                                                (click)="Closebranchoffice()" aria-label="">Clear</button>
+                                                (click)="clearBranchForm()" aria-label="">Clear</button>
                                         </div>
                                     </form>
 
@@ -500,11 +500,11 @@
                     <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                         <thead class="bg-200">
                             <tr>
-                                <th>Contact Person</th>
-                                <th>Designation</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th></th>
+                                <th style="width: 25%;">Contact Person</th>
+                                <th style="width: 20%;">Designation</th>
+                                <th style="width: 25%;">Email</th>
+                                <th style="width: 20%;">Contact No.</th>
+                                <th style="width: 10%;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -611,11 +611,11 @@
                     <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                         <thead class="bg-200">
                             <tr>
-                                <th>Contact Person</th>
-                                <th>Designation</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th></th>
+                                <th style="width: 25%;">Contact Person</th>
+                                <th style="width: 20%;">Designation</th>
+                                <th style="width: 25%;">Email</th>
+                                <th style="width: 20%;">Contact No.</th>
+                                <th style="width: 10%;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -722,11 +722,11 @@
                     <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                         <thead class="bg-200">
                             <tr>
-                                <th>Contact Person</th>
-                                <th>Designation</th>
-                                <th>Email</th>
-                                <th>Contact No.</th>
-                                <th></th>
+                                <th style="width: 25%;">Contact Person</th>
+                                <th style="width: 20%;">Designation</th>
+                                <th style="width: 25%;">Email</th>
+                                <th style="width: 20%;">Contact No.</th>
+                                <th style="width: 10%;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
