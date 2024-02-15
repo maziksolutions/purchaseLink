@@ -119,13 +119,7 @@ export class RequisitionslistComponent implements OnInit {
 
     this.loadScript('assets/js/SideNavi.js');
 
-    this.loadServiceType();
-    
-    this.route.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        console.log('NavigationEnd event:', event);
-      }
-    });
+    this.loadServiceType();    
   }
 
   ngAfterViewInit(): void {

@@ -30,3 +30,14 @@ height: 11px !important;
 ::ng-deep .selected-item {
   max-width:250px !important;
 }
+.ellipsis-text {  
+  white-space: nowrap;  
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50px;
+}
+.ellipsis-text:hover {  
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
+}

@@ -50,7 +50,6 @@ export class VendorRegistrationComponent implements OnInit {
   selectedItems: string[] = [];
   serviceTypes: any;
 
-
   vendorAccountData: any
 
   vendorId: any
@@ -66,7 +65,9 @@ export class VendorRegistrationComponent implements OnInit {
   ConfirmOnCallCheck: boolean;
   fileToUpload: File;
   FileName: string = "";
-
+  approvalList: any
+  CompanyName: string = ''
+  CompanyShortName: string = ''
 
   constructor(private fb: FormBuilder, private sideNavService: SideNavService, private route: Router, private http: HttpClient,
     private purchaseService: PurchaseMasterService, private vendorService: VendorService, private swal: SwalToastService, private roote: ActivatedRoute,
@@ -129,18 +130,19 @@ export class VendorRegistrationComponent implements OnInit {
 
     this.initForm()
 
-  
+
 
     // this.VendorMasterForm.get('vendorInfo')?.valueChanges.subscribe(() => {
     //   this.autoSave('vendorInfo');  
     // })
   }
 
-  get vm() { return this.VendorMasterForm.controls };
-  get vsf() { return this.VendorSalesDepartForm.controls };
+  get vm() { return this.VendorMasterForm.controls }
+  get vsf() { return this.VendorSalesDepartForm.controls }
   get vBranchf() { return this.vendorBranchInfo.controls }
-  get vserF() { return this.VendorServiceDepartForm.controls };
-  get vaf() { return this.VendorAccountDeptForm.controls };
+  get vserF() { return this.VendorServiceDepartForm.controls }
+  get vaf() { return this.VendorAccountDeptForm.controls }
+  get vbif() { return this.BankInformationForm.controls }
 
   LoadServiceType() {
     this.purchaseService.getServicetypes(0)
@@ -208,50 +210,51 @@ export class VendorRegistrationComponent implements OnInit {
         vendorId: [0, [Validators.required]],
       })
 
-      this.VendorSalesDepartForm = this.fb.group({
-        vendorSalesId: [0],
-        contactPerson: ['', Validators.required],
-        designation: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        contactNo: ['', Validators.required],
-        vendorId: [0, [Validators.required]],
-      })
-  
-      this.VendorServiceDepartForm = this.fb.group({
-        vendorServiceId: [0],
-        contactPerson: ['', Validators.required],
-        designation: ['', Validators.required],
-        email: ['',[Validators.required, Validators.email]],
-        contactNo: ['', Validators.required],
-        vendorId: [0, [Validators.required]],
-      })
-  
-      this.VendorAccountDeptForm = this.fb.group({
-        vendorAccountId: [0],
-        contactPerson: ['', Validators.required],
-        designation: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        contactNo: ['', Validators.required],
-        vendorId: [0, [Validators.required]],
-      })
-  
-      this.BankInformationForm = this.fb.group({
-        vendorBankInfoId: [0],
-        companyName: ['', Validators.required],
-        companyShortName: ['', Validators.required],
-        preferredCurrency: ['', Validators.required],
-        bankName: ['', Validators.required],
-        bankAddress: ['', Validators.required],
-        vendorBranchId: ['', Validators.required],
-        beneficiaryName: ['', Validators.required],
-        accountNumber: ['', Validators.required],
-        ibanSwiftCode: ['', Validators.required],
-        vatNo: ['', Validators.required],
-        remarks: ['', Validators.required],
-        confirmOnCall: [''],
-        attachments: [''],
-        vendorId: [0, Validators.required],
-      })
+    this.VendorSalesDepartForm = this.fb.group({
+      vendorSalesId: [0],
+      contactPerson: ['', Validators.required],
+      designation: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      contactNo: ['', Validators.required],
+      vendorId: [0, [Validators.required]],
+    })
+
+    this.VendorServiceDepartForm = this.fb.group({
+      vendorServiceId: [0],
+      contactPerson: ['', Validators.required],
+      designation: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      contactNo: ['', Validators.required],
+      vendorId: [0, [Validators.required]],
+    })
+
+    this.VendorAccountDeptForm = this.fb.group({
+      vendorAccountId: [0],
+      contactPerson: ['', Validators.required],
+      designation: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      contactNo: ['', Validators.required],
+      vendorId: [0, [Validators.required]],
+    })
+
+
+    this.BankInformationForm = this.fb.group({
+      vendorBankInfoId: [0],
+      companyName: [this.CompanyName, Validators.required],
+      companyShortName: [this.CompanyShortName, Validators.required],
+      preferredCurrency: ['', Validators.required],
+      bankName: ['', Validators.required],
+      bankAddress: ['', Validators.required],
+      vendorBranchId: ['', Validators.required],
+      beneficiaryName: ['', Validators.required],
+      accountNumber: ['', Validators.required],
+      ibanSwiftCode: ['', Validators.required],
+      vatNo: ['', Validators.required],
+      remarks: ['', Validators.required],
+      confirmOnCall: [''],
+      attachments: [''],
+      vendorId: [0, Validators.required],
+    })
 
 
 
@@ -292,7 +295,7 @@ export class VendorRegistrationComponent implements OnInit {
         if (data == undefined) {
           this.LocationList = [];
         } else {
-          
+
           this.LocationList = data;
 
         }
@@ -310,6 +313,7 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   onLocationPortSelect(event: any) {
+    debugger
     let isSelect = event.locationId;
     if (isSelect) {
       this.selectedLocationPort.push(event.locationId);
@@ -322,8 +326,8 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   onLocationPortDeSelect(event: any) {
-
-    let rindex = this.selectLocationPort.findIndex(locationId => locationId == event.locationId);
+    debugger
+    let rindex = this.selectedLocationPort.findIndex(locationId => locationId == event.locationId);
     if (rindex !== -1) {
       this.selectedLocationPort.splice(rindex, 1)
     }
@@ -355,7 +359,7 @@ export class VendorRegistrationComponent implements OnInit {
         if (data == undefined) {
           this.LocationListTwo = [];
         } else {
-          
+
           this.LocationListTwo = data;
         }
       });
@@ -389,15 +393,15 @@ export class VendorRegistrationComponent implements OnInit {
   //#region  Save Vendor Master Form
   autoSave(partName: string): void {
     if (partName == 'vendorBusinessInfo') {
-      
-      
+
+
       if (this.vendorId != null) {
-        
-        
+
+
         const formPart = this.VendorMasterForm.get(partName)
 
         if (formPart) {
-          
+
           const categoryIds = this.categorySelectedItems.join(',');
           const serviceTypeIds = this.selectedItems.join(',')
           const formValue = formPart.value;
@@ -410,7 +414,7 @@ export class VendorRegistrationComponent implements OnInit {
         fmdata.append('data', JSON.stringify(formPart?.value));
         if (formPart != null && formPart.valid) {
           this.vendorService.addbusinessInfo(fmdata).subscribe(data => {
-            
+
             if (data.message == "data added") {
               this.swal.success('Added successfully.');
             }
@@ -435,7 +439,7 @@ export class VendorRegistrationComponent implements OnInit {
     }
 
     if (partName == 'vendorInfo') {
-      
+
       const vendorform = this.VendorMasterForm.get(partName);
 
       vendorform?.patchValue({
@@ -446,15 +450,15 @@ export class VendorRegistrationComponent implements OnInit {
         city: vendorform.value.city,
         postalCode: vendorform.value.postalCode,
         country: vendorform.value.country,
-
       });
 
       if (partName == 'vendorInfo' && vendorform != null && vendorform.valid) {
         const formData = new FormData();
-        
-        
-        formData.append('data', JSON.stringify(vendorform.value))
 
+
+        formData.append('data', JSON.stringify(vendorform.value))
+        this.CompanyName = vendorform.value.companyName
+        this.CompanyShortName = vendorform.value.companyShortName
         this.vendorService.addvendorInfo(formData)
           .subscribe(data => {
             debugger
@@ -509,7 +513,7 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   onSubmitbranchoffice(form: any) {
-    
+
     if (this.vendorId) {
       form.value.vendorId = this.vendorId
       form.value.convenientPorts = this.selectedLocationPort.join(',')
@@ -517,20 +521,20 @@ export class VendorRegistrationComponent implements OnInit {
       fmdata.append('data', JSON.stringify(form.value));
 
       this.vendorService.addBranchoffice(fmdata)
-        .subscribe(data => {      
+        .subscribe(data => {
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
             this.loadVendorBranchData(this.vendorId)
             this.vendorBranchInfo.reset();
             this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
-           
+
           }
           else if (data.message == "updated") {
             this.swal.success('Data has been updated successfully.');
             this.loadVendorBranchData(this.vendorId)
             this.vendorBranchInfo.reset();
             this.vendorBranchInfo.controls.vendorBranchId.setValue(0);
-           
+
           }
           else if (data.message == "duplicate") {
             this.swal.info('Data already exist. Please enter new data');
@@ -548,7 +552,7 @@ export class VendorRegistrationComponent implements OnInit {
   loadVendorBranchData(id) {
     this.vendorService.getBranchOfficeByVendorId(id)
       .subscribe(response => {
-        
+
         // this.dataBranchOffice = []
         this.dataBranchOffice = response.data;
       });
@@ -560,7 +564,7 @@ export class VendorRegistrationComponent implements OnInit {
     this.vendorService.getBranchofficeId(id)
       .subscribe((response) => {
         if (response.status) {
-          
+
           this.ConvenientPortsList = [];
           if (response.data.convenientPorts != '' && response.data.convenientPorts != null) {
 
@@ -589,11 +593,11 @@ export class VendorRegistrationComponent implements OnInit {
         });
   }
 
-  deleteBranchoffice(id){
+  deleteBranchoffice(id) {
     if (this.vendorId > 0) {
       this.vendorService.archiveBranchoffice(id).subscribe(res => {
         if (res) {
-          
+
           this.loadVendorBranchData(this.vendorId)
         }
       })
@@ -606,7 +610,7 @@ export class VendorRegistrationComponent implements OnInit {
       this.categorySelectedItems = event.map((x: { serviceCategoryId: any; }) => x.serviceCategoryId);
   }
   onItemSelectCat(event: any) {
-    
+
     let isSelect = event.serviceCategoryId;
     if (isSelect) {
       this.categorySelectedItems.push(event.serviceCategoryId);
@@ -629,14 +633,14 @@ export class VendorRegistrationComponent implements OnInit {
       this.selectedItems = event.map((x: { serviceTypeId: any; }) => x.serviceTypeId);
   }
   onItemSelect(event: any) {
-    
+
     let isSelect = event.serviceTypeId;
     if (isSelect) {
       this.selectedItems.push(event.serviceTypeId);
     }
   }
   onOrderTypeDeSelect(event: any) {
-    
+
     let rindex = this.selectedItems.findIndex(orderTypeId => orderTypeId == event.serviceTypeId);
     if (rindex !== -1) {
       this.selectedItems.splice(rindex, 1)
@@ -649,7 +653,7 @@ export class VendorRegistrationComponent implements OnInit {
 
   //#region Vendor Sales Department
   onAddSales() {
-    
+
     if (this.vendorId > 0) {
       this.VendorSalesDepartForm.patchValue({ vendorId: this.vendorId })
       const formValues = this.VendorSalesDepartForm.value;
@@ -657,7 +661,7 @@ export class VendorRegistrationComponent implements OnInit {
       formData.append('data', JSON.stringify(formValues));
       if (this.VendorSalesDepartForm != null && this.VendorSalesDepartForm.valid) {
         this.vendorService.addSalesInfo(formData).subscribe(data => {
-          
+
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
             this.loadVendorSalesData(this.vendorId);
@@ -690,7 +694,7 @@ export class VendorRegistrationComponent implements OnInit {
   loadVendorSalesData(id) {
     this.vendorService.getSalesInfoByVendorId(id).subscribe(res => {
       if (res.status == true) {
-        
+
         this.zone.run(() => {
           this.vendorSalesData = []
           this.vendorSalesData = res.data;
@@ -700,10 +704,10 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   editSalesData(id) {
-    
+
     this.vendorService.getSalesInfoById(id).subscribe(res => {
       if (res.status == true) {
-        
+
         const data = res.data;
         this.VendorSalesDepartForm.reset()
         this.VendorSalesDepartForm.patchValue({
@@ -718,11 +722,11 @@ export class VendorRegistrationComponent implements OnInit {
     })
   }
   deleteSalesData(id) {
-    
+
     if (this.vendorId > 0) {
       this.vendorService.archiveSalesInfo(id).subscribe(res => {
         if (res) {
-          
+
           this.loadVendorSalesData(this.vendorId)
         }
       })
@@ -732,7 +736,7 @@ export class VendorRegistrationComponent implements OnInit {
 
   //#region Vendor Service Department
   onAddService() {
-    
+
     if (this.vendorId > 0) {
       this.VendorServiceDepartForm.patchValue({ vendorId: this.vendorId })
       const formValues = this.VendorServiceDepartForm.value;
@@ -740,7 +744,7 @@ export class VendorRegistrationComponent implements OnInit {
       formData.append('data', JSON.stringify(formValues));
       if (this.VendorServiceDepartForm != null && this.VendorServiceDepartForm.valid) {
         this.vendorService.addServiceInfo(formData).subscribe(data => {
-          
+
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
             this.loadVendorServiceData(this.vendorId);
@@ -766,17 +770,17 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   clearServiceForm() {
-    this.VendorServiceDepartForm.reset();
+    this.VendorServiceDepartForm.reset()
     this.VendorServiceDepartForm.controls.vendorServiceId.setValue(0)
   }
 
   loadVendorServiceData(id) {
-    
+
     this.vendorService.getServiceInfoByVendorId(id).subscribe(res => {
       if (res.status == true) {
-        
+
         this.zone.run(() => {
-          
+
           this.vendorServiceData = []
           this.vendorServiceData = res.data;
         })
@@ -785,10 +789,10 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   editServiceData(id) {
-    
+
     this.vendorService.getServiceInfoById(id).subscribe(res => {
       if (res.status == true) {
-        
+
         const data = res.data;
         this.VendorServiceDepartForm.reset()
         this.VendorServiceDepartForm.patchValue({
@@ -803,11 +807,11 @@ export class VendorRegistrationComponent implements OnInit {
     })
   }
   deleteServiceData(id) {
-    
+
     if (this.vendorId > 0) {
       this.vendorService.archiveServiceInfo(id).subscribe(res => {
         if (res) {
-          
+
           this.loadVendorServiceData(this.vendorId)
         }
       })
@@ -817,7 +821,7 @@ export class VendorRegistrationComponent implements OnInit {
 
   //#region Vendor Account Department
   onAddAccount() {
-    
+
     if (this.vendorId > 0) {
       this.VendorAccountDeptForm.patchValue({ vendorId: this.vendorId })
       const formValues = this.VendorAccountDeptForm.value;
@@ -825,7 +829,7 @@ export class VendorRegistrationComponent implements OnInit {
       formData.append('data', JSON.stringify(formValues));
       if (this.VendorAccountDeptForm != null && this.VendorAccountDeptForm.valid) {
         this.vendorService.addAccountInfo(formData).subscribe(data => {
-          
+
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
             this.loadVendorAccountData(this.vendorId);
@@ -858,9 +862,9 @@ export class VendorRegistrationComponent implements OnInit {
   loadVendorAccountData(id) {
     this.vendorService.getAccountInfoByVendorId(id).subscribe(res => {
       if (res.status == true) {
-        
+
         this.zone.run(() => {
-          
+
           this.vendorAccountData = []
           this.vendorAccountData = res.data;
         })
@@ -869,13 +873,13 @@ export class VendorRegistrationComponent implements OnInit {
   }
 
   editAccountData(id) {
-    
+
     // this.modal = 'modal'
     // this.modalTarget = '#service-contact'
     this.vendorService.getAccountInfoById(id).subscribe(res => {
       debugger
       if (res.status == true) {
-        
+
         const data = res.data;
         this.VendorAccountDeptForm.reset()
         this.VendorAccountDeptForm.patchValue({
@@ -890,11 +894,11 @@ export class VendorRegistrationComponent implements OnInit {
     })
   }
   deleteAccountData(id) {
-    
+
     if (this.vendorId > 0) {
       this.vendorService.archiveAccountInfo(id).subscribe(res => {
         if (res) {
-          
+
           this.loadVendorAccountData(this.vendorId)
         }
       })
@@ -905,9 +909,13 @@ export class VendorRegistrationComponent implements OnInit {
   //#region Edit VendorMaster Method
   getVendorMaster(id) {
     this.vendorService.getVendorInfoById(id).subscribe(res => {
-      
+
       if (res.status === true) {
         const vendorMasterData = res.data;
+        this.CompanyName = ''
+        this.CompanyShortName = ''
+        this.CompanyName = vendorMasterData.companyName
+        this.CompanyShortName = vendorMasterData.companyShortName
         const formPart = this.VendorMasterForm.get('vendorInfo');
         if (formPart) {
           formPart.patchValue({
@@ -1003,13 +1011,23 @@ export class VendorRegistrationComponent implements OnInit {
 
 
   clearBankForm() {
-    this.BankInformationForm.reset();
-    this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
+    debugger   
+    this.vbif.vendorBankInfoId.setValue(0)
+    this.vbif.preferredCurrency.setValue('')
+    this.vbif.bankName.setValue('')
+    this.vbif.bankAddress.setValue('')
+    this.vbif.vendorBranchId.setValue('')
+    this.vbif.beneficiaryName.setValue('')
+    this.vbif.accountNumber.setValue('')
+    this.vbif.ibanSwiftCode.setValue('')
+    this.vbif.vatNo.setValue('')
+    this.vbif.remarks.setValue('')
+    this.vbif.confirmOnCall.setValue(false)
     this.FileName = ""
   }
 
   onSubmitBankInformation(form: any) {
-    
+
     if (this.vendorId > 0) {
       form.value.attachments = this.FileName;
       form.value.vendorId = this.vendorId;
@@ -1056,11 +1074,11 @@ export class VendorRegistrationComponent implements OnInit {
       }
     });
   }
-  deletevendorBankInfo(id){
+  deletevendorBankInfo(id) {
     if (this.vendorId > 0) {
       this.vendorService.archiveBankInformation(id).subscribe(res => {
         if (res) {
-          
+
           this.loadBankInformation(this.vendorId)
         }
       })

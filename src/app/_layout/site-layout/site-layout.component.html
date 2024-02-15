@@ -25,7 +25,7 @@
                 </div>
               </a>
             </li>
-            <li class="nav-item">
+            <li routerLinkActive="in" class="nav-item">
               <!-- label-->
               <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
                 <div class="col-auto navbar-vertical-label">Purchase Link
@@ -43,7 +43,8 @@
               </a>
 
 
-              <ul class="nav collapse" id="purchase-link">
+              <ul class="nav collapse" id="purchase-link" routerLinkActive="in"
+                [ngClass]="{'show': routeUrl=='Requisition'}">
                 <li routerLinkActive="active" class="nav-item">
                   <a class="nav-link" aria-expanded="false">
                     <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Purchase Tracking</span>
@@ -94,7 +95,7 @@
             </li>
 
 
-            <li class="nav-item">
+            <li routerLinkActive="in" class="nav-item">
               <!-- label-->
               <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
                 <div class="col-auto navbar-vertical-label">Purchase Master
@@ -109,7 +110,7 @@
                       class="fas fa-cog"></i></span><span class="nav-link-text ps-1">Master</span>
                 </div>
               </a>
-              <ul class="nav collapse" id="master">
+              <ul class="nav collapse" id="master" [ngClass]="{'show': routeUrl=='master'}">
                 <!-- <li class="nav-item"><a class="nav-link active" href="purchase-link-order-type.html" aria-expanded="false">
               <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Order Type</span>
               </div>
@@ -181,7 +182,8 @@
 
               </ul>
             </li>
-            <li class="nav-item">
+
+            <li routerLinkActive="in" class="nav-item">
               <!-- label-->
               <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
                 <div class="col-auto navbar-vertical-label">Vendor Management
@@ -196,15 +198,17 @@
                       class="far fa-address-card"></i></span><span class="nav-link-text ps-1"> Vendor</span>
                 </div>
               </a>
-              <ul class="nav collapse" id="vendor-management">
-                <li class="nav-item"><a class="nav-link" routerLink="/Vendor-Master/VendorDetails" aria-expanded="false">
+              <ul class="nav collapse" id="vendor-management" [ngClass]="{'show': routeUrl=='Vendor-Master'}">
+                <li routerLinkActive="active" class="nav-item">
+                  <a class="nav-link" routerLink="/Vendor-Master/VendorDetails" aria-expanded="false">
                     <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Vendor Details</span>
                     </div>
                   </a>
-                </li>                
+                </li>
               </ul>
             </li>
-            <li class="nav-item">
+
+            <li routerLinkActive="in" class="nav-item">
               <!-- label-->
               <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
                 <div class="col-auto navbar-vertical-label">Accounts Master
@@ -216,10 +220,10 @@
               <a class="nav-link dropdown-indicator" href="#accountmaster" role="button" data-bs-toggle="collapse"
                 aria-expanded="false" aria-controls="register">
                 <div class="d-flex align-items-center"><span class="nav-link-icon"><i
-                      class="fas fa-cog"></i></span><span class="nav-link-text ps-1">Master</span>
+                      class="fas fa-cog"></i></span><span class="nav-link-text ps-1">Accounts</span>
                 </div>
               </a>
-              <ul class="nav collapse" id="accountmaster">
+              <ul class="nav collapse" id="accountmaster" [ngClass]="{'show': routeUrl=='Account'}">
                 <li routerLinkActive="active" class="nav-item">
                   <a class="nav-link" aria-expanded="false">
                     <div class="d-flex align-items-center">
@@ -250,7 +254,7 @@
                 </li>
               </ul>
             </li>
-            <li class="nav-item">
+            <li routerLinkActive="in" class="nav-item">
               <!-- label-->
               <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
                 <div class="col-auto navbar-vertical-label">WorkFlow Master
@@ -265,7 +269,7 @@
                       class="fas fa-cog"></i></span><span class="nav-link-text ps-1">Work Flow</span>
                 </div>
               </a>
-              <ul class="nav collapse" id="workflowmaster">
+              <ul class="nav collapse" id="workflowmaster" [ngClass]="{'show': routeUrl=='Workflow'}">
                 <li routerLinkActive="active" class="nav-item">
                   <a class="nav-link" routerLink="/Workflow/wfevent" aria-expanded="false">
                     <div class="d-flex align-items-center">
@@ -359,9 +363,9 @@
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#userProfileModal" data-bs-toggle="modal" aria-expanded="false">Profile
                   &amp; account</a>
-                  <div *ngIf="targetLoc === 'Office'" class="dropdown-divider"></div>
-                  <a *ngIf="targetLoc === 'Office'" class="dropdown-item" type="button" (click)="openFleetModal()" data-bs-toggle="modal"
-                  matTooltip="User Fleets" aria-expanded="false">Vessel Groups</a>
+                <div *ngIf="targetLoc === 'Office'" class="dropdown-divider"></div>
+                <a *ngIf="targetLoc === 'Office'" class="dropdown-item" type="button" (click)="openFleetModal()"
+                  data-bs-toggle="modal" matTooltip="User Fleets" aria-expanded="false">Vessel Groups</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" (click)="logout()">Logout</a>
               </div>

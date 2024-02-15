@@ -23,9 +23,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './site-layout.component.html',
   styleUrls: ['./site-layout.component.css']
 })
-export class SiteLayoutComponent implements OnInit, OnDestroy {
-  @ViewChild('masterMenu', { static: true }) masterMenu: ElementRef;
-  private routeSubscription: Subscription;
+export class SiteLayoutComponent implements OnInit {  
   userId: any;
   moduleAccess: any;
   PMS_View: boolean = false;
@@ -71,8 +69,8 @@ export class SiteLayoutComponent implements OnInit, OnDestroy {
   selectedVessel: any;
 
   constructor(private authStatusService: AuthStatusService, private userManagementService: UserManagementService, private activeRoute: RouteService,
-    private swal: SwalToastService, private router: Router, private fb: FormBuilder, private route: ActivatedRoute, private renderer: Renderer2,
-    private reqService: RequisitionService, private vesselService: VesselManagementService, private elRef: ElementRef,) {
+    private swal: SwalToastService, private router: Router, private fb: FormBuilder, private route: ActivatedRoute,
+    private reqService: RequisitionService, private vesselService: VesselManagementService) {
     var url = window.location.href;
     this.routeUrl = url.split('//')[1].split('/')[1].toString();
   }
@@ -117,36 +115,10 @@ export class SiteLayoutComponent implements OnInit, OnDestroy {
       unSelectAllText: 'UnSelect All',
       itemsShowLimit: 1,
       allowSearchFilter: true
-    };
-    debugger
-    this.routeSubscription = this.router.events.subscribe(event => {
-      
-      if (event instanceof NavigationEnd) {
-        debugger
-        const isActiveRoute = this.activeRouteResult;
-        const linkElement = this.masterMenu.nativeElement.querySelector('.nav-link');
-        if (isActiveRoute) {
-          this.renderer.addClass(linkElement, 'active');
-          this.renderer.setAttribute(linkElement, 'aria-expanded', 'true');
-          const ulElement = this.masterMenu.nativeElement.querySelector('.nav');
-          this.renderer.addClass(ulElement, 'show');
-        } else {
-          this.renderer.removeClass(linkElement, 'active');
-          this.renderer.setAttribute(linkElement, 'aria-expanded', 'false');
-          const ulElement = this.masterMenu.nativeElement.querySelector('.nav');
-          this.renderer.removeClass(ulElement, 'show');
-        }
-      }
-    })
+    };  
   }
   get fm() { return this.changePassForm.controls };
   get uflfm() { return this.userFleetForm.controls };
-
-  ngOnDestroy(): void {
-    if (this.routeSubscription) {
-      this.routeSubscription.unsubscribe();
-    }
-  }
 
   openFleetModal() {
     $("#userFleetModal").modal('show'); this.loadVessels();

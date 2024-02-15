@@ -111,7 +111,7 @@ console.log(error);
   }
 
   onOrderTypeSelect(event: any) {
-    
+    debugger
     let isSelect = event.orderTypeId;
     if (isSelect) {
       this.selectedorderType.push(event.orderTypeId);
@@ -125,8 +125,9 @@ console.log(error);
   }
 
   onOrderTypeDeSelect(event: any) {
+    debugger
     let rindex = this.selectedorderType.findIndex(orderTypeId => orderTypeId == event.orderTypeId);
-    if (rindex == -1) {
+    if (rindex !== -1) {
       this.selectedorderType.splice(rindex, 1)
     }
   }
