@@ -1,26 +1,37 @@
-<div class="card px-3 py-2 mb-3">
+<div class="card px-3 py-2 mb-1 bg-light">
     <div class="position-relative">
-        <div class="row">
-            <div class="col-lg-3">
+        <div class="row flex-between-center">
+            <div class="col-auto align-self-center">
                 <h5 class="mb-0">Work Flow</h5>
                 <span class="btn-sm ps-0 text-primary fw-bold">Master<span
-                        class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0"><b>Work Flow</b></span>
+                        class="fas fa-chevron-right ms-1 fs--2"></span>
+                      </span><span class="btn-sm p-0"><b>Work Flow</b></span>
+                       
+                        
             </div>
-            
+            <div class="col-auto ms-auto">
+              <form [formGroup]="headcompany">
+              <select formControlName="companyId" class="form-control form-small form-select" (change)="filterCompany($event)" required>
+                <option value="0" disabled>Select Company</option>
+                <option *ngFor="let item of Allcompany" value="{{item.companyId}}">{{item.companyName}}</option>
+              </select>
+            </form>
+            </div>
+          
         </div>
     </div>
 
 </div>
 
 <div class="card mb-3">
-  <div class="card-header bg-light">
+  <!-- <div class="card-header bg-light">
     <div class="row flex-between-end">
       <div class="col-md-8 align-self-center" type="button" data-bs-target="#document-header" aria-expanded="false" aria-controls="document-header">
         <h5 class="mb-0">Work Queue</h5>
       </div>
 
     </div>
-  </div>
+  </div> -->
   <hr class="m-0">
   <div class="card-body fs--1 collapse show" id="document-header">
     <!-- Section A -->
@@ -557,7 +568,7 @@
 
 <!-- WorkQueueStateRole -->
 
-<div class="modal fade" id="addModalWQSR" tabindex="-1" role="dialog" aria-labelledby="authentication-modal-label"
+<div class="modal fade" id="addModalWQSR" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="authentication-modal-label"
   aria-hidden="true">
   <div class="modal-dialog mt-6" role="document">
     <div class="modal-content border-0">
@@ -762,20 +773,31 @@
     
         <div class="modal-body p-0" style="font-weight: 400;">
           <div class="form">
-            <div class="table-responsive tableFixHead" style="max-height: 60vh !important; overflow: auto;">
+            <div class="table-responsive tableFixHead position-relative mt-2" style="max-height: 60vh !important; overflow: auto;">
+              
                 <table class="table table-hover table-striped" >
-                    <thead>
+                    <thead class="font-small-3">
+                      <tr style="background-color: #ffffff;">
+                          
+                        <th class="p-1">&nbsp;</th>
+                        <th class="p-1">&nbsp;</th>
+                        <th class="p-1">&nbsp;</th>
+                        <th class="p-1">&nbsp;</th>
+                        <th class="p-1">&nbsp;</th> 
+                        <th colspan="2" class="pt-1 pb-0" style="background: #e2e2e2; text-align: center; font-size: 13px; border-top-left-radius: 10px; border-top-right-radius: 10px; border: 0px;">Approval Limits {{"("+basedCurrency+")"}}</th>
+                        <th class="p-1">&nbsp;</th>
+                      </tr>
                         <tr style="background-color: #e2e2e2;">
                           
-                          <th class="th-sm" >Position Name</th>
-                          <th class="th-sm px-2" style="width: 20px;"><a href="javascript:void(0);" style="color: #333;" matTooltip="View"><i class="fa fa-eye" aria-hidden="true"></i></a> </th>
-                          <th class="th-sm px-2" style="width: 20px;"><a href="javascript:void(0);" style="color: #333;" matTooltip="Add"><i class="fa fa-plus" aria-hidden="true"></i></a></th>
-                          <th class="th-sm px-2" style="width: 20px;"><a href="javascript:void(0);" style="color: #333;" matTooltip="Edit"><i class="fa fa-edit"></i></a></th>
-                          <th class="th-sm ps-2 pe-4" style="width: 20px;"><a href="javascript:void(0);" style="color: #333;" matTooltip="Delete"><i class="fa fa-trash" aria-hidden="true"></i></a></th> 
-                          <th class="th-sm" style="width: 20%;">From</th>
-                          <th class="th-sm" style="width: 20%;">To</th>
-                          <th class="th-sm" style="width: 17%;">Approval Needed</th>
-                        
+                          <th rowspan="2" class="th-sm py-2" >Position Name</th>
+                          <th rowspan="2" class="th-sm py-2 px-2" style="width: 20px;"><a href="javascript:void(0);" style="color: #333;" matTooltip="View"><i class="fa fa-eye" aria-hidden="true"></i></a> </th>
+                          <th rowspan="2" class="th-sm py-2 px-2" style="width: 20px;"><a href="javascript:void(0);" style="color: #333;" matTooltip="Add"><i class="fa fa-plus" aria-hidden="true"></i></a></th>
+                          <th rowspan="2" class="th-sm py-2 px-2" style="width: 20px;"><a href="javascript:void(0);" style="color: #333;" matTooltip="Edit"><i class="fa fa-edit"></i></a></th>
+                          <th rowspan="2" class="th-sm py-2 ps-2 pe-4" style="width: 20px;"><a href="javascript:void(0);" style="color: #333;" matTooltip="Delete"><i class="fa fa-trash" aria-hidden="true"></i></a></th> 
+                          <th class="th-sm py-2" style="width: 20%;">From</th>
+                          <th class="th-sm py-2" style="width: 20%;">To</th>
+                          <th rowspan="2" class="th-sm py-2" style="width: 17%;">Approval Needed</th>
+                        </tr>
                       </thead>
                       <tbody>
                         

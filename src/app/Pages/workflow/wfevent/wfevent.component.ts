@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -8,6 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { UnitmasterService } from 'src/app/services/unitmaster.service';
+import { UserManagementService } from 'src/app/services/user-management.service';
 import { WorkflowService } from 'src/app/services/workflow.service';
 
 declare let Swal, $: any;
@@ -28,6 +29,8 @@ export class WfeventComponent implements OnInit {
   deletetooltip: string;
   selectedIndex: any;
   displayedColumns: string[] = ['checkbox', 'description','tableName','page'];
+  Allcompany: any;
+  selectCompanyId: any;
 
 
   constructor(private fb: FormBuilder,
@@ -35,7 +38,8 @@ export class WfeventComponent implements OnInit {
     private pageService: UnitmasterService,
     private swal: SwalToastService,
     private exportExcelService: ExportExcelService,
-    private workflowservice : WorkflowService) { }
+    private workflowservice : WorkflowService,
+    private userManagementService : UserManagementService)  { }
 
   ngOnInit(): void {
 
@@ -44,10 +48,13 @@ export class WfeventComponent implements OnInit {
       description: ['', [Validators.required]],
       tableName: ['', [Validators.required]],
       pageId: ['', [Validators.required]],
+      companyId:['0'],
     });
 
+    this.loadCompany();
     this.loadData(0);
     this.LoadPage();
+    
     
 
   }
@@ -62,19 +69,62 @@ export class WfeventComponent implements OnInit {
       })
   }
 
+  loadCompany(){
+    this.userManagementService.getAllCompanies(0)
+    .subscribe(response => {
+      this.Allcompany = response.data;
+  
+    })  
+  }
+
+  filterCompany(event){
+
+  this.selectCompanyId =event.target.value;
+
+  this.workflowservice.getEventByCompany(this.selectCompanyId)
+  .subscribe(response => {
+    this.dataSource.data = response.data;       
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    $("#collapse1").collapse('hide');
+  })  
+
+
+  }
+
   clear() {
+    if(this.selectCompanyId == '0' || this.selectCompanyId == '' || this.selectCompanyId == undefined){
+      this.swal.error('Please select company');
+    }
+    else{
+      this.EventForm.reset();
+      this.EventForm.controls.eventId.setValue(0);
+      this.EventForm.controls.description.setValue('');
+      this.EventForm.controls.tableName.setValue('');
+      this.EventForm.controls.pageId.setValue('');
+      this.EventForm.controls.companyId.setValue(this.selectCompanyId);
+      (document.getElementById('abc') as HTMLElement).focus();
+      $("#collapse1").collapse('show');
+    }
+    
+  }
+
+  Cancel(){
     this.EventForm.reset();
     this.EventForm.controls.eventId.setValue(0);
     this.EventForm.controls.description.setValue('');
     this.EventForm.controls.tableName.setValue('');
     this.EventForm.controls.pageId.setValue('');
-
+    this.EventForm.controls.companyId.setValue(this.selectCompanyId);
     (document.getElementById('abc') as HTMLElement).focus();
+    $("#collapse1").collapse('hide');
   }
 
 
   onSubmit(form: any) {
     
+    form.value.companyId = this.selectCompanyId;
+
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
 
@@ -85,21 +135,25 @@ export class WfeventComponent implements OnInit {
 
           this.swal.success('Added successfully.');
            this.loadData(0);
-           this.clear();
+           this.Cancel();
+           this.EventForm.controls.companyId.setValue('0');
         }
         else if (data.message == "updated") {
 
           this.swal.success('Data has been updated successfully.');
            this.loadData(0);
-           this.clear();
+           this.Cancel();
+           this.EventForm.controls.companyId.setValue('0');
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
            this.loadData(0);
+           this.EventForm.controls.companyId.setValue('0');
         }
         else if (data.message == "not found") {
           this.swal.info('Data exist not exist');
            this.loadData(0);
+           this.EventForm.controls.companyId.setValue('0');
         }
         else {
 
@@ -158,6 +212,7 @@ export class WfeventComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
       
+       
       });
   }
   DeleteData() {
@@ -202,20 +257,23 @@ export class WfeventComponent implements OnInit {
   Updatedata(id) {
 
     this.selectedIndex = id;
-    (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
-    (document.getElementById('collapse1') as HTMLElement).classList.add("show");
+    if(this.selectCompanyId == '0' || this.selectCompanyId == '' || this.selectCompanyId == undefined){
+      this.swal.error('Please select company');
+    }
+else{
     this.workflowservice.getWFEventById(id)
       .subscribe((response) => {
-        
         if (response.status) {
-
           this.EventForm.patchValue(response.data);
-
+          $("#collapse1").collapse('show');
         }
       },
         (error) => {
 
         });
+}
+  
+  
   }
 
   generateExcel() {

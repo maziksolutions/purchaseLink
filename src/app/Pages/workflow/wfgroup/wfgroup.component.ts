@@ -7,6 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
+import { UserManagementService } from 'src/app/services/user-management.service';
 import { WorkflowService } from 'src/app/services/workflow.service';
 declare let Swal, $: any;
 @Component({
@@ -29,19 +30,22 @@ export class WfgroupComponent implements OnInit {
 
   displayedColumns: string[] = ['checkbox', 'groupName', 'eventLink'];
   eventlist: any;
+  Allcompany: any;
+  selectCompanyId: any;
 
   constructor(private fb: FormBuilder,
     public dialog: MatDialog,
     private swal: SwalToastService,
     private exportExcelService: ExportExcelService,
-    private workflowservice: WorkflowService) { }
+    private workflowservice: WorkflowService,
+    private userManagementService : UserManagementService) { }
 
   ngOnInit(): void {
     this.EventGroupForm = this.fb.group({
       groupId: [0],
       groupName: ['', [Validators.required]],
       eventId: ['', [Validators.required]],
-
+      companyId:['0'],
     });
 
     this.dropdownEventSetting = {
@@ -54,28 +58,71 @@ export class WfgroupComponent implements OnInit {
       allowSearchFilter: true
     };
 
+    this.loadCompany();
     this.loadData(0);
-    this.LoadEvent();
+   
+  }
+
+  loadCompany(){
+    this.userManagementService.getAllCompanies(0)
+    .subscribe(response => {
+      
+      this.Allcompany = response.data;
+    
+    })  
+  }
+
+  filterCompany(event){
+    this.selectCompanyId =event.target.value;
+   
+  this.workflowservice.getGroupByCompany(this.selectCompanyId)
+  .subscribe(response => {
+    
+    this.dataSource.data = response.data;       
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    $("#collapse1").collapse('hide');
+  }) 
+
   }
 
   LoadEvent() {
-    this.workflowservice.getWFEvent(0)
+    this.workflowservice.getEventByCompany(this.selectCompanyId)
       .subscribe(response => {
+        
         this.eventlist = response.data;
-
+        
       })
   }
 
 
 
   clear() {
+    if(this.selectCompanyId == '0' || this.selectCompanyId == '' || this.selectCompanyId == undefined){
+      this.swal.error('Please select company');
+    }
+    else{
+    
+    this.LoadEvent();
     this.EventGroupForm.reset();
     this.EventGroupForm.controls.groupId.setValue(0);
     this.EventGroupForm.controls.groupName.setValue('');
     this.EventGroupForm.controls.eventId.setValue('');
+    this.EventGroupForm.controls.companyId.setValue(this.selectCompanyId);
 
     (document.getElementById('abc') as HTMLElement).focus();
+    $("#collapse1").collapse('show');
   }
+}
+Cancel(){
+  this.EventGroupForm.reset();
+  this.EventGroupForm.controls.groupId.setValue(0);
+  this.EventGroupForm.controls.groupName.setValue('');
+  this.EventGroupForm.controls.eventId.setValue('');
+  this.EventGroupForm.controls.companyId.setValue(this.selectCompanyId);
+  (document.getElementById('abc') as HTMLElement).focus();
+  $("#collapse1").collapse('hide');
+}
 
 
   onSelectAll(event: any) {
@@ -107,24 +154,27 @@ export class WfgroupComponent implements OnInit {
 
 
   onSubmit(form: any) {
-    debugger
+    
     form.value.eventId = this.selectedItems.join(',');
+    form.value.companyId = this.selectCompanyId;
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
 
     this.workflowservice.addWFGroup(fmdata)
       .subscribe(data => {
-        debugger
         if (data.message == "data added") {
           this.swal.success('Added successfully.');
           this.selectedItems.length = 0
           this.loadData(0);
-          this.clear();
+          this.Cancel();
+          this.EventGroupForm.controls.companyId.setValue('0');
         }
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
           this.selectedItems.length = 0
           this.loadData(0);
+          this.Cancel();
+          this.EventGroupForm.controls.companyId.setValue('0');
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -162,7 +212,7 @@ export class WfgroupComponent implements OnInit {
       .subscribe(response => {
 
         this.flag = status;
-        debugger
+           
         this.dataSource.data = response.data;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -198,14 +248,19 @@ export class WfgroupComponent implements OnInit {
 
   Updatedata(id) {
 
-    this.selectedIndex = id;
-    (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
-    (document.getElementById('collapse1') as HTMLElement).classList.add("show");
+    this.selectedIndex = id;    
+    if(this.selectCompanyId == '0' || this.selectCompanyId == '' || this.selectCompanyId == undefined){
+      this.swal.error('Please select company');
+    }
+else{
+ 
     this.workflowservice.getWFGroupById(id)
       .subscribe((response) => {
-
+        
+        this.LoadEvent();
+        
         if (response.status) {
-
+          
           this.dropdownList = [];
           if (response.data.eventId != '' && response.data.eventId != null) {
 
@@ -224,15 +279,17 @@ export class WfgroupComponent implements OnInit {
 
 
           response.data.eventId = this.dropdownList;
-
+          
           this.EventGroupForm.patchValue(response.data);
-
+          $("#collapse1").collapse('show');
+          
         }
       },
         (error) => {
 
         });
   }
+}
 
 
   DeleteData() {

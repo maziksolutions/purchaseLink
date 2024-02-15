@@ -9,7 +9,7 @@ import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
 import { WorkflowService } from 'src/app/services/workflow.service';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 declare let Swal, $: any;
 @Component({
@@ -18,6 +18,7 @@ declare let Swal, $: any;
   styleUrls: ['./wf-workflow.component.css']
 })
 export class WfWorkflowComponent implements OnInit {
+  headcompany:FormGroup;
   WorkFlowForm: FormGroup; flag; pkey: number = 0;
   WorkFlowStateForm: FormGroup; flagsate; pkeystate: number = 0;
   WorkStateRoleForm: FormGroup; flagSateRole; pkeyStateRole: number = 0;
@@ -73,6 +74,9 @@ export class WfWorkflowComponent implements OnInit {
   ToQTR: string;
   Yes_No_QTR: string;
   finalSiteType: string;
+  Allcompany: any;
+  selectCompanyId: any;
+  basedCurrency: any;
   
   
 
@@ -85,6 +89,9 @@ export class WfWorkflowComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.headcompany = this.fb.group({
+      companyId:[0]
+    })
 
     this.WorkFlowStateForm = this.fb.group({
       workQueueStateId: [0],
@@ -127,30 +134,58 @@ export class WfWorkflowComponent implements OnInit {
   
     });
    
-    this.LoadGroup();
+    this.loadCompany();
     this.loadDataWorkQueueState();
-    this.LoadEvent();
+
+   
     // this.loadUserPositions();
  
   }
 
-  LoadGroup() {
-    this.workflowservice.getWFGroup(0)
-      .subscribe(response => {
+  loadCompany(){
+    this.usermanagementservice.getAllCompanies(0)
+    .subscribe(response => {
+      
+      this.Allcompany = response.data;
+      // this.LoadGroup();
+    })  
+  }
+
+  filterCompany(event){
+    this.selectCompanyId =event.target.value;
+   
+  this.workflowservice.getGroupByCompany(this.selectCompanyId)
+  .subscribe(response => {
+    
+    this.dataSource.data = response.data;       
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+
+    this.dataSourceQueueState.data = []
+    this.dataSourceQueueStateRole.data = []; 
+    this.dataSourceQueueTransition.data =  [];
+    this.dataSourceQueueTransitionRole.data = []
+  }) 
+
+  }
+
+  // LoadGroup() {
+  //   this.workflowservice.getWFGroup(0)
+  //     .subscribe(response => {
         
  
-        this.dataSource.data = response.data;       
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+  //       this.dataSource.data = response.data;       
+  //       this.dataSource.sort = this.sort;
+  //       this.dataSource.paginator = this.paginator;
 
-      })
-  }
+  //     })
+  // }
 
 
   //#region WorkState
 
   GetIdinWorkState(groupId){
-    this.groupId = groupId;   
+    this.groupId = groupId;  
     this.dataSourceQueueStateRole.data = []; 
     this.dataSourceQueueTransition.data =  [];
     this.dataSourceQueueTransitionRole.data = []
@@ -175,18 +210,25 @@ export class WfWorkflowComponent implements OnInit {
   }
 
   LoadEvent() {
-    this.workflowservice.getWFEvent(0)
-      .subscribe(response => {
-        this.eventlist = response.data;
+    debugger
+    return this.workflowservice.getEventByCompany(this.selectCompanyId)
+    .pipe(map(response => {
+        debugger
+        return  response.data;
+      }))
 
-      })
+    
   }
 
   openModalWorkQueueState(){
     this.selectedIndexQueueState = null;
     if(this.groupId != null){
-      
+      debugger
       this.WorkFlowStateForm.reset();
+
+      this.LoadEvent().subscribe(response => {
+      this.eventlist = response;
+
       this.WorkFlowStateForm.controls.workQueueStateId.setValue(0);
       this.WorkFlowStateForm.controls.workQueueStateName.setValue('');
       this.WorkFlowStateForm.controls.siteType.setValue('');
@@ -199,6 +241,7 @@ export class WfWorkflowComponent implements OnInit {
       let eventIdsArray = eventIdsString.split(',');
       this.Eventfinal = this.eventlist.filter(x => eventIdsArray.includes(x.eventId.toString()));
             $("#addModalWQS").modal('show');
+      })
     }
     else{
       this.swal.error('Please select group name.');
@@ -267,20 +310,25 @@ loadWorkQueueState(id) {
 
 UpdateWorkQueueState(id){
   this.selectedIndexQueueState = id;
-  $("#addModalWQS").modal('show');
+  
   this.workflowservice.getWorkQueueStateId(id)
     .subscribe((response) => {
-      
+      debugger
       if (response.status) {
-
+      
         this.groupNameFix = this.dataSource.data.filter(x=>x.groupId == response.data.groupId);
         let Eventget = this.groupNameFix.map(x => x.eventId); 
         let eventIdsString = Eventget.join(', ');    
         let eventIdsArray = eventIdsString.split(',');
+
+        this.LoadEvent().subscribe(response => {
+          debugger
+          this.eventlist = response;
         this.Eventfinal = this.eventlist.filter(x => eventIdsArray.includes(x.eventId.toString()));
 
+        })
         this.WorkFlowStateForm.patchValue(response.data);
-
+        $("#addModalWQS").modal('show');
       }
     },
       (error) => {
@@ -529,6 +577,18 @@ else{
 
   //#region WorkQueueTransition
 
+  // WorkQSRwithId(id) {
+
+  //   return this.workflowservice.getWorkQueueStateRole(id)
+  //   .pipe(map(response => {
+  //     return   response.data;       
+     
+  //     }));
+
+  // }
+
+
+
   openModalWorkQT(){
     this.selectedIndexQueueTransition = null;
     if(this.workqueuestateId != null){
@@ -551,8 +611,9 @@ else{
   }
 
   getTargetWorkQueue(action){
-
+debugger
 const selectedValue = (action.target as HTMLSelectElement).value;
+this.currentworkstate =  this.dataSourceQueueState.data.filter(x=>x.workQueueStateId == this.workqueuestateId);
     if(selectedValue == 'Approve'){
       this.TargetWorkQueueStateData = this.WQstatusdata.filter(x=>x.groupId == this.currentworkstate[0].groupId && x.eventId == this.currentworkstate[0].eventId
         && x.stateType == 'Approve');
@@ -698,6 +759,7 @@ const selectedValue = (action.target as HTMLSelectElement).value;
     
     this.selectedIndexQueueTransitionRole = null;
     if(this.transitionId != null){
+      debugger
       this.WorkTransitionRoleForm.reset();
       this.WorkTransitionRoleForm.controls.wqTransitionRoleId.setValue(0);
       this.WorkTransitionRoleForm.controls.userPositionId.setValue('');
@@ -708,6 +770,7 @@ const selectedValue = (action.target as HTMLSelectElement).value;
       this.WorkTransitionRoleForm.controls.workQueueTransitionId.setValue(this.transitionId);
 
       this.getStateRole= this.dataSourceQueueStateRole.data.filter(x=>x.workQueueStateId == this.workqueuestateId && x.isEditAllowed == true);
+      this.basedCurrency =this.Allcompany.filter(x=>x.companyId == this.selectCompanyId).map(x=>x.basedCurrency);
       this.addmultipostionintransition(this.getStateRole)
     
        $("#addModalWQTR").modal('show');

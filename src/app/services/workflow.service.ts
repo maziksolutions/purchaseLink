@@ -28,6 +28,9 @@ export class WorkflowService {
     return this.httpClient.get<any>(this.linkurl + 'getWFEventId/' + id, httpOptions)
       .pipe(catchError(this.handleError));
   }
+  getEventByCompany(companyId): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}getEventByCompany/${companyId}`, httpOptions);
+  }
   addWFEvent(formData): Observable<any> {
     return this.httpClient.post<any>(this.linkurl + 'addWFEvent', formData)
       .pipe(catchError(this.handleError));
@@ -46,6 +49,9 @@ export class WorkflowService {
   getWFGroupById(id): Observable<any> {
     return this.httpClient.get<any>(this.linkurl + 'getWFGroupId/' + id, httpOptions)
       .pipe(catchError(this.handleError));
+  }
+  getGroupByCompany(companyId): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}getGroupByCompany/${companyId}`, httpOptions);
   }
   addWFGroup(formData): Observable<any> {
     return this.httpClient.post<any>(this.linkurl + 'addWFGroup', formData)

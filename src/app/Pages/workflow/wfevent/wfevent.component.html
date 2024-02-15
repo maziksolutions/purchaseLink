@@ -7,7 +7,19 @@
                         class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0"><b>Work Flow Event</b></span>
             </div>
             <div class="col-lg-9">
+                
               <div class="form-inline float-end mt-2">
+               
+                <form [formGroup]="EventForm">
+
+                <select formControlName="companyId" class="form-control form-small form-select" (change)="filterCompany($event)" required>
+                    <option value="0" disabled>Select Company</option>
+                    <option *ngFor="let item of Allcompany" value="{{item.companyId}}">{{item.companyName}}</option>
+                  </select>
+
+                </form>
+
+                  <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
                 <select class="form-control form-small form-select" #docStatus
                 (change)="loadData($any($event.target).value)" >
@@ -19,7 +31,7 @@
                 <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
                 <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add"
-                    data-bs-toggle="collapse" (click)="clear()" data-bs-target="#collapse1" aria-expanded="true"
+                    data-bs-toggle="collapse" (click)="clear()" data-bs-target="" aria-expanded="true"
                     aria-controls="collapse1"><i class="fas fa-plus text-primary"></i></a>
 
                 <a class="px-2 m-r-1" type="button" (click)="DeleteData()"  data-bs-toggle="tooltip"
@@ -75,7 +87,7 @@
                           data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""
                           [disabled]="EventForm.invalid  || !EventForm.dirty" ><i class="fas fa-save"></i></button>
                       <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip"
-                         data-bs-placement="top" title="" data-bs-original-title="Cancel"
+                         data-bs-placement="top" title="" data-bs-original-title="Cancel" (click)="Cancel()"
                           aria-label=""><i class="fas fa-ban"></i></button>
                   </div>
               </div>
@@ -108,7 +120,7 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
                 <mat-cell *matCellDef="let row">
                   <a (click)="Updatedata(row.eventId)" class="accordion-btn show px-2 m-r-5" type="button"
-                  data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true"
+                  data-bs-toggle="collapse" data-bs-target="" aria-expanded="true"
                   aria-controls="collapse1"  title={{row.description.toUpperCase()}}> <span>{{row.description.toUpperCase()}}</span>
               </a>
                 </mat-cell>
