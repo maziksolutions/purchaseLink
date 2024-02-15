@@ -206,8 +206,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   filenamecut: string;
 
   attachmentItemdataSource = new MatTableDataSource<any>();
-  selectionItemAttachment = new SelectionModel<any>(true, []);
-  attachmentItemfrm: FormGroup;
+  selectionItemAttachment = new SelectionModel<any>(true, []);  
   fileItemToUpload: File; fileItemUrl;
   myItemFiles: string[] = [];
   listItemOfFiles: any[] = [];
@@ -293,7 +292,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     });
 
     this.attachmentfrm = this.fb.group({
-      shipAttachmentId: [0],
+      attachmentId: [0],
       attachmentTypeId: ['', [Validators.required]],
       tableName: [''],
       tablePkeyId: [],
@@ -301,18 +300,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       attachment: [''],
       description: [''],
       vesselId: []
-    });
-
-    this.attachmentItemfrm = this.fb.group({
-      shipAttachmentId: [0],
-      attachmentTypeId: ['', [Validators.required]],
-      tableName: [''],
-      tablePkeyId: [],
-      pageName: [''],
-      attachment: [''],
-      description: [''],
-      vesselId: []
-    });
+    });  
 
     this.loadData(0);
     this.fillattachmenttype();
@@ -383,8 +371,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   get fm() { return this.RequisitionForm.controls };
   get fmd() { return this.deliveryForm.controls };
-  get atfm() { return this.attachmentfrm.controls };
-  get atIfm() { return this.attachmentItemfrm.controls };
+  get atfm() { return this.attachmentfrm.controls }; 
   get serviceType() { return this.serviceTypeForm.controls }
   get jobListAttachment() { return this.jobListAttachmentForm.controls }
   get jobListControls() {
@@ -2600,7 +2587,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
 
-
   attachmentcheckboxLabel(row: any): string {
     if (!row) {
       return `${this.isattachmentAllSelected() ? 'select' : 'deselect'} all`;
@@ -3067,7 +3053,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     $("#openAttachmentItem").modal('hide');
   }
 
+  loadAttachment(status: number) {
+    debugger    
+    const pageName = this.atfm.pageName.value
+    const id = this.atfm.tablePkeyId.value
+    const tableName = this.atfm.tableName.value
+    this.loadItemAttachment(status, id, pageName, tableName)
+  }
+
   loadItemAttachment(status: number, id: number, pageName: string, tableName: string) {
+    debugger
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
@@ -3083,10 +3078,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     }
     debugger
-    this.atIfm.tablePkeyId.setValue(id);
-    this.atIfm.tableName.setValue(tableName);
-    this.atIfm.pageName.setValue(pageName);
-    this.atIfm.vesselId.setValue(this.selectedVesselId);
+    this.atfm.tablePkeyId.setValue(id);
+    this.atfm.tableName.setValue(tableName);
+    this.atfm.pageName.setValue(pageName);
+    this.atfm.vesselId.setValue(this.selectedVesselId);
     this.pmsService.getmattachment(status, pageName, id)
       .subscribe(response => {
         debugger
@@ -3098,6 +3093,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   DeleteItemAttachment() {
+    debugger
     var message = ""
     var title = "";
 
@@ -3121,10 +3117,13 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         cancelButtonText: 'No'
       }).then((result) => {
         if (result.value) {
-          this.pmsService.archiveattachments(numSelected).subscribe(result => {
-            this.selectionItemAttachment.clear();
-            this.swal.success(message);
-            // this.loadItemAttachment(this.flag);
+          this.requisitionService.archiveAttachments(numSelected).subscribe((res: any) => {
+            debugger
+            if (res.status === true) {
+              this.selectionItemAttachment.clear();
+              this.swal.success(message);
+              this.loadItemAttachment(this.flag, res.tablePkId, res.pageName, res.tableName);
+            }
           })
         }
       })
@@ -3150,7 +3149,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.getDataReqwithId(this.reqId);
 
     // this.atIfm.shipAttachmentId.setValue(0);
-    // this.atIfm.tablePkeyId.setValue(this.GetItemId);
+    this.atfm.tablePkeyId.setValue(this.GetItemId);
     // this.atIfm.tableName.setValue('tblPmReqItems');
     // this.atIfm.pageName.setValue('Purchase Requisition Item');
     // this.atIfm.vesselId.setValue(this.requisitionWithIDAutoSave.vesselId);
@@ -3167,16 +3166,17 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         debugger
         if (res.message == "data added") {
           this.swal.success('Added successfully.');
-          this.CloseAttachmentItemFrm();
+          this.CloseAttachmentForm();
           (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
           this.loadItemAttachment(0, res.id, res.pageName, res.tableName);
-          this.myItemFiles.length === 0;
+          this.myItemFiles.length === 0;          
         }
         else if (res.message == "updated") {
+          debugger
           this.swal.success('Data has been updated successfully.');
-          // this.clearattachmentfrm(); 
+          this.clearattachmentfrm(); 
           (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
-          this.CloseAttachmentItemFrm();
+          this.CloseAttachmentForm();
           this.loadItemAttachment(0, res.id, res.pageName, res.tableName);
           this.myItemFiles.length === 0;
         }
@@ -3214,21 +3214,22 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   clearItemAttachmentfrm() {
     this.myItemFiles = [];
     this.listItemOfFiles = [];
-    this.attachmentItemfrm.controls.attachmentTypeId.setValue('');
-    this.attachmentItemfrm.controls.description.setValue('');
+    console.log(this.fileItemToUpload)
+    this.attachmentfrm.controls.attachmentTypeId.setValue('');
+    this.attachmentfrm.controls.description.setValue('');
     (document.getElementById('collapse10') as HTMLElement).classList.add("collapse");
     (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
   }
 
-  CloseAttachmentItemFrm() {
+  CloseAttachmentForm() {
     debugger
     this.myItemFiles = [];
     this.listItemOfFiles = [];
-    this.attachmentItemfrm.reset();
+    // this.attachmentfrm.reset();
 
-    this.atIfm.attachmentTypeId.setValue('');
-    this.atIfm.description.setValue('');
-    this.atIfm.attachment.setValue('');
+    this.atfm.attachmentTypeId.setValue('');
+    this.atfm.description.setValue('');
+    this.atfm.attachment.setValue('');
     (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
   }
 
@@ -3253,7 +3254,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   attachmentItemToggle() {
-    this.isItemattachmentAllSelected() ? this.selectionItemAttachment.clear() : this.attachmentItemdataSource.data.forEach(r => this.selectionItemAttachment.select(r));
+    this.isItemattachmentAllSelected() ? this.selectionItemAttachment.clear() : this.attachmentItemdataSource.data.forEach(r =>
+       this.selectionItemAttachment.select(r));
   }
 
   UpdateItemAttach(id) {
@@ -3261,8 +3263,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     (document.getElementById('collapse10') as HTMLElement).classList.add("show");
     this.pmsService.GetattachmentById(id)
       .subscribe((response) => {
+        debugger
         if (response.status) {
-          this.attachmentItemfrm.patchValue(response.data);
+          this.attachmentfrm.patchValue(response.data);          
           this.fileItemUrl = response.data.filePath;
           this.pkey = response.data.attachmentId;
         }
