@@ -251,7 +251,7 @@ export class VendorRegistrationComponent implements OnInit {
       ibanSwiftCode: ['', Validators.required],
       vatNo: ['', Validators.required],
       remarks: ['', Validators.required],
-      confirmOnCall: [''],
+      confirmOnCall: [false],
       attachments: [''],
       vendorId: [0, Validators.required],
     })
@@ -1016,15 +1016,17 @@ export class VendorRegistrationComponent implements OnInit {
 
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
-            this.BankInformationForm.reset();
-            this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
+            this.clearBankForm()
+            // this.BankInformationForm.reset();
+            // this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
             this.FileName = ""
             this.loadBankInformation(this.vendorId);
           }
           else if (data.message == "updated") {
             this.swal.success('Data has been updated successfully.');
-            this.BankInformationForm.reset();
-            this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
+            this.clearBankForm()
+            // this.BankInformationForm.reset();
+            // this.BankInformationForm.controls.vendorBankInfoId.setValue(0);
             this.FileName = ""
             this.loadBankInformation(this.vendorId);
           }

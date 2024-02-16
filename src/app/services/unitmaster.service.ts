@@ -375,6 +375,9 @@ archiveAdministrationPageCategory(PageCategory: any[]): Observable < string > {
 
 //#region Page Category
 //Get Page Category data
+getPageCategoriess(formData): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}PageCategoriess?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
+}
 getPageCategories(status): Observable<any> {  
   return this.httpClient.get<any[]>(`${this.linkurl}PageCategories/${status}`, httpOptions);
 }
@@ -471,9 +474,48 @@ getMaintenanceProcedureById(id):Observable<any>{
 archiveMaintenanceProcedure(maintenanceProcedure: any[]): Observable < string > {   
   return this.httpClient.post<string> (`${this.linkurl}archiveMaintenanceProcedure/`, maintenanceProcedure, httpOptions);  
 } 
+//#endregion  
+
+//#region Requisition Page Category
+getRequisitionPageCategoryByPaginator(formData): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}getRequisitionPageCategoryByPaginator?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
+}
+getRequisitionPageCategories(status): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}getRequisitionPageCategories/${status}`, httpOptions);
+}
+getRequisitionPageCategoryById(id):Observable<any>{  
+  return  this.httpClient.get<any>(this.linkurl + 'getRequisitionPageCategoryById/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
+addRequisitionPageCategory(formData): Observable<any> {
+  return this.httpClient.post<any>(this.linkurl + 'addRequisitionPageCategory', formData, httpOptions)
+  .pipe(catchError(this.handleError));
+}
+archiveRequisitionPageCategory(PageCategory: any[]): Observable < string > {   
+  return this.httpClient.post<string> (`${this.linkurl}archiveRequisitionPageCategory/`, PageCategory, httpOptions);  
+} 
 //#endregion
 
-
+//#region Requisition Page
+getRequistionPagesByPaginator(formData): Observable<any> {  
+  return this.httpClient.get<any[]>(`${this.linkurl}getRequistionPagesByPaginator?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}`, httpOptions);
+}
+getRequisitionPageById(id):Observable<any>{  
+  return  this.httpClient.get<any>(this.linkurl + 'getRequisitionPageById/' + id,httpOptions)
+  .pipe(catchError(this.handleError));
+}
+// Add New unit
+addRequisitionPage(formData): Observable<any> {
+  return this.httpClient.post<any>(this.linkurl + 'addRequisitionPage', formData, httpOptions)
+  .pipe(catchError(this.handleError));
+}
+archiveRequisitionPage(Page: any[]): Observable < string > {   
+  return this.httpClient.post<string> (`${this.linkurl}archiveRequisitionPage/`, Page, httpOptions);  
+} 
+getRequisitionPages(status): Observable<any> {
+  return this.httpClient.get<any[]>(`${this.linkurl}getRequisitionPages/${status}`, httpOptions);
+}
+//#endregion
 
 private handleError(error: HttpErrorResponse) {
   if (error.error instanceof ErrorEvent) {

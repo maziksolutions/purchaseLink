@@ -62,10 +62,9 @@ export class WfeventComponent implements OnInit {
   //#region Work Flow Event 
 
   LoadPage() {
-    this.pageService.getfilterPage(0)
+    this.pageService.getRequisitionPages(0)
       .subscribe(response => {
         this.pages = response.data;
-
       })
   }
 
