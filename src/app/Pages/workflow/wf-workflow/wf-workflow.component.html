@@ -675,6 +675,8 @@
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small class="text-600">Work Flow Event : <span formControlName="eventId" *ngFor="let item of currentworkstate">{{"("+item.wfEvent.tableName+")"}}</span></small>
               <br><small class="text-600">Current Work Queue State Name : <span *ngFor="let items of currentworkstate" formControlName="workQueueStateCurrentId">{{"("+items.workQueueStateName+")"}}</span></small>
               <br><small class="text-600">State Type : <span  *ngFor="let item of currentworkstate">{{"("+item.stateType+")"}}</span></small>
+              <br><small class="text-600">Site Type : <span  *ngFor="let item of currentworkstate">{{"("+item.siteType+")"}}</span></small>
+
             </h5>
 
             </div>
@@ -721,7 +723,7 @@
                       <select class="form-control  form-select"
                       formControlName="workQueueStateId" required>
                       <option value="" disabled>Select Work Queue State Name</option>
-                      <option *ngFor="let item of TargetWorkQueueStateData" value="{{item.workQueueStateId}}">{{item.workQueueStateName}}</option> 
+                      <option *ngFor="let item of TargetWorkQueueStateData" value="{{item.workQueueStateId}}">{{item.workQueueStateName+'    '+'('+item.stateType+')'}}</option> 
                   </select>
                   </fieldset>
                 </div>

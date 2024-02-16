@@ -2323,20 +2323,20 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     if (this.serviceTypeDataSource.length !== 0 || this.serviceTypeDataSource.length !== null) {
 
+      debugger
       const jobToAdd = this.serviceTypeDataSource.map(item => ({
         serviceName: item.serviceName,
         jobList: item.jobList
       })
       );
-
+      let jobNumber = 1;
       jobToAdd.forEach((item, index) => {
-        stepData += `
-        #${index + 2}=Service_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.serviceName}'`;
-
+       
         // Add jobList details to the stepData
         item.jobList.forEach((job, jobIndex) => {
           stepData += `,
-                                                                      #${jobIndex + 1}='${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','',''`;
+              #${jobNumber + 1}=Service_for_ordering_mr('${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','','')`;
+         jobNumber++;
         });
       });
     }

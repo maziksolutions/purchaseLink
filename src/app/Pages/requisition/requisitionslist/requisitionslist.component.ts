@@ -451,16 +451,16 @@ if (this.targetLoc == 'Office'){
         })  
           );  
   
-        jobToAdd.forEach((item, index) => {
-          stepData += `
-          #${index + 2}=Service_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.serviceName}'`;
-  
-    // Add jobList details to the stepData
-                            item.jobList.forEach((job, jobIndex) => {
-                                                          stepData += `,
-                                                                        #${jobIndex + 1}='${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','',''`;
-                                                  });
-                                                });
+          let jobNumber = 1;
+          jobToAdd.forEach((item, index) => {
+           
+            // Add jobList details to the stepData
+            item.jobList.forEach((job, jobIndex) => {
+              stepData += `,
+             #${jobNumber + 1}=Service_for_ordering_mr('${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','','')`;
+             jobNumber++;
+            });
+          });
          }
 
 
