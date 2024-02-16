@@ -582,6 +582,7 @@ else{
     if(this.workqueuestateId != null){
 
     this.WorkQTForm.reset();
+    this.loadDataWorkQueueState();
     this.WorkQTForm.controls.workQueueTransitionId.setValue(0);
     this.WorkQTForm.controls.workQueueStateId.setValue('');
     this.WorkQTForm.controls.action.setValue('');
@@ -590,7 +591,6 @@ else{
     this.selectgroupname = this.dataSource.data.filter(x=>x.groupId ==  this.groupId);
     this.currentworkstate =  this.dataSourceQueueState.data.filter(x=>x.workQueueStateId == this.workqueuestateId);
     this.WorkQTForm.controls.workQueueStateCurrentId.setValue(this.currentworkstate[0].workQueueStateId);
-
     $("#addModalWQT").modal('show');
      }
     else{
@@ -599,7 +599,8 @@ else{
   }
 
   getTargetWorkQueue(action){
-
+    
+    this.loadDataWorkQueueState();
 const selectedValue = (action.target as HTMLSelectElement).value;
     if(selectedValue == 'Approve'){
       this.TargetWorkQueueStateData = this.WQstatusdata.filter(x=>x.groupId == this.currentworkstate[0].groupId && x.eventId == this.currentworkstate[0].eventId
@@ -689,6 +690,7 @@ const selectedValue = (action.target as HTMLSelectElement).value;
       .subscribe((response) => {
         
         if (response.status) {
+          this.loadDataWorkQueueState();
           this.loadWorkQueueState(this.groupId);
           this.selectgroupname = this.dataSource.data.filter(x=>x.groupId ==  this.groupId);
           this.currentworkstate =  this.dataSourceQueueState.data.filter(x=>x.workQueueStateId == this.workqueuestateId);

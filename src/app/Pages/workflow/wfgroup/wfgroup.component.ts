@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { map } from 'rxjs/operators';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { UserManagementService } from 'src/app/services/user-management.service';
@@ -87,12 +88,11 @@ export class WfgroupComponent implements OnInit {
   }
 
   LoadEvent() {
-    this.workflowservice.getEventByCompany(this.selectCompanyId)
-      .subscribe(response => {
-        
-        this.eventlist = response.data;
-        
-      })
+
+      return this.workflowservice.getEventByCompany(this.selectCompanyId)
+      .pipe(map(response => {
+          return  response.data;
+        }))
   }
 
 
@@ -102,8 +102,11 @@ export class WfgroupComponent implements OnInit {
       this.swal.error('Please select company');
     }
     else{
-    
-    this.LoadEvent();
+
+    this.LoadEvent().subscribe(response => {
+      this.eventlist = response;
+    })
+
     this.EventGroupForm.reset();
     this.EventGroupForm.controls.groupId.setValue(0);
     this.EventGroupForm.controls.groupName.setValue('');
@@ -172,7 +175,8 @@ Cancel(){
         else if (data.message == "updated") {
           this.swal.success('Data has been updated successfully.');
           this.selectedItems.length = 0
-          this.loadData(0);
+          location.reload();
+          // this.loadData(0);
           this.Cancel();
           this.EventGroupForm.controls.companyId.setValue('0');
         }
@@ -256,8 +260,10 @@ else{
  
     this.workflowservice.getWFGroupById(id)
       .subscribe((response) => {
-        
-        this.LoadEvent();
+
+        this.LoadEvent().subscribe(response => {
+          this.eventlist = response;
+        })
         
         if (response.status) {
           

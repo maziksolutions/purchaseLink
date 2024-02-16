@@ -79,7 +79,6 @@ export class WfeventComponent implements OnInit {
   filterCompany(event){
 
   this.selectCompanyId =event.target.value;
-
   this.workflowservice.getEventByCompany(this.selectCompanyId)
   .subscribe(response => {
     this.dataSource.data = response.data;       
@@ -131,28 +130,29 @@ export class WfeventComponent implements OnInit {
       .subscribe(data => {
 
         if (data.message == "data added") {
-
           this.swal.success('Added successfully.');
-           this.loadData(0);
+          this.loadData(0);
            this.Cancel();
            this.EventForm.controls.companyId.setValue('0');
         }
         else if (data.message == "updated") {
-
           this.swal.success('Data has been updated successfully.');
-           this.loadData(0);
+          //  this.loadData(0);
+          location.reload();
            this.Cancel();
            this.EventForm.controls.companyId.setValue('0');
+
         }
         else if (data.message == "duplicate") {
-          this.swal.info('Data already exist. Please enter new data');
-           this.loadData(0);
+          this.swal.info('Data already exist. Please enter new data'); 
+          this.loadData(0);
            this.EventForm.controls.companyId.setValue('0');
         }
-        else if (data.message == "not found") {
-          this.swal.info('Data exist not exist');
+        else if (data.message == "not found") {  
+          this.swal.info('Data exist not exist');    
            this.loadData(0);
            this.EventForm.controls.companyId.setValue('0');
+          
         }
         else {
 
@@ -210,7 +210,6 @@ export class WfeventComponent implements OnInit {
         this.dataSource.data = response.data;       
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
-      
        
       });
   }
