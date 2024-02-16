@@ -210,10 +210,9 @@ export class WfWorkflowComponent implements OnInit {
   }
 
   LoadEvent() {
-    debugger
+    
     return this.workflowservice.getEventByCompany(this.selectCompanyId)
     .pipe(map(response => {
-        debugger
         return  response.data;
       }))
 
@@ -222,8 +221,7 @@ export class WfWorkflowComponent implements OnInit {
 
   openModalWorkQueueState(){
     this.selectedIndexQueueState = null;
-    if(this.groupId != null){
-      debugger
+    if(this.groupId != null){ 
       this.WorkFlowStateForm.reset();
 
       this.LoadEvent().subscribe(response => {
@@ -313,7 +311,7 @@ UpdateWorkQueueState(id){
   
   this.workflowservice.getWorkQueueStateId(id)
     .subscribe((response) => {
-      debugger
+
       if (response.status) {
       
         this.groupNameFix = this.dataSource.data.filter(x=>x.groupId == response.data.groupId);
@@ -322,8 +320,7 @@ UpdateWorkQueueState(id){
         let eventIdsArray = eventIdsString.split(',');
 
         this.LoadEvent().subscribe(response => {
-          debugger
-          this.eventlist = response;
+        this.eventlist = response;
         this.Eventfinal = this.eventlist.filter(x => eventIdsArray.includes(x.eventId.toString()));
 
         })
@@ -379,7 +376,6 @@ DeleteWQSData(){
   //#region workQueuestateRole
 
   GetIdinWorkStateRole(workqueuestateId){
-
    this.workqueuestateId = workqueuestateId;
    this.dataSourceQueueTransition.data =  [];
    this.dataSourceQueueTransitionRole.data = []
@@ -437,6 +433,7 @@ DeleteWQSData(){
     this.WorkStateRoleForm.controls.isDeleteAllowed.setValue('');
     this.WorkStateRoleForm.controls.workQueueStateId.setValue('');
     $("#addModalWQSR").modal('hide');
+    this.loadWorkQSR(this.workqueuestateId);
   }
 
   loadWorkQSR(id) {
@@ -449,6 +446,7 @@ DeleteWQSData(){
       
       });
   }
+
 
   addmultipostion(userposition){
 
@@ -484,7 +482,7 @@ const positionsToAdd = userPositionIds.map(userPositionId => ({
 
   saveAccessRight(id,event,right){
 
-var oldData = this.dataSourceQueueStateRole.data.filter(x=>x.userPositionId == id) ;
+var oldData = this.dataSourceQueueStateRole.data.filter(x=>x.userPositionId == id && x.workQueueStateId == this.workqueuestateId) ;
 
  if(right == 'View'){
   this.viewRight =   event.target.checked;
@@ -531,13 +529,15 @@ else{
 
           this.swal.success('Added successfully.');
            this.loadWorkQSR(this.workqueuestateId);
-           this.closeModalWorkStateRole();
+           $("#addModalWQSR").modal('show');
+          
         }
         else if (data.message == "updated") {
 
           this.swal.success('Data has been updated successfully.');
             this.loadWorkQSR(this.workqueuestateId);
-           this.closeModalWorkStateRole();
+            $("#addModalWQSR").modal('show');
+
         }
         else if (data.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -577,18 +577,6 @@ else{
 
   //#region WorkQueueTransition
 
-  // WorkQSRwithId(id) {
-
-  //   return this.workflowservice.getWorkQueueStateRole(id)
-  //   .pipe(map(response => {
-  //     return   response.data;       
-     
-  //     }));
-
-  // }
-
-
-
   openModalWorkQT(){
     this.selectedIndexQueueTransition = null;
     if(this.workqueuestateId != null){
@@ -611,9 +599,8 @@ else{
   }
 
   getTargetWorkQueue(action){
-debugger
+
 const selectedValue = (action.target as HTMLSelectElement).value;
-this.currentworkstate =  this.dataSourceQueueState.data.filter(x=>x.workQueueStateId == this.workqueuestateId);
     if(selectedValue == 'Approve'){
       this.TargetWorkQueueStateData = this.WQstatusdata.filter(x=>x.groupId == this.currentworkstate[0].groupId && x.eventId == this.currentworkstate[0].eventId
         && x.stateType == 'Approve');
@@ -702,7 +689,7 @@ this.currentworkstate =  this.dataSourceQueueState.data.filter(x=>x.workQueueSta
       .subscribe((response) => {
         
         if (response.status) {
-  
+          this.loadWorkQueueState(this.groupId);
           this.selectgroupname = this.dataSource.data.filter(x=>x.groupId ==  this.groupId);
           this.currentworkstate =  this.dataSourceQueueState.data.filter(x=>x.workQueueStateId == this.workqueuestateId);
           const    selectedValue =  response.data.action;
@@ -759,7 +746,7 @@ this.currentworkstate =  this.dataSourceQueueState.data.filter(x=>x.workQueueSta
     
     this.selectedIndexQueueTransitionRole = null;
     if(this.transitionId != null){
-      debugger
+      
       this.WorkTransitionRoleForm.reset();
       this.WorkTransitionRoleForm.controls.wqTransitionRoleId.setValue(0);
       this.WorkTransitionRoleForm.controls.userPositionId.setValue('');
@@ -818,7 +805,7 @@ this.currentworkstate =  this.dataSourceQueueState.data.filter(x=>x.workQueueSta
 
   saveTransitionRight(id,event,right,type){
 
-    var oldTransitionData = this.dataSourceQueueTransitionRole.data.filter(x=>x.userPositionId == id) ;
+    var oldTransitionData = this.dataSourceQueueTransitionRole.data.filter(x=>x.userPositionId == id && x.workQueueTransitionId ==  this.transitionId) ;
     
      if(right == 'View'){
       this.viewTransitionRight =   event.target.checked;
@@ -890,13 +877,13 @@ this.currentworkstate =  this.dataSourceQueueState.data.filter(x=>x.workQueueSta
     
               this.swal.success('Added successfully.');
               this.loadWorkQTR(this.transitionId);
-               this.closeModalWorkTransitionRole();
+              $("#addModalWQTR").modal('show');
             }
             else if (data.message == "updated") {
     
               this.swal.success('Data has been updated successfully.');
               this.loadWorkQTR(this.transitionId);
-               this.closeModalWorkTransitionRole();
+              $("#addModalWQTR").modal('show');
             }
             else if (data.message == "duplicate") {
               this.swal.info('Data already exist. Please enter new data');
