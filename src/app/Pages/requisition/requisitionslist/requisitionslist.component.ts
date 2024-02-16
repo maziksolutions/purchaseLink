@@ -432,7 +432,7 @@ if (this.targetLoc == 'Office'){
 
       stepData += `
   
-             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].pmPreference.description}','${Dates}','','','${this.ReqData[0].departments.departmentName}','','${this.accountcode.accountCode}','','','','','${this.ReqData[0].orderTitle}')`;
+             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].pmPreference.description}','${Dates}','','','${this.ReqData[0].departments.departmentName}','','${this.accountcode.accountCode == this.accountcode.accountCode ? this.accountcode.accountCode : null}','','','','','${this.ReqData[0].orderTitle}')`;
 
       uniqueItems.forEach((item, index) => {
         stepData += `

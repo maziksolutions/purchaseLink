@@ -43,7 +43,7 @@ export class OrdertypeComponent implements OnInit {
   dropdownList: { serviceTypeId: number, serviceType: string }[] = [];
   selectedItems: string[] = [];
   dropdownServiceSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
-  
+
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
     private purchaseService: PurchaseMasterService, private swal: SwalToastService,
     private router: Router, private userManagementService: UserManagementService) { }
@@ -89,32 +89,30 @@ export class OrdertypeComponent implements OnInit {
   // console.log(error);
   //     })
   //   } 
+
+  //#region Service Type Dropdown 
   onSelectAll(event: any) {
-    
     if (event)
       this.selectedItems = event.map((x: { serviceTypeId: any; }) => x.serviceTypeId);
   }
-
   onItemSelect(event: any) {
-    
+    debugger
     let isSelect = event.serviceTypeId;
     if (isSelect) {
       this.selectedItems.push(event.serviceTypeId);
     }
   }
   onOrderTypeDeSelect(event: any) {
-    
+
     let rindex = this.selectedItems.findIndex(orderTypeId => orderTypeId == event.serviceTypeId);
     if (rindex !== -1) {
       this.selectedItems.splice(rindex, 1)
     }
   }
-
   onOrderTypeDeSelectAll(event: any) {
-    
     this.selectedItems.length = 0;
-    // this.selectedCountries.splice(0, this.selectedCountries.length);
   }
+  //#endregion
 
 
   LoadServiceType() {
@@ -144,7 +142,7 @@ export class OrdertypeComponent implements OnInit {
 
     this.purchaseService.getOrderTypes(status)
       .subscribe(response => {
-       
+
         this.flag = status;
         var serviceType = response.data;
 
@@ -156,7 +154,7 @@ export class OrdertypeComponent implements OnInit {
       });
   }
   onSubmit(form: any) {
-    
+
     form.value.serviceTypeId = this.selectedItems.join(',');
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(form.value));
@@ -189,7 +187,7 @@ export class OrdertypeComponent implements OnInit {
       });
   }
   Updatedata(id) {
-    
+
     this.selectedIndex = id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
@@ -197,31 +195,23 @@ export class OrdertypeComponent implements OnInit {
       .subscribe((response) => {
 
         if (response.status) {
-       
-          var objProcR = [];
+          debugger
           this.dropdownList = [];
           if (response.data.serviceTypeId != '' && response.data.serviceTypeId != null) {
-            
+
             const objProcR = response.data.serviceTypeId.split(',');
 
-            this.dropdownList = objProcR.map(item => {
-              return this.serviceTypes.find(x => x.serviceTypeId == item);
+            this.selectedItems.length = 0;
+            this.dropdownList = this.serviceTypes.filter(item => objProcR.includes(item.serviceTypeId.toString()))
+            this.selectedItems = this.dropdownList.filter(item => item.serviceTypeId).map(item => item.serviceTypeId.toString());
+            this.orderForm.patchValue({
+              orderTypeId: response.data.orderTypeId,
+              orderTypes: response.data.orderTypes,
+              defaultOrderType: response.data.defaultOrderType,
+              serviceTypeId: this.dropdownList,
+              abbreviation: response.data.abbreviation
             });
-            const merge4 = this.dropdownList.flat(1);
-            this.dropdownList = merge4;  
-            this.selectedItems.length=0; 
-            this.dropdownList.map(item=>{
-              this.selectedItems.push(item.serviceTypeId.toString());
-            })       
           }
-          
-          // var serviceTypeIds = response.data.serviceTypeId.split(',');
-          // const selectedServices = this.dropdownList.filter(item => serviceTypeIds.includes((item.serviceTypeId).toString()));
-
-          response.data.serviceTypeId = this.dropdownList;
-
-          this.orderForm.patchValue(response.data);
-
         }
       },
         (error) => {
@@ -310,23 +300,23 @@ export class OrdertypeComponent implements OnInit {
   exportAsXLSX(data: any[]): void {
     data.forEach((item) => {
       delete item.orderTypeId,
-        delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy ,delete item.serviceTypeId
+        delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy, delete item.serviceTypeId
 
-        item.serviceTypeNames = item.serviceTypeNames.join(', ');
+      item.serviceTypeNames = item.serviceTypeNames.join(', ');
 
     })
     this.exportExcelService.exportAsExcelFile(data, 'Order Type', 'Order Type');
   }
 
   exportLoadSheet() {
-  
+
     var data;
     const numSelected = this.selection.selected;
     if (numSelected.length > 0) {
       data = numSelected;
       data.forEach((item) => {
         delete item.orderTypeId,
-          delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy,delete item.serviceTypeId
+          delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy, delete item.serviceTypeId
       })
     }
     else

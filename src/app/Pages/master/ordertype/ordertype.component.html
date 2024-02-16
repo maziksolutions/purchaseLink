@@ -89,9 +89,8 @@
                             <ng-multiselect-dropdown [placeholder]="'Select Service Type'" class="multiselect-dropdown"
                                 [settings]="dropdownServiceSetting" [data]="serviceTypes" [(ngModel)]="dropdownList"
                                 (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
-                                formControlName="serviceType" (onDeSelect)="onOrderTypeDeSelect($event)"
-                                (onDeSelectAll)="onOrderTypeDeSelectAll($event)"
-                                >
+                                formControlName="serviceTypeId" (onDeSelect)="onOrderTypeDeSelect($event)"
+                                (onDeSelectAll)="onOrderTypeDeSelectAll($event)">
                             </ng-multiselect-dropdown>
                         </fieldset>
                     </div>
