@@ -1,15 +1,13 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { PurchaseMasterService } from '../../../services/purchase-master.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportDataComponent } from '../../common/import-data/import-data.component';
 import { MultiSelectComponent } from 'ng-multiselect-dropdown';
-declare let Swal, PerfectScrollbar: any;
-
 import {
   SelectionModel
 } from '@angular/cdk/collections';
@@ -20,7 +18,9 @@ import { UserManagementService } from 'src/app/services/user-management.service'
 import { Router } from '@angular/router';
 import { RightsModel } from '../../Models/page-rights';
 import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
-declare var $: any;
+import { from } from 'rxjs';
+
+declare let Swal, PerfectScrollbar: any; declare let $: any;
 @Component({
   selector: 'app-ordertype',
   templateUrl: './ordertype.component.html',
@@ -34,12 +34,19 @@ export class OrdertypeComponent implements OnInit {
   selection = new SelectionModel<any>(true, []);
   rights: RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
-  deletetooltip: any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   selectedIndex: any;
   serviceTypes: any;
 
+  @ViewChild('mainSort') mainSort = new MatSort();
+  PageTotal: any;
+  pageEvent: PageEvent;
+  pageSizeOptions: number[] = [20, 40, 60, 100];
+  deletetooltip: any;
+  searchForm: FormGroup;
+  pageSize = 20; currentPage = 0; page: number = 1;
+  
   dropdownList: { serviceTypeId: number, serviceType: string }[] = [];
   selectedItems: string[] = [];
   dropdownServiceSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
@@ -53,13 +60,12 @@ export class OrdertypeComponent implements OnInit {
       orderTypeId: [0],
       orderTypes: ['', [Validators.required]],
       defaultOrderType: ['', [Validators.required]],
-      serviceTypeId: [''],
+      serviceTypeId: ['', this.dropdownValidator()],
       abbreviation: ['', [Validators.required]]
     });
     //this.orderForm.controls.directCompletion.setValue('');
     //this.loadRights();
     this.LoadServiceType();
-    this.loadData(0);
 
     this.dropdownServiceSetting = {
       singleSelection: false,
@@ -70,9 +76,69 @@ export class OrdertypeComponent implements OnInit {
       itemsShowLimit: 1,
       allowSearchFilter: true
     };
+
+    this.searchForm = this.fb.group({
+      pageNumber: [''],
+      pageSize: [this.pageSize],
+      status: ['0'],
+      keyword: [''],
+      excel: ['']
+    });
+
+    this.loadData(0);
   }
   get fm() { return this.orderForm.controls };
+  get sfm() { return this.searchForm.controls };
 
+  dropdownValidator(): ValidatorFn {
+
+    return (control: AbstractControl): { [key: string]: any } | null => {
+
+      console.log('Control value:', control.value);
+      const isValid = control.value !== null && control.value !== '';
+      console.log('Is valid:', isValid);
+      return isValid ? null : { 'invalidSelection': true };
+    };
+  }
+
+  loadData(status: number) {
+    if (status == 1) {
+      this.deletetooltip = 'UnArchive';
+      if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
+        (document.querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
+        (document.querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
+      }
+    }
+    else {
+      this.deletetooltip = 'Archive';
+      if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
+        (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
+        (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
+      }
+    }
+    this.sfm.pageNumber.setValue(this.currentPage);
+    this.sfm.pageSize.setValue(this.pageSize);
+    this.sfm.excel.setValue('False')
+    this.purchaseService.getOrderTypesByPaginator(this.searchForm.value)
+      .subscribe(response => {
+        this.flag = status;
+        this.dataSource.data = response.data;
+        this.dataSource.sort = this.mainSort;
+        this.PageTotal = response.total;
+        // this.dataSource.paginator = this.paginator;
+        this.dataSource.sortingDataAccessor = (item, property) => {
+          switch (property) {
+            case 'checkbox': return this.checkboxLabel(item);
+            case 'pageCategory': return item.pageCategory;
+            case 'module': return item.module;
+
+            default: return item[property];
+          }
+        };
+        this.clear();
+        (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+      });
+  }
   //   loadRights(){
   //     this.userManagementService.checkAccessRight(unitMasterNavEnum.jobGroup).subscribe((response)=>{
   // if(response.status){
@@ -124,67 +190,40 @@ export class OrdertypeComponent implements OnInit {
         }))
       })
   }
-  loadData(status: number) {
-    if (status == 1) {
-      this.deletetooltip = 'UnArchive';
-      if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
-        (document.querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
-        (document.querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
-      }
-    }
-    else {
-      this.deletetooltip = 'Archive';
-      if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
-        (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
-        (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
-      }
-    }
-
-    this.purchaseService.getOrderTypes(status)
-      .subscribe(response => {
-
-        this.flag = status;
-        var serviceType = response.data;
-
-        this.dataSource.data = serviceType;
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
-        this.clear();
-        (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
-      });
-  }
   onSubmit(form: any) {
-
+    debugger
     form.value.serviceTypeId = this.selectedItems.join(',');
-    const fmdata = new FormData();
-    fmdata.append('data', JSON.stringify(form.value));
+    if (this.orderForm.valid) {
+      const fmdata = new FormData();
+      fmdata.append('data', JSON.stringify(form.value));
 
-    this.purchaseService.addOrderType(fmdata)
-      .subscribe(data => {
+      this.purchaseService.addOrderType(fmdata)
+        .subscribe(data => {
 
-        if (data.message == "data added") {
-          this.swal.success('Added successfully.');
-          this.clear();
-          this.loadData(0);
-        }
-        else if (data.message == "updated") {
-          this.swal.success('Data has been updated successfully.');
-          this.clear();
-          this.loadData(0);
-        }
-        else if (data.message == "duplicate") {
-          this.swal.info('Data already exist. Please enter new data');
-          this.loadData(0);
-        }
-        else if (data.message == "not found") {
-          this.swal.info('Data exist not exist');
-          this.loadData(0);
-        }
-        else {
+          if (data.message == "data added") {
+            this.swal.success('Added successfully.');
+            this.clear();
+            this.loadData(0);
+          }
+          else if (data.message == "updated") {
+            this.swal.success('Data has been updated successfully.');
+            this.clear();
+            this.loadData(0);
+          }
+          else if (data.message == "duplicate") {
+            this.swal.info('Data already exist. Please enter new data');
+            this.loadData(0);
+          }
+          else if (data.message == "not found") {
+            this.swal.info('Data exist not exist');
+            this.loadData(0);
+          }
+          else {
 
-        }
+          }
 
-      });
+        });
+    }
   }
   Updatedata(id) {
 
@@ -256,15 +295,28 @@ export class OrdertypeComponent implements OnInit {
       this.swal.info('Select at least one row')
     }
   }
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase();
-    this.dataSource.filter = filterValue;
+  applyFilter() {
+    this.page = 1; this.currentPage = 0;
+    this.loadData(0);
+    this.pageChanged(this.pageEvent);
   }
   clearSearchInput() {
-    this.searchInput.nativeElement.value = '';
-    this.applyFilter(this.searchInput.nativeElement.value)
+    debugger
+    this.sfm.keyword.setValue('');
+    this.applyFilter()
   }
+  pageChanged(event: PageEvent) {
+    if (event == undefined) {
+
+    }
+    else {
+      this.pageSize = event.pageSize;
+      this.currentPage = event.pageIndex;
+      this.loadData(0);
+      // this.dataSource.paginator = this.paginator;
+    }
+  }
+
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = !!this.dataSource && this.dataSource.data.length;

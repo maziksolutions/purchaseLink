@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppMaterialModule } from 'src/app/app.material.module';
 import { PMExceptionComponent } from './pmexception/pmexception.component';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { AddCurrencyComponent } from './add-currency/add-currency.component';
 
 
 
@@ -17,7 +18,8 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
     AccountcodeNameComponent,
     AccountTypeComponent,
     CurrencyMasterComponent,
-    PMExceptionComponent
+    PMExceptionComponent,
+    AddCurrencyComponent
   ],
   imports: [
     CommonModule,

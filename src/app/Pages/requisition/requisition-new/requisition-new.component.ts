@@ -86,7 +86,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   displayedColumns: string[]
   ItemsColumns: string[] = ['checkbox', 'Index', 'Item Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
     'Last Delivered Qty', 'ROB', 'Enter Quantity', 'Unit', 'Item Specs', 'Remarks', 'Attachments'];
-  visibleColumns: boolean[] = [true, true, true, false, true, true, false, false, false, false, true, true, true, false, true, true];
+  visibleColumns: boolean[] = [true, true, true, false, true, false, false, false, false, false, true, true, true, false, true, true];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
   leftTableColumn: string[] = ['checkbox', 'inventoryName', 'partNo', 'dwg', 'quantity', 'availableQty', 'minRequired', 'reorderLevel'];
   rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];

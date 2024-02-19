@@ -1,50 +1,62 @@
-
 <div class="card px-3 py-2 mb-1">
     <div class="position-relative">
         <div class="row">
-            <div class="col-lg-3">            
+            <div class="col-lg-3">
                 <h5 class="mb-0">Service Type</h5>
                 <span class="btn-sm ps-0 text-primary fw-bold">Master<span
                         class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Register<span
-                            class="fas fa-chevron-right ms-1 fs--2"></span></span> &nbsp;<span class="btn-sm p-0"><b>Service Type</b></span>
+                        class="fas fa-chevron-right ms-1 fs--2"></span></span> &nbsp;<span class="btn-sm p-0"><b>Service
+                        Type</b></span>
             </div>
             <div class="col-lg-9">
-                <div class="form-inline float-end mt-2">                   
-                    <select class="form-control form-small form-select" #docStatus (change)="loadData($any($event.target).value)">
-                        <option selected="" value="0">Active Data</option>
-                        <option value="1">Archive Data</option>
-                    </select>
-                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
-                    <input type="text" class="form-control form-small" (keyup)="applyFilter($any($event.target).value)"
-                        placeholder="Search" style="border-top-right-radius: 0; border-bottom-right-radius: 0px" #searchInput>
-                    <button class="btn btn-primary form-small m-r-5"
-                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Search"
-                        aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
+                <form [formGroup]="searchForm">
+                    <div class="form-inline float-end mt-2">
+
+                        <select class="form-control form-small form-select" #docStatus formControlName="status"
+                            (change)="loadData($any($event.target).value)">
+                            <option selected="" value="0">Active Data</option>
+                            <option value="1">Archive Data</option>
+                        </select>
+                        <span class="p-l-10 p-r-10 mm-t-3">|</span>
+                        <input type="text" class="form-control form-small" (keydown.enter)="applyFilter()"
+                            formControlName="keyword" placeholder="Search"
+                            style="border-top-right-radius: 0; border-bottom-right-radius: 0px">
+                        <button class="btn btn-primary form-small m-r-5" (click)="applyFilter()"
+                            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="" matTooltip="Search"
+                            aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
+
+
                         <button class="btn btn-primary form-small m-r-5"
-                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button" data-bs-toggle="tooltip"
-                        data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()" data-bs-original-title="Search" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
-                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
+                            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                            data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Clear Search Input"
+                            (click)="clearSearchInput()" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
 
-                    <a  class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse" (click)="clear()"
-                        data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1"><i
-                            class="fas fa-plus text-primary"></i></a>
+                        <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
-                    <a  class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
-                        data-bs-placement="top" matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""><i
-                            class="fas fa-trash text-danger"></i></a>
+                        <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add"
+                            data-bs-toggle="collapse" (click)="clear()" data-bs-target="#collapse1" aria-expanded="true"
+                            aria-controls="collapse1"><i class="fas fa-plus text-primary"></i></a>
 
-                            <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Excel"  (click)="generateExcel()" 
-                            data-bs-original-title="List" aria-label=""><i
-                                class="fas fa-file-excel"></i></a>
+                        <a class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
+                            data-bs-placement="top" matTooltip="{{deletetooltip}}"
+                            aria-label=""><i class="fas fa-trash text-danger"></i></a>
 
-                    <!-- <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Export load data sheet" (click)="exportLoadSheet()"  
+                        <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip"
+                            data-bs-placement="top" matTooltip="Excel" (click)="generateExcel()"
+                            aria-label=""><i class="fas fa-file-excel"></i></a>
+
+                        <!-- <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Export load data sheet" (click)="exportLoadSheet()"  
                         data-bs-original-title="Export" aria-label=""><i
                             class="fas fa-file-export text-primary"></i></a> -->
 
-                            <a *ngIf="rights?.importRight" class="" (click)="openModal()" type="button"  data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Import data" data-bs-original-title="Import" aria-label=""><i class="fas fa-file-download text-primary"></i></a>
+                        <a *ngIf="rights?.importRight" class="" (click)="openModal()" type="button"
+                            data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Import data"
+                            data-bs-original-title="Import" aria-label=""><i
+                                class="fas fa-file-download text-primary"></i></a>
 
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -57,23 +69,25 @@
             <form (ngSubmit)="onSubmit(servicetypeForm)" [formGroup]="servicetypeForm">
                 <div class="row">
                     <div class="col-4">
-                        <fieldset class="form-group mb-0">                           
+                        <fieldset class="form-group mb-0">
                             <input type="text" formControlName="serviceType" class="form-control form-small" id="abc"
                                 placeholder="Service Type" appUppercase maxlength="100" required noWhiteSpace>
                         </fieldset>
                     </div>
                     <div class="col-sm">
                         <fieldset class="form-group mb-0">
-                            <textarea rows="3" class="form-control" spellcheck="true" placeholder="Description" formControlName="description"
-                            maxlength="500"></textarea>
+                            <textarea rows="3" class="form-control" spellcheck="true" placeholder="Description"
+                                formControlName="description" maxlength="500"></textarea>
                         </fieldset>
-                      </div>
+                    </div>
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""  [disabled]="servicetypeForm.invalid  || !servicetypeForm.dirty"><i
+                        <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
+                            data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""
+                            [disabled]="servicetypeForm.invalid  || !servicetypeForm.dirty"><i
                                 class="fas fa-save"></i></button>
-                        <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip" (click)="close()" 
-                            data-bs-placement="top" title="" data-bs-original-title="Cancel" aria-label=""><i
-                                class="fas fa-ban"></i></button>
+                        <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip"
+                            (click)="close()" data-bs-placement="top" title="" data-bs-original-title="Cancel"
+                            aria-label=""><i class="fas fa-ban"></i></button>
                     </div>
                 </div>
             </form>
@@ -84,14 +98,14 @@
 
     <div class="card-body">
         <div class="table-responsive scrollbar">
-            <mat-table #table [dataSource]="dataSource" matSort
+            <mat-table #table [dataSource]="dataSource" matSort #mainSort="matSort"
                 class="table table-hover table-striped table-sm small table-bordered">
                 <ng-container matColumnDef="checkbox">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>
                         <mat-checkbox (change)="$event ? masterToggle() : null"
-                        [checked]="selection.hasValue() && isAllSelected()"
-                        [indeterminate]="selection.hasValue() && !isAllSelected()">
-                    </mat-checkbox>
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()">
+                        </mat-checkbox>
 
                     </mat-header-cell>
                     <mat-cell *matCellDef="let row">
@@ -102,24 +116,26 @@
                 </ng-container>
                 <ng-container matColumnDef="servicetype">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Service Type</mat-header-cell>
-                    <mat-cell *matCellDef="let row">                       
-                        <a (click)="Updatedata(row.serviceTypeId)"  class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1" title={{row.serviceType}}> {{row.serviceType}}</a>
-                    
+                    <mat-cell *matCellDef="let row">
+                        <a (click)="Updatedata(row.serviceTypeId)" class="accordion-btn show px-2 m-r-5" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true"
+                            aria-controls="collapse1" title={{row.serviceType}}> {{row.serviceType}}</a>
+
                     </mat-cell>
-                </ng-container>  
+                </ng-container>
                 <ng-container matColumnDef="description">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
-                <mat-cell *matCellDef="let row" title={{row.description}}>
-                   <span> {{row.description}}   </span> 
-                </mat-cell>   
-            </ng-container>     
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+                    <mat-cell *matCellDef="let row" title={{row.description}}>
+                        <span> {{row.description}} </span>
+                    </mat-cell>
+                </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.serviceTypeId==selectedIndex))}" ></mat-row>
-              </mat-table>
-              <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
+                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
+                    [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.serviceTypeId==selectedIndex))}"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
                 [pageSizeOptions]="[20, 40, 60, 100]">
-              </mat-paginator>
+            </mat-paginator>
         </div>
     </div>
 </div>

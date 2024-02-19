@@ -86,10 +86,11 @@ getPrioritybyid(id):Observable<any>{
 }
 
 
-
-// Attachment Type
-
-
+//#region Attachment Type
+getAttachmentsByPaginator(formData): Observable<any> {
+  return this.httpClient.get<response>(`${this.linkurl}attachmentTypess?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&PageSize=${formData.categoryId}&Status=${formData.status}&Keyword=${formData.keyword}`, httpOptions)
+    .pipe(catchError(this.handleError));
+}
 getAttachmentTypes(status): Observable<any> {  
   return this.httpClient.get<any[]>(`${this.linkurl}attachmentTypes/${status}`, httpOptions);
 }
@@ -107,7 +108,7 @@ getAttachmentTypeById(id):Observable<any>{
 archiveAttachmentType(attachmentType: any[]): Observable < string > {   
   return this.httpClient.post<string> (`${this.linkurl}archiveAttachmentType/`, attachmentType, httpOptions);  
 }  
-
+//#endregion
 
 //#region  Reason Master
 
