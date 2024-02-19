@@ -204,7 +204,7 @@ export class ServicetypeComponent implements OnInit {
   }
   applyFilter() {
     this.page = 1; this.currentPage = 0;
-    this.loadData(0);
+    this.loadData(this.flag);
     this.pageChanged(this.pageEvent);
   }
   clearSearchInput() {
@@ -219,7 +219,7 @@ export class ServicetypeComponent implements OnInit {
     else {
       this.pageSize = event.pageSize;
       this.currentPage = event.pageIndex;
-      this.loadData(0);
+      this.loadData(this.flag);
       // this.dataSource.paginator = this.paginator;
     }
   }
