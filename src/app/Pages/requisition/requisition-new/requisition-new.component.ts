@@ -3322,7 +3322,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   //#endregion
 
-  CancelRequisition() {
+  // CancelRequisition() {
 
     //   let DataRequisitionMaster =  this.requisitiondata.filter(x=>x.documentHeader == this.finallyHeader);
 
@@ -3332,11 +3332,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     //   })
     //  }
     //  else{
-    this.router.navigate(['/Requisition/Requisitionslist']);
+    // this.router.navigate(['/Requisition/Requisitionslist']);
     //  }
 
 
-  }
+  // }
 
   GetunitList() {
     this.unitmasterservice.GetunitList(0)
