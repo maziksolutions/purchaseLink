@@ -170,26 +170,26 @@
             </div>
 
             <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-              *ngIf="approvestatus === undefined || approvestatus === null" title=""
+              *ngIf="approvestatus === undefined || approvestatus === null" title="Send for Approval"
               data-bs-original-title="Send for Approval" aria-label="" (click)="sendApprove()">
               <i class="fas fa-share-square text-primary"></i></a>
 
 
             <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" *ngIf="approvestatus == 'Waiting For Approval'"
-              data-bs-placement="top" title="" data-bs-original-title="Approved" aria-label=""
+              data-bs-placement="top" title="Approved" data-bs-original-title="Approved" aria-label=""
               (click)="FinalApprove('Approved')">
               <i class="fas fa-check text-primary"></i></a>
 
-            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Reject"
               *ngIf="approvestatus == 'Waiting For Approval'" data-bs-original-title="Reject" aria-label=""
               (click)="FinalApprove('Reject')"> <i class="fas fa-times text-danger"></i></a>
 
-            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Reject"
               *ngIf="approvestatus == 'Reject'" data-bs-original-title="Reject" aria-label="">
               <i class="fas fa-times text-danger"></i></a>
 
 
-            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Add Attachment"
             (click)="openAttachmentItem(reqId,'Purchase Requisition','tblPMRequisitions')" data-bs-original-title="Add Attachment" aria-label=""><i
                 class="fas fa-paperclip text-primary"></i></a>
 
@@ -197,7 +197,7 @@
                     data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
                       class="fas fa-save text-primary"></i></button>-->
 
-            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancel"
               data-bs-original-title="Cancel" (click)="CancelRequisition()" aria-label=""><i
                 class="fas fa-ban text-danger"></i></a>
 

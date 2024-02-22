@@ -2,11 +2,11 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UnitmasterService } from '../../../services/unitmaster.service';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {SelectionModel} from '@angular/cdk/collections';
+import { SelectionModel } from '@angular/cdk/collections';
 import { ViewChild } from '@angular/core';
 import { ExportExcelService } from 'src/app/services/export-excel.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -17,7 +17,7 @@ import { registerNavEnum, unitMasterNavEnum } from '../../Shared/rights-enum';
 import { RightsModel } from '../../Models/page-rights';
 import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
-declare let Swal,$, PerfectScrollbar: any;
+declare let Swal, $, PerfectScrollbar: any;
 @Component({
   selector: 'app-material-quality',
   templateUrl: './material-quality.component.html',
@@ -26,70 +26,101 @@ declare let Swal,$, PerfectScrollbar: any;
 export class MaterialQualityComponent implements OnInit {
 
   materialqualitiesForm: FormGroup; flag; pkey: number = 0;
-  displayedColumns: string[] = ['checkbox','materialqualities'];
+  displayedColumns: string[] = ['checkbox', 'materialqualities'];
   dataSource = new MatTableDataSource<any>();
   selection = new SelectionModel<any>(true, []);
-  rights:RightsModel;
+  rights: RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
-  deletetooltip:any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   selectedIndex: any;
+
+  @ViewChild('mainSort') mainSort = new MatSort();
+  PageTotal: any;
+  pageEvent: PageEvent;
+  pageSizeOptions: number[] = [20, 40, 60, 100];
+  deletetooltip: any;
+  searchForm: FormGroup;
+  pageSize = 20; currentPage = 0; page: number = 1;
+
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
     private purchasemasterService: PurchaseMasterService, private swal: SwalToastService,
-    private router:Router,private userManagementService: UserManagementService) { }
+    private router: Router, private userManagementService: UserManagementService) { }
 
   ngOnInit(): void {
     this.materialqualitiesForm = this.fb.group({
       materialQualityId: [0],
       materialQualities: ['', [Validators.required]],
     });
+
+    this.searchForm = this.fb.group({
+      pageNumber: [''],
+      pageSize: [this.pageSize],
+      status: ['0'],
+      keyword: [''],
+      excel: ['']
+    });
+
     //this.servicetypeForm.controls.directCompletion.setValue('');
-  //  this.loadRights();
+    //  this.loadRights();
     this.loadData(0);
   }
   get fm() { return this.materialqualitiesForm.controls };
+  get sfm() { return this.searchForm.controls };
 
-  loadRights(){
-    this.userManagementService.checkAccessRight(unitMasterNavEnum.jobGroup).subscribe((response)=>{
-if(response.status){
-this.rights=response.data;
-}else{
-  this.rights=new RightsModel(); 
-  this.rights.addRight=this.rights.ammendRight=this.rights.deleteRight=this.rights.importRight=this.rights.viewRight=false;
-}
-if(!this.rights.viewRight){
-  alert('you have no view right')
-  this.router.navigate(['welcome']);
-}
-    },(error)=>{
-console.log(error);
+  loadRights() {
+    this.userManagementService.checkAccessRight(unitMasterNavEnum.jobGroup).subscribe((response) => {
+      if (response.status) {
+        this.rights = response.data;
+      } else {
+        this.rights = new RightsModel();
+        this.rights.addRight = this.rights.ammendRight = this.rights.deleteRight = this.rights.importRight = this.rights.viewRight = false;
+      }
+      if (!this.rights.viewRight) {
+        alert('you have no view right')
+        this.router.navigate(['welcome']);
+      }
+    }, (error) => {
+      console.log(error);
     })
-  } 
+  }
 
   loadData(status: number) {
     if (status == 1) {
-      this.deletetooltip ='UnArchive';
+      this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
         (document.querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
         (document.querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
       }
     }
     else {
-      this.deletetooltip='Archive';
+      this.deletetooltip = 'Archive';
       if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
-    this.purchasemasterService.getmaterialquality(status)
+    this.sfm.pageNumber.setValue(this.currentPage);
+    this.sfm.pageSize.setValue(this.pageSize);
+    this.sfm.excel.setValue('False')
+    this.purchasemasterService.getMaterialByPaginator(this.searchForm.value)
       .subscribe(response => {
         this.flag = status;
         this.dataSource.data = response.data;
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.mainSort;
+        this.PageTotal = response.total;
+        // this.dataSource.paginator = this.paginator;
+        this.dataSource.sortingDataAccessor = (item, property) => {
+          switch (property) {
+            case 'checkbox': return this.checkboxLabel(item);
+            case 'pageCategory': return item.pageCategory;
+            case 'module': return item.module;
+
+            default: return item[property];
+          }
+        };
         this.clear();
-          (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+        (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
   }
   onSubmit(form: any) {
@@ -115,12 +146,12 @@ console.log(error);
         }
         else {
 
-        }        
+        }
       });
   }
   Updatedata(id) {
 
-    this.selectedIndex=id;
+    this.selectedIndex = id;
     (document.getElementById('collapse1') as HTMLElement).classList.remove("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.add("show");
     this.purchasemasterService.getmaterialqualityId(id)
@@ -173,15 +204,27 @@ console.log(error);
       this.swal.info('Select at least one row')
     }
   }
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase();
-    this.dataSource.filter = filterValue;
+  applyFilter() {
+    this.page = 1; this.currentPage = 0;
+    this.loadData(this.flag);
+    this.pageChanged(this.pageEvent);
   }
-  clearSearchInput(){
-    this.searchInput.nativeElement.value ='';
-    this.applyFilter(this.searchInput.nativeElement.value)
- }
+  clearSearchInput() {
+    debugger
+    this.sfm.keyword.setValue('');
+    this.applyFilter()
+  }
+  pageChanged(event: PageEvent) {
+    if (event == undefined) {
+
+    }
+    else {
+      this.pageSize = event.pageSize;
+      this.currentPage = event.pageIndex;
+      this.loadData(this.flag);
+      // this.dataSource.paginator = this.paginator;
+    }
+  }
   isAllSelected() {
     console.log(this.dataSource)
     const numSelected = this.selection.selected.length;
@@ -203,7 +246,7 @@ console.log(error);
   clear() {
     this.materialqualitiesForm.reset();
     this.materialqualitiesForm.controls.materialQualityId.setValue(0);
-    this.materialqualitiesForm.controls.materialQualities.setValue('');    
+    this.materialqualitiesForm.controls.materialQualities.setValue('');
 
     (document.getElementById('abc') as HTMLElement).focus();
   }
@@ -234,7 +277,7 @@ console.log(error);
     }
     else
       data = { materialQuality: '' };
-    this.exportExcelService.LoadSheet(data, 'MaterialQualitySheet', 'Material Quality Load Sheet',2);
+    this.exportExcelService.LoadSheet(data, 'MaterialQualitySheet', 'Material Quality Load Sheet', 2);
   }
 
   close() {
@@ -244,17 +287,17 @@ console.log(error);
     (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
   }
 
-    //Open Modal Pop-up to Importdata
-    openModal() {   
-      const dialogRef = this.dialog.open(ImportDataComponent, {
-        width: '500px',
-        data:{modalTitle: "Import Maintenance Group Master",tablename:"tblJobGroup",columname:"JobGroup"},
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result === 'success') {
-          this.loadData(this.flag);
-        }
-      });
-    }    
+  //Open Modal Pop-up to Importdata
+  openModal() {
+    const dialogRef = this.dialog.open(ImportDataComponent, {
+      width: '500px',
+      data: { modalTitle: "Import Maintenance Group Master", tablename: "tblJobGroup", columname: "JobGroup" },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'success') {
+        this.loadData(this.flag);
+      }
+    });
+  }
 
 }

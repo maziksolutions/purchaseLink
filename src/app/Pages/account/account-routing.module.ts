@@ -5,17 +5,23 @@ import { AccountcodeNameComponent } from './accountcode-name/accountcode-name.co
 import { AccountTypeComponent } from './account-type/account-type.component';
 import { CurrencyMasterComponent } from './currency-master/currency-master.component';
 import { PMExceptionComponent } from './pmexception/pmexception.component';
+import { AddCurrencyComponent } from './add-currency/add-currency.component';
 
 const routes: Routes = [
   {
     path: '', component: SiteLayoutComponent,
-  children:[
- {path: 'accountcode-name',component: AccountcodeNameComponent,pathMatch:'full'},
- {path: 'accountType',component: AccountTypeComponent,pathMatch:'full'}, 
- {path: 'currencyMaster',component: CurrencyMasterComponent,pathMatch:'full'}, 
- {path: 'pmexception',component: PMExceptionComponent,pathMatch:'full'}, 
- 
-]}
+    children: [
+      { path: 'accountcode-name', component: AccountcodeNameComponent, pathMatch: 'full' },
+      { path: 'accountType', component: AccountTypeComponent, pathMatch: 'full' },
+      { path: 'currencyMaster', component: CurrencyMasterComponent, pathMatch: 'full' },
+      { path: 'pmexception', component: PMExceptionComponent, pathMatch: 'full' },
+      { path: 'addCurrency', component: AddCurrencyComponent, pathMatch: 'full' },
+      {
+        path: 'addCurrency/:currencyId',
+        component: AddCurrencyComponent, pathMatch: 'full'
+      },
+    ]
+  }
 ];
 
 @NgModule({

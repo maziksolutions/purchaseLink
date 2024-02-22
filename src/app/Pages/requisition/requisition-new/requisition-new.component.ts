@@ -86,7 +86,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   displayedColumns: string[]
   ItemsColumns: string[] = [ 'No', 'Item Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
     'Last Delivered Qty', 'ROB', 'Enter Quantity', 'Unit', 'Item Specs', 'Remarks', 'Attachments'];
-  visibleColumns: boolean[] = [true, true, true, false, true, true, false, false, false, false, true, true, true, false, true, true];
+  visibleColumns: boolean[] = [true, true, true, false, true, false, false, false, false, false, true, true, true, false, true, true];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
   leftTableColumn: string[] = ['checkbox', 'inventoryName', 'partNo', 'dwg', 'quantity', 'availableQty', 'minRequired', 'reorderLevel'];
   rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];
@@ -2278,22 +2278,22 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   downloadNotepad() {
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
     this.ReqData = this.requisitionFullData;
-
+    debugger
     if (this.ReqData == undefined) {
       this.swal.error('Please save your data before downloading the RTO file.')
     }
     let shipcompId = this.ReqData.orderReference.split(',')[0];
     if (this.ReqData.orderReferenceType == "Group") {
-      this.codeAccount = this.GetGroupAccCode.filter(x => x.pmsGroupId == shipcompId)[0];
+      this.codeAccount = this.GetGroupAccCode?.filter(x => x.pmsGroupId == shipcompId)[0];
     }
     if (this.ReqData.orderReferenceType == "Component") {
-      this.codeAccount = this.GetCompoAccCode.filter(x => x.componentId == shipcompId)[0];
+      this.codeAccount = this.GetCompoAccCode?.filter(x => x.componentId == shipcompId)[0];
     }
     if (this.ReqData.orderReferenceType == "Store") {
-      this.codeAccount = this.GetStoreAccCode.filter(x => x.shipStoreId == shipcompId)[0];
+      this.codeAccount = this.GetStoreAccCode?.filter(x => x.shipStoreId == shipcompId)[0];
     }
     if (this.ReqData.orderReferenceType == "Spare") {
-      this.codeAccount = this.GetSpareAccCode.filter(x => x.spareId == shipcompId)[0];
+      this.codeAccount = this.GetSpareAccCode?.filter(x => x.spareId == shipcompId)[0];
     }
     let Dates = this.datePipe.transform(this.ReqData.recDate, 'yyyyMMdd');
     let year = this.datePipe.transform(this.ReqData.recDate, 'yy');
@@ -3214,8 +3214,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   clearItemAttachmentfrm() {
     this.myItemFiles = [];
-    this.listItemOfFiles = [];
-    console.log(this.fileItemToUpload)
+    this.listItemOfFiles = [];   
     this.attachmentfrm.controls.attachmentTypeId.setValue('');
     this.attachmentfrm.controls.description.setValue('');
     (document.getElementById('collapse10') as HTMLElement).classList.add("collapse");

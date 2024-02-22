@@ -1,11 +1,13 @@
 <div class="card mb-3">
     <div class="card-body bg-light p-2">
-          <ul class="nav nav-pills font-small-2">
-            <li  class="nav-item"><a class="nav-link"  routerLinkActive="active"  routerLink="/Workflow/page-category">Page Category</a></li>
-            <li class="nav-item"><a class="nav-link" routerLinkActive="active" routerLink="/Workflow/pages"><strong>Pages</strong></a></li>        
-          </ul>
+        <ul class="nav nav-pills font-small-2">
+            <li class="nav-item"><a class="nav-link" routerLinkActive="active" routerLink="/Workflow/page-category">Page
+                    Category</a></li>
+            <li class="nav-item"><a class="nav-link" routerLinkActive="active"
+                    routerLink="/Workflow/pages"><strong>Pages</strong></a></li>
+        </ul>
     </div>
-</div> 
+</div>
 
 <div class="card px-3 py-2 mb-1">
     <div class="position-relative">
@@ -30,8 +32,9 @@
                 &nbsp;<span class="btn-sm p-0"><b>Pages</b></span>
             </div>
             <div class="col-lg-9">
-                <form [formGroup]="searchForm" >
-                <div class="form-inline float-end mt-2">  <!-- <select class="form-control form-small mb-d3 form-select-dark bg-primary text-white"
+                <form [formGroup]="searchForm">
+                    <div class="form-inline float-end mt-2">
+                        <!-- <select class="form-control form-small mb-d3 form-select-dark bg-primary text-white"
                     onchange="location = this.value;" style="width:175px;">
                     <option value="" selected="">Select Page</option>
                     <option value="/master/pagecategory">Page Category</option>    
@@ -41,38 +44,40 @@
                    -->
 
 
-                    <select class="form-control form-small form-select" #docStatus
-                    formControlName="status" (change)="loadData($any($event.target).value)">
-                        <option selected="" value="0">Active Data</option>
-                        <option value="1">Archive Data</option>
-                    </select>
-                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
-                    <input type="text" class="form-control form-small" (keydown.enter)="applyFilter()" formControlName="keyword"
-                        placeholder="Search" style="border-top-right-radius: 0; border-bottom-right-radius: 0px">
-                    <button class="btn btn-primary form-small m-r-5" (click)="applyFilter()"
-                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
-                        data-bs-toggle="tooltip" data-bs-placement="top" title=""  matTooltip="Search"
-                        aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
-                        
-                       
+                        <select class="form-control form-small form-select" #docStatus formControlName="status"
+                            (change)="loadData($any($event.target).value)">
+                            <option selected="" value="0">Active Data</option>
+                            <option value="1">Archive Data</option>
+                        </select>
+                        <span class="p-l-10 p-r-10 mm-t-3">|</span>
+                        <input type="text" class="form-control form-small" (keydown.enter)="applyFilter()"
+                            formControlName="keyword" placeholder="Search"
+                            style="border-top-right-radius: 0; border-bottom-right-radius: 0px">
+                        <button class="btn btn-primary form-small m-r-5" (click)="applyFilter()"
+                            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="" matTooltip="Search"
+                            aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
+
+
                         <button class="btn btn-primary form-small m-r-5"
-                        style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button" data-bs-toggle="tooltip"
-                        data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
-                    <span class="p-l-10 p-r-10 mm-t-3">|</span>
+                            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                            data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Clear Search Input"
+                            (click)="clearSearchInput()" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
+                        <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
-                    <a class="accordion-btn collapsed px-2 m-r-1"  type="button" data-bs-toggle="collapse"
-                        (click)="clear()" data-bs-target="#collapse1" matTooltip="Add" aria-expanded="true" aria-controls="collapse1"><i
-                            class="fas fa-plus text-primary"></i></a>
+                        <a class="accordion-btn collapsed px-2 m-r-1" type="button" data-bs-toggle="collapse"
+                            (click)="clear()" data-bs-target="#collapse1" matTooltip="Add" aria-expanded="true"
+                            aria-controls="collapse1"><i class="fas fa-plus text-primary"></i></a>
 
-                    <a class="px-2 m-r-1" type="button" *ngIf="userName=='superit'"  (click)="DeleteData()" data-bs-toggle="tooltip"
-                        data-bs-placement="top" matTooltip="{{deletetooltip}}" aria-label=""><i
-                            class="fas fa-trash text-danger"></i></a>
+                        <a class="px-2 m-r-1" type="button" *ngIf="userName=='superit'" (click)="DeleteData()"
+                            data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="{{deletetooltip}}"
+                            aria-label=""><i class="fas fa-trash text-danger"></i></a>
 
-                    <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip"
-                        data-bs-placement="top" matTooltip="Excel" (click)="generateExcel()" 
-                        aria-label=""><i class="fas fa-file-excel"></i></a>
+                        <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip"
+                            data-bs-placement="top" matTooltip="Excel" (click)="generateExcel()" aria-label=""><i
+                                class="fas fa-file-excel"></i></a>
 
-<!-- 
+                        <!-- 
                     <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Export load data sheet"
                         (click)="exportLoadSheet()" aria-label=""><i
                             class="fas fa-file-export text-primary"></i></a>
@@ -81,8 +86,8 @@
                     matTooltip="Import data" aria-label=""><i
                             class="fas fa-file-download text-primary"></i></a> -->
 
-                </div>
-            </form>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -105,12 +110,13 @@
                             <input type="text" formControlName="url" class="form-control form-small"
                                 placeholder="Page URL" noWhiteSpace required>
                         </fieldset>
-                    </div >
+                    </div>
 
                     <div class="col-6 row">
                         <div class="col-5">
                             <fieldset class="form-group mb-0">
-                                <select class="form-control form-small form-select page-category" formControlName="pageCategoryId" required>
+                                <select class="form-control form-small form-select page-category"
+                                    formControlName="pageCategoryId" required>
                                     <option value="" disabled>Select page category</option>
                                     <option *ngFor="let item of pageCategory" value="{{item.pageCategoryId}}">
                                         {{item.pageCategory | titlecase}}
@@ -120,20 +126,22 @@
                         </div>
                         <div class="col-4">
                             <div class="form-check form-switch">
-                                <input class="form-check-input m-r-5" id="" type="checkbox"  formControlName="specialFields">  <label class="text-bold-600" for="">Special Permissions Required? </label> 
-                                
-                                </div>
+                                <input class="form-check-input m-r-5" id="" type="checkbox"
+                                    formControlName="specialFields"> <label class="text-bold-600" for="">Special
+                                    Permissions Required? </label>
+
+                            </div>
                         </div>
 
                         <div class="col-sm">
                             <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
-                                data-bs-placement="top"  matTooltip="Save" aria-label=""
+                                data-bs-placement="top" matTooltip="Save" aria-label=""
                                 [disabled]="pageForm.invalid || !pageForm.dirty"><i class="fas fa-save"></i></button>
                             <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip"
-                                (click)="close()" data-bs-placement="top" matTooltip="Cancel"
-                                aria-label=""><i class="fas fa-ban"></i></button>
+                                (click)="close()" data-bs-placement="top" matTooltip="Cancel" aria-label=""><i
+                                    class="fas fa-ban"></i></button>
                         </div>
-                    </div>                    
+                    </div>
 
                     <!-- <div class="col-2">
                         <div class="form-check form-switch">
@@ -141,7 +149,7 @@
                             
                             </div>
                     </div> -->
-                    
+
                 </div>
             </form>
         </div>
@@ -151,10 +159,10 @@
 
     <div class="card-body">
         <div class="table-responsive scrollbar">
-            <mat-table #table [dataSource]="dataSource" matSort  #mainSort="matSort"
+            <mat-table #table [dataSource]="dataSource" matSort #mainSort="matSort"
                 class="table table-hover table-striped scrollbar-visible table-sm small table-bordered">
-                <ng-container matColumnDef="checkbox" >
-                    <mat-header-cell *matHeaderCellDef  mat-sort-header>
+                <ng-container matColumnDef="checkbox">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
                         <mat-checkbox (change)="$event ? masterToggle() : null"
                             [checked]="selection.hasValue() && isAllSelected()"
                             [indeterminate]="selection.hasValue() && !isAllSelected()">
@@ -192,24 +200,27 @@
                     <mat-cell *matCellDef="let row">
                         {{row.specialFields==true?'Yes':'No'}}
                     </mat-cell>
-                    </ng-container>
+                </ng-container>
 
-                    <ng-container matColumnDef="icon">
-                        <mat-header-cell *matHeaderCellDef></mat-header-cell>
-                        <mat-cell *matCellDef="let row">
-                            <a href="javascript:void(0)" *ngIf="userName=='superit'"
-                            (click)="openModalPage(row.pageId,row.page)"><i class="fas fa-exclamation-circle fa-lg"></i></a>
-                            <a href="javascript:void(0)" *ngIf="checkAlerts(row.pageId)"  
-                                (click)="OpenModalPopup(row.pageId)"><i class="fas fa-solid fa-bell m-r-5  fa-lg"></i></a> 
-    
-                           
-                        </mat-cell>
-                    </ng-container>
+                <ng-container matColumnDef="icon">
+                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <a href="javascript:void(0)" *ngIf="userName=='superit'"
+                            (click)="openModalPage(row.pageId,row.page)"><i
+                                class="fas fa-exclamation-circle fa-lg"></i></a>
+                        <a href="javascript:void(0)" *ngIf="checkAlerts(row.pageId)"
+                            (click)="OpenModalPopup(row.pageId)"><i class="fas fa-solid fa-bell m-r-5  fa-lg"></i></a>
+
+
+                    </mat-cell>
+                </ng-container>
 
                 <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;let i = index"  [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.pageId==selectedIndex))}"></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;let i = index"
+                    [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.pageId==selectedIndex))}"></mat-row>
             </mat-table>
-            <mat-paginator  [length]="pageTotal" [pageIndex]="currentPage" [pageSizeOptions]="pageSizeOptions" (page)="pageChanged($event)" showFirstLastButtons>
+            <mat-paginator [length]="pageTotal" [pageIndex]="currentPage" [pageSizeOptions]="pageSizeOptions"
+                (page)="pageChanged($event)" showFirstLastButtons>
             </mat-paginator>
         </div>
     </div>
@@ -231,10 +242,11 @@
                     <div class="col-lg-8">
                         <div class="form-inline float-end mt-2">
 
-                      <select class="form-control form-small form-select" #docStatus (change)="loadNotificationData($any($event.target).value)">
-                        <option selected="" value="0">Active Data</option>
-                        <option value="1">Archive Data</option>
-                        </select>
+                            <select class="form-control form-small form-select" #docStatus
+                                (change)="loadNotificationData($any($event.target).value)">
+                                <option selected="" value="0">Active Data</option>
+                                <option value="1">Archive Data</option>
+                            </select>
 
                             <!-- <select class="form-control form-small form-select"
                                 (change)="loadNotificationData($any($event.target).value)">
@@ -247,14 +259,13 @@
                                 style="border-top-right-radius: 0; border-bottom-right-radius: 0px" #searchInputNoti>
                             <button class="btn btn-primary form-small m-r-5"
                                 style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
-                                data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                aria-label=""><i class="fa fa-search"
-                                    aria-hidden="true"></i></button>
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="" aria-label=""><i
+                                    class="fa fa-search" aria-hidden="true"></i></button>
                             <button class="btn btn-primary form-small m-r-5"
                                 style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
                                 data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Clear Search Input"
-                                (click)="clearSearchInputNotification()"
-                                aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
+                                (click)="clearSearchInputNotification()" aria-label=""><i
+                                    class="fa fa-solid fa-eraser"></i></button>
                             <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
                             <a class="accordion-btn collapsed px-2 m-r-1" matTooltip="Add" type="button"
@@ -263,8 +274,7 @@
                                     class="fas fa-plus text-primary"></i></a>
                             <a class="px-2 m-r-1" type="button" (click)="DeleteNotificationData()"
                                 data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="{{deletetooltips}}"
-                               aria-label=""><i
-                                    class="fas fa-trash text-danger"></i></a>
+                                aria-label=""><i class="fas fa-trash text-danger"></i></a>
                         </div>
                     </div>
 
@@ -293,7 +303,7 @@
                                     <!-- <div class="col-4"></div> -->
                                     <div class="col-sm">
                                         <fieldset class="form-group mb-0">
-                                            <input type="number"  min="0" formControlName="frequency"
+                                            <input type="number" min="0" formControlName="frequency"
                                                 class="form-control form-small" id="abc" placeholder="Frequency (Days)"
                                                 appUppercase maxlength="10" required>
                                         </fieldset>
@@ -312,7 +322,7 @@
         <textarea class="form-control" style="min-height: 70px;" placeholder="Email Template (Max 500 Chars)" maxlength="500" formControlName="emailTemplate"></textarea>                       
         
     </fieldset>    -->
-                                    <textarea id="summernote"  formControlName="emailTemplate"></textarea>
+                                    <textarea id="summernote" formControlName="emailTemplate"></textarea>
                                 </div>
                                 <div class="col-md-2">
                                     <button type="submit" class="btn btn-primary form-small m-r-5"
@@ -355,7 +365,8 @@
                                         <a (click)="UpdateNotificationdata(row.alertConfigId)"
                                             class="accordion-btn show px-2 m-r-5" type="button"
                                             data-bs-toggle="collapse" data-bs-target="#collapse2" type="button"
-                                            aria-expanded="true" aria-controls="collapse1"> {{row.pageAlert?.alertName}}</a>
+                                            aria-expanded="true" aria-controls="collapse1">
+                                            {{row.pageAlert?.alertName}}</a>
 
                                     </mat-cell>
                                 </ng-container>
@@ -410,8 +421,9 @@
                         <h5 class="modal-title" id="changePassLabel">{{Page}} Page Alerts</h5>
                     </div>
                     <div class="col-lg-8">
-                        <div class="form-inline float-end mt-2">                            
-                            <select class="form-control form-small form-select" #docStatus (change)="loadAlertData($any($event.target).value)">
+                        <div class="form-inline float-end mt-2">
+                            <select class="form-control form-small form-select" #docStatus
+                                (change)="loadAlertData($any($event.target).value)">
                                 <option selected="" value="0">Active Data</option>
                                 <option value="1">Archive Data</option>
                             </select>
@@ -427,24 +439,23 @@
                                 style="border-top-right-radius: 0; border-bottom-right-radius: 0px" #searchInputAlert>
                             <button class="btn btn-primary form-small m-r-5"
                                 style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
-                                data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                aria-label=""><i class="fa fa-search"
-                                    aria-hidden="true"></i></button>
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="" aria-label=""><i
+                                    class="fa fa-search" aria-hidden="true"></i></button>
                             <button class="btn btn-primary form-small m-r-5"
                                 style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
                                 data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Clear Search Input"
-                                (click)="clearSearchInputAlert()"  aria-label=""><i
+                                (click)="clearSearchInputAlert()" aria-label=""><i
                                     class="fa fa-solid fa-eraser"></i></button>
                             <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
                             <a class="accordion-btn collapsed px-2 m-r-1" matTooltip="Add" type="button"
                                 data-bs-toggle="collapse" (click)="clearAlerts()" data-bs-target="#collapse3"
                                 aria-expanded="true" aria-controls="collapse3"><i
-                                    class="fas fa-plus text-primary"></i></a>                                 
+                                    class="fas fa-plus text-primary"></i></a>
 
                             <a class="px-2" type="button" (click)="DeleteAlerts()" data-bs-toggle="tooltip"
-                                data-bs-placement="top" matTooltip="{{deletetooltipss}}"
-                                aria-label=""><i class="fas fa-trash text-danger"></i></a>
+                                data-bs-placement="top" matTooltip="{{deletetooltipss}}" aria-label=""><i
+                                    class="fas fa-trash text-danger"></i></a>
                         </div>
                     </div>
 
@@ -475,7 +486,7 @@
                                             data-bs-toggle="tooltip" data-bs-placement="top" title=""
                                             data-bs-original-title="Cancel" aria-label="" (click)="clearAlerts()"><i
                                                 class="fas fa-ban"></i></button>
-                                             
+
 
                                     </div>
                                 </div>

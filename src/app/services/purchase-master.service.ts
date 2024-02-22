@@ -18,8 +18,10 @@ export class PurchaseMasterService {
   private linkurl = this.baseUrl + 'pmPurchaseMaster/';
   constructor(private httpClient: HttpClient) { }
 
-  //#region Maintenance Type Master
-  //Get Maintenance Type data
+  //#region Service Category Master
+  getServiceCatByPaginator(formData): Observable<any> {  
+    return this.httpClient.get<any[]>(`${this.linkurl}filterServiceCategoryList?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
+  }
   getServiceCategories(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterServiceCategory/${status}`, httpOptions);
   }
@@ -37,7 +39,11 @@ export class PurchaseMasterService {
   }
   //#endregion
 
+  //#region Order Type
   //Get Maintenance Type data
+  getOrderTypesByPaginator(formData): Observable<any> {  
+    return this.httpClient.get<any[]>(`${this.linkurl}GetOrderTypesByPaginator?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
+  }
   getOrderTypes(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterOrderType/${status}`, httpOptions);
   }
@@ -56,7 +62,9 @@ export class PurchaseMasterService {
   //#endregion
 
   //#region Service Type Master
-  //Get Maintenance Type data
+  getServiceTypeByPaginator(formData): Observable<any> {  
+    return this.httpClient.get<any[]>(`${this.linkurl}serviceTypePaginate?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
+  }
   getServicetypes(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filtervendorServiceType/${status}`, httpOptions);
   }
@@ -71,10 +79,12 @@ export class PurchaseMasterService {
   archiveServiceType(jobType: any[]): Observable<string> {
     return this.httpClient.post<string>(`${this.linkurl}deleteServiceType/`, jobType, httpOptions);
   }
-  //#endregion Service Type Master
+  //#endregion
   
   //#region Priority Master
-
+  getPreferenceTypeByPaginator(formData): Observable<any> {  
+    return this.httpClient.get<any[]>(`${this.linkurl}filterPreferenceType?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
+  }
   GetPreferenceType(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterPreferenceType/${status}`, httpOptions);
   }
@@ -97,10 +107,10 @@ export class PurchaseMasterService {
   }
   //#endregion Priority Master
 
-
-
-  //#region  materialquality
-
+  //#region  Material Quality
+  getMaterialByPaginator(formData): Observable<any> {  
+    return this.httpClient.get<any[]>(`${this.linkurl}MaterialQualityPaginate?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
+  }
   getmaterialquality(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterMaterialQuality/${status}`, httpOptions);
   }
@@ -116,11 +126,13 @@ export class PurchaseMasterService {
   archivematerialquality(jobType: any[]): Observable<string> {
     return this.httpClient.post<string>(`${this.linkurl}deleteMaterialType/`, jobType, httpOptions);
   }
-
-
   //#endregion
+
   //#region Project Name / Code
   //Get Maintenance Type data
+  getProjectNameByPaginator(formData): Observable<any> {  
+    return this.httpClient.get<any[]>(`${this.linkurl}filterProjectNameCodeList?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
+  }
   getprojectname(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterprojectname/${status}`, httpOptions);
   }
