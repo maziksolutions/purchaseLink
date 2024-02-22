@@ -223,7 +223,19 @@
                     <input type="text" class="form-control form-small" formControlName="otherCertification"
                         (change)="autoSave('vendorBusinessInfo')" placeholder="otherCertification">
                 </div>
+                <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Maker Linking</label>
+                <div class="col-sm-4">
+                    <fieldset class="form-group mb-0">
+                        <ng-multiselect-dropdown [placeholder]="'Select Maker Master'" class="multiselect-dropdown"
+                            [settings]="dropdownMakerSetting" [data]="MakerMaster" [(ngModel)]="dropdownMakerList"
+                            (onSelect)="onMakerSelect($event)" (onSelectAll)="onMakerSelectAll($event)"
+                            formControlName="makerMaster" (onDeSelect)="onMakerDeSelect($event)"
+                            (onDeSelectAll)="onMakerDeSelectAll($event)" (click)="autoSave('vendorBusinessInfo')">
+                        </ng-multiselect-dropdown>
+                    </fieldset>
+                </div>
             </div>
+          
         </div>
         <!--End Here-->
 
@@ -778,7 +790,7 @@
                                         (click)="clearBankForm()" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="">Add Accounts Department</h5>
+                                    <h5 class="modal-title" id="">Add Bank Account Detail </h5>
 
                                 </div>
                                 <form (ngSubmit)="onSubmitBankInformation(BankInformationForm)"
@@ -809,17 +821,15 @@
                                                 for="inputPassword">Preferred
                                                 Currency</label>
                                             <div class="col-sm-10">
-                                                <!-- <fieldset class="form-group mb-0">
-                                                    <select class="form-control form-small form-select" formControlName="makerApproval">
-                                                      <option value="0" selected disabled>Select Currency</option>
-                                                      <option *ngFor="let item of  approvalList" id="abc" value="{{item.vesselId}}">
-                                                        {{item.vesselName | titlecase}}
-                                      
-                                                      </option>
-                                                    </select>
-                                                  </fieldset> -->
-                                                <input type="text" formControlName="preferredCurrency"
-                                                    class="form-control form-small">
+                                                <select class="form-control form-small form-select"
+                                                formControlName="preferredCurrency" required>
+                                                <option value="" disabled>Select Preferred Currency</option>
+                                                <option value="INR">INR</option>
+                                                <option value="USD">USD</option>
+                                                <option value="EURO">EURO</option>
+                                            </select>
+                                                <!-- <input type="text" formControlName="preferredCurrency"
+                                                    class="form-control form-small"> -->
                                             </div>
                                         </div>
                                         <div class="row g-3 mb-3">
@@ -874,12 +884,20 @@
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
-                                                for="inputPassword">Iban/Swift
-                                                Code</label>
+                                                for="inputPassword">Iban</label>
                                             <div class="col-sm-10">
-                                                <input type="text" formControlName="ibanSwiftCode"
+                                                <input type="text" formControlName="iban"
                                                     class="form-control form-small">
                                             </div>
+                                           
+                                        </div>
+                                        <div class="row g-3 mb-3">
+                                            <label class="col-sm-2 col-form-label py-0 font-small-3"
+                                            for="inputPassword">SwiftCode</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" formControlName="swiftCode"
+                                                class="form-control form-small">
+                                        </div>
                                         </div>
                                         <div class="row g-3 mb-3">
                                             <label class="col-sm-2 col-form-label py-0 font-small-3"
@@ -951,7 +969,8 @@
                                 <th>Branch Office</th>
                                 <th>Beneficiary Name</th>
                                 <th>Account Number</th>
-                                <th>Iban/Swift Code</th>
+                                <th>Iban</th>
+                                <th>Swift Code</th>
                                 <th>Vat No.</th>
                                 <th>Remarks</th>
                                 <th></th>
@@ -967,7 +986,8 @@
                                 <td>{{items.branchOffice.branchName}}</td>
                                 <td>{{items.beneficiaryName}}</td>
                                 <td>{{items.accountNumber}}</td>
-                                <td>{{items.ibanSwiftCode}}</td>
+                                <td>{{items.iban}}</td>
+                                <td>{{items.swiftCode}}</td>
                                 <td>{{items.vatNo}}</td>
                                 <td>{{items.remarks}}</td>
                                 <td>

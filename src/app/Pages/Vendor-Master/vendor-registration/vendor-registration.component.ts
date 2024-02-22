@@ -10,6 +10,7 @@ import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
 import { RequisitionService } from 'src/app/services/requisition.service';
+import { TypemasterService } from 'src/app/services/typemaster.service';
 
 declare let Swal, $: any;
 
@@ -50,6 +51,11 @@ export class VendorRegistrationComponent implements OnInit {
   selectedItems: string[] = [];
   serviceTypes: any;
 
+  dropdownMakerSetting: { singleSelection: boolean; idField: string; textField: string; selectAllText: string; unSelectAllText: string; itemsShowLimit: number; allowSearchFilter: boolean; };
+  dropdownMakerList: { makerId: number, makerName: string }[] = [];
+  selectedMakerItems: string[] = [];
+  MakerMaster: any;
+
   vendorAccountData: any
 
   vendorId: any
@@ -68,10 +74,11 @@ export class VendorRegistrationComponent implements OnInit {
   approvalList: any
   CompanyName: string = ''
   CompanyShortName: string = ''
+ 
 
   constructor(private fb: FormBuilder, private sideNavService: SideNavService, private route: Router, private http: HttpClient,
     private purchaseService: PurchaseMasterService, private vendorService: VendorService, private swal: SwalToastService, private roote: ActivatedRoute,
-    private requisitionService: RequisitionService, private zone: NgZone) {
+    private requisitionService: RequisitionService,private categorymasterService:TypemasterService ,private zone: NgZone) {
     this.route.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.sideNavService.initSidenav();
@@ -97,6 +104,7 @@ export class VendorRegistrationComponent implements OnInit {
 
     this.LoadServiceType();
     this.loadCategoryType()
+    this.loadMakerMaster();
 
     this.dropdownServiceSetting = {
       singleSelection: false,
@@ -122,6 +130,16 @@ export class VendorRegistrationComponent implements OnInit {
       singleSelection: false,
       idField: 'locationId',
       textField: 'fullName',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 1,
+      allowSearchFilter: true
+    };
+
+    this.dropdownMakerSetting = {
+      singleSelection: false,
+      idField: 'makerId',
+      textField: 'makerName',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       itemsShowLimit: 1,
@@ -163,6 +181,13 @@ export class VendorRegistrationComponent implements OnInit {
       })
   }
 
+  loadMakerMaster() {
+    this.categorymasterService.getMakers(0)
+      .subscribe(response => {
+        this.MakerMaster = response.data;
+      })
+  }
+
   initForm(): void {
     this.VendorMasterForm = this.fb.group({
       vendorInfo: this.fb.group({
@@ -178,6 +203,7 @@ export class VendorRegistrationComponent implements OnInit {
         vendorBusinessId: [0],
         serviceType: ['', [Validators.required]],
         serviceCategory: ['', [Validators.required]],
+        makerMaster: ['', [Validators.required]],
         otherSpec: [''],
         classApproval: [''],
         makerApproval: [''],
@@ -248,9 +274,10 @@ export class VendorRegistrationComponent implements OnInit {
       vendorBranchId: ['', Validators.required],
       beneficiaryName: ['', Validators.required],
       accountNumber: ['', Validators.required],
-      ibanSwiftCode: ['', Validators.required],
-      vatNo: ['', Validators.required],
-      remarks: ['', Validators.required],
+      iban: [''],
+      swiftCode: [''],
+      vatNo: [''],
+      remarks: [''],
       confirmOnCall: [false],
       attachments: [''],
       vendorId: [0, Validators.required],
@@ -392,20 +419,23 @@ export class VendorRegistrationComponent implements OnInit {
 
   //#region  Save Vendor Master Form
   autoSave(partName: string): void {
+    debugger
     if (partName == 'vendorBusinessInfo') {
 
       if (this.vendorId != null) {
-
+debugger
         const formPart = this.VendorMasterForm.get(partName)
 
         if (formPart) {
 
           const categoryIds = this.categorySelectedItems.join(',');
           const serviceTypeIds = this.selectedItems.join(',')
+          const makerMaster = this.selectedMakerItems.join(',')
           const formValue = formPart.value;
           formValue.serviceCategory = categoryIds
           formValue.serviceType = serviceTypeIds
           formValue.vendorId = this.vendorId
+          formValue.makerMaster = makerMaster
         }
 
         const fmdata = new FormData();
@@ -626,6 +656,31 @@ export class VendorRegistrationComponent implements OnInit {
   }
   onOrderTypeDeSelectAll(event: any) {
     this.selectedItems.length = 0;
+  }
+  //#endregion
+
+  
+  //#region Maker Master Dropdown 
+  onMakerSelectAll(event: any) {
+    if (event)
+      this.selectedMakerItems = event.map((x: { makerId: any; }) => x.makerId);
+  }
+  onMakerSelect(event: any) {
+
+    let isSelect = event.makerId;
+    if (isSelect) {
+      this.selectedMakerItems.push(event.makerId);
+    }
+  }
+  onMakerDeSelect(event: any) {
+
+    let rindex = this.selectedMakerItems.findIndex(makerId => makerId == event.makerId);
+    if (rindex !== -1) {
+      this.selectedMakerItems.splice(rindex, 1)
+    }
+  }
+  onMakerDeSelectAll(event: any) {
+    this.selectedMakerItems.length = 0;
   }
   //#endregion
 
@@ -936,6 +991,18 @@ export class VendorRegistrationComponent implements OnInit {
                     this.categorySelectedItems.push(item.serviceCategoryId.toString());
                   })
                 }
+                if(vendorBusinessData.makerMaster != '' && vendorBusinessData.makerMaster!=null){
+                  const objProcR = vendorBusinessData.makerMaster.split(',');
+                  this.dropdownMakerList = objProcR.map(item => {
+                    return this.MakerMaster.find(x => x.makerId == item);
+                  });
+                  const merge4 = this.dropdownMakerList.flat(1);
+                  this.dropdownMakerList = merge4;
+                  this.selectedMakerItems.length = 0;
+                  this.dropdownMakerList.map(item => {
+                    this.selectedMakerItems.push(item.makerId.toString());
+                  })
+                }
                 businessform.patchValue({
                   vendorBusinessId: vendorBusinessData.vendorBusinessId,
                   // serviceType: vendorBusinessData.serviceType,
@@ -997,7 +1064,8 @@ export class VendorRegistrationComponent implements OnInit {
     this.vbif.vendorBranchId.setValue('')
     this.vbif.beneficiaryName.setValue('')
     this.vbif.accountNumber.setValue('')
-    this.vbif.ibanSwiftCode.setValue('')
+    this.vbif.iban.setValue('')
+    this.vbif.swiftCode.setValue('')
     this.vbif.vatNo.setValue('')
     this.vbif.remarks.setValue('')
     this.vbif.confirmOnCall.setValue(false)
