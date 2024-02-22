@@ -84,7 +84,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   serviceObject: any = {}; isEditMode = false;
   displayedColumns: string[]
-  ItemsColumns: string[] = ['checkbox', 'Index', 'Item Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
+  ItemsColumns: string[] = [ 'No', 'Item Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
     'Last Delivered Qty', 'ROB', 'Enter Quantity', 'Unit', 'Item Specs', 'Remarks', 'Attachments'];
   visibleColumns: boolean[] = [true, true, true, false, true, true, false, false, false, false, true, true, true, false, true, true];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
@@ -233,6 +233,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   jobListAttachmentForm: FormGroup
   unitmasterlist: any;
   currentRoute: string;
+  userSite: any;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -446,7 +447,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         documentHeader: ['', [Validators.required]],
         vesselId: ['0', [Validators.required]],
         orderTypeId: ['0', [Validators.required]],
-        orderTitle: ['', [Validators.required]],
         orderReference: ['', [Validators.required]],
         orderReferenceType: ['', [Validators.required]],
         departmentId: ['', [Validators.required]],
@@ -534,7 +534,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         originSite: this.location,
         vesselId: formPart?.value.vesselId,
         orderTypeId: formPart?.value.orderTypeId,
-        orderTitle: formPart?.value.orderTitle,
         orderReference: this.saveValue,
         departmentId: formPart?.value.departmentId,
         priorityId: formPart?.value.priorityId,
@@ -946,7 +945,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           originSite: requisitionData.originSite,
           vesselId: requisitionData.vesselId,
           orderTypeId: requisitionData.orderTypeId,
-          orderTitle: requisitionData.orderTitle,
           departmentId: requisitionData.departmentId,
           priorityId: requisitionData.priorityId,
           projectNameCodeId: requisitionData.projectNameCodeId,
@@ -1353,7 +1351,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.LoadPriority();
           this.LoadDepartment();
           this.GetunitList();
-          this.userService.getUserById(this.userId).subscribe(response => { this.userDetail = response.data; this.currentyear = new Date().getFullYear(); })
+          this.userService.getUserById(this.userId).subscribe(response => { 
+            this.userDetail = response.data;
+            this.userSite = response.data.site; 
+            this.currentyear = new Date().getFullYear(); })
           // this.LoadUserDetails();
           this.getReqData();
         } else {
@@ -2314,7 +2315,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     stepData += `
    
-              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount.accountCode == this.codeAccount.accountCode ? this.codeAccount.accountCode : null}','','','','','${this.ReqData.orderTitle}')`;
+              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount.accountCode == this.codeAccount.accountCode ? this.codeAccount.accountCode : null}','','','','','')`;
 
     uniqueItems.forEach((item, index) => {
       stepData += `

@@ -219,7 +219,7 @@
 
         <div class="row">
           <div class="col-lg mb-3">
-            <h6 class="text-900 mb-1">Origin Site</h6>
+            <h6 class="text-900 mb-1">Origin</h6>
 
             <fieldset class="form-group mb-0">
               <input type="text" class="form-control form-small" disabled value="{{location}}">
@@ -241,11 +241,11 @@
           </div>
 
           <div class="col-lg mb-3">
-            <h6 class="text-900 mb-1">Purpose</h6>
+            <h6 class="text-900 mb-1">Type</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="projectNameCodeId"
                 (change)="selectProjectCode($event)" required>
-                <option value="" selected disabled>Select Purpose</option>
+                <option value="" selected disabled>Select Type</option>
                 <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
                   {{item.projectName|titlecase }}-{{item.projectCode}}
                 </option>
@@ -254,11 +254,11 @@
           </div>
 
           <div class="col-lg mb-3">
-            <h6 class="text-900 mb-1">Order Type</h6>
+            <h6 class="text-900 mb-1">Order</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="orderTypeId"
                 [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
-                <option value="0" selected disabled>Select Order Type</option>
+                <option value="0" selected disabled>Select Order</option>
                 <option *ngFor="let item of filteredOrderTypes" value="{{item.orderTypeId}}">
                   {{item.orderTypes | titlecase}}
                 </option>
@@ -266,19 +266,19 @@
             </fieldset>
           </div>
 
-          <div class="col-lg mb-3">
+          <!-- <div class="col-lg mb-3">
             <h6 class="text-900 mb-1">Order Title</h6>
             <h6 class="mb-0 fs--2 text-500"></h6>
             <fieldset class="form-group mb-0">
               <input type="text" formControlName="orderTitle" class="form-control form-small"
                 (change)="autoSave('header')" placeholder="Order Title" maxlength="100" required>
             </fieldset>
-          </div>
+          </div> -->
         </div>
 
         <div class="row">
           <div class="col-lg-6 mb-3">
-            <h6 class="text-900 mb-1">Order Reference</h6>
+            <h6 class="text-900 mb-1">Description</h6>
             <fieldset class="form-group mb-0">
               <input type="text" class="form-control form-small ellipsis-text" placeholder="Select Component Items"
                 (click)="openModal()" formControlName="orderReference" [value]="displayValue" [title]="displayValue"
@@ -373,29 +373,29 @@
         <h6 class="text-900 mb-2">Account Name</h6>
         <h6 class="mb-0 fs--2 text-500">Account Name</h6>
       </div>
-      <div class="col-lg-3 mb-3">
+      <div class="col-lg-3 mb-3" *ngIf="this.userSite == 'Office'">
         <h6 class="text-900 mb-2">Budget Period</h6>
         <h6 class="mb-0 fs--2 text-500">Budget Period</h6>
       </div>
-      <div class="col-lg-3 mb-3">
+      <div class="col-lg-3 mb-3" *ngIf="this.userSite == 'Office'">
         <h6 class="text-900 mb-2">Account Category</h6>
         <h6 class="mb-0 fs--2 text-500">Account Category</h6>
       </div>
     </div>
     <div class="row">
-      <div class="col-lg-3 mb-3">
+      <div class="col-lg-3 mb-3" *ngIf="this.userSite == 'Office'">
         <h6 class="text-900 mb-2">Estimated Req Cost</h6>
         <h6 class="mb-0 fs--2 text-500">Estimated Req Cost</h6>
       </div>
-      <div class="col-lg-3 mb-3">
+      <div class="col-lg-3 mb-3" *ngIf="this.userSite == 'Office'">
         <h6 class="text-900 mb-2">Budget Cost</h6>
         <h6 class="mb-0 fs--2 text-500">Budget Cost</h6>
       </div>
-      <div class="col-lg-3 mb-3">
+      <div class="col-lg-3 mb-3" *ngIf="this.userSite == 'Office'">
         <h6 class="text-900 mb-2">Committed Cost</h6>
         <h6 class="mb-0 fs--2 text-500">Committed Cost</h6>
       </div>
-      <div class="col-lg-3 mb-3">
+      <div class="col-lg-3 mb-3" *ngIf="this.userSite == 'Office'">
         <h6 class="text-900 mb-2">Actual Cost</h6>
         <h6 class="mb-0 fs--2 text-500">Actual Cost</h6>
       </div>
@@ -440,7 +440,7 @@
         <div class="col-lg mb-3">
           <!-- <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
             Expected Delivery Port</h6>-->
-          <h6 class="text-900 mb-2">Port/Country</h6> 
+          <h6 class="text-900 mb-2">Expected Delivery Port</h6> 
 
           <!-- <fieldset > -->
           
@@ -874,7 +874,7 @@
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Index" style="width: 60px;">
-              <mat-header-cell class="mat-column-index" *matHeaderCellDef>Line No</mat-header-cell>
+              <mat-header-cell class="mat-column-index" *matHeaderCellDef>No</mat-header-cell>
               <mat-cell class="mat-column-index" style="width: 60px;" *matCellDef="let row; let i = index">{{ i +
                 1 }}</mat-cell>
             </ng-container>
@@ -1023,7 +1023,7 @@
           <div class="col-lg-9" *ngFor="let item of listViewItems;">
             <div class="row mb-4">
               <div class="col-lg-2">
-                <h6 class="text-900 mb-2">Line No</h6>
+                <h6 class="text-900 mb-2">No</h6>
                 <h6 class="mb-0 fs--2 text-500">{{ selectedItemIndex }}</h6>
               </div>
               <div class="col-lg-2">

@@ -47,7 +47,7 @@
                 <tr style="background-color: #1C3451; color: #fff;">
                     <th>Column Name</th>
                     <th>Show</th>  
-                    <th>Hide</th>                   
+                    <!-- <th>Hide</th>                    -->
                 </tr>
             </thead>
             <tbody>
@@ -56,9 +56,9 @@
                     <td>
                         <mat-checkbox [checked]="visibleColumns[i]" (change)="toggleVisibility(i)"></mat-checkbox>
                       </td>
-                      <td>
+                      <!-- <td>
                         <mat-checkbox [checked]="!visibleColumns[i]"  (change)="toggleVisibility(i)"></mat-checkbox>
-                      </td>
+                      </td> -->
                 </tr>
             </tbody>
         </table>
