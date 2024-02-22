@@ -10,7 +10,9 @@
                     Master</span>
             </div>
             <div class="col-auto ms-auto">
-
+                <a routerLink="/Account/currencyMaster" class="btn btn-pms-primary" type="button" data-index="0"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Back"
+                    aria-label="Back"><i class="fas fa-arrow-left"></i></a>
             </div>
         </div>
     </div>
@@ -24,54 +26,83 @@
                 <h5 class="mb-0">Currency</h5>
             </div>
             <div class="col-auto ms-auto">
-                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Save" aria-label=""><i class="fas fa-save text-primary"></i></a>
+                <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    data-bs-original-title="Save" aria-label=""><i class="fas fa-save text-primary"></i></a> -->
 
-                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancel"
                     data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban text-danger"></i></a>
             </div>
         </div>
     </div>
     <hr class="m-0">
     <div class="card-body">
-        <div class="row">
-            <div class="col-lg mb-3">
-                <h6 class="text-900 mb-1">Currency</h6>
-                <h6 class="mb-0 fs--2 text-500">Currency</h6>
-            </div>
-            <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">Name</h6>
-                <h6 class="mb-0 fs--2 text-500">Name</h6>
-            </div>
-            <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">Last Update</h6>
-                <h6 class="mb-0 fs--2 text-500">Last Update</h6>
-            </div>
-            <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">USD Exchange Rate</h6>
-                <h6 class="mb-0 fs--2 text-500">USD Exchange Rate</h6>
-            </div>
-        </div>
-        <div class="row">
+        <form [formGroup]="currencyForm">
 
-            <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">USD value</h6>
-                <h6 class="mb-0 fs--2 text-500">USD value</h6>
-            </div>
-            <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">GBP value</h6>
-                <h6 class="mb-0 fs--2 text-500">GBP value</h6>
-            </div>
-            <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">From Date</h6>
-                <h6 class="mb-0 fs--2 text-500">From Date</h6>
-            </div>
-            <div class="col-lg mb-3">
-                <h6 class="text-900 mb-2">To Date</h6>
-                <h6 class="mb-0 fs--2 text-500">To Date</h6>
+            <div class="row">
+                <div class="col-lg mb-3">
+                    <h6 class="text-900 mb-2">Currency Code</h6>
+                    <fieldset class="form-group mb-0">
+                        <input type="text" formControlName="currencySign" class="form-control form-small"
+                            id="currencySign" placeholder="Enter Currency Sign" maxlength="10" required
+                            (change)="autoSave()" [readOnly]="currencyId > 0">
+                    </fieldset>
+                </div>
+                <div class="col-lg mb-3">
+                    <h6 class="text-900 mb-2">Name</h6>
+                    <fieldset class="form-group mb-0">
+                        <input type="text" formControlName="currencyName" class="form-control form-small" id="currencyName"
+                            placeholder="Enter Currency Name" maxlength="20" required [readOnly]="currencyId > 0"
+                            (change)="autoSave()">
+                    </fieldset>
+                </div>
+                <div class="col-lg mb-3">
+                    <h6 class="text-900 mb-2">Last Update</h6>
+                    <fieldset class="form-group mb-0">
+                        <input type="date" formControlName="lastUpdate" class="form-control form-small" id="lastUpdate"
+                        placeholder="Enter last Update" required (change)="autoSave()">
+                    </fieldset>                    
+                </div>
+                <div class="col-lg mb-3">
+                    <h6 class="text-900 mb-2">USD Exchange Rate</h6>
+                    <fieldset class="form-group mb-0">
+                        <input type="text" formControlName="usdExcRate" class="form-control form-small" id="usdExcRate" [(ngModel)]="usdInput" 
+                        placeholder="Enter USD Exchange Rate" maxlength="10" required (input)="getUsd(usdInput)">
+                    </fieldset>                    
+                </div>
             </div>
 
-        </div>
+            <div class="row">
+                <div class="col-lg mb-3">
+                    <h6 class="text-900 mb-2">USD value</h6>
+                    <fieldset class="form-group mb-0">
+                        <input type="text" formControlName="usdValue" class="form-control form-small" id="usdValue"
+                       [(ngModel)]="UsdValue" maxlength="10" required (change)="autoSave()" [readOnly]="currencyId || !currencyId">
+                    </fieldset>                  
+                </div>
+                <div class="col-lg mb-3">
+                    <h6 class="text-900 mb-2">GBP value</h6>
+                    <fieldset class="form-group mb-0">
+                        <input type="text" formControlName="gbpValue" class="form-control form-small" id="gbpValue"
+                        placeholder="Enter GBP Value" maxlength="10" required (change)="autoSave()">
+                    </fieldset>                   
+                </div>
+                <div class="col-lg mb-3">
+                    <h6 class="text-900 mb-2">From Date</h6>
+                    <fieldset class="form-group mb-0">
+                        <input type="date" formControlName="fromDate" class="form-control form-small" id="fromDate"
+                        placeholder="Enter From Date" required (change)="autoSave()">
+                    </fieldset>                    
+                </div>
+                <div class="col-lg mb-3">
+                    <h6 class="text-900 mb-2">To Date</h6>
+                    <fieldset class="form-group mb-0">
+                        <input type="date" formControlName="toDate" class="form-control form-small" id="toDate"
+                        placeholder="Enter To Date" required (change)="autoSave()">
+                    </fieldset>                   
+                </div>
+            </div>
+
+        </form>
     </div>
     <div class="card-header bg-200">
         <div class="row flex-between-end">
@@ -99,13 +130,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>-----</td>
-                        <td>-----</td>
-                        <td>-----</td>
-                        <td>-----</td>
-                        <td>-----</td>
-                        <td>-----</td>
+                    <tr *ngFor="let item of currencyHistory">
+                        <td>{{item.recDate | date: 'shortDate'}}</td>
+                        <td>{{item.usdExcRate}}</td>
+                        <td>{{item.usdValue}}</td>
+                        <td>{{item.gbpValue}}</td>
+                        <td>{{item.fromDate | date: 'shortDate'}}</td>
+                        <td>{{item.toDate | date: 'shortDate'}}</td>
                     </tr>
                 </tbody>
             </table>

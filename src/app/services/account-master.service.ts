@@ -17,9 +17,8 @@ export class AccountMasterService {
   baseUrl = environment.apiurl;
   private linkurl = this.baseUrl + 'AccountMaster/';
   constructor(private httpClient: HttpClient) { }
- 
-  //#region AccountCategory
 
+  //#region AccountCategory
   getAccountCategoryMaster(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterAccountCategory/${status}`, httpOptions);
   }
@@ -34,12 +33,10 @@ export class AccountMasterService {
   archiveAccountCategory(jobType: any[]): Observable<string> {
     return this.httpClient.post<string>(`${this.linkurl}archiveAccountCategory/`, jobType, httpOptions);
   }
-
   //#endregion
 
 
   //#region AccountSubCategory
-
   getAccountSubCategory(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterAccountSubCategory/${status}`, httpOptions);
   }
@@ -54,48 +51,65 @@ export class AccountMasterService {
   archiveAccountSubCategory(jobType: any[]): Observable<string> {
     return this.httpClient.post<string>(`${this.linkurl}archiveAccountSubCategory/`, jobType, httpOptions);
   }
-
   //#endregion
 
 
-    //#region AccountHead
+  //#region AccountHead
+  getAccountHead(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterAccountHead/${status}`, httpOptions);
+  }
+  getAccountHeadId(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getAccountHeadId/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  addAccountHead(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addAccountHead', formData)
+      .pipe(catchError(this.handleError));
+  }
+  archiveAccountHead(jobType: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveAccountHead/`, jobType, httpOptions);
+  }
+  //#endregion
 
-    getAccountHead(status): Observable<any> {
-      return this.httpClient.get<any[]>(`${this.linkurl}filterAccountHead/${status}`, httpOptions);
-    }
-    getAccountHeadId(id): Observable<any> {
-      return this.httpClient.get<any>(this.linkurl + 'getAccountHeadId/' + id, httpOptions)
-        .pipe(catchError(this.handleError));
-    }
-    addAccountHead(formData): Observable<any> {
-      return this.httpClient.post<any>(this.linkurl + 'addAccountHead', formData)
-        .pipe(catchError(this.handleError));
-    }
-    archiveAccountHead(jobType: any[]): Observable<string> {
-      return this.httpClient.post<string>(`${this.linkurl}archiveAccountHead/`, jobType, httpOptions);
-    }
-  
-    //#endregion
+  //#region AccountCode
+  getAccountCode(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}filterAccountCode/${status}`, httpOptions);
+  }
+  getAccountCodeId(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getAccountCodeId/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  addAccountCode(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addAccountCode', formData)
+      .pipe(catchError(this.handleError));
+  }
+  archiveAccountCode(jobType: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveAccountCode/`, jobType, httpOptions);
+  }
+  //#endregion
 
-        //#region AccountCode
-
-        getAccountCode(status): Observable<any> {
-          return this.httpClient.get<any[]>(`${this.linkurl}filterAccountCode/${status}`, httpOptions);
-        }
-        getAccountCodeId(id): Observable<any> {
-          return this.httpClient.get<any>(this.linkurl + 'getAccountCodeId/' + id, httpOptions)
-            .pipe(catchError(this.handleError));
-        }
-        addAccountCode(formData): Observable<any> {
-          return this.httpClient.post<any>(this.linkurl + 'addAccountCode', formData)
-            .pipe(catchError(this.handleError));
-        }
-        archiveAccountCode(jobType: any[]): Observable<string> {
-          return this.httpClient.post<string>(`${this.linkurl}archiveAccountCode/`, jobType, httpOptions);
-        }
-      
-        //#endregion
-
+  //#region  Currency Master
+  getCurrencyByPaginator(formData): Observable<any> {  
+    return this.httpClient.get<any[]>(`${this.linkurl}filterCurrencyMasterList?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
+  }
+  getCurrencyData(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}getCurrencyMasters/${status}`, httpOptions);
+  }
+  getCurrencyById(id): Observable<any> {
+    return this.httpClient.get<any>(this.linkurl + 'getCurrencyById/' + id, httpOptions)
+      .pipe(catchError(this.handleError));
+  }
+  addCurrency(formData): Observable<any> {
+    return this.httpClient.post<any>(this.linkurl + 'addCurrencyMaster', formData)
+      .pipe(catchError(this.handleError));
+  }
+  archiveCurrencyData(data: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveCurrencyMaster/`, data, httpOptions);
+  }
+  getCurrencyHistory(status): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}getCurrencyHistory/${status}`, httpOptions);
+  }
+  //#endregion
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

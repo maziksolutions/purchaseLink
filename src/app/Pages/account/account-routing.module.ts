@@ -16,6 +16,10 @@ const routes: Routes = [
       { path: 'currencyMaster', component: CurrencyMasterComponent, pathMatch: 'full' },
       { path: 'pmexception', component: PMExceptionComponent, pathMatch: 'full' },
       { path: 'addCurrency', component: AddCurrencyComponent, pathMatch: 'full' },
+      {
+        path: 'addCurrency/:currencyId',
+        component: AddCurrencyComponent, pathMatch: 'full'
+      },
     ]
   }
 ];

@@ -8,22 +8,59 @@
                     Master</span>
             </div>
             <div class="col-auto ms-auto">
+                <form [formGroup]="searchForm">
+                    <div class="form-inline float-end mt-2">
 
-                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" routerLink="/Account/addCurrency"
-                    data-bs-original-title="Add" aria-label=""><i class="fas fa-plus text-primary"></i></a>
+                        <select class="form-control form-small form-select" #docStatus formControlName="status"
+                            (change)="loadData($any($event.target).value)">
+                            <option selected="" value="0">Active Data</option>
+                            <option value="1">Archive Data</option>
+                        </select>
+                        <span class="p-l-10 p-r-10 mm-t-3">|</span>
+                        <input type="text" class="form-control form-small" (keydown.enter)="applyFilter()"
+                            formControlName="keyword" placeholder="Search"
+                            style="border-top-right-radius: 0; border-bottom-right-radius: 0px">
+                        <button class="btn btn-primary form-small m-r-5" (click)="applyFilter()"
+                            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                            data-bs-toggle="tooltip" data-bs-placement="top" title="" matTooltip="Search"
+                            aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
 
-                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Add" aria-label=""><i class="fas fa-edit text-primary"></i></a>
+                        <button class="btn btn-primary form-small m-r-5"
+                            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
+                            data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Clear Search Input"
+                            (click)="clearSearchInput()" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
 
-                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Import" aria-label=""><i class="fas fa-download text-primary"></i></a>
+                        <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
-                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Export PDF" aria-label=""><i class="fas fa-file-pdf text-danger"></i></a>
+                        <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add"
+                            data-bs-toggle="collapse"  data-bs-target="#collapse1" aria-expanded="true" routerLink="/Account/addCurrency"
+                            aria-controls="collapse1"><i class="fas fa-plus text-primary"></i></a>
+                        <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                            routerLink="/Account/addCurrency" data-bs-original-title="Add" aria-label=""><i
+                                class="fas fa-plus text-primary"></i></a> -->
 
-                <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Export Excel" aria-label=""><i
-                        class="fas fa-file-excel text-success"></i></a>
+                        <a class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
+                            data-bs-placement="top" matTooltip="{{deletetooltip}}" aria-label=""><i
+                                class="fas fa-trash text-danger"></i></a>
+                        <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                            data-bs-original-title="Add" aria-label=""><i class="fas fa-edit text-primary"></i></a> -->
+
+                        <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                            data-bs-original-title="Import" aria-label=""><i
+                                class="fas fa-download text-primary"></i></a> -->
+
+                        <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                            data-bs-original-title="Export PDF" aria-label=""><i
+                                class="fas fa-file-pdf text-danger"></i></a> -->
+
+                        <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip"
+                            data-bs-placement="top" matTooltip="Excel" aria-label=""><i
+                                class="fas fa-file-excel"></i></a>
+                        <!-- <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                            data-bs-original-title="Export Excel" aria-label=""><i
+                                class="fas fa-file-excel text-success"></i></a> -->
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -33,7 +70,84 @@
 
     <div class="card-body">
         <div class="table-responsive scrollbar">
-            <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
+            <mat-table #table [dataSource]="dataSource" matSort #mainSort="matSort"
+                class="table table-hover table-striped table-sm small table-bordered">
+                <ng-container matColumnDef="checkbox">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                        <mat-checkbox (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()">
+                        </mat-checkbox>
+
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
+                            [aria-label]="checkboxLabel(row)"></mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="CurrencySign">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Currency</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <a (click)="UpdateData(row.currencyId)" class="accordion-btn show px-2 m-r-5" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true"
+                            aria-controls="collapse1" title={{row.currencySign}}> <span>{{row.currencySign}}</span>
+                        </a>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="CurrencyName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Currency Name</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span> {{row.currencyName}} </span>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="LastUpdate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Last Update</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <span> {{row.lastUpdate | date: 'shortDate'}} </span>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="UsdExcRate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Usd Exchange Rate</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.usdExcRate}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="UsdValue">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Usd Value</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.usdValue}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="GbpValue">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>GBP Value</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.gbpValue}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="FromDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>From Date</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.fromDate | date: 'shortDate'}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="ToDate">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>To Date</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.toDate | date: 'shortDate'}}
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns; let i = index"
+                    [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row.currencyId==selectedIndex))}"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator [length]="dataSource.filteredData.length" [pageIndex]="0" [pageSize]="20"
+                [pageSizeOptions]="[20, 40, 60, 100]">
+            </mat-paginator>
+            <!-- <table class="table table-hover table-striped table-sm small table-bordered overflow-hidden">
                 <thead>
                     <tr>
                         <th>Currency</th>
@@ -67,7 +181,7 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table> -->
         </div>
     </div>
 </div>
