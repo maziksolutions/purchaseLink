@@ -84,9 +84,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   serviceObject: any = {}; isEditMode = false;
   displayedColumns: string[]
-  ItemsColumns: string[] = [ 'No', 'Item Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
+  ItemsColumns: string[] = ['No', 'Item Name', 'Component Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
     'Last Delivered Qty', 'ROB', 'Enter Quantity', 'Unit', 'Item Specs', 'Remarks', 'Attachments'];
-  visibleColumns: boolean[] = [true, true, true, false, true, false, false, false, false, false, true, true, true, false, true, true];
+  visibleColumns: boolean[] = [true, true, true, true, false, false, false, false, false, false, true, true, true, false, true, true];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
   leftTableColumn: string[] = ['checkbox', 'inventoryName', 'partNo', 'dwg', 'quantity', 'availableQty', 'minRequired', 'reorderLevel'];
   rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];
@@ -206,7 +206,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   filenamecut: string;
 
   attachmentItemdataSource = new MatTableDataSource<any>();
-  selectionItemAttachment = new SelectionModel<any>(true, []);  
+  selectionItemAttachment = new SelectionModel<any>(true, []);
   fileItemToUpload: File; fileItemUrl;
   myItemFiles: string[] = [];
   listItemOfFiles: any[] = [];
@@ -301,7 +301,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       attachment: [''],
       description: [''],
       vesselId: []
-    });  
+    });
 
     this.loadData(0);
     this.fillattachmenttype();
@@ -372,7 +372,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   get fm() { return this.RequisitionForm.controls };
   get fmd() { return this.deliveryForm.controls };
-  get atfm() { return this.attachmentfrm.controls }; 
+  get atfm() { return this.attachmentfrm.controls };
   get serviceType() { return this.serviceTypeForm.controls }
   get jobListAttachment() { return this.jobListAttachmentForm.controls }
   get jobListControls() {
@@ -1351,10 +1351,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.LoadPriority();
           this.LoadDepartment();
           this.GetunitList();
-          this.userService.getUserById(this.userId).subscribe(response => { 
+          this.userService.getUserById(this.userId).subscribe(response => {
             this.userDetail = response.data;
-            this.userSite = response.data.site; 
-            this.currentyear = new Date().getFullYear(); })
+            this.userSite = response.data.site;
+            this.currentyear = new Date().getFullYear();
+          })
           // this.LoadUserDetails();
           this.getReqData();
         } else {
@@ -2332,12 +2333,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       );
       let jobNumber = 1;
       jobToAdd.forEach((item, index) => {
-       
+
         // Add jobList details to the stepData
         item.jobList.forEach((job, jobIndex) => {
           stepData += `,
               #${jobNumber + 1}=Service_for_ordering_mr('${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','','')`;
-         jobNumber++;
+          jobNumber++;
         });
       });
     }
@@ -2680,15 +2681,17 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
 
       if (result.result === 'success') {
+        debugger
         const data = result.dataToSend
         if (data != null && data.displayValue !== '' && data.saveValue !== '') {
           this.zone.run(() => {
             this.displayValue = ''
             this.saveValue = ''
             if (data.orderReferenceType === 'Component') {
+              debugger
               this.requisitionService.getDisplayComponent(data.saveValue).subscribe(res => {
-                this.displayValue = res.data.map(item => `${item.componentName}/${item.componentCode}/${item.makerName}/${item.modelNo}${item.serialNo}`)
-                  .join(', ')
+                this.displayValue = res.data.map(item => `${item.componentName},${item.componentCode},${item.makerName},${item.modelNo},${item.serialNo}`)
+                  .join('/ ')
               })
             } else {
               this.displayValue = data.displayValue;
@@ -3055,7 +3058,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   loadAttachment(status: number) {
-    debugger    
+    debugger
     const pageName = this.atfm.pageName.value
     const id = this.atfm.tablePkeyId.value
     const tableName = this.atfm.tableName.value
@@ -3170,12 +3173,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.CloseAttachmentForm();
           (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
           this.loadItemAttachment(0, res.id, res.pageName, res.tableName);
-          this.myItemFiles.length === 0;          
+          this.myItemFiles.length === 0;
         }
         else if (res.message == "updated") {
           debugger
           this.swal.success('Data has been updated successfully.');
-          this.clearattachmentfrm(); 
+          this.clearattachmentfrm();
           (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
           this.CloseAttachmentForm();
           this.loadItemAttachment(0, res.id, res.pageName, res.tableName);
@@ -3214,7 +3217,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   clearItemAttachmentfrm() {
     this.myItemFiles = [];
-    this.listItemOfFiles = [];   
+    this.listItemOfFiles = [];
     this.attachmentfrm.controls.attachmentTypeId.setValue('');
     this.attachmentfrm.controls.description.setValue('');
     (document.getElementById('collapse10') as HTMLElement).classList.add("collapse");
@@ -3255,7 +3258,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   attachmentItemToggle() {
     this.isItemattachmentAllSelected() ? this.selectionItemAttachment.clear() : this.attachmentItemdataSource.data.forEach(r =>
-       this.selectionItemAttachment.select(r));
+      this.selectionItemAttachment.select(r));
   }
 
   UpdateItemAttach(id) {
@@ -3265,7 +3268,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       .subscribe((response) => {
         debugger
         if (response.status) {
-          this.attachmentfrm.patchValue(response.data);          
+          this.attachmentfrm.patchValue(response.data);
           this.fileItemUrl = response.data.filePath;
           this.pkey = response.data.attachmentId;
         }

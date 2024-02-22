@@ -873,7 +873,7 @@
                   [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>
               </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="Index" style="width: 60px;">
+            <ng-container matColumnDef="No" style="width: 60px;">
               <mat-header-cell class="mat-column-index" *matHeaderCellDef>No</mat-header-cell>
               <mat-cell class="mat-column-index" style="width: 60px;" *matCellDef="let row; let i = index">{{ i +
                 1 }}</mat-cell>
@@ -881,6 +881,11 @@
             <ng-container matColumnDef="Item Name">
               <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
               <mat-cell class="ellipsis-text" title="{{row.itemName}}" *matCellDef="let row">{{ row.itemName
+                }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Component Name">
+              <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
+              <mat-cell class="ellipsis-text" title="{{row.componentName}}" *matCellDef="let row">{{ row.componentName
                 }}</mat-cell>
             </ng-container>
             <ng-container class="rightTableCode" matColumnDef="Item Code">
