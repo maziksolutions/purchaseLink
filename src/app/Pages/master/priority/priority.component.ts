@@ -387,7 +387,7 @@ export class PriorityComponent implements OnInit {
 
   close() {
     this.PriorityForm.reset();
-    this.PriorityForm.controls.serviceTypeId.setValue(0);
+    this.PriorityForm.controls.orderTypeId.setValue(0);
     (document.getElementById('collapse1') as HTMLElement).classList.add("collapse");
     (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
   }
