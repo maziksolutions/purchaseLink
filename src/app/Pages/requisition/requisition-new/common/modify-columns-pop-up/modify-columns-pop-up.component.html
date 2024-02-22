@@ -38,29 +38,31 @@
 
   </div>
 
+<!-- 
+<mat-dialog-content> -->
 
-<mat-dialog-content>
-    <form >
         <table id="tblStockReconciliation"
             class="table table-hover table-striped scrollbar-visible table-sm small table-bordered overflow-hidden table-striped">
             <thead>
                 <tr style="background-color: #1C3451; color: #fff;">
                     <th>Column Name</th>
                     <th>Show</th>  
-                    <!-- <th>Hide</th>                    -->
+                    <!-- <th>Hide</th> -->
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let column of displayedColumns; let i = index">
-                    <td>{{ column }}</td>
-                    <td>
-                        <mat-checkbox [checked]="visibleColumns[i]" (change)="toggleVisibility(i)"></mat-checkbox>
-                      </td>
-                      <!-- <td>
-                        <mat-checkbox [checked]="!visibleColumns[i]"  (change)="toggleVisibility(i)"></mat-checkbox>
-                      </td> -->
-                </tr>
+                <ng-container *ngFor="let column of displayedColumns; let i = index">
+                    <tr *ngIf="i > 0">
+                        <td>{{ column }}</td>
+                        <td>
+                            <mat-checkbox [checked]="visibleColumns[i]" (change)="toggleVisibility(i)"></mat-checkbox>
+                        </td>
+                        <!-- <td>
+                            <mat-checkbox [checked]="!visibleColumns[i]"  (change)="toggleVisibility(i)"></mat-checkbox>
+                        </td> -->
+                    </tr>
+                </ng-container>
             </tbody>
         </table>
-    </form>   
-</mat-dialog-content>
+ 
+<!-- </mat-dialog-content> -->

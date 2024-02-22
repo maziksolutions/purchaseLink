@@ -84,7 +84,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   serviceObject: any = {}; isEditMode = false;
   displayedColumns: string[]
-  ItemsColumns: string[] = [ 'No', 'Item Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
+  ItemsColumns: string[] = ['checkbox', 'No', 'Item Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
     'Last Delivered Qty', 'ROB', 'Enter Quantity', 'Unit', 'Item Specs', 'Remarks', 'Attachments'];
   visibleColumns: boolean[] = [true, true, true, false, true, false, false, false, false, false, true, true, true, false, true, true];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
@@ -3301,6 +3301,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //#region Modify Columns of Items Pop Up View
   openModifyPopUp() {
     let dialogRef: any
+    debugger
     dialogRef = this.dialog.open(ModifyColumnsPopUpComponent, {
       width: '600px',
       data: {
@@ -3309,11 +3310,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         displayedColumns: this.ItemsColumns,
       }
     });
+    
     dialogRef.afterClosed().subscribe(result => {
 
       if (result.result === 'success') {
         const data = result.data
-        console.log(data)
         this.zone.run(() => {
           this.displayedColumns = this.ItemsColumns.filter((column, index) => data[index]);
         })
