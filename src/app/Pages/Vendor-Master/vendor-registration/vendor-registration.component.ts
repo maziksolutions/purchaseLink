@@ -1013,11 +1013,11 @@ debugger
                   isoCertification: vendorBusinessData.isoCertification,
                   otherCertification: vendorBusinessData.otherCertification,
                 })
-                this.loadBankInformation(id);
-                this.loadVendorAccountData(id);
-                this.loadVendorServiceData(id);
-                this.loadVendorSalesData(id);
                 this.loadVendorBranchData(id);
+                this.loadVendorSalesData(id);
+                this.loadVendorServiceData(id);
+                this.loadVendorAccountData(id); 
+                this.loadBankInformation(id);
 
 
               }

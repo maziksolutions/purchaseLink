@@ -31,7 +31,7 @@
 
 
       <div class="col-auto ms-auto">
-        <a routerLink="/Requisition/Requisitionslist" class="btn btn-pms-primary" type="button" data-index="0"
+        <a (click)="backButton()" class="btn btn-pms-primary" type="button" data-index="0"
           data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Back" aria-label="Back"><i
             class="fas fa-arrow-left"></i></a>
       </div>
@@ -197,9 +197,9 @@
                     data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
                       class="fas fa-save text-primary"></i></button>-->
 
-            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancel"
+            <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancel"
               data-bs-original-title="Cancel" (click)="CancelRequisition()" aria-label=""><i
-                class="fas fa-ban text-danger"></i></a>
+                class="fas fa-ban text-danger"></i></a> -->
 
             <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Export PDF" aria-label="" [class.disabled]="!isRequisitionApproved"><i class="fas fa-file-pdf text-danger"></i></a>
@@ -254,7 +254,7 @@
           </div>
 
           <div class="col-lg mb-3">
-            <h6 class="text-900 mb-1">Order</h6>
+            <h6 class="text-900 mb-1">Category</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="orderTypeId"
                 [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>

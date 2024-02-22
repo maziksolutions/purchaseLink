@@ -129,8 +129,9 @@
                         <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
                             data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""
                             [disabled]="ExceptionForm.invalid  || !ExceptionForm.dirty" ><i class="fas fa-save"></i></button>
+
                         <button type="button" class="btn btn-danger form-small m-r-5" data-bs-toggle="tooltip"
-                           data-bs-placement="top" title="" data-bs-original-title="Cancel"
+                          (click)="close()" data-bs-placement="top" title="" data-bs-original-title="Cancel"
                             aria-label=""><i class="fas fa-ban"></i></button>
                     </div>
                 </div>

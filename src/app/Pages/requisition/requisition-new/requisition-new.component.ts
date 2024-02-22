@@ -84,7 +84,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   serviceObject: any = {}; isEditMode = false;
   displayedColumns: string[]
-  ItemsColumns: string[] = ['No', 'Item Name', 'Component Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
+  ItemsColumns: string[] = ['checkbox','No', 'Item Name', 'Component Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
     'Last Delivered Qty', 'ROB', 'Enter Quantity', 'Unit', 'Item Specs', 'Remarks', 'Attachments'];
   visibleColumns: boolean[] = [true, true, true, true, false, false, false, false, false, false, true, true, true, false, true, true];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
@@ -2427,6 +2427,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
           this.loadattachment(0);
           this.myFiles.length === 0;
+          alert(this.myFiles.length)
         }
         else if (res.message == "updated") {
           this.swal.success('Data has been updated successfully.');
@@ -3304,6 +3305,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //#region Modify Columns of Items Pop Up View
   openModifyPopUp() {
     let dialogRef: any
+    debugger
     dialogRef = this.dialog.open(ModifyColumnsPopUpComponent, {
       width: '600px',
       data: {
@@ -3312,11 +3314,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         displayedColumns: this.ItemsColumns,
       }
     });
+    
     dialogRef.afterClosed().subscribe(result => {
 
       if (result.result === 'success') {
         const data = result.data
-        console.log(data)
         this.zone.run(() => {
           this.displayedColumns = this.ItemsColumns.filter((column, index) => data[index]);
         })
@@ -3325,7 +3327,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   //#endregion
 
-  CancelRequisition() {
+  // CancelRequisition() {
 
     //   let DataRequisitionMaster =  this.requisitiondata.filter(x=>x.documentHeader == this.finallyHeader);
 
@@ -3335,11 +3337,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     //   })
     //  }
     //  else{
-    this.router.navigate(['/Requisition/Requisitionslist']);
+    // this.router.navigate(['/Requisition/Requisitionslist']);
     //  }
 
 
-  }
+  // }
 
   GetunitList() {
     this.unitmasterservice.GetunitList(0)
@@ -3355,6 +3357,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
 
       });
+  }
+
+  backButton(){
+    this.router.navigate(['/Requisition/Requisitionslist']);
   }
 
 }

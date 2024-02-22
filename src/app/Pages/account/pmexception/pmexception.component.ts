@@ -288,6 +288,14 @@ export class PMExceptionComponent implements OnInit {
     
   }
 
+  close() {
+    this.ExceptionForm.reset();
+    this.ExceptionForm.controls.accountCode.setValue(0);
+    this.ExceptionForm.controls.projectCode.setValue(0);
+    this.ExceptionForm.controls.inventoryType.setValue(0);
+    (document.getElementById('collapse1') as HTMLElement).classList.add("collapse");
+    (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+  }
   clear() {
     this.ExceptionForm.reset();
     this.ExceptionForm.controls.exceptionId.setValue(0);
