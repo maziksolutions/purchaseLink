@@ -2426,6 +2426,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
           this.loadattachment(0);
           this.myFiles.length === 0;
+          alert(this.myFiles.length)
         }
         else if (res.message == "updated") {
           this.swal.success('Data has been updated successfully.');
@@ -3353,6 +3354,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
 
       });
+  }
+
+  backButton(){
+    this.router.navigate(['/Requisition/Requisitionslist']);
   }
 
 }

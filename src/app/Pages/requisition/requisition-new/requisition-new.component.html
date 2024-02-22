@@ -31,7 +31,7 @@
 
 
       <div class="col-auto ms-auto">
-        <a routerLink="/Requisition/Requisitionslist" class="btn btn-pms-primary" type="button" data-index="0"
+        <a (click)="backButton()" class="btn btn-pms-primary" type="button" data-index="0"
           data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Back" aria-label="Back"><i
             class="fas fa-arrow-left"></i></a>
       </div>
@@ -254,7 +254,7 @@
           </div>
 
           <div class="col-lg mb-3">
-            <h6 class="text-900 mb-1">Order</h6>
+            <h6 class="text-900 mb-1">Category</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="orderTypeId"
                 [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
