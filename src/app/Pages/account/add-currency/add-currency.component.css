@@ -3,3 +3,16 @@
     font-weight:500;
     color: black;
 }
+
+.input-group {
+    position: relative;
+}
+
+.dollar-sign {
+    position: absolute;   
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+}

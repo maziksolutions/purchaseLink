@@ -2686,7 +2686,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             this.saveValue = ''
             if (data.orderReferenceType === 'Component') {
               this.requisitionService.getDisplayComponent(data.saveValue).subscribe(res => {
-                this.displayValue = res.data.map(item => `${item.componentName}/${item.componentCode}/${item.serialNo}/${item.makerName}/${item.modelNo}`)
+                this.displayValue = res.data.map(item => `${item.componentName}/${item.componentCode}/${item.makerName}/${item.modelNo}${item.serialNo}`)
                   .join(', ')
               })
             } else {

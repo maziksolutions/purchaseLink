@@ -31,7 +31,7 @@ export class AddCurrencyComponent implements OnInit {
   pageSize = 20; currentPage = 0; page: number = 1;
 
   currencyHistory: any
-  UsdValue:any
+  UsdValue: any
   usdInput: number;
 
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
@@ -62,7 +62,7 @@ export class AddCurrencyComponent implements OnInit {
   }
   get cmf() { return this.currencyForm.controls };
 
-  getUsd(value: number){
+  getUsd(value: number) {
     alert(value)
   }
 
@@ -76,7 +76,7 @@ export class AddCurrencyComponent implements OnInit {
         .subscribe(data => {
           debugger
           if (data.message == "data added") {
-            this.swal.success('Added successfully.');           
+            this.swal.success('Added successfully.');
             this.router.navigate(['/Account/currencyMaster']);
             this.clear();
           }
@@ -84,7 +84,7 @@ export class AddCurrencyComponent implements OnInit {
             this.swal.success('Data has been updated successfully.');
             // this.router.navigate(['/Account/currencyMaster']);
             // this.clear(); 
-            this.getCurrency(this.currencyId)           
+            this.getCurrency(this.currencyId)
           }
           else if (data.message == "duplicate") {
             this.swal.info('Data already exist. Please enter new data');
@@ -117,14 +117,14 @@ export class AddCurrencyComponent implements OnInit {
       }
     })
   }
-  private formatDate(dateString: string): string {      
+  private formatDate(dateString: string): string {
     if (!dateString) return '';
-  
+
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     const day = ('0' + date.getDate()).slice(-2);
-    
+
     return `${year}-${month}-${day}`;
   }
 

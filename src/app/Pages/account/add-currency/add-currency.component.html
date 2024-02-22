@@ -50,24 +50,28 @@
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">Name</h6>
                     <fieldset class="form-group mb-0">
-                        <input type="text" formControlName="currencyName" class="form-control form-small" id="currencyName"
-                            placeholder="Enter Currency Name" maxlength="20" required [readOnly]="currencyId > 0"
-                            (change)="autoSave()">
+                        <input type="text" formControlName="currencyName" class="form-control form-small"
+                            id="currencyName" placeholder="Enter Currency Name" maxlength="20" required
+                            [readOnly]="currencyId > 0" (change)="autoSave()">
                     </fieldset>
                 </div>
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">Last Update</h6>
                     <fieldset class="form-group mb-0">
                         <input type="date" formControlName="lastUpdate" class="form-control form-small" id="lastUpdate"
-                        placeholder="Enter last Update" required (change)="autoSave()">
-                    </fieldset>                    
+                            placeholder="Enter last Update" required (change)="autoSave()">
+                    </fieldset>
                 </div>
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">USD Exchange Rate</h6>
                     <fieldset class="form-group mb-0">
-                        <input type="text" formControlName="usdExcRate" class="form-control form-small" id="usdExcRate" [(ngModel)]="usdInput" 
-                        placeholder="Enter USD Exchange Rate" maxlength="10" required (input)="getUsd(usdInput)">
-                    </fieldset>                    
+                        <div class="input-group">
+                            <input type="text" formControlName="usdExcRate" class="form-control form-small"
+                                id="usdExcRate" [(ngModel)]="usdInput" placeholder="Enter USD Exchange Rate"
+                                maxlength="10" required (input)="getUsd(usdInput)">
+                            <span class="dollar-sign" *ngIf="usdInput > 0">$</span>
+                        </div>
+                    </fieldset>
                 </div>
             </div>
 
@@ -76,29 +80,30 @@
                     <h6 class="text-900 mb-2">USD value</h6>
                     <fieldset class="form-group mb-0">
                         <input type="text" formControlName="usdValue" class="form-control form-small" id="usdValue"
-                       [(ngModel)]="UsdValue" maxlength="10" required (change)="autoSave()" [readOnly]="currencyId || !currencyId">
-                    </fieldset>                  
+                            [(ngModel)]="UsdValue" maxlength="10" required (change)="autoSave()"
+                            [readOnly]="currencyId || !currencyId">
+                    </fieldset>
                 </div>
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">GBP value</h6>
                     <fieldset class="form-group mb-0">
                         <input type="text" formControlName="gbpValue" class="form-control form-small" id="gbpValue"
-                        placeholder="Enter GBP Value" maxlength="10" required (change)="autoSave()">
-                    </fieldset>                   
+                            placeholder="Enter GBP Value" maxlength="10" required>
+                    </fieldset>
                 </div>
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">From Date</h6>
                     <fieldset class="form-group mb-0">
                         <input type="date" formControlName="fromDate" class="form-control form-small" id="fromDate"
-                        placeholder="Enter From Date" required (change)="autoSave()">
-                    </fieldset>                    
+                            placeholder="Enter From Date" required (change)="autoSave()">
+                    </fieldset>
                 </div>
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">To Date</h6>
                     <fieldset class="form-group mb-0">
                         <input type="date" formControlName="toDate" class="form-control form-small" id="toDate"
-                        placeholder="Enter To Date" required (change)="autoSave()">
-                    </fieldset>                   
+                            placeholder="Enter To Date" required (change)="autoSave()">
+                    </fieldset>
                 </div>
             </div>
 
