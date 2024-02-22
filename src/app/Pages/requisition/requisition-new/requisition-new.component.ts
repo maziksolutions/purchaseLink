@@ -84,9 +84,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   serviceObject: any = {}; isEditMode = false;
   displayedColumns: string[]
-  ItemsColumns: string[] = ['checkbox','No', 'Item Name', 'Component Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
+  ItemsColumns: string[] = ['checkbox', 'No', 'Item Name', 'Component Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
     'Last Delivered Qty', 'ROB', 'Enter Quantity', 'Unit', 'Item Specs', 'Remarks', 'Attachments'];
-  visibleColumns: boolean[] = [true, true, true, true, false, false, false, false, false, false, true, true, true, false, true, true];
+  visibleColumns: boolean[] = [true, true, true, true, true, false, false, false, false, false, false, true, true, true, false, true, true];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
   leftTableColumn: string[] = ['checkbox', 'inventoryName', 'partNo', 'dwg', 'quantity', 'availableQty', 'minRequired', 'reorderLevel'];
   rightTableColumn: string[] = ['checkbox', 'userInput', 'partNo', 'inventoryName'];
@@ -3314,7 +3314,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         displayedColumns: this.ItemsColumns,
       }
     });
-    
+
     dialogRef.afterClosed().subscribe(result => {
 
       if (result.result === 'success') {
@@ -3329,16 +3329,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   // CancelRequisition() {
 
-    //   let DataRequisitionMaster =  this.requisitiondata.filter(x=>x.documentHeader == this.finallyHeader);
+  //   let DataRequisitionMaster =  this.requisitiondata.filter(x=>x.documentHeader == this.finallyHeader);
 
-    //  if(DataRequisitionMaster.length != 0){
-    //   this.requisitionService.archiveRequisitionMaster(DataRequisitionMaster).subscribe(result => {
-    //     this.router.navigate(['/Requisition/Requisitionslist']);
-    //   })
-    //  }
-    //  else{
-    // this.router.navigate(['/Requisition/Requisitionslist']);
-    //  }
+  //  if(DataRequisitionMaster.length != 0){
+  //   this.requisitionService.archiveRequisitionMaster(DataRequisitionMaster).subscribe(result => {
+  //     this.router.navigate(['/Requisition/Requisitionslist']);
+  //   })
+  //  }
+  //  else{
+  // this.router.navigate(['/Requisition/Requisitionslist']);
+  //  }
 
 
   // }
@@ -3359,7 +3359,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       });
   }
 
-  backButton(){
+  backButton() {
     this.router.navigate(['/Requisition/Requisitionslist']);
   }
 
