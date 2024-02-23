@@ -54,7 +54,7 @@ h5{
    font-weight: bold;
 }
   /*---------Mat Table Override CSS-------------------*/
-.mat-header-cell{
+/* .mat-header-cell{
     vertical-align: top !important;    
     border-right: 1px solid var(--pms-input-border-color) !important;     
     font-weight: 600 !important;    
@@ -63,17 +63,17 @@ h5{
    color: var(--pms-headings-color) !important;
    padding: 0 0 0 5px !important;
    height: 100% !important;   
-  }
+  } */
 
- .mat-cell{          
+ /* .mat-cell{          
       border-right: 1px solid var(--pms-input-border-color) !important; 
     position: relative; 
     color: var(--pms-headings-color) !important;
     padding: 0 0 0 5px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    /* flex:0 0 100% !important; */
-  }
+     flex:0 0 100% !important; 
+  } */
   .mat-cell span {
     text-overflow: ellipsis; 
     overflow: hidden; 
@@ -118,8 +118,8 @@ h5{
   }
   .mat-row
   {
-    padding: 0;
-    margin: 0;
+    padding: 0 !important;
+    margin: 0 !important;
     min-height: auto !important;    
     border-bottom-color: var(--pms-input-border-color) !important;
   }
@@ -197,6 +197,45 @@ textarea.ng-invalid
 
 /* .btn{padding: 0.3rem 0.5rem !important;} */
 
-.w-97 {
-  width: 97%;
+.mat-header-cell{
+  vertical-align: top !important;    
+  border-right: 1px solid var(--pms-input-border-color) !important;     
+  font-weight: 600 !important;    
+ font-size: 12px;     
+ text-shadow: none;
+ color: var(--pms-headings-color) !important;
+ padding: 3px !important;
+ /* height: 100% !important;   */
+ 
+ display: -ms-flexbox !important;
+ display: -webkit-flex !important;
+ display: flex !important;
+ -webkit-align-self: stretch;
+ -ms-flex-item-align: stretch;
+ align-self: stretch !important;
+ /* align-items center so that cell content is vertically centered */
+ -webkit-align-items: center;
+ -ms-flex-align: center;
+ align-items: center;
+}
+
+.mat-cell{          
+    border-right: 1px solid var(--pms-input-border-color) !important; 
+  position: relative; 
+  color: var(--pms-headings-color) !important;
+  padding: 3px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: -ms-flexbox !important;
+  display: -webkit-flex !important;
+  display: flex !important;
+  -webkit-align-self: stretch;
+  -ms-flex-item-align: stretch;
+  align-self: stretch !important;
+  /* align-items center so that cell content is vertically centered */
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+
+  /* flex:0 0 100% !important; */
 }

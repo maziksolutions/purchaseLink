@@ -106,6 +106,12 @@
               [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>
           </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="VesselName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Vessel Name</mat-header-cell>
+          <mat-cell *matCellDef="let row" title={{row.vessel.vesselName}}>
+            <span>{{row.vessel.vesselName}} </span>
+          </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="Requisition_No">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Requisition No.</mat-header-cell>
           <mat-cell *matCellDef="let row" (click)="editRequisition(row)">
@@ -114,40 +120,16 @@
 
           </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="Delivery_Site">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Delivery Site</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.deliverySiteNames}}>
-            <span>{{row.deliverySiteNames}} </span>
+        <ng-container matColumnDef="Status">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+          <mat-cell *matCellDef="let row" title={{row.approvedReq}}>
+            <span> {{row.approvedReq}} </span>
           </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="OriginSite">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Origin Site</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.originSite}}>
-            <span> {{row.originSite}} </span>
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="RequestOrderType">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Request Order Type</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.pmOrderType.orderTypes}}>
-            <span> {{row.pmOrderType.orderTypes}} </span>
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="OrderTitle">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Order Title</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.orderTitle}}>
-            <span> {{row.orderTitle}} </span>
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="OrderReference">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Order Reference</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.orderReferenceNames}}>
-            <span> {{row.orderReferenceNames}} </span>
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="Department">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Department</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.departments.departmentName}}>
-            <span> {{row.departments.departmentName}} </span>
+        <ng-container matColumnDef="reqRecDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Req.Rec.Date</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <span>{{row.recDate | date :'dd-MMM-yyyy'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Priority">
@@ -156,19 +138,47 @@
             <span> {{row.pmPreference.description}} </span>
           </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="OrderReference">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
+          <mat-cell *matCellDef="let row" title={{row.orderReferenceNames}}>
+            <span> {{row.orderReferenceNames}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="OriginSite">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Origin</mat-header-cell>
+          <mat-cell *matCellDef="let row" title={{row.originSite}}>
+            <span> {{row.originSite}} </span>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Department">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Department</mat-header-cell>
+          <mat-cell *matCellDef="let row" title={{row.departments.departmentName}}>
+            <span> {{row.departments.departmentName}} </span>
+          </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="ProjectName_Code">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Project Name / Code</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
           <mat-cell *matCellDef="let row"
             title={{row.pmProjectNameCode.projectName}}{{row.pmProjectNameCode.projectCode}}>
             <span> {{row.pmProjectNameCode.projectName}}{{row.pmProjectNameCode.projectCode}} </span>
           </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="Status">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.approvedReq}}>
-            <span> {{row.approvedReq}} </span>
+        <ng-container matColumnDef="Delivery_Site">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Delivery Site</mat-header-cell>
+          <mat-cell *matCellDef="let row" title={{row.deliverySiteNames}}>
+            <span>{{row.deliverySiteNames}} </span>
           </mat-cell>
         </ng-container>
+      
+        <ng-container matColumnDef="RequestOrderType">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Request Order</mat-header-cell>
+          <mat-cell *matCellDef="let row" title={{row.pmOrderType.orderTypes}}>
+            <span> {{row.pmOrderType.orderTypes}} </span>
+          </mat-cell>
+        </ng-container>
+
+
+      
 
         <!-- <ng-container matColumnDef="RTO">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>RTO</mat-header-cell>
