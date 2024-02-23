@@ -81,6 +81,8 @@ export interface Port {
 })
 export class RequisitionNewComponent implements OnInit, OnDestroy {
 
+  @ViewChild('attachments') fileInput: ElementRef;
+
   RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   serviceObject: any = {}; isEditMode = false;
   displayedColumns: string[]
@@ -2416,7 +2418,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(formValues));
+    
     if (this.fileToUpload != null) {
+      
       this.myFiles.forEach((f) => fmdata.append('attachment', f));
       //fmdata.append('attachment', this.myFiles);
     }
@@ -3064,7 +3068,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   loadAttachment(status: number) {
-        alert()
     const pageName = this.atfm.pageName.value
     const id = this.atfm.tablePkeyId.value
     const tableName = this.atfm.tableName.value
@@ -3072,19 +3075,21 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   loadItemAttachment(status: number, id: number, pageName: string, tableName: string) {
-    debugger
+    
     if (status == 1) {
+      debugger
       this.deletetooltip = 'UnArchive';
-      if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
-        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
-        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
+      if ((document.querySelector('.attach') as HTMLElement) != null) {
+        (document.querySelector('.attach') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
+        (document.querySelector('.attach') as HTMLElement).classList.remove("fa-trash", "text-danger");
       }
     }
     else {
+      debugger
       this.deletetooltip = 'Archive';
-      if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement) != null) {
-        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
-        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
+      if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
+        (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
+        (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
     
@@ -3114,7 +3119,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   getUserName(userId){
     if(userId!=null && userId!=undefined)
     {
-      debugger
+      
   var UserName =  this.userData.filter(x=>x.userId==userId);
   return UserName[0]?.firstName+' '+UserName[0]?.lastName;
     }
@@ -3187,7 +3192,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(formValues));
+    debugger
     if (this.fileItemToUpload != null) {
+      debugger
       this.myItemFiles.forEach((f) => fmdata.append('attachment', f));
     }
 
@@ -3200,15 +3207,17 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
           this.loadItemAttachment(0, res.id, res.pageName, res.tableName);
           this.myItemFiles.length === 0;
+          this.fileInput.nativeElement.value = null;
         }
         else if (res.message == "updated") {
           
           this.swal.success('Data has been updated successfully.');
-          this.clearattachmentfrm();
-          (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
           this.CloseAttachmentForm();
+          (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
           this.loadItemAttachment(0, res.id, res.pageName, res.tableName);
           this.myItemFiles.length === 0;
+          this.fileInput.nativeElement.value = null;
+
         }
         else if (res.message == "duplicate") {
           this.swal.info('Data already exist. Please enter new data');
@@ -3223,12 +3232,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   FileItemSelect(event) {
-    
+ 
     if (event.target.files.length > 0) {
+
       const file = event.target.files[0];
       this.fileItemToUpload = file;
       this.FileName = file.name;
+
       for (var i = 0; i <= event.target.files.length - 1; i++) {
+        
         this.myItemFiles.push(event.target.files[i]);
         var selectedFile = event.target.files[i];
         if (this.listItemOfFiles.indexOf(selectedFile.name) === -1) {

@@ -33,8 +33,8 @@ export class RequisitionslistComponent implements OnInit {
   RequisitionForm: FormGroup; flag; pkey: number = 0;
   selectedIndex: any;
   dataSource = new MatTableDataSource<any>();
-  displayedColumns: string[] = ['checkbox', 'Requisition_No', 'Delivery_Site', 'OriginSite', 'RequestOrderType', 'OrderTitle',
-    'OrderReference', 'Department', 'Priority', 'ProjectName_Code', 'Status'];
+  displayedColumns: string[] = ['checkbox','VesselName','Requisition_No','Status','reqRecDate','Priority','OrderReference',
+  'OriginSite','Department', 'ProjectName_Code', 'Delivery_Site', 'RequestOrderType', ];
   selection = new SelectionModel<any>(true, []);
   rights: RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
@@ -224,6 +224,8 @@ export class RequisitionslistComponent implements OnInit {
 
 if (this.targetLoc == 'Vessel') {
         this.dataSource.data = response.data.filter(x=>x.originSite == 'Vessel');
+console.log(this.dataSource.data)
+
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
 

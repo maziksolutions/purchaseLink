@@ -723,7 +723,7 @@
                       <select class="form-control  form-select"
                       formControlName="workQueueStateId" required>
                       <option value="" disabled>Select Work Queue State Name</option>
-                      <option *ngFor="let item of TargetWorkQueueStateData" value="{{item.workQueueStateId}}">{{item.workQueueStateName+'    '+'('+item.stateType+')'}}</option> 
+                      <option *ngFor="let item of TargetWorkQueueStateData" value="{{item.workQueueStateId}}">{{item.workQueueStateName+'    '+'('+item.stateType+')'+'  ,  '+'('+item.siteType+')'}}</option> 
                   </select>
                   </fieldset>
                 </div>

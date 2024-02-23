@@ -71,18 +71,6 @@
    width: 30px;
  }
 
- .ellipsis-text {
-   white-space: nowrap;
-   overflow: hidden;
-   text-overflow: ellipsis;
- }
-
- .ellipsis-text:hover {
-   white-space: nowrap;
-   overflow: visible;
-   text-overflow: unset;
- }
-
  .disabled {
    opacity: 0.5;
    cursor: not-allowed;
@@ -124,6 +112,7 @@
   border-radius: 0.25rem;
   font-weight: 400;
   line-height: 1.2;
+  box-sizing: content-box;
 }
 .mat-option{
   font-family: Arial, Helvetica, sans-serif;
@@ -134,10 +123,13 @@
   border: 1px solid #ccc; 
   box-shadow: none;
 }
-.mat-cell{
+/* .mat-cell{
   display: block !important;
-}
+} 
 .table-sm > :not(caption) > * > *
 {
   padding: 0.1rem !important;
-}
+}*/
+/* .mat-row {
+  min-height: 30px !important;
+} */

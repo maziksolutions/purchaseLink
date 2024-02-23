@@ -31,8 +31,8 @@
 
 
       <div class="col-auto ms-auto">
-        <a (click)="backButton()" class="btn btn-pms-primary" type="button" data-index="0"
-          data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Back" aria-label="Back"><i
+        <a (click)="backButton()" class="btn btn-pms-primary" type="button" data-index="0" data-bs-toggle="tooltip"
+          data-bs-placement="top" title="" data-bs-original-title="Back" aria-label="Back"><i
             class="fas fa-arrow-left"></i></a>
       </div>
 
@@ -190,8 +190,8 @@
 
 
             <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Add Attachment"
-            (click)="openAttachmentItem(reqId,'Purchase Requisition','tblPMRequisitions')" data-bs-original-title="Add Attachment" aria-label=""><i
-                class="fas fa-paperclip text-primary"></i></a>
+              (click)="openAttachmentItem(reqId,'Purchase Requisition','tblPMRequisitions')"
+              data-bs-original-title="Add Attachment" aria-label=""><i class="fas fa-paperclip text-primary"></i></a>
 
             <!-- <button class="px-1 m-r-5" type="submit" style="border: #f9fafd;" data-bs-toggle="tooltip"
                     data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
@@ -280,9 +280,10 @@
           <div class="col-lg-6 mb-3">
             <h6 class="text-900 mb-1">Description</h6>
             <fieldset class="form-group mb-0">
-              <input type="text" class="form-control form-small ellipsis-text" placeholder="Select Component Items"
+              <span><input type="text" class="form-control form-small" placeholder="Select Component Items"
                 (click)="openModal()" formControlName="orderReference" [value]="displayValue" [title]="displayValue"
                 readonly>
+              </span>
             </fieldset>
           </div>
 
@@ -353,7 +354,8 @@
         <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
           data-bs-original-title="Variance Grid" aria-label=""><i class="fas fa-th text-primary disabled"></i></a> <a
           class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-          data-bs-original-title="Variance Chart" aria-label=""><i class="fas fa-chart-pie text-primary disabled"></i></a>
+          data-bs-original-title="Variance Chart" aria-label=""><i
+            class="fas fa-chart-pie text-primary disabled"></i></a>
       </div>
     </div>
   </div>
@@ -436,22 +438,23 @@
     </div>
     <hr class="m-0">
     <div class="card-body collapse" id="delivery" formGroupName="delivery">
-      <div class="row"> 
+      <div class="row">
         <div class="col-lg mb-3">
           <!-- <h6 class="text-900 mb-2" *ngIf="defaultOrderType[0] === 'Spare' || defaultOrderType[0] === 'Store'">
             Expected Delivery Port</h6>-->
-          <h6 class="text-900 mb-2">Expected Delivery Port</h6> 
+          <h6 class="text-900 mb-2">Expected Delivery Port</h6>
 
           <!-- <fieldset > -->
-          
-              <input type="text" class="border-1 border-400 form-control w-97 p-1 serarch-container" style="border: 1px solid;" [placeholder]="myPlaceholder" aria-label="Port" matInput [formControl]="myControl"
-                [matAutocomplete]="auto">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                <mat-option *ngFor="let port of filteredPorts | async" [value]="port">
-                  {{port.locationName}} {{ port.countryMaster ? ', ' + port.countryMaster.countryName : '' }}
-                </mat-option>
-              </mat-autocomplete>
-         
+
+          <input type="text" class="border-1 border-400 form-control serarch-container" style="border: 1px solid;line-height: 1.7;
+              -webkit-border-horizontal-spacing: inherit;" [placeholder]="myPlaceholder" aria-label="Port" matInput
+            [formControl]="myControl" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-option *ngFor="let port of filteredPorts | async" [value]="port">
+              {{port.locationName}} {{ port.countryMaster ? ', ' + port.countryMaster.countryName : '' }}
+            </mat-option>
+          </mat-autocomplete>
+
 
 
           <!-- </fieldset>  -->
@@ -662,7 +665,7 @@
         <!--Strat here Items Pop Up View-->
         <div class="modal fade" id="ship-items" tabindex="-1" aria-hidden="true" role="dialog"
           aria-labelledby="authentication-modal-label">
-          <div class="modal-dialog modal-xl mt-6" role="document">
+          <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
             <div class="modal-content border-0">
               <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
                 <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
@@ -672,7 +675,7 @@
                 <h5 class="modal-title" id="">Add Items</h5>
 
               </div>
-              <div class="modal-body mt-0" style="height: 70vh; overflow-y: auto;">
+              <div class="modal-body mt-0">
                 <div class="form-inline mb-3">
                   <input type="text" class="form-control form-small m-r-5 mb-d3 m-r-d0" placeholder="Search"
                     (keyup)="applyFilter($any($event.target).value)" #searchInput>
@@ -683,70 +686,71 @@
                 </div>
                 <div class="row">
                   <div class="col-md-8">
-                    <div class="table-responsive scrollbar-visible">
-                      <table class="table table-hover table-striped table-sm small">
+                    <div class="table-responsive">
+                      <table class="table table-hover table-striped table-sm small mb-0">
                         <thead>
                           <tr>
                             <th colspan="6" class="bg-primary text-light text-center">Choose Ship Spare Parts
                             </th>
                           </tr>
-                          <mat-table #leftTable [dataSource]="leftTableDataSource"
-                            class="table table-hover table-striped table-sm small table-bordered">
-                            <ng-container matColumnDef="checkbox">
-                              <mat-header-cell *matHeaderCellDef>
-                                <mat-checkbox (change)="$event ? masterLeftTableToggle() : null"
-                                  [checked]="leftTableSelection.hasValue() && isAllLeftTableSelected()"
-                                  [indeterminate]="leftTableSelection.hasValue() && !isAllLeftTableSelected()">
-                                </mat-checkbox>
-
-                              </mat-header-cell>
-                              <mat-cell *matCellDef="let row">
-                                <mat-checkbox (click)="$event.stopPropagation()"
-                                  (change)="$event ? leftTableSelection.toggle(row) : null"
-                                  [checked]="leftTableSelection.isSelected(row)"
-                                  [aria-label]="checkboxLeftTableLabel(row)"></mat-checkbox>
-                              </mat-cell>
-                            </ng-container>
-                            <ng-container matColumnDef="inventoryName">
-                              <mat-header-cell *matHeaderCellDef>Part Name</mat-header-cell>
-                              <mat-cell class="ellipsis-text" title="{{row.itemName}}" *matCellDef="let row">{{
-                                row.itemName }}</mat-cell>
-                            </ng-container>
-                            <ng-container matColumnDef="partNo">
-                              <mat-header-cell *matHeaderCellDef>Part No.</mat-header-cell>
-                              <mat-cell class="ellipsis-text" title="{{row.partNo}}" *matCellDef="let row">{{ row.partNo
-                                }}</mat-cell>
-                            </ng-container>
-                            <ng-container matColumnDef="dwg">
-                              <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
-                              <mat-cell class="ellipsis-text" title="{{row.dwg}}" *matCellDef="let row">{{ row.dwg
-                                }}</mat-cell>
-                            </ng-container>
-                            <ng-container matColumnDef="quantity">
-                              <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
-                              <mat-cell class="ellipsis-text" title="{{row.rob}}" *matCellDef="let row">{{ row.rob
-                                }}</mat-cell>
-                            </ng-container>
-                            <ng-container matColumnDef="availableQty">
-                              <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
-                              <mat-cell class="ellipsis-text" title="{{row.unit}}" *matCellDef="let row">{{ row.unit }}
-                                (PCS)</mat-cell>
-                            </ng-container>
-                            <ng-container matColumnDef="minRequired">
-                              <mat-header-cell *matHeaderCellDef>Min Required</mat-header-cell>
-                              <mat-cell *matCellDef="let row">{{ row.minRequired }}</mat-cell>
-                            </ng-container>
-                            <ng-container matColumnDef="reorderLevel">
-                              <mat-header-cell *matHeaderCellDef>Reorder Level</mat-header-cell>
-                              <mat-cell class="ellipsis-text" title="{{row.reorderQty}}" *matCellDef="let row">{{
-                                row.reorderQty }}</mat-cell>
-                            </ng-container>
-                            <mat-header-row class="bg-300"
-                              *matHeaderRowDef="leftTableColumn; sticky:true"></mat-header-row>
-                            <mat-row *matRowDef="let row; columns: leftTableColumn; let i = index"></mat-row>
-                          </mat-table>
                         </thead>
                       </table>
+                      <mat-table #leftTable [dataSource]="leftTableDataSource"
+                        class="table table-hover table-striped table-sm small table-bordered scrollbar-visible mb-0">
+                        <ng-container matColumnDef="checkbox">
+                          <mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox (change)="$event ? masterLeftTableToggle() : null"
+                              [checked]="leftTableSelection.hasValue() && isAllLeftTableSelected()"
+                              [indeterminate]="leftTableSelection.hasValue() && !isAllLeftTableSelected()">
+                            </mat-checkbox>
+
+                          </mat-header-cell>
+                          <mat-cell *matCellDef="let row">
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                              (change)="$event ? leftTableSelection.toggle(row) : null"
+                              [checked]="leftTableSelection.isSelected(row)"
+                              [aria-label]="checkboxLeftTableLabel(row)"></mat-checkbox>
+                          </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="inventoryName">
+                          <mat-header-cell *matHeaderCellDef>Part Name</mat-header-cell>
+                          <mat-cell title="{{row.itemName}}" *matCellDef="let row">
+                            <span>{{row.itemName }}</span></mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="partNo">
+                          <mat-header-cell *matHeaderCellDef>Part No.</mat-header-cell>
+                          <mat-cell title="{{row.partNo}}" *matCellDef="let row">
+                            <span>{{ row.partNo}}</span></mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="dwg">
+                          <mat-header-cell *matHeaderCellDef>DWG</mat-header-cell>
+                          <mat-cell title="{{row.dwg}}" *matCellDef="let row">
+                            <span>{{ row.dwg}}</span></mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="quantity">
+                          <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
+                          <mat-cell title="{{row.rob}}" *matCellDef="let row">
+                            <span>{{ row.rob}}</span></mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="availableQty">
+                          <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
+                          <mat-cell title="{{row.unit}}" *matCellDef="let row">
+                            <span>{{ row.unit }}(PCS)</span>
+                          </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="minRequired">
+                          <mat-header-cell *matHeaderCellDef>Min Required</mat-header-cell>
+                          <mat-cell *matCellDef="let row"><span>{{ row.minRequired }}</span></mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="reorderLevel">
+                          <mat-header-cell *matHeaderCellDef>Reorder Level</mat-header-cell>
+                          <mat-cell title="{{row.reorderQty}}" *matCellDef="let row">
+                            <span>{{row.reorderQty }}</span></mat-cell>
+                        </ng-container>
+                        <mat-header-row class="bg-300" *matHeaderRowDef="leftTableColumn; sticky:true"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: leftTableColumn; let i = index"></mat-row>
+                      </mat-table>
+
                     </div>
                   </div>
 
@@ -767,60 +771,60 @@
 
                   <div class="col-md-3">
                     <div class="table-responsive scrollbar-visible">
-                      <table class="table table-hover table-striped table-sm small">
+                      <table class="table table-hover table-striped table-sm small mb-0">
                         <thead>
                           <tr>
                             <th colspan="6" class="bg-primary text-light text-center">Selected Spare Parts</th>
                           </tr>
-
-                          <mat-table #rightTable [dataSource]="rightTableDataSource"
-                            class="table table-hover table-striped table-sm small table-bordered">
-                            <ng-container matColumnDef="checkbox">
-                              <mat-header-cell *matHeaderCellDef>
-                                <mat-checkbox (change)="$event ? masterRightTableToggle() : null"
-                                  [checked]="rightTableSelection.hasValue() && isAllRightTableSelected()"
-                                  [indeterminate]="rightTableSelection.hasValue() && !isAllRightTableSelected()">
-                                </mat-checkbox>
-
-                              </mat-header-cell>
-                              <mat-cell *matCellDef="let row">
-                                <mat-checkbox (click)="$event.stopPropagation()"
-                                  (change)="$event ? rightTableSelection.toggle(row) : null"
-                                  [checked]="rightTableSelection.isSelected(row)"
-                                  [aria-label]="checkboxRightTableLabel(row)"></mat-checkbox>
-                              </mat-cell>
-                            </ng-container>
-                            <ng-container style="min-width: 50px; width: 50px; max-width: 50px;"
-                              matColumnDef="userInput">
-                              <mat-header-cell style="min-width: 50px; width: 50px; max-width: 50px;"
-                                *matHeaderCellDef>Qty</mat-header-cell>
-                              <mat-cell #reqQty style="min-width: 50px; width: 50px; max-width: 50px;"
-                                *matCellDef="let row; let i = index">
-                                <div class="border-1 border-400 form-control p-1" *ngIf="!row.editMode" (click)="toggleEditModeItem(row)" style="cursor: pointer">{{
-                                  row.reqQty }}</div>
-                                <input class="border-1 border-400 form-control p-1 " #reqQtyElements *ngIf="row.editMode" matInput
-                                  [(ngModel)]="row.reqQty" (blur)="saveChanges(row)"
-                                  (keydown)="handleKeyDown($event, row)"
-                                  [id]="'reqQty_' + i + '_' + row.shipComponentSpareId" />
-                              </mat-cell>
-                            </ng-container>
-                            <ng-container matColumnDef="partNo">
-                              <mat-header-cell *matHeaderCellDef>PartNo.</mat-header-cell>
-                              <mat-cell class="ellipsis-text" title="{{row.partNo}}" *matCellDef="let row">{{ row.partNo
-                                }}</mat-cell>
-                            </ng-container>
-                            <ng-container matColumnDef="inventoryName">
-                              <mat-header-cell *matHeaderCellDef>Part
-                                Name</mat-header-cell>
-                              <mat-cell class="rightTableCode" class="ellipsis-text" title="{{row.itemName}}"
-                                *matCellDef="let row">{{row.itemName }}</mat-cell>
-                            </ng-container>
-                            <mat-header-row class="bg-300"
-                              *matHeaderRowDef="rightTableColumn; sticky:true"></mat-header-row>
-                            <mat-row *matRowDef="let row; columns: rightTableColumn; let i = index"></mat-row>
-                          </mat-table>
                         </thead>
                       </table>
+                      <mat-table #rightTable [dataSource]="rightTableDataSource"
+                        class="table table-hover table-striped table-sm small table-bordered scrollbar-visible mb-0">
+                        <ng-container matColumnDef="checkbox">
+                          <mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox (change)="$event ? masterRightTableToggle() : null"
+                              [checked]="rightTableSelection.hasValue() && isAllRightTableSelected()"
+                              [indeterminate]="rightTableSelection.hasValue() && !isAllRightTableSelected()">
+                            </mat-checkbox>
+
+                          </mat-header-cell>
+                          <mat-cell *matCellDef="let row">
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                              (change)="$event ? rightTableSelection.toggle(row) : null"
+                              [checked]="rightTableSelection.isSelected(row)"
+                              [aria-label]="checkboxRightTableLabel(row)"></mat-checkbox>
+                          </mat-cell>
+                        </ng-container>
+                        <ng-container style="min-width: 50px; width: 50px; max-width: 50px;" matColumnDef="userInput">
+                          <mat-header-cell style="min-width: 50px; width: 50px; max-width: 50px;"
+                            *matHeaderCellDef>Qty</mat-header-cell>
+                          <mat-cell #reqQty style="min-width: 50px; width: 50px; max-width: 50px;"
+                            *matCellDef="let row; let i = index">
+                            <div class="border-1 border-400 form-control p-1" *ngIf="!row.editMode"
+                              (click)="toggleEditModeItem(row)" style="cursor: pointer">{{
+                              row.reqQty }}</div>
+                            <input class="border-1 border-400 form-control p-1 " #reqQtyElements *ngIf="row.editMode"
+                              matInput [(ngModel)]="row.reqQty" (blur)="saveChanges(row)"
+                              (keydown)="handleKeyDown($event, row)"
+                              [id]="'reqQty_' + i + '_' + row.shipComponentSpareId" />
+                          </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="partNo">
+                          <mat-header-cell *matHeaderCellDef>PartNo.</mat-header-cell>
+                          <mat-cell title="{{row.partNo}}" *matCellDef="let row">
+                            <span>{{ row.partNo}}</span></mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="inventoryName">
+                          <mat-header-cell *matHeaderCellDef>Part
+                            Name</mat-header-cell>
+                          <mat-cell class="rightTableCode" title="{{row.itemName}}"
+                            *matCellDef="let row"><span>{{row.itemName }}</span></mat-cell>
+                        </ng-container>
+                        <mat-header-row class="bg-300"
+                          *matHeaderRowDef="rightTableColumn; sticky:true"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: rightTableColumn; let i = index"></mat-row>
+                      </mat-table>
+
                     </div>
                   </div>
                 </div>
@@ -880,56 +884,73 @@
             </ng-container>
             <ng-container matColumnDef="Item Name">
               <mat-header-cell *matHeaderCellDef>Item Name</mat-header-cell>
-              <mat-cell class="ellipsis-text" title="{{row.itemName}}" *matCellDef="let row">{{ row.itemName
-                }}</mat-cell>
+              <mat-cell title="{{row.itemName}}" *matCellDef="let row">
+                <span>{{ row.itemName}}</span></mat-cell>
             </ng-container>
             <ng-container matColumnDef="Component Name">
               <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
-              <mat-cell class="ellipsis-text" title="{{row.componentName}}" *matCellDef="let row">{{ row.componentName
-                }}</mat-cell>
+              <mat-cell title="{{row.componentName}}" *matCellDef="let row">
+                <span>{{ row.componentName}}</span>  
+              </mat-cell>
             </ng-container>
             <ng-container class="rightTableCode" matColumnDef="Item Code">
               <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
-              <mat-cell class="ellipsis-text" title="{{row.itemCode}}" *matCellDef="let row">{{ row.itemCode
-                }}</mat-cell>
+              <mat-cell title="{{row.itemCode}}" *matCellDef="let row">
+                <span>{{ row.itemCode}}</span> 
+              </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Part No">
               <mat-header-cell *matHeaderCellDef>Part No</mat-header-cell>
-              <mat-cell class="ellipsis-text" title="{{row.partNo}}" *matCellDef="let row">{{ row.partNo }}</mat-cell>
+              <mat-cell  title="{{row.partNo}}" *matCellDef="let row">
+                <span>{{ row.partNo }}</span>  
+              </mat-cell>
             </ng-container>
             <ng-container matColumnDef="DWG" hidden>
               <mat-header-cell *matHeaderCellDef>DWG Ref.</mat-header-cell>
-              <mat-cell class="ellipsis-text" title="{{row.dwg}}" *matCellDef="let row">{{ row.dwg }}</mat-cell>
+              <mat-cell  title="{{row.dwg}}" *matCellDef="let row">
+                <span>{{ row.dwg }}</span> 
+              </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Make" hidden>
               <mat-header-cell *matHeaderCellDef>Make</mat-header-cell>
-              <mat-cell class="ellipsis-text" *matCellDef="let row" title="{{row.maker}}">{{ row.maker }}</mat-cell>
+              <mat-cell  *matCellDef="let row" title="{{row.maker}}">
+                <span>{{ row.maker }}</span>  
+              </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Model" hidden>
               <mat-header-cell *matHeaderCellDef>Model</mat-header-cell>
-              <mat-cell class="ellipsis-text" title="{{row.model}}" *matCellDef="let row">{{ row.model }}</mat-cell>
+              <mat-cell title="{{row.model}}" *matCellDef="let row">
+                <span>{{ row.model }}</span> 
+              </mat-cell>
             </ng-container>
             <ng-container matColumnDef="last Delivery Date" hidden>
               <mat-header-cell *matHeaderCellDef title="Last delivery date">LDD</mat-header-cell>
-              <mat-cell *matCellDef="let row">{{ row.lastDlDt }}</mat-cell>
+              <mat-cell *matCellDef="let row">
+                <span>{{ row.lastDlDt }}</span> 
+              </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Last Delivered Qty" hidden>
               <mat-header-cell *matHeaderCellDef title="Last delivered qty.">LDQ</mat-header-cell>
-              <mat-cell *matCellDef="let row">{{ row.lastDlQty }}</mat-cell>
+              <mat-cell *matCellDef="let row">
+               <span>{{ row.lastDlQty }}</span> 
+              </mat-cell>
             </ng-container>
             <ng-container matColumnDef="ROB">
-              <mat-header-cell  *matHeaderCellDef>ROB</mat-header-cell>
+              <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
               <mat-cell title="{{row.rob}}" *matCellDef="let row" (click)="openEditModal(row)">
-               <div class="border-1 border-400 form-control w-97 p-1" style="cursor: pointer;">{{row.rob }}</div></mat-cell>
+                <div class="border-1 border-400 form-control" style="cursor: pointer;">
+                  {{row.rob }}
+                </div>
+              </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Enter Quantity">
               <mat-header-cell *matHeaderCellDef>Req Qty</mat-header-cell>
               <mat-cell *matCellDef="let row; let i = index" #reqQty>
-                <div class="border-1 border-400 form-control w-97 p-1" *ngIf="!row.editMode" (click)="toggleEditMode(row)">{{ row.reqQty
-                  }}</div>
-                <input class="border-1 border-400 form-control w-97 p-1" #reqQtyElements *ngIf="row.editMode" type="text" [(ngModel)]="row.reqQty"
-                  (blur)="saveChanges(row)" (keydown)="handleKeyDown($event, row)"
+                <div class="border-1 border-400 form-control" *ngIf="!row.editMode" (click)="toggleEditMode(row)">
+                  {{row.reqQty}}</div>
+                <input class="border-1 border-400 form-control" #reqQtyElements *ngIf="row.editMode" type="text"
+                  [(ngModel)]="row.reqQty" (blur)="saveChanges(row)" (keydown)="handleKeyDown($event, row)"
                   [id]="'reqQty_' + i + '_' + row.ids" />
               </mat-cell>
             </ng-container>
@@ -937,7 +958,8 @@
             <ng-container matColumnDef="Unit">
               <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
               <mat-cell *matCellDef="let row">
-                <select class="form-control form-small form-select border-1 border-400 w-97 p-1" (change)="updateunit($event ,row.itemsId)" [(ngModel)]="row.unit" required>
+                <select class="form-control form-small form-select border-1 border-400"
+                  (change)="updateunit($event ,row.itemsId)" [(ngModel)]="row.unit" required>
                   <option value="0" disabled>Select unit</option>
                   <option *ngFor="let item of unitmasterlist" value="{{item.shortCode}}">{{item.shortCode}}</option>
 
@@ -947,30 +969,30 @@
 
             <ng-container matColumnDef="Item Specs" hidden>
               <mat-header-cell *matHeaderCellDef>Other Specs</mat-header-cell>
-              <mat-cell class="ellipsis-text" *matCellDef="let row" title="{{ row.makerReference ? row.makerReference + '-' : '' }}
+              <mat-cell  *matCellDef="let row" title="{{ row.makerReference ? row.makerReference + '-' : '' }}
               {{ row.material ? row.material + '-' : '' }}
               {{ row.description ? row.description + '-' : '' }}
-              {{ row.remarks ? row.remarks : '' }}"> {{ row.makerReference ? row.makerReference + '-' : '' }}
+              {{ row.remarks ? row.remarks : '' }}"> 
+             <span>{{ row.makerReference ? row.makerReference + '-' : '' }}
                 {{ row.material ? row.material + '-' : '' }}
                 {{ row.description ? row.description + '-' : '' }}
-                {{ row.remarks ? row.remarks : '' }} </mat-cell>
+                {{ row.remarks ? row.remarks : '' }}</span> 
+               </mat-cell>
             </ng-container>
 
-            <ng-container  matColumnDef="Remarks">
-              <mat-header-cell 
-                *matHeaderCellDef>Remarks</mat-header-cell>
-              <mat-cell #reqQty 
-                *matCellDef="let row; let i = index"><div class="border-1 border-400 form-control w-97 p-1">
-                  <input  matInput placeholder="Enter data" (change)="autoSave('items')"
-                  [(ngModel)]="row.itemRemarks">
-                </div>                
+            <ng-container matColumnDef="Remarks">
+              <mat-header-cell *matHeaderCellDef>Remarks</mat-header-cell>
+              <mat-cell #reqQty *matCellDef="let row; let i = index">
+                <div class="border-1 border-400 form-control">
+                  <input matInput placeholder="Enter data" (change)="autoSave('items')" [(ngModel)]="row.itemRemarks">
+                </div>
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Attachments">
               <mat-header-cell *matHeaderCellDef>Attachments</mat-header-cell>
               <mat-cell class="text-center" *matCellDef="let row"><a class="px-1 m-r-5 text-center" type="button"
                   data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                   (click)="openAttachmentItem(row.itemsId,'Purchase Requisition Item','tblPmReqItems')"
+                  (click)="openAttachmentItem(row.itemsId,'Purchase Requisition Item','tblPmReqItems')"
                   data-bs-original-title="Add Attachment" aria-label=""><i
                     class="fas fa-paperclip text-primary"></i></a></mat-cell>
             </ng-container>
@@ -1006,8 +1028,8 @@
                 </div>
               </div>
             </div>
-          </div> -->       
-         
+          </div> -->
+
         </div>
       </div>
       <div class="tab-pane code-tab-pane" role="tabpanel" id="detail-view">
@@ -1351,7 +1373,8 @@
                         <td>
                           <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                             data-bs-target="#attachents" data-bs-original-title="Attachment" aria-label=""
-                            (click)="openServiceItem(job.jobId,'ServiceType Requisition Item','tblPMServiceType')"><i class="fas fa-paperclip text-primary"></i></a>
+                            (click)="openServiceItem(job.jobId,'ServiceType Requisition Item','tblPMServiceType')"><i
+                              class="fas fa-paperclip text-primary"></i></a>
                         </td>
                       </tr>
                     </tbody>
@@ -1435,7 +1458,7 @@
 <!-- Attachment Item -->
 <div class="modal fade" id="openAttachmentItem" tabindex="-1" role="dialog" aria-labelledby="authentication-modal-label"
   aria-hidden="true">
-  <div class="modal-dialog mt-6  modal-xl" role="document">
+  <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
     <div class="modal-content border-0">
       <div class="modal-header">
         <div class="col-xl-6 col-lg-12">
@@ -1452,7 +1475,7 @@
         </div>
       </div>
 
-      <div class="modal-body" style="font-weight: 400;">
+      <div class="modal-body scrollbar" style="font-weight: 400;">
         <div class="form">
           <div class="row">
             <div class="col-xl-6 col-lg-12">
@@ -1470,13 +1493,12 @@
                 <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
                 <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse"
-                  data-bs-target="#collapse10" aria-expanded="true" aria-controls="collapse10" *ngIf="deletetooltip == 'Archive'"><i
-                    class="fas fa-plus text-primary"></i></a>
+                  data-bs-target="#collapse10" aria-expanded="true" aria-controls="collapse10"
+                  *ngIf="deletetooltip == 'Archive'"><i class="fas fa-plus text-primary"></i></a>
 
                 <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
                   matTooltip="{{deletetooltip}}" data-bs-original-title="Delete" aria-label=""
-                  (click)="DeleteItemAttachment()"><i class="fas fa-trash text-danger"></i></a>
-
+                  (click)="DeleteItemAttachment()"><i class="fas fa-trash text-danger attach"></i></a>
               </div>
             </div>
           </div>
@@ -1513,8 +1535,7 @@
                 <div class="col-md-2">
                   <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
                     data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""
-                    [disabled]="attachmentfrm.invalid  || !attachmentfrm.dirty"><i
-                      class="fas fa-save"></i></button>
+                    [disabled]="attachmentfrm.invalid  || !attachmentfrm.dirty"><i class="fas fa-save"></i></button>
                   <button type="button" (click)="clearItemAttachmentfrm()" (click)="CloseAttachmentForm()"
                     class="btn btn-danger form-small" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                     data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban"></i></button>
@@ -1523,7 +1544,7 @@
             </form>
             <hr class="mb-3">
             <div id="" class="table-responsive scrollbar">
-              <table class="table table-hover table-striped scrollbar-visible table-sm small table-bordered">
+              <table class="table table-hover table-striped table-sm small table-bordered">
                 <thead class="bg-primary text-white">
                   <tr>
                     <th>File</th>
@@ -1550,7 +1571,8 @@
             <div class="col-xl-12 col-lg-12">
               <div id="" class="table-responsive scrollbar">
                 <mat-table #table [dataSource]="attachmentItemdataSource" matSort
-                  class="table table-hover table-striped scrollbar-visible table-sm small table-bordered">
+                  class="table table-hover table-striped table-sm small table-bordered"
+                  style="max-height: unset !important;">
                   <ng-container matColumnDef="checkbox">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>
                       <mat-checkbox (change)="$event ? attachmentItemToggle() : null"
@@ -1567,24 +1589,30 @@
                   </ng-container>
                   <ng-container matColumnDef="attachmenttype">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Attachment Type</mat-header-cell>
-                    <mat-cell *matCellDef="let row">
+                    <mat-cell *matCellDef="let row" title="{{row.attachmentTypeName}}">
                       <a (click)="UpdateItemAttach(row.attachmentId)" class="accordion-btn show px-2 m-r-5"
                         type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="true"
                         aria-controls="collapse3">
-                        {{row.attachmentTypeName}}</a>
+                        <span>{{row.attachmentTypeName}}</span></a>
                     </mat-cell>
                   </ng-container>
                   <ng-container matColumnDef="filename">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>File Name</mat-header-cell>
-                    <mat-cell *matCellDef="let row"> {{row.filename}}</mat-cell>
+                    <mat-cell *matCellDef="let row" title="{{row.filename}}">
+                      <span>{{row.filename}}</span> </mat-cell>
                   </ng-container>
                   <ng-container matColumnDef="description">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
-                    <mat-cell *matCellDef="let row"> {{row.description}}</mat-cell>
+                    <mat-cell *matCellDef="let row" title="{{row.description}}">
+                      <span>
+                        {{row.description}}
+                      </span></mat-cell>
                   </ng-container>
                   <ng-container matColumnDef="filesize">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Size</mat-header-cell>
-                    <mat-cell *matCellDef="let row"> {{row.fileSize}} KB</mat-cell>
+                    <mat-cell *matCellDef="let row">
+                      <span>{{row.fileSize}} KB</span>
+                    </mat-cell>
                   </ng-container>
                   <ng-container matColumnDef="uploadeddatetime">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -1592,9 +1620,11 @@
                       <span *ngIf="docStatus.value=='1'"> Removed on </span>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                      <span *ngIf="docStatus.value=='0'"> {{row.recDate |date:'dd-MMM-yyyy'}}
+                      <span *ngIf="docStatus.value=='0'">
+                        {{row.recDate |date:'dd-MMM-yyyy'}}
                       </span>
-                      <span *ngIf="docStatus.value=='1'"> {{row.modifiedDate |date:'dd-MMM-yyyy'}}
+                      <span *ngIf="docStatus.value=='1'">
+                        {{row.modifiedDate |date:'dd-MMM-yyyy'}}
                       </span>
                     </mat-cell>
                   </ng-container>
@@ -1615,7 +1645,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let row">
                       <a href="javascript:void(0)" (click)="showItemAttachment(row.filePath)">
-                         <i class="fa fa-download" aria-hidden="true"></i></a>
+                        <i class="fa fa-download" aria-hidden="true"></i></a>
                     </mat-cell>
                   </ng-container>
                   <mat-header-row *matHeaderRowDef="attachmentColumns; sticky:true"></mat-header-row>
