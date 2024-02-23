@@ -234,6 +234,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   unitmasterlist: any;
   currentRoute: string;
   userSite: any;
+  userData: any;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -244,7 +245,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    debugger
+    
     this.targetLoc = environment.location;
     this.sideNavService.initSidenav();
     this.userId = this.authStatusService.userId();
@@ -383,7 +384,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.requisitionService.getTempNumber(0).subscribe(res => {
       if (res.data != null) {
-        debugger
+        
         this.temporaryNumber = res.data;
         this.RequisitionForm.get('header')?.patchValue({ documentHeader: this.temporaryNumber })
 
@@ -527,7 +528,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.temporaryNumber = documentHeaderElement.textContent;
       }
       // formPart?.get('orderReference')?.setValue(displayValue);
-      debugger
+      
       formPart?.patchValue({
         requisitionId: formPart?.value.requisitionId,
         documentHeader: formPart?.value.documentHeader || '0',
@@ -781,7 +782,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    debugger
+    
     if (this.reqId) {
       const formData = new FormData();
       this.serviceTypeForm.patchValue({ pmReqId: this.reqId })
@@ -791,7 +792,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
       if (this.serviceTypeForm.valid) {
         this.requisitionService.addServiceType(formData).subscribe(data => {
-          debugger
+          
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
             if (this.reqId) {
@@ -930,7 +931,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
-        debugger
+        
         const requisitionData = response.data;
         const formPart = this.RequisitionForm.get('header');
         this.approvestatus = requisitionData.approvedReq;
@@ -985,11 +986,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.loadOrderTypeByEditReq().subscribe(res => {
 
           this.orderTypes = res;
-          debugger
+          
           const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == requisitionData.projectNameCodeId).map(item => item.serviceTypeId)
           if (selectedProjectCode[0] != null) {
             const serviceTypeIds: string[] = selectedProjectCode[0].split(',');
-            debugger
+            
             // Filter order types based on service type IDs
             this.filteredOrderTypes = this.orderTypes.filter(orderType => {
               const orderTypeServiceTypeIds: string[] = orderType.serviceTypeId.split(',');
@@ -1251,7 +1252,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       )
   }
   selectProjectCode(event: any) {
-    debugger
+    
     const selectedId = event.target.value;
     const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == selectedId).map(item => item.serviceTypeId)
     if (selectedProjectCode[0] != null) {
@@ -1272,7 +1273,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.purchaseService.getProjectNCForReq(0)
       .subscribe(response => {
-        debugger
+        
         if (this.selectedVesselId != "0") {
           const Vesselset = this.RequisitionForm.get('header')
           if (Vesselset) {
@@ -2279,7 +2280,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   downloadNotepad() {
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
     this.ReqData = this.requisitionFullData;
-    debugger
+    
     if (this.ReqData == undefined) {
       this.swal.error('Please save your data before downloading the RTO file.')
     }
@@ -2325,7 +2326,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     if (this.serviceTypeDataSource.length !== 0 || this.serviceTypeDataSource.length !== null) {
 
-      debugger
+      
       const jobToAdd = this.serviceTypeDataSource.map(item => ({
         serviceName: item.serviceName,
         jobList: item.jobList
@@ -2427,7 +2428,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           (document.getElementById('collapse9') as HTMLElement).classList.remove("show");
           this.loadattachment(0);
           this.myFiles.length === 0;
-          alert(this.myFiles.length)
+
         }
         else if (res.message == "updated") {
           this.swal.success('Data has been updated successfully.');
@@ -3012,45 +3013,49 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   //#region ServiceType Attachment Items
-  openServiceItem(id, page) {
-    debugger
+  openServiceItem(id, pageName ,tableName) {
+    
     this.GetItemId = id;
     $("#openAttachmentItem").modal('show');
-    this.loadServiceAttachement(0, page, id);
+    this.loadItemAttachment(0, id, pageName, tableName);
+    // this.loadServiceAttachement(0, page, id);
   }
-  loadServiceAttachement(status: number, page: string, id: number) {
-    debugger
-    if (status == 1) {
-      this.deletetooltip = 'UnArchive';
-      if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
-        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
-        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
-      }
-    }
-    else {
-      this.deletetooltip = 'Archive';
-      if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement) != null) {
-        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
-        ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
-      }
-    }
-    this.pmsService.getmattachment(status, page, id)
-      .subscribe(response => {
-        debugger
-        this.flag = status;
-        this.attachmentItemdataSource.data = response.data;
-        this.attachmentItemdataSource.sort = this.sort;
-        this.attachmentItemdataSource.paginator = this.paginator;
-      });
-  }
+  // loadServiceAttachement(status: number, page: string, id: number) {
+    
+  //   if (status == 1) {
+  //     this.deletetooltip = 'UnArchive';
+  //     if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
+  //       ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
+  //       ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement).classList.remove("fa-trash", "text-danger");
+  //     }
+  //   }
+  //   else {
+  //     this.deletetooltip = 'Archive';
+  //     if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement) != null) {
+  //       ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
+  //       ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
+  //     }
+  //   }
+  //   this.pmsService.getmattachment(status, page, id)
+  //     .subscribe(response => {
+        
+  //       this.flag = status;
+  //       this.attachmentItemdataSource.data = response.data;
+  //       this.attachmentItemdataSource.sort = this.sort;
+  //       this.attachmentItemdataSource.paginator = this.paginator;
+  //     });
+  // }
   //#endregion
 
 
   //#region AttachmentItem  
   openAttachmentItem(id, pageName, tableName) {
     this.GetItemId = id;
-    $("#openAttachmentItem").modal('show');
-    this.loadItemAttachment(0, id, pageName, tableName);
+    if(this.GetItemId !== 0 || this.GetItemId !== undefined){
+      this.loadItemAttachment(0, id, pageName, tableName);
+      $("#openAttachmentItem").modal('show');
+    }
+ 
   }
 
   CloseAttachmentItem() {
@@ -3059,7 +3064,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   loadAttachment(status: number) {
-    debugger
+        alert()
     const pageName = this.atfm.pageName.value
     const id = this.atfm.tablePkeyId.value
     const tableName = this.atfm.tableName.value
@@ -3082,23 +3087,42 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         ((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
-    debugger
+    
     this.atfm.tablePkeyId.setValue(id);
     this.atfm.tableName.setValue(tableName);
     this.atfm.pageName.setValue(pageName);
     this.atfm.vesselId.setValue(this.selectedVesselId);
     this.pmsService.getmattachment(status, pageName, id)
       .subscribe(response => {
-        debugger
+
         this.flag = status;
         this.attachmentItemdataSource.data = response.data;
         this.attachmentItemdataSource.sort = this.sort;
         this.attachmentItemdataSource.paginator = this.paginator;
+
+        this.loadUser();
       });
   }
 
+  loadUser(){
+    this.userService.getLineManagers(0)
+    .subscribe(response => {
+     // console.log(response.data)
+      this.userData = response.data;
+    });
+  }
+  getUserName(userId){
+    if(userId!=null && userId!=undefined)
+    {
+      debugger
+  var UserName =  this.userData.filter(x=>x.userId==userId);
+  return UserName[0]?.firstName+' '+UserName[0]?.lastName;
+    }
+    else
+    return '';
+  }
+
   DeleteItemAttachment() {
-    debugger
     var message = ""
     var title = "";
 
@@ -3123,8 +3147,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }).then((result) => {
         if (result.value) {
           this.requisitionService.archiveAttachments(numSelected).subscribe((res: any) => {
-            debugger
+            
             if (res.status === true) {
+              
               this.selectionItemAttachment.clear();
               this.swal.success(message);
               this.loadItemAttachment(this.flag, res.tablePkId, res.pageName, res.tableName);
@@ -3139,7 +3164,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
 
   submitItemAttachmentfrm(form: any) {
-    debugger
+    
     this.GetItemId
 
     if (this.GetItemId == 0) {
@@ -3168,7 +3193,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.pmsService.addattachment(fmdata)
       .subscribe(res => {
-        debugger
+        
         if (res.message == "data added") {
           this.swal.success('Added successfully.');
           this.CloseAttachmentForm();
@@ -3177,7 +3202,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.myItemFiles.length === 0;
         }
         else if (res.message == "updated") {
-          debugger
+          
           this.swal.success('Data has been updated successfully.');
           this.clearattachmentfrm();
           (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
@@ -3198,7 +3223,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   FileItemSelect(event) {
-    debugger
+    
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
       this.fileItemToUpload = file;
@@ -3226,7 +3251,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   CloseAttachmentForm() {
-    debugger
+    
     this.myItemFiles = [];
     this.listItemOfFiles = [];
     // this.attachmentfrm.reset();
@@ -3267,7 +3292,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     (document.getElementById('collapse10') as HTMLElement).classList.add("show");
     this.pmsService.GetattachmentById(id)
       .subscribe((response) => {
-        debugger
+        
         if (response.status) {
           this.attachmentfrm.patchValue(response.data);
           this.fileItemUrl = response.data.filePath;
@@ -3305,7 +3330,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //#region Modify Columns of Items Pop Up View
   openModifyPopUp() {
     let dialogRef: any
-    debugger
+    
     dialogRef = this.dialog.open(ModifyColumnsPopUpComponent, {
       width: '600px',
       data: {
