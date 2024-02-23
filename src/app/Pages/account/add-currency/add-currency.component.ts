@@ -33,6 +33,7 @@ export class AddCurrencyComponent implements OnInit {
   currencyHistory: any
   UsdValue: any
   usdInput: number;
+  currencyCode:any
 
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
     private swal: SwalToastService, private actService: AccountMasterService, private roote: ActivatedRoute,
@@ -63,7 +64,7 @@ export class AddCurrencyComponent implements OnInit {
   get cmf() { return this.currencyForm.controls };
 
   getUsd(value: number) {
-    alert(value)
+    
   }
 
   autoSave() {

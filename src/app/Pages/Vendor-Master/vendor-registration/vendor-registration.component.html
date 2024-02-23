@@ -156,7 +156,7 @@
                             [(ngModel)]="categoryDropdownList" (onSelect)="onItemSelectCat($event)"
                             (onSelectAll)="onSelectAllCat($event)" formControlName="serviceCategory"
                             (onDeSelect)="onCategoryDeSelect($event)" (onDeSelectAll)="onCategoryDeSelectAll($event)"
-                            (change)="autoSave('vendorBusinessInfo')">
+                            (click)="autoSave('vendorBusinessInfo')">
                         </ng-multiselect-dropdown>
                     </fieldset>
                     <!-- <input type="text" formControlName="serviceCategory" placeholder="serviceCategory" class="form-control form-small"> -->
@@ -169,7 +169,7 @@
                             [settings]="dropdownServiceSetting" [data]="serviceTypes" [(ngModel)]="dropdownList"
                             (onSelect)="onItemSelect($event)" (onSelectAll)="onSelectAll($event)"
                             formControlName="serviceType" (onDeSelect)="onOrderTypeDeSelect($event)"
-                            (onDeSelectAll)="onOrderTypeDeSelectAll($event)" (change)="autoSave('vendorBusinessInfo')">
+                            (onDeSelectAll)="onOrderTypeDeSelectAll($event)" (click)="autoSave('vendorBusinessInfo')">
                         </ng-multiselect-dropdown>
                     </fieldset>
                 </div>

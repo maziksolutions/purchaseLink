@@ -42,7 +42,7 @@
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">Currency Code</h6>
                     <fieldset class="form-group mb-0">
-                        <input type="text" formControlName="currencySign" class="form-control form-small"
+                        <input type="text" formControlName="currencySign" class="form-control form-small" [(ngModel)]="currencyCode" 
                             id="currencySign" placeholder="Enter Currency Sign" maxlength="10" required
                             (change)="autoSave()" [readOnly]="currencyId > 0">
                     </fieldset>

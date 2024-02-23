@@ -883,6 +883,11 @@
               <mat-cell class="ellipsis-text" title="{{row.itemName}}" *matCellDef="let row">{{ row.itemName
                 }}</mat-cell>
             </ng-container>
+            <ng-container matColumnDef="Component Name">
+              <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
+              <mat-cell class="ellipsis-text" title="{{row.componentName}}" *matCellDef="let row">{{ row.componentName
+                }}</mat-cell>
+            </ng-container>
             <ng-container class="rightTableCode" matColumnDef="Item Code">
               <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
               <mat-cell class="ellipsis-text" title="{{row.itemCode}}" *matCellDef="let row">{{ row.itemCode
