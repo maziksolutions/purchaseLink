@@ -32,8 +32,9 @@ export class AddCurrencyComponent implements OnInit {
 
   currencyHistory: any
   UsdValue: any
-  usdInput: number;
-  currencyCode:any
+  usdInput: any;
+  currencyCode: any
+  GbpValue: any
 
   constructor(private fb: FormBuilder, public dialog: MatDialog, private exportExcelService: ExportExcelService,
     private swal: SwalToastService, private actService: AccountMasterService, private roote: ActivatedRoute,
@@ -53,7 +54,7 @@ export class AddCurrencyComponent implements OnInit {
       currencyId: [0],
       currencySign: ['', [Validators.required]],
       currencyName: ['', [Validators.required]],
-      lastUpdate: ['', [Validators.required]],
+      lastUpdate: [''],
       usdExcRate: ['', [Validators.required]],
       usdValue: ['', [Validators.required]],
       gbpValue: ['', [Validators.required]],
@@ -63,13 +64,46 @@ export class AddCurrencyComponent implements OnInit {
   }
   get cmf() { return this.currencyForm.controls };
 
-  getUsd(value: number) {
-    
+  getUsd(value: any) {
+    debugger
+    const gbpExcRate = parseFloat(value);
+    const usdValue = 1 / gbpExcRate;
+    const formattedUsdValue = '$' + usdValue.toFixed(5);
+    this.usdInput = '$' + value
+    this.UsdValue = formattedUsdValue
+    // this.currencyForm.patchValue({ usdValue: usdValue.toFixed(3) })
+
+    this.actService.getCurrencyData(0).subscribe(res => {
+      debugger
+      const usd = res.data.find(item => item.currencySign === 'USD')
+      const gbp = res.data.find(item => item.currencySign === 'GBP');
+      if (!gbp) {
+        this.GbpValue = '£' + 1
+      }
+      else {
+        if (usd) {
+          if (this.currencyCode === 'USD') {
+            this.GbpValue = '£' + gbp.usdValue
+          } else if (this.currencyCode !== 'GBP') {
+            const usdValue = parseFloat(gbp.usdValue)
+            if (usdValue) {
+              this.GbpValue = '£' + (1 / (value * usdValue)).toFixed(5)
+            }
+          }
+        }
+      }
+    })
   }
 
   autoSave() {
     debugger
     if (this.currencyForm.valid && this.currencyForm.value != null) {
+      debugger
+      const currencyData = this.currencyForm.value
+      const gbpValue = parseFloat(currencyData.gbpValue.replace(/[^\d.-]/g, ''));
+      const usdExcRate = parseFloat(currencyData.usdExcRate.replace(/[^\d.-]/g, ''));
+      const usdValue = parseFloat(currencyData.usdValue.replace(/[^\d.-]/g, ''));
+      this.currencyForm.patchValue({ gbpValue: gbpValue, usdExcRate: usdExcRate, usdValue: usdValue, lastUpdate: '' })
       const fmdata = new FormData();
       fmdata.append('data', JSON.stringify(this.currencyForm.value));
 
@@ -107,7 +141,9 @@ export class AddCurrencyComponent implements OnInit {
         currency.lastUpdate = this.formatDate(currency.lastUpdate)
         currency.fromDate = this.formatDate(currency.fromDate)
         currency.toDate = this.formatDate(currency.toDate)
-        console.log(currency)
+        currency.usdExcRate = '$' + currency.usdExcRate
+        currency.usdValue = '$' + currency.usdValue
+        currency.gbpValue = '£' + currency.gbpValue
         this.currencyForm.patchValue(currency);
         this.actService.getCurrencyHistory(id).subscribe(res => {
           if (res.status === true) {

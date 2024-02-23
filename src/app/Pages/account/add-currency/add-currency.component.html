@@ -26,8 +26,9 @@
                 <h5 class="mb-0">Currency</h5>
             </div>
             <div class="col-auto ms-auto">
-                <!-- <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                    data-bs-original-title="Save" aria-label=""><i class="fas fa-save text-primary"></i></a> -->
+                <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
+                    (click)="autoSave()" data-bs-original-title="Save" aria-label=""><i
+                        class="fas fa-save text-primary"></i></a>
 
                 <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancel"
                     data-bs-original-title="Cancel" aria-label=""><i class="fas fa-ban text-danger"></i></a>
@@ -42,9 +43,9 @@
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">Currency Code</h6>
                     <fieldset class="form-group mb-0">
-                        <input type="text" formControlName="currencySign" class="form-control form-small" [(ngModel)]="currencyCode" 
-                            id="currencySign" placeholder="Enter Currency Sign" maxlength="10" required
-                            (change)="autoSave()" [readOnly]="currencyId > 0">
+                        <input type="text" formControlName="currencySign" class="form-control form-small"
+                            [(ngModel)]="currencyCode" id="currencySign" placeholder="Enter Currency Sign"
+                            maxlength="10" required [readOnly]="currencyId > 0">
                     </fieldset>
                 </div>
                 <div class="col-lg mb-3">
@@ -52,25 +53,25 @@
                     <fieldset class="form-group mb-0">
                         <input type="text" formControlName="currencyName" class="form-control form-small"
                             id="currencyName" placeholder="Enter Currency Name" maxlength="20" required
-                            [readOnly]="currencyId > 0" (change)="autoSave()">
+                            [readOnly]="currencyId > 0">
                     </fieldset>
                 </div>
-                <div class="col-lg mb-3">
+                <div class="col-lg mb-3" *ngIf="currencyId > 0">
                     <h6 class="text-900 mb-2">Last Update</h6>
                     <fieldset class="form-group mb-0">
                         <input type="date" formControlName="lastUpdate" class="form-control form-small" id="lastUpdate"
-                            placeholder="Enter last Update" required (change)="autoSave()">
+                            placeholder="Enter last Update" required [readOnly]="currencyId > 0">
                     </fieldset>
                 </div>
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">USD Exchange Rate</h6>
                     <fieldset class="form-group mb-0">
-                        <div class="input-group">
-                            <input type="text" formControlName="usdExcRate" class="form-control form-small"
-                                id="usdExcRate" [(ngModel)]="usdInput" placeholder="Enter USD Exchange Rate"
-                                maxlength="10" required (input)="getUsd(usdInput)">
-                            <span class="dollar-sign" *ngIf="usdInput > 0">$</span>
-                        </div>
+                        <!-- <div class="input-group"> -->
+                        <input type="text" formControlName="usdExcRate" class="form-control form-small" id="usdExcRate"
+                            placeholder="Enter USD Exchange Rate" [(ngModel)]="usdInput" maxlength="10" required
+                            (change)="getUsd(usdInput)">
+                        <!-- <span class="dollar-sign" *ngIf="usdInput > 0">$</span> -->
+                        <!-- </div> -->
                     </fieldset>
                 </div>
             </div>
@@ -88,21 +89,21 @@
                     <h6 class="text-900 mb-2">GBP value</h6>
                     <fieldset class="form-group mb-0">
                         <input type="text" formControlName="gbpValue" class="form-control form-small" id="gbpValue"
-                            placeholder="Enter GBP Value" maxlength="10" required>
+                            placeholder="Enter GBP Value" maxlength="10" required readonly [(ngModel)]="GbpValue">
                     </fieldset>
                 </div>
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">From Date</h6>
                     <fieldset class="form-group mb-0">
                         <input type="date" formControlName="fromDate" class="form-control form-small" id="fromDate"
-                            placeholder="Enter From Date" required (change)="autoSave()">
+                            placeholder="Enter From Date" required>
                     </fieldset>
                 </div>
                 <div class="col-lg mb-3">
                     <h6 class="text-900 mb-2">To Date</h6>
                     <fieldset class="form-group mb-0">
                         <input type="date" formControlName="toDate" class="form-control form-small" id="toDate"
-                            placeholder="Enter To Date" required (change)="autoSave()">
+                            placeholder="Enter To Date" required>
                     </fieldset>
                 </div>
             </div>
