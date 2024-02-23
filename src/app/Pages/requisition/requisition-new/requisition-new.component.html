@@ -1346,7 +1346,7 @@
                         <td>
                           <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
                             data-bs-target="#attachents" data-bs-original-title="Attachment" aria-label=""
-                            (click)="openServiceItem(job.jobId,'ServiceType Requisition Item')"><i class="fas fa-paperclip text-primary"></i></a>
+                            (click)="openServiceItem(job.jobId,'ServiceType Requisition Item','tblPMServiceType')"><i class="fas fa-paperclip text-primary"></i></a>
                         </td>
                       </tr>
                     </tbody>
@@ -1465,7 +1465,7 @@
                 <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
                 <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add" data-bs-toggle="collapse"
-                  data-bs-target="#collapse10" aria-expanded="true" aria-controls="collapse10"><i
+                  data-bs-target="#collapse10" aria-expanded="true" aria-controls="collapse10" *ngIf="deletetooltip == 'Archive'"><i
                     class="fas fa-plus text-primary"></i></a>
 
                 <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
@@ -1507,7 +1507,8 @@
               <div class="row">
                 <div class="col-md-2">
                   <button type="submit" class="btn btn-primary form-small m-r-5" data-bs-toggle="tooltip"
-                    data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""><i
+                    data-bs-placement="top" title="" data-bs-original-title="Save" aria-label=""
+                    [disabled]="attachmentfrm.invalid  || !attachmentfrm.dirty"><i
                       class="fas fa-save"></i></button>
                   <button type="button" (click)="clearItemAttachmentfrm()" (click)="CloseAttachmentForm()"
                     class="btn btn-danger form-small" data-bs-toggle="tooltip" data-bs-placement="top" title=""
@@ -1607,8 +1608,8 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                      <a href="javascript:void(0)" (click)="showItemAttachment(row.filePath)"> <i
-                          class="fas fa-paperclip"></i></a>
+                      <a href="javascript:void(0)" (click)="showItemAttachment(row.filePath)">
+                         <i class="fa fa-download" aria-hidden="true"></i></a>
                     </mat-cell>
                   </ng-container>
                   <mat-header-row *matHeaderRowDef="attachmentColumns; sticky:true"></mat-header-row>
