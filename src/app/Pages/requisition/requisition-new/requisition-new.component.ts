@@ -234,6 +234,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   unitmasterlist: any;
   currentRoute: string;
   userSite: any;
+  userData: any;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -3063,7 +3064,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   loadAttachment(status: number) {
-        
+        alert()
     const pageName = this.atfm.pageName.value
     const id = this.atfm.tablePkeyId.value
     const tableName = this.atfm.tableName.value
@@ -3098,7 +3099,27 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.attachmentItemdataSource.data = response.data;
         this.attachmentItemdataSource.sort = this.sort;
         this.attachmentItemdataSource.paginator = this.paginator;
+
+        this.loadUser();
       });
+  }
+
+  loadUser(){
+    this.userService.getLineManagers(0)
+    .subscribe(response => {
+     // console.log(response.data)
+      this.userData = response.data;
+    });
+  }
+  getUserName(userId){
+    if(userId!=null && userId!=undefined)
+    {
+      debugger
+  var UserName =  this.userData.filter(x=>x.userId==userId);
+  return UserName[0]?.firstName+' '+UserName[0]?.lastName;
+    }
+    else
+    return '';
   }
 
   DeleteItemAttachment() {

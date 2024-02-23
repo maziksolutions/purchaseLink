@@ -1605,8 +1605,9 @@
 
                     </mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                      <span *ngIf="docStatus.value=='0'"> {{row.createdBy}}</span>
-                      <span *ngIf="docStatus.value=='1'"> {{row.modifiedBy}}</span>
+                      <span *ngIf="docStatus.value=='0'">{{getUserName(row.createdBy)}}</span>
+                      <span *ngIf="docStatus.value=='1'"> {{getUserName(row.modifiedBy)}}</span>
+
                     </mat-cell>
                   </ng-container>
                   <ng-container matColumnDef="file">
