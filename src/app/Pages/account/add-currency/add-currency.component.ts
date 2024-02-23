@@ -66,10 +66,10 @@ export class AddCurrencyComponent implements OnInit {
 
   getUsd(value: any) {
     debugger
-    const gbpExcRate = parseFloat(value);
+    const gbpExcRate = parseFloat(value.replace(/[^\d.-]/g, ''));
     const usdValue = 1 / gbpExcRate;
     const formattedUsdValue = '$' + usdValue.toFixed(5);
-    this.usdInput = '$' + value
+    this.usdInput = '$' + gbpExcRate
     this.UsdValue = formattedUsdValue
     // this.currencyForm.patchValue({ usdValue: usdValue.toFixed(3) })
 
@@ -87,7 +87,7 @@ export class AddCurrencyComponent implements OnInit {
           } else if (this.currencyCode !== 'GBP') {
             const usdValue = parseFloat(gbp.usdValue)
             if (usdValue) {
-              this.GbpValue = '£' + (1 / (value * usdValue)).toFixed(5)
+              this.GbpValue = '£' + (1 / (gbpExcRate * usdValue)).toFixed(5)
             }
           }
         }

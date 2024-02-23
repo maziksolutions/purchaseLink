@@ -72,7 +72,7 @@
         <div class="table-responsive scrollbar">
             <mat-table #table [dataSource]="dataSource" matSort #mainSort="matSort"
                 class="table table-hover table-striped table-sm small table-bordered">
-                <ng-container matColumnDef="checkbox">
+                <ng-container matColumnDef="checkbox" style="width: 10px;">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>
                         <mat-checkbox (change)="$event ? masterToggle() : null"
                             [checked]="selection.hasValue() && isAllSelected()"
@@ -80,7 +80,7 @@
                         </mat-checkbox>
 
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let row">
+                    <mat-cell *matCellDef="let row" style="width: 10px;">
                         <mat-checkbox (click)="$event.stopPropagation()"
                             (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
                             [aria-label]="checkboxLabel(row)"></mat-checkbox>
