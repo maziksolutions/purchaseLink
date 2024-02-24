@@ -152,8 +152,7 @@
 
     <mat-header-row class="bg-300" *matHeaderRowDef="spareItemsTableColumn; sticky:true"></mat-header-row>
 
-    <mat-row *matRowDef="let row; columns: spareItemsTableColumn; let i = index"
-        [ngClass]="{'highlight': (selectedIndex==0?(i==0):(row[cartItemId]==selectedIndex))}"></mat-row>
+    <mat-row *matRowDef="let row; columns: spareItemsTableColumn; let i = index"></mat-row>
 
 </mat-table>
 

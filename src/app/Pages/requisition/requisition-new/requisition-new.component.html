@@ -281,8 +281,8 @@
             <h6 class="text-900 mb-1">Description</h6>
             <fieldset class="form-group mb-0">
               <span><input type="text" class="form-control form-small" placeholder="Select Component Items"
-                (click)="openModal()" formControlName="orderReference" [value]="displayValue" [title]="displayValue"
-                readonly>
+                  (click)="openModal()" formControlName="orderReference" [value]="displayValue" [title]="displayValue"
+                  readonly>
               </span>
             </fieldset>
           </div>
@@ -696,7 +696,8 @@
                         </thead>
                       </table>
                       <mat-table #leftTable [dataSource]="leftTableDataSource"
-                        class="table table-hover table-striped table-sm small table-bordered scrollbar-visible mb-0">
+                        class="table table-hover table-striped table-sm small table-bordered scrollbar-visible mb-0"
+                        style="max-height: calc(100vh - 350px) !important;">
                         <ng-container matColumnDef="checkbox">
                           <mat-header-cell *matHeaderCellDef>
                             <mat-checkbox (change)="$event ? masterLeftTableToggle() : null"
@@ -750,7 +751,15 @@
                         <mat-header-row class="bg-300" *matHeaderRowDef="leftTableColumn; sticky:true"></mat-header-row>
                         <mat-row *matRowDef="let row; columns: leftTableColumn; let i = index"></mat-row>
                       </mat-table>
-
+                      <hr class="mt-0">
+                      <div class="pagination float-end" *ngIf="leftTableDataSource.data.length >= 100">
+                        <button class="btn btn-primary btn-sm" color="primary" (click)="loadPreviousPage()"
+                          [disabled]="pageNumber === 1">Previous</button>
+                        <span class="d-block py-1 text-center" style="width: 80px">{{ pageNumber }} / {{
+                          leftTableDataSource.filteredData.length }}</span>
+                        <button class="btn btn-primary btn-sm" color="primary" (click)="loadNextPage()"
+                          [disabled]="pageNumber === leftTableDataSource.filteredData.length">Next</button>
+                      </div>
                     </div>
                   </div>
 
@@ -829,7 +838,7 @@
                   </div>
                 </div>
               </div>
-              <div class="modal-footer" style="margin-top: 0.6rem;">
+              <div class="modal-footer">
                 <button type="button" class="btn btn-primary me-1" aria-label="" [disabled]="!reqId"
                   (click)="storeTableData()">Ok</button>
                 <!-- <button type="button" data-bs-dismiss="modal" class="btn btn-danger me-1" aria-label="">Cancel</button> -->
@@ -890,49 +899,49 @@
             <ng-container matColumnDef="Component Name">
               <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
               <mat-cell title="{{row.componentName}}" *matCellDef="let row">
-                <span>{{ row.componentName}}</span>  
+                <span>{{ row.componentName}}</span>
               </mat-cell>
             </ng-container>
             <ng-container class="rightTableCode" matColumnDef="Item Code">
               <mat-header-cell *matHeaderCellDef>Item Code</mat-header-cell>
               <mat-cell title="{{row.itemCode}}" *matCellDef="let row">
-                <span>{{ row.itemCode}}</span> 
+                <span>{{ row.itemCode}}</span>
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Part No">
               <mat-header-cell *matHeaderCellDef>Part No</mat-header-cell>
-              <mat-cell  title="{{row.partNo}}" *matCellDef="let row">
-                <span>{{ row.partNo }}</span>  
+              <mat-cell title="{{row.partNo}}" *matCellDef="let row">
+                <span>{{ row.partNo }}</span>
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="DWG" hidden>
               <mat-header-cell *matHeaderCellDef>DWG Ref.</mat-header-cell>
-              <mat-cell  title="{{row.dwg}}" *matCellDef="let row">
-                <span>{{ row.dwg }}</span> 
+              <mat-cell title="{{row.dwg}}" *matCellDef="let row">
+                <span>{{ row.dwg }}</span>
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Make" hidden>
               <mat-header-cell *matHeaderCellDef>Make</mat-header-cell>
-              <mat-cell  *matCellDef="let row" title="{{row.maker}}">
-                <span>{{ row.maker }}</span>  
+              <mat-cell *matCellDef="let row" title="{{row.maker}}">
+                <span>{{ row.maker }}</span>
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Model" hidden>
               <mat-header-cell *matHeaderCellDef>Model</mat-header-cell>
               <mat-cell title="{{row.model}}" *matCellDef="let row">
-                <span>{{ row.model }}</span> 
+                <span>{{ row.model }}</span>
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="last Delivery Date" hidden>
               <mat-header-cell *matHeaderCellDef title="Last delivery date">LDD</mat-header-cell>
               <mat-cell *matCellDef="let row">
-                <span>{{ row.lastDlDt }}</span> 
+                <span>{{ row.lastDlDt }}</span>
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Last Delivered Qty" hidden>
               <mat-header-cell *matHeaderCellDef title="Last delivered qty.">LDQ</mat-header-cell>
               <mat-cell *matCellDef="let row">
-               <span>{{ row.lastDlQty }}</span> 
+                <span>{{ row.lastDlQty }}</span>
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="ROB">
@@ -969,15 +978,15 @@
 
             <ng-container matColumnDef="Item Specs" hidden>
               <mat-header-cell *matHeaderCellDef>Other Specs</mat-header-cell>
-              <mat-cell  *matCellDef="let row" title="{{ row.makerReference ? row.makerReference + '-' : '' }}
+              <mat-cell *matCellDef="let row" title="{{ row.makerReference ? row.makerReference + '-' : '' }}
               {{ row.material ? row.material + '-' : '' }}
               {{ row.description ? row.description + '-' : '' }}
-              {{ row.remarks ? row.remarks : '' }}"> 
-             <span>{{ row.makerReference ? row.makerReference + '-' : '' }}
-                {{ row.material ? row.material + '-' : '' }}
-                {{ row.description ? row.description + '-' : '' }}
-                {{ row.remarks ? row.remarks : '' }}</span> 
-               </mat-cell>
+              {{ row.remarks ? row.remarks : '' }}">
+                <span>{{ row.makerReference ? row.makerReference + '-' : '' }}
+                  {{ row.material ? row.material + '-' : '' }}
+                  {{ row.description ? row.description + '-' : '' }}
+                  {{ row.remarks ? row.remarks : '' }}</span>
+              </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="Remarks">

@@ -11,6 +11,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { PurchaseMasterService } from 'src/app/services/purchase-master.service';
 import { RequisitionService } from 'src/app/services/requisition.service';
 import { TypemasterService } from 'src/app/services/typemaster.service';
+import { AccountMasterService } from 'src/app/services/account-master.service';
 
 declare let Swal, $: any;
 
@@ -74,11 +75,12 @@ export class VendorRegistrationComponent implements OnInit {
   approvalList: any
   CompanyName: string = ''
   CompanyShortName: string = ''
- 
+
 
   constructor(private fb: FormBuilder, private sideNavService: SideNavService, private route: Router, private http: HttpClient,
-    private purchaseService: PurchaseMasterService, private vendorService: VendorService, private swal: SwalToastService, private roote: ActivatedRoute,
-    private requisitionService: RequisitionService,private categorymasterService:TypemasterService ,private zone: NgZone) {
+    private actService: AccountMasterService, private purchaseService: PurchaseMasterService, private vendorService: VendorService,
+    private swal: SwalToastService, private roote: ActivatedRoute, private requisitionService: RequisitionService,
+    private categorymasterService: TypemasterService, private zone: NgZone) {
     this.route.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.sideNavService.initSidenav();
@@ -148,7 +150,7 @@ export class VendorRegistrationComponent implements OnInit {
 
     this.initForm()
 
-
+    this.loadCurrency()
 
     // this.VendorMasterForm.get('vendorInfo')?.valueChanges.subscribe(() => {
     //   this.autoSave('vendorInfo');  
@@ -186,6 +188,12 @@ export class VendorRegistrationComponent implements OnInit {
       .subscribe(response => {
         this.MakerMaster = response.data;
       })
+  }
+
+  loadCurrency() {
+    this.actService.getCurrencyData(0).subscribe(res=>{
+      
+    })
   }
 
   initForm(): void {
@@ -423,7 +431,7 @@ export class VendorRegistrationComponent implements OnInit {
     if (partName == 'vendorBusinessInfo') {
 
       if (this.vendorId != null) {
-debugger
+        debugger
         const formPart = this.VendorMasterForm.get(partName)
 
         if (formPart) {
@@ -659,7 +667,7 @@ debugger
   }
   //#endregion
 
-  
+
   //#region Maker Master Dropdown 
   onMakerSelectAll(event: any) {
     if (event)
@@ -991,7 +999,7 @@ debugger
                     this.categorySelectedItems.push(item.serviceCategoryId.toString());
                   })
                 }
-                if(vendorBusinessData.makerMaster != '' && vendorBusinessData.makerMaster!=null){
+                if (vendorBusinessData.makerMaster != '' && vendorBusinessData.makerMaster != null) {
                   const objProcR = vendorBusinessData.makerMaster.split(',');
                   this.dropdownMakerList = objProcR.map(item => {
                     return this.MakerMaster.find(x => x.makerId == item);
@@ -1016,7 +1024,7 @@ debugger
                 this.loadVendorBranchData(id);
                 this.loadVendorSalesData(id);
                 this.loadVendorServiceData(id);
-                this.loadVendorAccountData(id); 
+                this.loadVendorAccountData(id);
                 this.loadBankInformation(id);
 
 

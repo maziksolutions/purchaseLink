@@ -55,15 +55,15 @@
           <!-- <button class="btn btn-secondary dropdown-toggle pe-1 me-1" type="button" data-bs-toggle="dropdown" (click)="handleButtonClick()"
             aria-haspopup="true" aria-expanded="false"><span class="pe-1"><i class="fas fa-plus"></i></span></button> -->
           <!-- <div class="dropdown-menu"> -->
-            <!-- <a class="dropdown-item"  routerLink="/Requisition/RequisitionsNew">REQUISITION</a> -->
-            <!-- <button class="dropdown-item" (click)="clear()">REQUISITION</button> -->
-            <!-- <a class="dropdown-item" href="#">DIRECT PO</a>
+          <!-- <a class="dropdown-item"  routerLink="/Requisition/RequisitionsNew">REQUISITION</a> -->
+          <!-- <button class="dropdown-item" (click)="clear()">REQUISITION</button> -->
+          <!-- <a class="dropdown-item" href="#">DIRECT PO</a>
             <a class="dropdown-item" href="#">INVOICE</a> -->
           <!-- </div> -->
 
-          <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add Requisition"
-          data-bs-toggle="" (click)="clear()" data-bs-target="" aria-expanded="true"
-          aria-controls=""><i class="fas fa-plus text-primary"></i></a>
+          <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add Requisition" data-bs-toggle=""
+            (click)="clear()" data-bs-target="" aria-expanded="true" aria-controls=""><i
+              class="fas fa-plus text-primary"></i></a>
 
           <!-- <a class="px-2 m-r-1 font-medium-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
                   title="" data-bs-original-title="Export PDF" aria-label=""><i
@@ -73,9 +73,8 @@
             (click)="generateExcel()" data-bs-original-title="Export Excel" aria-label="">
             <i class="fas fa-file-excel text-success"></i></a>
 
-          <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-            matTooltip="RTO" (click)="downloadNotepad()" data-bs-original-title="List" aria-label=""><i
-              class="fas fa-file-alt"></i></a>
+          <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="RTO"
+            (click)="downloadNotepad()" data-bs-original-title="List" aria-label=""><i class="fas fa-file-alt"></i></a>
 
         </div>
       </div>
@@ -109,76 +108,76 @@
         <ng-container matColumnDef="VesselName">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Vessel Name</mat-header-cell>
           <mat-cell *matCellDef="let row" title={{row.vessel.vesselName}}>
-            <span>{{row.vessel.vesselName}} </span>
+            <span>{{row.vessel.vesselName ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Requisition_No">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Requisition No.</mat-header-cell>
           <mat-cell *matCellDef="let row" (click)="editRequisition(row)">
             <a class="accordion-btn show px-2 m-r-5" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1"
-              aria-expanded="true" aria-controls="collapse1">{{row.documentHeader}}</a>
+              aria-expanded="true" aria-controls="collapse1">{{row.documentHeader ?? '-'}}</a>
 
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Status">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
           <mat-cell *matCellDef="let row" title={{row.approvedReq}}>
-            <span> {{row.approvedReq}} </span>
+            <span> {{row.approvedReq ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="reqRecDate">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Req.Rec.Date</mat-header-cell>
           <mat-cell *matCellDef="let row">
-            <span>{{row.recDate | date :'dd-MMM-yyyy'}} </span>
+            <span>{{row.recDate | date :'dd-MMM-yyyy' ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Priority">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Priority</mat-header-cell>
           <mat-cell *matCellDef="let row" title={{row.pmPreference.description}}>
-            <span> {{row.pmPreference.description}} </span>
+            <span> {{row.pmPreference.description ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="OrderReference">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Description</mat-header-cell>
           <mat-cell *matCellDef="let row" title={{row.orderReferenceNames}}>
-            <span> {{row.orderReferenceNames}} </span>
+            <span> {{row.orderReferenceNames ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="OriginSite">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Origin</mat-header-cell>
           <mat-cell *matCellDef="let row" title={{row.originSite}}>
-            <span> {{row.originSite}} </span>
+            <span> {{row.originSite ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Department">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Department</mat-header-cell>
           <mat-cell *matCellDef="let row" title={{row.departments.departmentName}}>
-            <span> {{row.departments.departmentName}} </span>
+            <span> {{row.departments.departmentName ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="ProjectName_Code">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
           <mat-cell *matCellDef="let row"
             title={{row.pmProjectNameCode.projectName}}{{row.pmProjectNameCode.projectCode}}>
-            <span> {{row.pmProjectNameCode.projectName}}{{row.pmProjectNameCode.projectCode}} </span>
+            <span> {{row.pmProjectNameCode.projectName ?? '-'}}{{row.pmProjectNameCode.projectCode ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Delivery_Site">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Delivery Site</mat-header-cell>
           <mat-cell *matCellDef="let row" title={{row.deliverySiteNames}}>
-            <span>{{row.deliverySiteNames}} </span>
+            <span>{{row.deliverySiteNames ?? '-'}} </span>
           </mat-cell>
         </ng-container>
-      
+
         <ng-container matColumnDef="RequestOrderType">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Request Order</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Category</mat-header-cell>
           <mat-cell *matCellDef="let row" title={{row.pmOrderType.orderTypes}}>
-            <span> {{row.pmOrderType.orderTypes}} </span>
+            <span> {{row.pmOrderType.orderTypes ?? '-'}} </span>
           </mat-cell>
         </ng-container>
 
 
-      
+
 
         <!-- <ng-container matColumnDef="RTO">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>RTO</mat-header-cell>

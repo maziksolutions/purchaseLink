@@ -28,8 +28,7 @@ export class RequisitionService {
   constructor(private httpClient: HttpClient) { }
 
   //Get Maintenance Type data
-  getRequisitionMaster(status): Observable<any> {
-    debugger
+  getRequisitionMaster(status): Observable<any> {  
     return this.httpClient.get<any[]>(`${this.linkurl}filterRequisitionMaster/${status}`, httpOptions);
   }
 
@@ -171,7 +170,7 @@ export class RequisitionService {
       .pipe(catchError(this.handleError));
   }
 
-  updateUnitinItem(unitvalue: string,id: number): Observable<any> {
+  updateUnitinItem(unitvalue: string, id: number): Observable<any> {
 
     return this.httpClient.post<any>(`${this.linkurl}updateUnitinItem/${unitvalue}/${id}`, httpOptions);
   }
@@ -213,10 +212,10 @@ export class RequisitionService {
   }
 
   // archive Maintenance Classification Society
-archiveAttachments(attachments: any[]): Observable < string > {   
-  return this.httpClient.post<string> (`${this.linkurl}archiveAttachment/`, attachments, httpOptions);  
-} 
-//#endregion
+  archiveAttachments(attachments: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveAttachment/`, attachments, httpOptions);
+  }
+  //#endregion
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

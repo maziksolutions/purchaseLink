@@ -7,27 +7,25 @@
             class="fas fa-chevron-right ms-1 fs--2"></span></span> <span class="btn-sm p-0">Account Code / Name</span>
       </div>
       <div class="col-auto ms-auto form-inline float-end mt-2">
-        
+
         <select class="form-control form-small form-select" #docStatus
-            (change)="AccCodeLoadData($any($event.target).value)">
-            <option selected="" value="0">Active Data</option>
-            <option value="1">Archive Data</option>
+          (change)="AccCodeLoadData($any($event.target).value)">
+          <option selected="" value="0">Active Data</option>
+          <option value="1">Archive Data</option>
         </select>
         <span class="p-l-10 p-r-10 mm-t-3">|</span>
         <input type="text" class="form-control form-small" (keyup)="applyFilter($any($event.target).value)"
-            placeholder="Search" style="border-top-right-radius: 0; border-bottom-right-radius: 0px"
-            #searchInput>
+          placeholder="Search" style="border-top-right-radius: 0; border-bottom-right-radius: 0px" #searchInput>
 
         <button class="btn btn-primary form-small m-r-5"
-            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
-            data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="Search"
-            aria-label=""><i class="fa fa-search" aria-hidden="true"></i></button>
+          style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button" data-bs-toggle="tooltip"
+          data-bs-placement="top" title="" data-bs-original-title="Search" aria-label=""><i class="fa fa-search"
+            aria-hidden="true"></i></button>
 
         <button class="btn btn-primary form-small m-r-5"
-            style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button"
-            data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Clear Search Input"
-            (click)="clearSearchInput()" data-bs-original-title="Search" aria-label=""><i
-                class="fa fa-solid fa-eraser"></i></button>
+          style="border-top-left-radius: 0; border-bottom-left-radius: 0px" type="button" data-bs-toggle="tooltip"
+          data-bs-placement="top" matTooltip="Clear Search Input" (click)="clearSearchInput()"
+          data-bs-original-title="Search" aria-label=""><i class="fa fa-solid fa-eraser"></i></button>
 
         <span class="p-l-10 p-r-10 mm-t-3">|</span>
 
@@ -44,16 +42,16 @@
             data-bs-target="#add-acc-head" aria-label="">Add Account Head</a>
           <a class="dropdown-item" type="button" data-bs-toggle="modal" (click)="addAccCode()"
             data-bs-target="#add-acc-code" aria-controls="add-acc-code" aria-label="">Add Account Code</a>
-        </div>        
+        </div>
 
         <!-- <a class="px-1 m-r-5 text-primary" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title=""
           data-bs-original-title="Edit" aria-label=""><i class="fas fa-edit"></i></a> -->
         <a class="px-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="" (click)="DeleteData()"
           data-bs-original-title="Delete" aria-label=""><i class="fas fa-trash text-danger"></i></a>
 
-          <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Excel"  (click)="generateExcel()" 
-          data-bs-original-title="List" aria-label=""><i
-              class="fas fa-file-excel"></i></a>
+        <a class="px-2 m-r-1" style="color: green;" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
+          matTooltip="Excel" (click)="generateExcel()" data-bs-original-title="List" aria-label=""><i
+            class="fas fa-file-excel"></i></a>
       </div>
     </div>
   </div>
@@ -66,8 +64,8 @@
     <div class="modal-content border-0">
 
       <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-          data-bs-dismiss="modal" aria-label="Close"></button>
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal"
+          aria-label="Close"></button>
       </div>
       <div class="modal-header">
         <h5 class="modal-title" id="">Add Category</h5>
@@ -126,8 +124,8 @@
   <div class="modal-dialog modal-xl mt-6" role="document">
     <div class="modal-content border-0">
       <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-          data-bs-dismiss="modal" aria-label="Close"></button>
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal"
+          aria-label="Close"></button>
       </div>
       <div class="modal-header">
         <h5 class="modal-title" id="">Add Sub Category</h5>
@@ -171,8 +169,7 @@
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary me-1" aria-label=""
                 [disabled]="subCategoryForm.invalid  || !subCategoryForm.dirty">Add</button>
-              <button type="button" class="btn btn-danger me-1" aria-label=""
-                (click)="subCatClose()">Clear</button>
+              <button type="button" class="btn btn-danger me-1" aria-label="" (click)="subCatClose()">Clear</button>
             </div>
 
           </div>
@@ -186,8 +183,8 @@
   <div class="modal-dialog modal-xl mt-6" role="document">
     <div class="modal-content border-0">
       <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-          data-bs-dismiss="modal" aria-label="Close"></button>
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal"
+          aria-label="Close"></button>
       </div>
       <div class="modal-header">
         <h5 class="modal-title" id="">Add Account Head</h5>
@@ -233,8 +230,7 @@
               <div class="form-floating mb-3">
                 <input class="form-control px-1 border-top-0 border-start-0 border-end-0 border-bottom-2" id=""
                   type="text" placeholder="Warehouse Info"
-                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);"
-                  formControlName="headCode" />
+                  style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px);" formControlName="headCode" />
                 <label for="" class="px-0" style="line-height: 0.625rem;">Head Code (1 Digit)</label>
               </div>
             </div>
@@ -242,8 +238,7 @@
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary me-1" aria-label=""
               [disabled]="accountHeadForm.invalid  || !accountHeadForm.dirty">Add</button>
-            <button type="button" class="btn btn-danger me-1" aria-label=""
-              (click)="accheadClose()">Clear</button>
+            <button type="button" class="btn btn-danger me-1" aria-label="" (click)="accheadClose()">Clear</button>
           </div>
 
         </div>
@@ -256,8 +251,8 @@
   <div class="modal-dialog modal-xl mt-6" role="document">
     <div class="modal-content border-0">
       <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-          data-bs-dismiss="modal" aria-label="Close"></button>
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal"
+          aria-label="Close"></button>
       </div>
       <div class="modal-header">
         <h5 class="modal-title" id="">
@@ -307,8 +302,7 @@
                 <select class="form-select px-1 border-top-0 border-start-0 border-end-0 border-bottom-2"
                   style="border-radius:0; box-shadow: none; height: calc(2.5rem + 2px); padding-top: 1rem; padding-bottom: 0rem;"
                   formControlName="accountHeadId">
-                  <option *ngFor="let acchead of  this.accHeadDataSource.data"
-                    value="{{acchead.accountHeadId}}">
+                  <option *ngFor="let acchead of  this.accHeadDataSource.data" value="{{acchead.accountHeadId}}">
                     {{acchead.accountHead | titlecase}}
                   </option>
                 </select>
@@ -339,8 +333,7 @@
               [disabled]="accountCodeForm.invalid  || !accountCodeForm.dirty">
               {{Idheaderfoot==0?'Add':'Update'}}
             </button>
-            <button type="button" class="btn btn-danger me-1" aria-label=""
-              (click)="accCodeClose()">Clear</button>
+            <button type="button" class="btn btn-danger me-1" aria-label="" (click)="accCodeClose()">Clear</button>
           </div>
         </div>
       </form>

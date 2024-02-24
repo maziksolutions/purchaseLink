@@ -404,6 +404,7 @@ export class AccountcodeNameComponent implements OnInit {
   }
 
   AccCodeLoadData(status: number) {
+    debugger
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -421,7 +422,7 @@ export class AccountcodeNameComponent implements OnInit {
 
     this.accountMasterService.getAccountCode(status)
       .subscribe(response => {
-       
+       debugger
         this.flagAc = status;
 
         this.accCodeDataSource.data = response.data;
@@ -496,7 +497,7 @@ export class AccountcodeNameComponent implements OnInit {
     }
     const numSelected = this.selection.selected;
     if (numSelected.length > 0) {
-
+      
       Swal.fire({
         title: 'Are you sure?',
         text: title,

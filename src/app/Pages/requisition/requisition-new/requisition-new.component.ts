@@ -238,6 +238,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   userSite: any;
   userData: any;
 
+  pageNumber = 1;
+  pageSize = 100;
+  totalItems = 0;
+  data: any[] = [];
+
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
     private authStatusService: AuthStatusService, private userService: UserManagementService, private autoSaveService: AutoSaveService, public dialog: MatDialog,
@@ -247,11 +252,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    
+
     this.targetLoc = environment.location;
     this.sideNavService.initSidenav();
     this.userId = this.authStatusService.userId();
     this.reqGetId = this.route.snapshot.paramMap.get('requisitionId')
+    if (this.reqGetId !== null) {
+      this.reqId = parseInt(this.reqGetId, 10);
+    }
     this.routeService.getCurrentRoute().subscribe(route => {
       this.currentRoute = route;
     });
@@ -386,7 +394,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.requisitionService.getTempNumber(0).subscribe(res => {
       if (res.data != null) {
-        
+
         this.temporaryNumber = res.data;
         this.RequisitionForm.get('header')?.patchValue({ documentHeader: this.temporaryNumber })
 
@@ -530,7 +538,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.temporaryNumber = documentHeaderElement.textContent;
       }
       // formPart?.get('orderReference')?.setValue(displayValue);
-      
+
       formPart?.patchValue({
         requisitionId: formPart?.value.requisitionId,
         documentHeader: formPart?.value.documentHeader || '0',
@@ -552,8 +560,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           .subscribe(data => {
 
             this.reqId = data.data;
-            this.temporaryNumber = data.documentHeader
-            formPart.patchValue({ requisitionId: data.data, documentHeader: data.documentHeader })
+            // this.temporaryNumber = data.documentHeader
+            // formPart.patchValue({ requisitionId: data.data, documentHeader: data.documentHeader })
             if (this.defaultOrderType[0] !== 'Service') {
               if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
 
@@ -638,6 +646,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                       this.loadItemsData(0);
                     }
                   });
+                }
+                else {
+                  this.swal.success('Updated successfully.');
+                  this.loadData(0)
                 }
               }
             }
@@ -784,7 +796,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    
+
     if (this.reqId) {
       const formData = new FormData();
       this.serviceTypeForm.patchValue({ pmReqId: this.reqId })
@@ -794,7 +806,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
       if (this.serviceTypeForm.valid) {
         this.requisitionService.addServiceType(formData).subscribe(data => {
-          
+
           if (data.message == "data added") {
             this.swal.success('Added successfully.');
             if (this.reqId) {
@@ -933,7 +945,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.requisitionService.getRequisitionById(this.reqGetId)
       .subscribe(response => {
-        
+
         const requisitionData = response.data;
         const formPart = this.RequisitionForm.get('header');
         this.approvestatus = requisitionData.approvedReq;
@@ -988,11 +1000,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.loadOrderTypeByEditReq().subscribe(res => {
 
           this.orderTypes = res;
-          
+
           const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == requisitionData.projectNameCodeId).map(item => item.serviceTypeId)
           if (selectedProjectCode[0] != null) {
             const serviceTypeIds: string[] = selectedProjectCode[0].split(',');
-            
+
             // Filter order types based on service type IDs
             this.filteredOrderTypes = this.orderTypes.filter(orderType => {
               const orderTypeServiceTypeIds: string[] = orderType.serviceTypeId.split(',');
@@ -1254,7 +1266,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       )
   }
   selectProjectCode(event: any) {
-    
+
     const selectedId = event.target.value;
     const selectedProjectCode = this.projectnameAndcode.filter(item => item.projectNameId == selectedId).map(item => item.serviceTypeId)
     if (selectedProjectCode[0] != null) {
@@ -1275,7 +1287,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     this.purchaseService.getProjectNCForReq(0)
       .subscribe(response => {
-        
+
         if (this.selectedVesselId != "0") {
           const Vesselset = this.RequisitionForm.get('header')
           if (Vesselset) {
@@ -1335,46 +1347,47 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     }
     else {
-
       this.deletetooltip = 'Archive';
       if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
+
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
+
         // this.flag = status;
         this.requisitiondata = response.data;
-
-        if (this.reqGetId) {
-          // this.loadItemByReqId(this.reqGetId);
-          this.LoadVessel();
-          this.LoadProjectnameAndcode();
-          this.LoadPriority();
-          this.LoadDepartment();
-          this.GetunitList();
-          this.userService.getUserById(this.userId).subscribe(response => {
-            this.userDetail = response.data;
-            this.userSite = response.data.site;
-            this.currentyear = new Date().getFullYear();
-          })
-          // this.LoadUserDetails();
-          this.getReqData();
-        } else {
-          this.saveValue = ''
-          this.displayValue = ''
-          // this.LoadUserDetails();
-          this.LoadOrdertype();
-          this.LoadPriority();
-          this.LoadVessel();
-          this.LoadDepartment();
-          this.loadPortList();
-          this.GetunitList();
-          // this.generateTempNumber();
-        }
         // (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
+
+    if (this.reqGetId) {
+      // this.loadItemByReqId(this.reqGetId);
+      this.LoadVessel();
+      this.LoadProjectnameAndcode();
+      this.LoadPriority();
+      this.LoadDepartment();
+      this.GetunitList();
+      this.userService.getUserById(this.userId).subscribe(response => {
+        this.userDetail = response.data;
+        this.userSite = response.data.site;
+        this.currentyear = new Date().getFullYear();
+      })
+      // this.LoadUserDetails();
+      this.getReqData();
+    } else {
+      this.saveValue = ''
+      this.displayValue = ''
+      // this.LoadUserDetails();
+      this.LoadOrdertype();
+      this.LoadPriority();
+      this.LoadVessel();
+      this.LoadDepartment();
+      this.loadPortList();
+      this.GetunitList();
+      // this.generateTempNumber();
+    }
   }
 
   LoadVessel() {
@@ -1553,12 +1566,35 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     })
   }
 
+  getSpareItemsList() {
+    // Assuming allItems is already populated with data
+    this.totalItems = this.data.length;
+    this.updateTableData();
+  }
+  updateTableData() {
+    const startIndex = (this.pageNumber - 1) * this.pageSize;
+    const endIndex = Math.min(startIndex + this.pageSize, this.totalItems);
+    this.leftTableDataSource.data = this.data.slice(startIndex, endIndex);
+  }
+  loadNextPage() {
+    const totalPages = Math.ceil(this.totalItems / this.pageSize);
+    if (this.pageNumber < totalPages) {
+      this.pageNumber++;
+      this.updateTableData();
+    }
+  }
+  loadPreviousPage() {
+    if (this.pageNumber > 1) {
+      this.pageNumber--;
+      this.updateTableData();
+    }
+  }
   //#region  PM Items
   getSpareItems(itemType: string, ids: any) {
     if (itemType === 'Component') {
       this.requisitionService.getItemsInfo(ids)
         .subscribe(res => {
-
+          debugger
           const data = res.map(item => ({
             itemsId: item.shipComponentSpareId,
             spareId: item.shipSpareId || null,
@@ -1617,10 +1653,12 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
                   data.splice(indexToRemove, 1);
                 }
               });
-              this.leftTableDataSource.data = data;
+              this.data = data;
+              this.getSpareItemsList()
             })
           } else
-            this.leftTableDataSource.data = data;
+            this.data = data;
+          this.getSpareItemsList()
         });
     } else if (itemType === 'Group') {
       this.requisitionService.getGroupsInfo(ids).subscribe(res => {
@@ -1695,7 +1733,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     })
   }
   moveItemToRight(): void {
-
+    debugger
     const selectedItems = this.leftTableSelection.selected.length > 0
       ? this.leftTableSelection.selected
       : [this.leftTableDataSource.data[0]];
@@ -1703,15 +1741,20 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (selectedItems[0] != undefined) {
       this.rightTableDataSource.data = this.rightTableDataSource.data.concat(selectedItems);
       this.leftTableDataSource.data = this.leftTableDataSource.data.filter(item => !selectedItems.includes(item));
+      // Remove selected items from the main data list
+      this.data = this.data.filter(item => !selectedItems.includes(item));
       this.leftTableSelection.clear();
+      this.getSpareItemsList()
     }
   }
   moveAllItemToRight(): void {
-
+    debugger
     const newData = this.rightTableDataSource.data.concat(this.leftTableDataSource.data);
     this.rightTableDataSource.data = newData;
     this.leftTableDataSource.data = [];
+    this.data = this.data.filter(item => !newData.includes(item))
     this.leftTableDataSource._updateChangeSubscription();
+    this.getSpareItemsList()
   }
 
   moveItemToLeft(): void {
@@ -1722,16 +1765,20 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     if (selectedItems[0] != undefined) {
       this.leftTableDataSource.data = this.leftTableDataSource.data.concat(selectedItems);
+      this.data = this.leftTableDataSource.data.concat(selectedItems);
       this.rightTableDataSource.data = this.rightTableDataSource.data.filter(item => !selectedItems.includes(item));
       this.rightTableSelection.clear();
+      this.getSpareItemsList()
     }
   }
   moveAllItemToLeft(): void {
 
     const newData = this.leftTableDataSource.data.concat(this.rightTableDataSource.data);
     this.leftTableDataSource.data = newData;
+    this.data=newData
     this.rightTableDataSource.data = [];
     this.rightTableDataSource._updateChangeSubscription();
+    this.getSpareItemsList()
   }
 
   storeTableData() {
@@ -1851,7 +1898,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (this.reqId)
       this.requisitionService.getItemsByReqId(this.reqId)
         .subscribe(response => {
-
+          debugger
           this.flag = status;
           this.dataSource.data = [];
           this.zone.run(() => {
@@ -2282,7 +2329,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   downloadNotepad() {
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
     this.ReqData = this.requisitionFullData;
-    
+
     if (this.ReqData == undefined) {
       this.swal.error('Please save your data before downloading the RTO file.')
     }
@@ -2328,7 +2375,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     if (this.serviceTypeDataSource.length !== 0 || this.serviceTypeDataSource.length !== null) {
 
-      
+
       const jobToAdd = this.serviceTypeDataSource.map(item => ({
         serviceName: item.serviceName,
         jobList: item.jobList
@@ -2418,9 +2465,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(formValues));
-    
+
     if (this.fileToUpload != null) {
-      
+
       this.myFiles.forEach((f) => fmdata.append('attachment', f));
       //fmdata.append('attachment', this.myFiles);
     }
@@ -3017,15 +3064,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   //#region ServiceType Attachment Items
-  openServiceItem(id, pageName ,tableName) {
-    
+  openServiceItem(id, pageName, tableName) {
+
     this.GetItemId = id;
     $("#openAttachmentItem").modal('show');
     this.loadItemAttachment(0, id, pageName, tableName);
     // this.loadServiceAttachement(0, page, id);
   }
   // loadServiceAttachement(status: number, page: string, id: number) {
-    
+
   //   if (status == 1) {
   //     this.deletetooltip = 'UnArchive';
   //     if (((document.getElementById("collapse10") as HTMLElement).querySelector('.fa-trash') as HTMLElement) != null) {
@@ -3042,7 +3089,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //   }
   //   this.pmsService.getmattachment(status, page, id)
   //     .subscribe(response => {
-        
+
   //       this.flag = status;
   //       this.attachmentItemdataSource.data = response.data;
   //       this.attachmentItemdataSource.sort = this.sort;
@@ -3055,11 +3102,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //#region AttachmentItem  
   openAttachmentItem(id, pageName, tableName) {
     this.GetItemId = id;
-    if(this.GetItemId !== 0 || this.GetItemId !== undefined){
+    if (this.GetItemId !== 0 || this.GetItemId !== undefined) {
       this.loadItemAttachment(0, id, pageName, tableName);
       $("#openAttachmentItem").modal('show');
     }
- 
+
   }
 
   CloseAttachmentItem() {
@@ -3075,9 +3122,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   loadItemAttachment(status: number, id: number, pageName: string, tableName: string) {
-    
+
     if (status == 1) {
-      debugger
+
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.attach') as HTMLElement) != null) {
         (document.querySelector('.attach') as HTMLElement).classList.add("fa-trash-restore", "text-primary");
@@ -3085,14 +3132,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }
     }
     else {
-      debugger
+
       this.deletetooltip = 'Archive';
       if ((document.querySelector('.fa-trash-restore') as HTMLElement) != null) {
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.add("fa-trash", "text-danger");
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
-    
+
     this.atfm.tablePkeyId.setValue(id);
     this.atfm.tableName.setValue(tableName);
     this.atfm.pageName.setValue(pageName);
@@ -3109,22 +3156,21 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       });
   }
 
-  loadUser(){
+  loadUser() {
     this.userService.getLineManagers(0)
-    .subscribe(response => {
-     // console.log(response.data)
-      this.userData = response.data;
-    });
+      .subscribe(response => {
+        // console.log(response.data)
+        this.userData = response.data;
+      });
   }
-  getUserName(userId){
-    if(userId!=null && userId!=undefined)
-    {
-      
-  var UserName =  this.userData.filter(x=>x.userId==userId);
-  return UserName[0]?.firstName+' '+UserName[0]?.lastName;
+  getUserName(userId) {
+    if (userId != null && userId != undefined) {
+
+      var UserName = this.userData.filter(x => x.userId == userId);
+      return UserName[0]?.firstName + ' ' + UserName[0]?.lastName;
     }
     else
-    return '';
+      return '';
   }
 
   DeleteItemAttachment() {
@@ -3152,9 +3198,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       }).then((result) => {
         if (result.value) {
           this.requisitionService.archiveAttachments(numSelected).subscribe((res: any) => {
-            
+
             if (res.status === true) {
-              
+
               this.selectionItemAttachment.clear();
               this.swal.success(message);
               this.loadItemAttachment(this.flag, res.tablePkId, res.pageName, res.tableName);
@@ -3169,7 +3215,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
 
   submitItemAttachmentfrm(form: any) {
-    
+
     this.GetItemId
 
     if (this.GetItemId == 0) {
@@ -3192,15 +3238,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     const fmdata = new FormData();
     fmdata.append('data', JSON.stringify(formValues));
-    debugger
+
     if (this.fileItemToUpload != null) {
-      debugger
+
       this.myItemFiles.forEach((f) => fmdata.append('attachment', f));
     }
 
     this.pmsService.addattachment(fmdata)
       .subscribe(res => {
-        
+
         if (res.message == "data added") {
           this.swal.success('Added successfully.');
           this.CloseAttachmentForm();
@@ -3210,7 +3256,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           this.fileInput.nativeElement.value = null;
         }
         else if (res.message == "updated") {
-          
+
           this.swal.success('Data has been updated successfully.');
           this.CloseAttachmentForm();
           (document.getElementById('collapse10') as HTMLElement).classList.remove("show");
@@ -3232,7 +3278,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   FileItemSelect(event) {
- 
+
     if (event.target.files.length > 0) {
 
       const file = event.target.files[0];
@@ -3240,7 +3286,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.FileName = file.name;
 
       for (var i = 0; i <= event.target.files.length - 1; i++) {
-        
+
         this.myItemFiles.push(event.target.files[i]);
         var selectedFile = event.target.files[i];
         if (this.listItemOfFiles.indexOf(selectedFile.name) === -1) {
@@ -3263,7 +3309,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
 
   CloseAttachmentForm() {
-    
+
     this.myItemFiles = [];
     this.listItemOfFiles = [];
     // this.attachmentfrm.reset();
@@ -3304,7 +3350,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     (document.getElementById('collapse10') as HTMLElement).classList.add("show");
     this.pmsService.GetattachmentById(id)
       .subscribe((response) => {
-        
+
         if (response.status) {
           this.attachmentfrm.patchValue(response.data);
           this.fileItemUrl = response.data.filePath;
@@ -3342,7 +3388,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   //#region Modify Columns of Items Pop Up View
   openModifyPopUp() {
     let dialogRef: any
-    
+
     dialogRef = this.dialog.open(ModifyColumnsPopUpComponent, {
       width: '600px',
       data: {

@@ -75,8 +75,7 @@ export class SiteLayoutComponent implements OnInit {
     this.routeUrl = url.split('//')[1].split('/')[1].toString();
   }
 
-  ngOnInit(): void {
-    debugger
+  ngOnInit(): void {   
     this.targetLoc = environment.location;
     if (this.targetLoc == 'Vessel') {
       this.VesselId = environment.vesselId;
