@@ -230,9 +230,9 @@
             <h6 class="text-900 mb-1">Vessel</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="vesselId"
-                [(ngModel)]="selectedVesselId" required (change)="LoadProjectnameAndcode()">
+                [(ngModel)]="selectedVesselId" required (change)="LoadProjectnameAndcode()" id="vesselDisable">
                 <option value="0" selected disabled>Select Vessel</option>
-                <option *ngFor="let item of  Vessels" id="abc" value="{{item.vesselId}}">
+                <option *ngFor="let item of  Vessels" id="abc" value="{{item.vesselId}}"> 
                   {{item.vesselName | titlecase}}
 
                 </option>
@@ -244,7 +244,7 @@
             <h6 class="text-900 mb-1">Type</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="projectNameCodeId"
-                (change)="selectProjectCode($event)" required>
+                (change)="selectProjectCode($event)" required id="projectNameCodeDisable">
                 <option value="" selected disabled>Select Type</option>
                 <option *ngFor="let item of projectnameAndcode" value="{{item.projectNameId}}">
                   {{item.projectName|titlecase }}-{{item.projectCode}}
@@ -257,7 +257,7 @@
             <h6 class="text-900 mb-1">Category</h6>
             <fieldset class="form-group mb-0">
               <select class="form-control form-small form-select" formControlName="orderTypeId"
-                [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required>
+                [(ngModel)]="selectedOrderTypeId" (change)="LoadheadorderType()" required id="categoryDisable">
                 <option value="0" selected disabled>Select Order</option>
                 <option *ngFor="let item of filteredOrderTypes" value="{{item.orderTypeId}}">
                   {{item.orderTypes | titlecase}}
@@ -279,7 +279,7 @@
         <div class="row">
           <div class="col-lg-6 mb-3">
             <h6 class="text-900 mb-1">Description</h6>
-            <fieldset class="form-group mb-0">
+            <fieldset class="form-group mb-0" id="descriptionDisable">
               <span><input type="text" class="form-control form-small" placeholder="Select Component Items"
                   (click)="openModal()" formControlName="orderReference" [value]="displayValue" [title]="displayValue"
                   readonly>
@@ -886,8 +886,8 @@
                   [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)"></mat-checkbox>
               </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="No" style="width: 60px;">
-              <mat-header-cell class="mat-column-index" *matHeaderCellDef>No</mat-header-cell>
+            <ng-container matColumnDef="Number" style="width: 60px;">
+              <mat-header-cell class="mat-column-index" *matHeaderCellDef>Number</mat-header-cell>
               <mat-cell class="mat-column-index" style="width: 60px;" *matCellDef="let row; let i = index">{{ i +
                 1 }}</mat-cell>
             </ng-container>
@@ -896,8 +896,8 @@
               <mat-cell title="{{row.itemName}}" *matCellDef="let row">
                 <span>{{ row.itemName}}</span></mat-cell>
             </ng-container>
-            <ng-container matColumnDef="Component Name">
-              <mat-header-cell *matHeaderCellDef>Component Name</mat-header-cell>
+            <ng-container matColumnDef="Ship Component Name">
+              <mat-header-cell *matHeaderCellDef title="Ship Component Name">SCN</mat-header-cell>
               <mat-cell title="{{row.componentName}}" *matCellDef="let row">
                 <span>{{ row.componentName}}</span>
               </mat-cell>
@@ -945,7 +945,7 @@
               </mat-cell>
             </ng-container>
             <ng-container matColumnDef="ROB">
-              <mat-header-cell *matHeaderCellDef>ROB</mat-header-cell>
+              <mat-header-cell *matHeaderCellDef title="Remaining onboard">ROB</mat-header-cell>
               <mat-cell title="{{row.rob}}" *matCellDef="let row" (click)="openEditModal(row)">
                 <div class="border-1 border-400 form-control" style="cursor: pointer;">
                   {{row.rob }}

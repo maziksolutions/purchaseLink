@@ -86,7 +86,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   RequisitionForm: FormGroup; serviceTypeForm: FormGroup; jobListForm: FormGroup; flag; pkey: number = 0; isRequisitionApproved: boolean = false; temporaryNumber: any;
   serviceObject: any = {}; isEditMode = false;
   displayedColumns: string[]
-  ItemsColumns: string[] = ['checkbox', 'No', 'Item Name', 'Component Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
+  ItemsColumns: string[] = ['checkbox', 'Number', 'Item Name', 'Ship Component Name', 'Item Code', 'Part No', 'DWG', 'Make', 'Model', 'last Delivery Date',
     'Last Delivered Qty', 'ROB', 'Enter Quantity', 'Unit', 'Item Specs', 'Remarks', 'Attachments'];
   visibleColumns: boolean[] = [true, true, true, true, true, false, false, false, false, false, false, true, true, true, false, true, true];
   serviceTypeColumns: string[] = ['checkbox', 'index', 'sn', 'sd', 'remarks'];
@@ -258,7 +258,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.userId = this.authStatusService.userId();
     this.reqGetId = this.route.snapshot.paramMap.get('requisitionId')
     if (this.reqGetId !== null) {
+      debugger
       this.reqId = parseInt(this.reqGetId, 10);
+
+      const vesselDisable = document.getElementById("vesselDisable") as HTMLSelectElement;
+      const projectNameCodeDisable = document.getElementById("projectNameCodeDisable") as HTMLSelectElement;
+      const categoryDisable = document.getElementById("categoryDisable") as HTMLSelectElement;
+      vesselDisable.disabled = true;
+      projectNameCodeDisable.disabled = true;
+      categoryDisable.disabled = true;
+
     }
     this.routeService.getCurrentRoute().subscribe(route => {
       this.currentRoute = route;
@@ -560,6 +569,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           .subscribe(data => {
 
             this.reqId = data.data;
+
+            const vesselDisable = document.getElementById("vesselDisable") as HTMLSelectElement;
+            const projectNameCodeDisable = document.getElementById("projectNameCodeDisable") as HTMLSelectElement;
+            const categoryDisable = document.getElementById("categoryDisable") as HTMLSelectElement;
+            vesselDisable.disabled = true;
+            projectNameCodeDisable.disabled = true;
+            categoryDisable.disabled = true;
+
             // this.temporaryNumber = data.documentHeader
             // formPart.patchValue({ requisitionId: data.data, documentHeader: data.documentHeader })
             if (this.defaultOrderType[0] !== 'Service') {
@@ -974,6 +991,9 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
           if (headerStringParts.length === 6) {
             const headerSerialNumber = headerStringParts[5];
             // this.headabb = headerStringParts[3];
+            const descriptionDisable = document.getElementById("descriptionDisable") as HTMLSelectElement;
+            descriptionDisable.disabled = true;
+
             this.temporaryNumber = headerSerialNumber;
           }
         } else {
