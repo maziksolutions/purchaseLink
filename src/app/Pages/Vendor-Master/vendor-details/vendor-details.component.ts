@@ -5,8 +5,10 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NavigationEnd, Router } from '@angular/router';
 import { SideNavService } from 'src/app/services/sidenavi-service';
+import { SwalToastService } from 'src/app/services/swal-toast.service';
 import { VendorService } from 'src/app/services/vendor.service';
 
+declare let Swal; declare let $: any;
 @Component({
   selector: 'app-vendor-details',
   templateUrl: './vendor-details.component.html',
@@ -23,7 +25,7 @@ export class VendorDetailsComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   deletetooltip: any;
 
-  constructor(private sideNavService: SideNavService, private route: Router, private vendorService: VendorService) {
+  constructor(private sideNavService: SideNavService, private route: Router, private vendorService: VendorService,private swal: SwalToastService,) {
     this.route.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.sideNavService.initSidenav()
@@ -91,6 +93,46 @@ export class VendorDetailsComponent implements OnInit {
 
   editVendorMaster(row: any): void {    
     this.route.navigate(['/Vendor-Master/VendorRegistration', row.vendorId]);
+  }
+
+
+  DeleteData() {
+    var message = ""
+    var title = "";
+
+    if (this.flag == 1) {
+      message = "Un-archived successfully.";
+      title = "you want to un-archive data."
+    }
+    else {
+      message = "Archived successfully.";
+      title = "you want to archive data."
+
+    }
+    const numSelected = this.selection.selected;
+    if (numSelected.length > 0) {
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: title,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+      }).then((result) => {
+        if (result.value) {
+          this.vendorService.archiveVendorInfo(numSelected).subscribe(result => {
+            this.selection.clear();
+            this.swal.success(message);
+            this.loadData(this.flag);
+          })
+
+        }
+      })
+
+    } else {
+      this.swal.info('Select at least one row')
+    }
   }
 
 }
