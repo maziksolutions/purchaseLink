@@ -22,6 +22,10 @@ export class VendorService {
     return this.httpClient.get<any[]>(`${this.linkurl}filterVendorInfoMaster/${status}`, httpOptions);
   }
 
+  archiveVendorInfo(jobType: any[]): Observable<string> {
+    return this.httpClient.post<string>(`${this.linkurl}archiveVendorInfo/`, jobType, httpOptions);
+  }
+
   getVendorInfoById(id): Observable<any> {
     return this.httpClient.get<any>(this.linkurl + 'getVendorInfoById/' + id, httpOptions)
       .pipe(catchError(this.handleError));
