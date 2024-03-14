@@ -195,7 +195,7 @@
                         </select>
                       </fieldset> -->
                     <input type="text" class="form-control form-small" formControlName="classApproval"
-                        placeholder="classApproval" (change)="autoSave('vendorBusinessInfo')">
+                        placeholder="Class Approvals" (change)="autoSave('vendorBusinessInfo')">
                 </div>
                 <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Maker Approvals</label>
                 <div class="col-sm-4">
@@ -209,19 +209,19 @@
                         </select>
                       </fieldset> -->
                     <input type="text" class="form-control form-small" formControlName="makerApproval"
-                        (change)="autoSave('vendorBusinessInfo')" placeholder="makerApproval">
+                        (change)="autoSave('vendorBusinessInfo')" placeholder="Maker Approvals">
                 </div>
             </div>
             <div class="row g-3 mb-3">
                 <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">ISO Certifications</label>
                 <div class="col-sm-4">
                     <input type="text" class="form-control form-small" formControlName="isoCertification"
-                        (change)="autoSave('vendorBusinessInfo')" placeholder="isoCertification">
+                        (change)="autoSave('vendorBusinessInfo')" placeholder="ISO Certifications">
                 </div>
                 <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Other Certification</label>
                 <div class="col-sm-4">
                     <input type="text" class="form-control form-small" formControlName="otherCertification"
-                        (change)="autoSave('vendorBusinessInfo')" placeholder="otherCertification">
+                        (change)="autoSave('vendorBusinessInfo')" placeholder="Other Certification">
                 </div>
                 <label class="col-sm-2 col-form-label py-0 font-small-3" for="inputPassword">Maker Linking</label>
                 <div class="col-sm-4">
@@ -254,7 +254,7 @@
             <div class="row g-3 mb-3">
                 <div class="col-sm">
                     <a class="btn btn-primary" type="button" aria-expanded="true" aria-controls=""
-                        data-bs-toggle="modal" data-bs-target="#branch-office"><i class="fas fa-plus"></i> Add Branch
+                        data-bs-toggle="modal" data-bs-target="#" (click)="ModalBranchOffice()"><i class="fas fa-plus"></i> Add Branch
                         Office</a>
 
                     <div class="modal fade" id="branch-office" tabindex="-1" aria-hidden="true">

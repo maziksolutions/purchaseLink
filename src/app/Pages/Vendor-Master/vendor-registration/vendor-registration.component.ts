@@ -340,9 +340,10 @@ export class VendorRegistrationComponent implements OnInit {
   loadPortList() {
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
+        debugger
         this.LocationPortList = response.data.map(item => ({
           locationId: item.locationId,
-          fullName: `${item.locationName} ${item.countryMaster.countryName}`,
+          fullName: `${item.locationName} - ${item.countryName}`,
         }));
       });
   }
@@ -534,6 +535,10 @@ export class VendorRegistrationComponent implements OnInit {
     this.vendorBranchInfo.controls.vendorId.setValue(this.vendorInfoId);
   }
 
+  ModalBranchOffice(){
+    this.loadPortList();
+    $("#branch-office").modal('show');
+  }
   onSubmitbranchoffice(form: any) {
 
     if (this.vendorId) {
