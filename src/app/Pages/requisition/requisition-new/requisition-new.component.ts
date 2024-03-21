@@ -258,7 +258,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.userId = this.authStatusService.userId();
     this.reqGetId = this.route.snapshot.paramMap.get('requisitionId')
     if (this.reqGetId !== null) {
-      debugger
+      
       this.reqId = parseInt(this.reqGetId, 10);
 
       const vesselDisable = document.getElementById("vesselDisable") as HTMLSelectElement;
@@ -1442,6 +1442,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   getPortList() {
     return this.requisitionService.GetPortList(0).pipe(map(res => {
+      
       return res.data;
     }))
   }
@@ -1450,7 +1451,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     this.requisitionService.GetPortList(0)
       .subscribe(response => {
 
-        this.portList = response.data.filter(data => data.countryMaster && data.countryMaster.countryName);
+        this.portList = response.data;
 
         this.filteredPorts = this.myControl.valueChanges.pipe(
           startWith(''),
@@ -1460,8 +1461,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   displayFn(port: any): string {
 
-    if (port && port.locationName && port.countryMaster && port.countryMaster.countryName) {
-      return `${port.locationName}, ${port.countryMaster.countryName}`;
+    if (port && port.locationName &&  port.countryName) {
+      return `${port.locationName}, ${port.countryName}`;
     } else if (port && port.locationName) {
       return port.locationName;
     } else {
@@ -1614,7 +1615,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (itemType === 'Component') {
       this.requisitionService.getItemsInfo(ids)
         .subscribe(res => {
-          debugger
+          
           const data = res.map(item => ({
             itemsId: item.shipComponentSpareId,
             spareId: item.shipSpareId || null,
@@ -1753,7 +1754,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     })
   }
   moveItemToRight(): void {
-    debugger
+    
     const selectedItems = this.leftTableSelection.selected.length > 0
       ? this.leftTableSelection.selected
       : [this.leftTableDataSource.data[0]];
@@ -1768,7 +1769,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
   }
   moveAllItemToRight(): void {
-    debugger
+    
     const newData = this.rightTableDataSource.data.concat(this.leftTableDataSource.data);
     this.rightTableDataSource.data = newData;
     this.leftTableDataSource.data = [];
@@ -1918,7 +1919,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     if (this.reqId)
       this.requisitionService.getItemsByReqId(this.reqId)
         .subscribe(response => {
-          debugger
+          
           this.flag = status;
           this.dataSource.data = [];
           this.zone.run(() => {
@@ -2754,14 +2755,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
 
       if (result.result === 'success') {
-        debugger
+        
         const data = result.dataToSend
         if (data != null && data.displayValue !== '' && data.saveValue !== '') {
           this.zone.run(() => {
             this.displayValue = ''
             this.saveValue = ''
             if (data.orderReferenceType === 'Component') {
-              debugger
+              
               this.requisitionService.getDisplayComponent(data.saveValue).subscribe(res => {
                 this.displayValue = res.data.map(item => `${item.componentName},${item.componentCode},${item.makerName},${item.modelNo},${item.serialNo}`)
                   .join('/ ')
