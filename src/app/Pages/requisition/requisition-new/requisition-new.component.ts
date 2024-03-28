@@ -567,7 +567,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         // formPart?.get('orderReference')?.setValue(displayValue);
         this.requisitionService.addRequisitionMaster(formData)
           .subscribe(data => {
-
             this.reqId = data.data;
 
             const vesselDisable = document.getElementById("vesselDisable") as HTMLSelectElement;
@@ -577,8 +576,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
             projectNameCodeDisable.disabled = true;
             categoryDisable.disabled = true;
 
-            // this.temporaryNumber = data.documentHeader
-            // formPart.patchValue({ requisitionId: data.data, documentHeader: data.documentHeader })
+            this.temporaryNumber = data.documentHeader
+            formPart.patchValue({ requisitionId: data.data, documentHeader: data.documentHeader })
             if (this.defaultOrderType[0] !== 'Service') {
               if (formPart.value.orderReferenceType === 'Spare' || formPart.value.orderReferenceType === 'Store') {
 
