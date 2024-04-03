@@ -233,7 +233,10 @@ console.log(this.dataSource.data)
         (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
 }
 if (this.targetLoc == 'Office'){
-  this.dataSource.data = response.data;
+  let OfficeSite = response.data.filter(x => x.originSite == "Office");
+  let VesselSite = response.data.filter(x => x.originSite == "Vessel" && x.approvedReq == "Approved");
+
+  this.dataSource.data = OfficeSite.concat(VesselSite);
   this.dataSource.sort = this.sort;
   this.dataSource.paginator = this.paginator;
 }
