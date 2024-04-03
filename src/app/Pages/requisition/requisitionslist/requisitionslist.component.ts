@@ -22,6 +22,7 @@ import { AuthStatusService } from 'src/app/services/guards/auth-status.service';
 import { SideNavService } from 'src/app/services/sidenavi-service';
 import { filter } from 'rxjs/operators';
 import { RouteService } from 'src/app/services/route.service';
+import { concat } from 'rxjs';
 
 
 @Component({
@@ -83,7 +84,7 @@ export class RequisitionslistComponent implements OnInit {
   // }
 
   ngOnInit(): void {
-    debugger
+    
     this.targetLoc = environment.location;
     this.sideNavService.setActiveComponent(false);
     this.sideNavService.initSidenav();
@@ -288,12 +289,16 @@ if (this.targetLoc == 'Office'){
       .subscribe(response => {
       
         this.flag = status;
-        // this.documentHeaderList =response.data.map(x=>x.documentHeader.replace(/\D/g, '')) 
+       
+        if (this.targetLoc == "Office") {
 
-        this.dataSource.data = response.data;
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+          let OfficeSite = response.data.filter(x => x.originSite == "Office");
+          let VesselSite = response.data.filter(x => x.originSite == "Vessel" && x.approvedReq == "Approved");
 
+          this.dataSource.data = OfficeSite.concat(VesselSite);
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+        }
         (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
       });
   }
