@@ -273,7 +273,81 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.currentRoute = route;
     });
 
-    // this.initForm();
+    this.RequisitionForm = this.fb.group({
+      header: this.fb.group({
+        requisitionId: [0],
+        originSite: ['', [Validators.required]],
+        documentHeader: ['', [Validators.required]],
+        vesselId: ['0', [Validators.required]],
+        orderTypeId: ['0', [Validators.required]],
+        orderReference: ['', [Validators.required]],
+        orderReferenceType: ['', [Validators.required]],
+        departmentId: ['', [Validators.required]],
+        priorityId: ['', [Validators.required]],
+        projectNameCodeId: ['', [Validators.required]],
+        remarks: ['']
+      }),
+
+      account: this.fb.group({
+
+      }),
+
+      delivery: this.fb.group({
+        delInfoId: [0],
+        expectedDeliveryPort: ['', Validators.required],
+        expectedDeliveryDate: ['', Validators.required],
+        vesselETA: ['', Validators.required],
+        vesselETB: ['', Validators.required],
+        deliveryAddress: ['vessel'],
+        reqIds: [],
+        vesselId: []
+      }),
+
+      items: this.fb.group({
+        itemsId: [0],
+        itemCode: ['', [Validators.required]],
+        itemName: ['', [Validators.required]],
+        partNo: ['', [Validators.required]],
+        dwg: ['', [Validators.required]],
+        make: ['', [Validators.required]],
+        makerReference: ['', [Validators.required]],
+        model: ['', [Validators.required]],
+        minRequired: [0, [Validators.required]],
+        orderQty: [0, [Validators.required]],
+        rob: [0, [Validators.required]],
+        lpp: [0],
+        lpd: [0],
+        aq: [0],
+        unit: [0],
+        uc: [0],
+        qu: [0],
+        dt: [Date],
+        id: [0],
+        cost: [0],
+        cbc: [0],
+        lowest: [0],
+        remarks: ['', [Validators.required]],
+        line: [''],
+        componentName: [''],
+        componentCode: [''],
+        EquipmentName: [''],
+        prevReqdQty: [''],
+        approvedQty: [''],
+        qtyInUse: [''],
+        qtyRoB: [''],
+        reorderQty: [''],
+        reorderLevel: [''],
+        maxQuantity: [''],
+        split: [''],
+        asset: [''],
+        additionalRemarks: [''],
+        storageLocation: [''],
+        spareId: [],
+        storeId: [],
+        pmReqId: [0, [Validators.required]],
+        vesselId: []
+      }),
+    });
 
     this.RequisitionForm.get('header')?.valueChanges.subscribe((headerValue) => {
       // if (headerValue && headerValue.requisitionId === 0) 
@@ -376,90 +450,11 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     //   }
     // });
 
-    this.RequisitionForm = this.fb.group({
-      header: this.fb.group({
-        requisitionId: [0],
-        originSite: ['', [Validators.required]],
-        documentHeader: ['', [Validators.required]],
-        vesselId: ['0', [Validators.required]],
-        orderTypeId: ['0', [Validators.required]],
-        orderReference: ['', [Validators.required]],
-        orderReferenceType: ['', [Validators.required]],
-        departmentId: ['', [Validators.required]],
-        priorityId: ['', [Validators.required]],
-        projectNameCodeId: ['', [Validators.required]],
-        remarks: ['']
-      }),
-
-      account: this.fb.group({
-
-      }),
-
-      delivery: this.fb.group({
-        delInfoId: [0],
-        expectedDeliveryPort: ['', Validators.required],
-        expectedDeliveryDate: ['', Validators.required],
-        vesselETA: ['', Validators.required],
-        vesselETB: ['', Validators.required],
-        deliveryAddress: ['vessel'],
-        reqIds: [],
-        vesselId: []
-      }),
-
-      items: this.fb.group({
-        itemsId: [0],
-        itemCode: ['', [Validators.required]],
-        itemName: ['', [Validators.required]],
-        partNo: ['', [Validators.required]],
-        dwg: ['', [Validators.required]],
-        make: ['', [Validators.required]],
-        makerReference: ['', [Validators.required]],
-        model: ['', [Validators.required]],
-        minRequired: [0, [Validators.required]],
-        orderQty: [0, [Validators.required]],
-        rob: [0, [Validators.required]],
-        lpp: [0],
-        lpd: [0],
-        aq: [0],
-        unit: [0],
-        uc: [0],
-        qu: [0],
-        dt: [Date],
-        id: [0],
-        cost: [0],
-        cbc: [0],
-        lowest: [0],
-        remarks: ['', [Validators.required]],
-        line: [''],
-        componentName: [''],
-        componentCode: [''],
-        EquipmentName: [''],
-        prevReqdQty: [''],
-        approvedQty: [''],
-        qtyInUse: [''],
-        qtyRoB: [''],
-        reorderQty: [''],
-        reorderLevel: [''],
-        maxQuantity: [''],
-        split: [''],
-        asset: [''],
-        additionalRemarks: [''],
-        storageLocation: [''],
-        spareId: [],
-        storeId: [],
-        pmReqId: [0, [Validators.required]],
-        vesselId: []
-      }),
-    });
-
     this.Loadgroup();
     this.LoadComponent();
     this.LoadStore();
     this.LoadSpare();
-    this.LoadOrdertype();
-    this.LoadPriority();
-    this.LoadVessel();
-    this.LoadDepartment();
+
     this.displayedColumns = this.ItemsColumns.filter((column, index) => this.visibleColumns[index]);
   }
 
@@ -537,9 +532,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     return jobFormGroup.get('attachment') as FormGroup;
   }
 
-  // initForm(): void {
-   
-  // }
 
   autoSave(partName: string): void {
 
@@ -1390,6 +1382,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     if (this.reqGetId) {
       // this.loadItemByReqId(this.reqGetId);
+      this.LoadVessel();
+      this.LoadProjectnameAndcode();
+      this.LoadPriority();
+      this.LoadDepartment();
       this.userService.getUserById(this.userId).subscribe(response => {
         this.userDetail = response.data;
         this.userSite = response.data.site;
@@ -1401,7 +1397,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.saveValue = ''
       this.displayValue = ''
       // this.LoadUserDetails();
-      
+      this.LoadOrdertype();
+      this.LoadPriority();
+      this.LoadVessel();
+      this.LoadDepartment();
       
       // this.generateTempNumber();
     }
