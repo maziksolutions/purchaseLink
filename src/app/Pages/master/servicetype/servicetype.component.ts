@@ -85,6 +85,7 @@ export class ServicetypeComponent implements OnInit {
   }
 
   loadData(status: number) {
+    this.selection.clear();
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -208,7 +209,7 @@ export class ServicetypeComponent implements OnInit {
     this.pageChanged(this.pageEvent);
   }
   clearSearchInput() {
-    debugger
+    
     this.sfm.keyword.setValue('');
     this.applyFilter()
   }

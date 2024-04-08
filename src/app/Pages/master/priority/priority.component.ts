@@ -53,6 +53,7 @@ export class PriorityComponent implements OnInit {
   defchecked: boolean = false;
   ordertypename: any;
   lastpreferenceValues: any;
+  FullDatapriority: any;
 
 
   constructor(private fb: FormBuilder,
@@ -93,6 +94,7 @@ export class PriorityComponent implements OnInit {
 
     //this.PriorityForm.controls.directCompletion.setValue('');
     // this.loadRights();
+    this.fullData();
     this.loadData(0);
     this.LoadOrderType();
   }
@@ -152,7 +154,26 @@ export class PriorityComponent implements OnInit {
     // this.selectedCountries.splice(0, this.selectedCountries.length);
   }
 
+  fullData(){
+    this.purchaseService.GetPreferenceType(0)
+      .subscribe(response => {
+
+        this.FullDatapriority = response.data;
+
+        let preferenceValues = response.data.map(x => x.preferenceNumber);
+
+        if (preferenceValues.length > 0) {
+          this.lastpreferenceValues = preferenceValues.pop();
+
+        }
+        else if (preferenceValues.length == 0) {
+          this.lastpreferenceValues = 0;
+        }
+      }) 
+  }
+
   loadData(status: number) {
+    this.selection.clear();
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -175,15 +196,7 @@ export class PriorityComponent implements OnInit {
         this.flag = status;
         this.dataSource.data = response.data;
 
-        let preferenceValues = response.data.map(x => x.preferenceNumber);
-
-        if (preferenceValues.length > 0) {
-          this.lastpreferenceValues = preferenceValues.pop();
-
-        }
-        else if (preferenceValues.length == 0) {
-          this.lastpreferenceValues = 0;
-        }
+      
         this.dataSource.sort = this.mainSort;
         this.PageTotal = response.total;
         this.dataSource.sortingDataAccessor = (item, property) => {

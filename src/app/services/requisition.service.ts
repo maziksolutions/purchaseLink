@@ -31,11 +31,17 @@ export class RequisitionService {
   getRequisitionMaster(status): Observable<any> {  
     return this.httpClient.get<any[]>(`${this.linkurl}OldfilterRequisitionMaster/${status}`, httpOptions);
   }
-
+  getRequisitionMasters(status): Observable<any> {  
+    return this.httpClient.get<any[]>(`${this.linkurl}filterRequisitionMasterOlds/${status}`, httpOptions);
+  }
   filterRequisitionMasterwithvessel(vesselId): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}OldGetRequisitionMasterWithVessel/${vesselId}`, httpOptions);
   }
   
+  filterRequisitionMasterwithvessels(vesselId): Observable<any> {
+    return this.httpClient.get<any[]>(`${this.linkurl}OldGetRequisitionMasterWithVesselss/${vesselId}`, httpOptions);
+  }
+
   getOrderTypeById(id): Observable<any> {
     return this.httpClient.get<any>(this.linkurl + 'getOrderTypeById/' + id, httpOptions)
       .pipe(catchError(this.handleError));

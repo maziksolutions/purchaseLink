@@ -77,13 +77,13 @@ export class PurchaseMasterService {
       .pipe(catchError(this.handleError));
   }
   archiveServiceType(jobType: any[]): Observable<string> {
-    return this.httpClient.post<string>(`${this.linkurl}deleteServiceType/`, jobType, httpOptions);
+    return this.httpClient.post<string>(`${this.linkurl}olddeleteServiceType/`, jobType, httpOptions);
   }
   //#endregion
   
   //#region Priority Master
   getPreferenceTypeByPaginator(formData): Observable<any> {  
-    return this.httpClient.get<any[]>(`${this.linkurl}filterPreferenceType?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
+    return this.httpClient.get<any[]>(`${this.linkurl}FilterPreference?PageNumber=${formData.pageNumber}&PageSize=${formData.pageSize}&Status=${formData.status}&KeyWord=${formData.keyword}&Excel=${formData.excel}`, httpOptions);
   }
   GetPreferenceType(status): Observable<any> {
     return this.httpClient.get<any[]>(`${this.linkurl}filterPreferenceType/${status}`, httpOptions);
@@ -103,7 +103,7 @@ export class PurchaseMasterService {
   }
 
   archivePreference(jobType: any[]): Observable<string> {
-    return this.httpClient.post<string>(`${this.linkurl}deletePreference/`, jobType, httpOptions);
+    return this.httpClient.post<string>(`${this.linkurl}olddeletePreference/`, jobType, httpOptions);
   }
   //#endregion Priority Master
 
@@ -124,7 +124,7 @@ export class PurchaseMasterService {
       .pipe(catchError(this.handleError));
   }
   archivematerialquality(jobType: any[]): Observable<string> {
-    return this.httpClient.post<string>(`${this.linkurl}deleteMaterialType/`, jobType, httpOptions);
+    return this.httpClient.post<string>(`${this.linkurl}OlddeleteMaterialType/`, jobType, httpOptions);
   }
   //#endregion
 
@@ -148,7 +148,7 @@ export class PurchaseMasterService {
       .pipe(catchError(this.handleError));
   }
   archiveProjectname(jobType: any[]): Observable<string> {
-    return this.httpClient.post<string>(`${this.linkurl}archiveProjectNameCodeGroup/`, jobType, httpOptions);
+    return this.httpClient.post<string>(`${this.linkurl}OldarchiveProjectNameCodeGroup/`, jobType, httpOptions);
   }
   //#endregion Project Name / Code
 

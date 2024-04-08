@@ -142,6 +142,7 @@ export class PagesComponent implements OnInit {
   }
 
   loadData(status: number) {
+    this.selection.clear();
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {

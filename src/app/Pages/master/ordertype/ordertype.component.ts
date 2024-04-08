@@ -102,7 +102,7 @@ export class OrdertypeComponent implements OnInit {
   }
 
   loadData(status: number) {
-    debugger
+    this.selection.clear();
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -122,7 +122,7 @@ export class OrdertypeComponent implements OnInit {
     this.sfm.excel.setValue('False')
     this.purchaseService.getOrderTypesByPaginator(this.searchForm.value)
       .subscribe(response => {
-        debugger
+        
         this.flag = status;
         this.dataSource.data = response.data;
         this.dataSource.sort = this.mainSort;
@@ -164,7 +164,7 @@ export class OrdertypeComponent implements OnInit {
       this.selectedItems = event.map((x: { serviceTypeId: any; }) => x.serviceTypeId);
   }
   onItemSelect(event: any) {
-    debugger
+    
     let isSelect = event.serviceTypeId;
     if (isSelect) {
       this.selectedItems.push(event.serviceTypeId);
@@ -193,7 +193,7 @@ export class OrdertypeComponent implements OnInit {
       })
   }
   onSubmit(form: any) {
-    debugger
+    
     form.value.serviceTypeId = this.selectedItems.join(',');
     if (this.orderForm.valid) {
       const fmdata = new FormData();
@@ -236,7 +236,7 @@ export class OrdertypeComponent implements OnInit {
       .subscribe((response) => {
 
         if (response.status) {
-          debugger
+          
           this.dropdownList = [];
           if (response.data.serviceTypeId != '' && response.data.serviceTypeId != null) {
 
@@ -298,13 +298,13 @@ export class OrdertypeComponent implements OnInit {
     }
   }
   applyFilter() {
-    debugger
+    
     this.page = 1; this.currentPage = 0;
     this.loadData(this.flag);
     this.pageChanged(this.pageEvent);
   }
   clearSearchInput() {
-    debugger
+    
     this.sfm.keyword.setValue('');
     this.applyFilter()
   }

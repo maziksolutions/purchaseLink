@@ -106,7 +106,7 @@ getAttachmentTypeById(id):Observable<any>{
 }
 
 archiveAttachmentType(attachmentType: any[]): Observable < string > {   
-  return this.httpClient.post<string> (`${this.linkurl}archiveAttachmentType/`, attachmentType, httpOptions);  
+  return this.httpClient.post<string> (`${this.linkurl}OldarchiveAttachmentType/`, attachmentType, httpOptions);  
 }  
 //#endregion
 

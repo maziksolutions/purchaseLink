@@ -21,7 +21,7 @@
             class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Approved
           Requisition</span>
       </div>
-      <div class="col-auto align-self-center" *ngIf="approvestatus == 'Reject'">
+      <div class="col-auto align-self-center" *ngIf="approvestatus == 'Rejected'">
         <h5 class="mb-0">Reject Requisition</h5>
         <span class="btn-sm ps-0 text-primary fw-bold">Purchase Link<span
             class="fas fa-chevron-right ms-1 fs--2"></span></span><span class="btn-sm p-0">Rejected
@@ -170,7 +170,7 @@
             </div>
 
             <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
-              *ngIf="approvestatus === undefined || approvestatus === null" title="Send for Approval"
+              *ngIf="approvestatus === 'Draft'" title="Send for Approval"
               data-bs-original-title="Send for Approval" aria-label="" (click)="sendApprove()">
               <i class="fas fa-share-square text-primary"></i></a>
 
@@ -180,12 +180,12 @@
               (click)="FinalApprove('Approved')">
               <i class="fas fa-check text-primary"></i></a>
 
-            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Reject"
-              *ngIf="approvestatus == 'Waiting For Approval'" data-bs-original-title="Reject" aria-label=""
-              (click)="FinalApprove('Reject')"> <i class="fas fa-times text-danger"></i></a>
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Rejected"
+              *ngIf="approvestatus == 'Waiting For Approval'" data-bs-original-title="Rejected" aria-label=""
+              (click)="FinalApprove('Rejected')"> <i class="fas fa-times text-danger"></i></a>
 
-            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Reject"
-              *ngIf="approvestatus == 'Reject'" data-bs-original-title="Reject" aria-label="">
+            <a class="px-1 m-r-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Rejected"
+              *ngIf="approvestatus == 'Rejected'" data-bs-original-title="Rejected" aria-label="">
               <i class="fas fa-times text-danger"></i></a>
 
 
@@ -410,7 +410,7 @@
 <!--Delivery Form Start Here -->
 <div class="card mb-3" *ngIf="reqId !== undefined">
   <form [formGroup]="RequisitionForm">
-    <div class="card-header bg-light">
+    <div class="card-header bg-light" (click)="loadPortList()" >
       <div class="row flex-between-end">
         <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#delivery"
           aria-expanded="false" aria-controls="document-header">
@@ -642,7 +642,7 @@
 
 <!--Items Form Start Here -->
 <div class="card mb-3" *ngIf="reqId !== undefined && (defaultOrderType[0]==='Spare' || defaultOrderType[0]==='Store')">
-  <div class="card-header bg-light">
+  <div class="card-header bg-light" (click)="ItemsClick();">
     <div class="row flex-between-end">
       <div class="col-md-8 align-self-center" type="button" data-bs-toggle="collapse" data-bs-target="#items"
         aria-expanded="false" aria-controls="items">

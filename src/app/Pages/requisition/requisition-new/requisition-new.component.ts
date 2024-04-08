@@ -324,7 +324,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     });
 
     this.loadData(0);
-    this.fillattachmenttype();
 
     this.sortItems();
     this.sideNavService.setActiveComponent(true);
@@ -559,7 +558,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         priorityId: formPart?.value.priorityId,
         projectNameCodeId: formPart?.value.projectNameCodeId,
         remarks: formPart?.value.remarks,
+       
       });
+
+     
       if (partName == 'header' && formPart != null && formPart.valid) {
 
         const formData = new FormData();
@@ -568,14 +570,14 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.requisitionService.addRequisitionMaster(formData)
           .subscribe(data => {
             this.reqId = data.data;
-
+            
             const vesselDisable = document.getElementById("vesselDisable") as HTMLSelectElement;
             const projectNameCodeDisable = document.getElementById("projectNameCodeDisable") as HTMLSelectElement;
             const categoryDisable = document.getElementById("categoryDisable") as HTMLSelectElement;
             vesselDisable.disabled = true;
             projectNameCodeDisable.disabled = true;
             categoryDisable.disabled = true;
-
+            this.approvestatus = data.approvedReq
             this.temporaryNumber = data.documentHeader
             formPart.patchValue({ requisitionId: data.data, documentHeader: data.documentHeader })
             if (this.defaultOrderType[0] !== 'Service') {
@@ -1011,7 +1013,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         this.selectedVesselId = requisitionData.vesselId;
         const objProcR = requisitionData.orderReference.split(',');
         this.getPortList().subscribe(res => {
-          this.loadPortList()
+          
           this.portList = res;
           this.loadDeliveryInfo();
         });
@@ -1387,7 +1389,6 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.LoadProjectnameAndcode();
       this.LoadPriority();
       this.LoadDepartment();
-      this.GetunitList();
       this.userService.getUserById(this.userId).subscribe(response => {
         this.userDetail = response.data;
         this.userSite = response.data.site;
@@ -1403,8 +1404,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       this.LoadPriority();
       this.LoadVessel();
       this.LoadDepartment();
-      this.loadPortList();
-      this.GetunitList();
+      
       // this.generateTempNumber();
     }
   }
@@ -2286,7 +2286,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
       })
     }
 
-    if (final == 'Reject') {
+    if (final == 'Rejected') {
 
       var title = "";
       Swal.fire({
@@ -3445,6 +3445,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
 
   // }
+  ItemsClick(){
+    this.GetunitList();
+    this.fillattachmenttype();
+  }
 
   GetunitList() {
     this.unitmasterservice.GetunitList(0)

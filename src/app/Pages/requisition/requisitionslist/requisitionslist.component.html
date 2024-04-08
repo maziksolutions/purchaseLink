@@ -107,8 +107,8 @@
         </ng-container>
         <ng-container matColumnDef="VesselName">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Vessel Name</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.vessel.vesselName}}>
-            <span>{{row.vessel.vesselName ?? '-'}} </span>
+          <mat-cell *matCellDef="let row" title={{row.vesselName}}>
+            <span>{{row.vesselName ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Requisition_No">
@@ -133,8 +133,8 @@
         </ng-container>
         <ng-container matColumnDef="Priority">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Priority</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.pmPreference.description}}>
-            <span> {{row.pmPreference.description ?? '-'}} </span>
+          <mat-cell *matCellDef="let row" title={{row.description}}>
+            <span> {{row.description ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="OrderReference">
@@ -151,15 +151,15 @@
         </ng-container>
         <ng-container matColumnDef="Department">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Department</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.departments.departmentName}}>
-            <span> {{row.departments.departmentName ?? '-'}} </span>
+          <mat-cell *matCellDef="let row" title={{row.departmentName}}>
+            <span> {{row.departmentName ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="ProjectName_Code">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
           <mat-cell *matCellDef="let row"
-            title={{row.pmProjectNameCode.projectName}}{{row.pmProjectNameCode.projectCode}}>
-            <span> {{row.pmProjectNameCode.projectName ?? '-'}}{{row.pmProjectNameCode.projectCode ?? '-'}} </span>
+            title={{row.projectName}}{{row.projectCode}}>
+            <span> {{row.projectName ?? '-'}}{{row.projectCode ?? '-'}} </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Delivery_Site">
@@ -171,8 +171,8 @@
 
         <ng-container matColumnDef="RequestOrderType">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Category</mat-header-cell>
-          <mat-cell *matCellDef="let row" title={{row.pmOrderType.orderTypes}}>
-            <span> {{row.pmOrderType.orderTypes ?? '-'}} </span>
+          <mat-cell *matCellDef="let row" title={{row.orderTypes}}>
+            <span> {{row.orderTypes ?? '-'}} </span>
           </mat-cell>
         </ng-container>
 

@@ -112,15 +112,16 @@ export class RequisitionslistComponent implements OnInit {
     }
     this.loadUserFleetData();
     this.LoadVessel();
+    
+
+    this.loadScript('assets/js/SideNavi.js');
+
     this.Loadgroup();
     this.LoadComponent();
     this.LoadStore();
     this.LoadSpare();
     this.loadItem();
-
-    this.loadScript('assets/js/SideNavi.js');
-
-    this.loadServiceType();    
+    this.loadServiceType();
   }
 
   ngAfterViewInit(): void {
@@ -218,7 +219,7 @@ export class RequisitionslistComponent implements OnInit {
       })
   }
   filterVessel() {
-    this.requisitionService.filterRequisitionMasterwithvessel(this.selectedVesselId)
+    this.requisitionService.filterRequisitionMasterwithvessels(this.selectedVesselId)
       .subscribe(response => {
 
         this.flag = status;
@@ -273,7 +274,7 @@ if (this.targetLoc == 'Office'){
   }
 
   loadData(status: number) {
-
+this.selection.clear();
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -288,7 +289,7 @@ if (this.targetLoc == 'Office'){
         (document.querySelector('.fa-trash-restore') as HTMLElement).classList.remove("fa-trash-restore", "text-primary");
       }
     }
-    this.requisitionService.getRequisitionMaster(status)
+    this.requisitionService.getRequisitionMasters(status)
       .subscribe(response => {
       
         this.flag = status;
@@ -336,7 +337,7 @@ if (this.targetLoc == 'Office'){
         delete item.approvedReq, delete item.shipRecordId, delete item.officeRecordId, delete item.vessel,
 
         item.pmOrderType = item.pmOrderType.orderTypes;
-      item.pmPreference = item.pmPreference.description;
+      item.pmPreference = item.description;
       item.pmProjectNameCode = item.pmProjectNameCode.projectName + item.pmProjectNameCode.projectCode;
       item.departments = item.departments.departmentName;
 
@@ -430,23 +431,23 @@ if (this.targetLoc == 'Office'){
 
       const uniqueItems = this.itemdata.filter(x => x.pmReqId == id[i].requisitionId);
 
-      let fileDes = this.ReqData[0].pmOrderType.defaultOrderType == "Spare" ? "TmMASTER" : "StarIPS";
+      let fileDes = this.ReqData[0].defaultOrderType == "Spare" ? "TmMASTER" : "StarIPS";
 
 
       let stepData = `ISO-10303-21;
     HEADER;
     FILE_DESCRIPTION(('Requisition data transfer in ${fileDes}');
-    FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData[0].vessel.vesselCode}${year + '' + documentHeader}.RTO','${Dates}');
+    FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData[0].vesselCode}${year + '' + documentHeader}.RTO','${Dates}');
     ENDSEC;
     DATA;`;
 
       stepData += `
   
-             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].pmPreference.description}','${Dates}','','','${this.ReqData[0].departments.departmentName}','','${this.accountcode.accountCode == this.accountcode.accountCode ? this.accountcode.accountCode : null}','','','','','')`;
+             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].description}','${Dates}','','','${this.ReqData[0].departmentName}','','${this.accountcode.accountCode == this.accountcode.accountCode ? this.accountcode.accountCode : null}','','','','','')`;
 
       uniqueItems.forEach((item, index) => {
         stepData += `
-             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
+             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
       });
    
       
@@ -480,7 +481,7 @@ if (this.targetLoc == 'Office'){
       // Convert the content to a Blob
       const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
 
-      let filesaveName = this.ReqData[0].vessel.vesselCode + year + documentHeader + '.RTO';
+      let filesaveName = this.ReqData[0].vesselCode + year + documentHeader + '.RTO';
       // Use FileSaver.js to save the file
       saveAs(blob, filesaveName);
 
