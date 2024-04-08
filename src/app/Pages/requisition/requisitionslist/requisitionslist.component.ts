@@ -23,6 +23,7 @@ import { SideNavService } from 'src/app/services/sidenavi-service';
 import { filter } from 'rxjs/operators';
 import { RouteService } from 'src/app/services/route.service';
 import { concat } from 'rxjs';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 
 @Component({
@@ -34,8 +35,8 @@ export class RequisitionslistComponent implements OnInit {
   RequisitionForm: FormGroup; flag; pkey: number = 0;
   selectedIndex: any;
   dataSource = new MatTableDataSource<any>();
-  displayedColumns: string[] = ['checkbox','VesselName','Requisition_No','Status','reqRecDate','Priority','OrderReference',
-  'OriginSite','Department', 'ProjectName_Code', 'Delivery_Site', 'RequestOrderType', ];
+  displayedColumns: string[] = ['checkbox', 'VesselName', 'Requisition_No', 'Status', 'reqRecDate', 'Priority', 'OrderReference',
+    'OriginSite', 'Department', 'ProjectName_Code', 'Delivery_Site', 'RequestOrderType',];
   selection = new SelectionModel<any>(true, []);
   rights: RightsModel;
   @ViewChild('searchInput') searchInput: ElementRef;
@@ -63,7 +64,7 @@ export class RequisitionslistComponent implements OnInit {
   constructor(private sideNavService: SideNavService, private route: Router, private authStatusService: AuthStatusService, private routeService: RouteService,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService, private elRef: ElementRef,
     private fb: FormBuilder, private requisitionService: RequisitionService, private swal: SwalToastService, private datePipe: DatePipe, private shipmasterService: ShipmasterService,
-    private exportExcelService: ExportExcelService, private pmsgroupService: PmsgroupService) {
+    private exportExcelService: ExportExcelService, private ngxUiLoaderService: NgxUiLoaderService, private pmsgroupService: PmsgroupService) {
     this.route.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.sideNavService.initSidenav();
@@ -84,7 +85,7 @@ export class RequisitionslistComponent implements OnInit {
   // }
 
   ngOnInit(): void {
-    
+
     this.targetLoc = environment.location;
     this.sideNavService.setActiveComponent(false);
     this.sideNavService.initSidenav();
@@ -120,14 +121,14 @@ export class RequisitionslistComponent implements OnInit {
 
     this.loadScript('assets/js/SideNavi.js');
 
-    this.loadServiceType();    
+    this.loadServiceType();
   }
 
   ngAfterViewInit(): void {
     this.checkDropdownItems();
   }
   checkDropdownItems() {
-    
+
     const dropdownItems = this.elRef.nativeElement.querySelectorAll('.dropdown-item');
     // if (dropdownItems.length === 1) {
     //   const singleItem = dropdownItems[0] as HTMLElement;
@@ -136,7 +137,7 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   handleButtonClick() {
-    
+
     const dropdownItems = document.querySelectorAll('.dropdown-item');
     if (dropdownItems.length === 1) {
       const singleItem = dropdownItems[0] as HTMLElement;
@@ -154,7 +155,7 @@ export class RequisitionslistComponent implements OnInit {
       });
   }
   filteredVessels(id) {
-    
+
     this.VesselId = null;
     var vesselList = this.myFleet.filter(x => x.userFleetId == id)[0]["vessels"];
 
@@ -202,7 +203,7 @@ export class RequisitionslistComponent implements OnInit {
     this.vesselService.getVessels(0)
       .subscribe(response => {
         if (this.targetLoc == 'Vessel') {
-          
+
           const filteredVessels = response.data.filter(x => x.vesselId == environment.vesselId);
           if (filteredVessels.length > 0) {
             this.Vessels = filteredVessels;
@@ -218,28 +219,31 @@ export class RequisitionslistComponent implements OnInit {
       })
   }
   filterVessel() {
+    this.ngxUiLoaderService.start();
     this.requisitionService.filterRequisitionMasterwithvessel(this.selectedVesselId)
       .subscribe(response => {
-
+        this.ngxUiLoaderService.stop();
         this.flag = status;
 
-if (this.targetLoc == 'Vessel') {
-        this.dataSource.data = response.data.filter(x=>x.originSite == 'Vessel');
-console.log(this.dataSource.data)
+        if (this.targetLoc == 'Vessel') {
+          this.dataSource.data = response.data.filter(x => x.originSite == 'Vessel');
+          console.log(this.dataSource.data)
 
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+          this.ngxUiLoaderService.stop();
+          (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+        }
+        if (this.targetLoc == 'Office') {
+          let OfficeSite = response.data.filter(x => x.originSite == "Office");
+          let VesselSite = response.data.filter(x => x.originSite == "Vessel" && x.approvedReq == "Approved");
 
-        (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
-}
-if (this.targetLoc == 'Office'){
-  let OfficeSite = response.data.filter(x => x.originSite == "Office");
-  let VesselSite = response.data.filter(x => x.originSite == "Vessel" && x.approvedReq == "Approved");
-
-  this.dataSource.data = OfficeSite.concat(VesselSite);
-  this.dataSource.sort = this.sort;
-  this.dataSource.paginator = this.paginator;
-}
+          this.dataSource.data = OfficeSite.concat(VesselSite);
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+          this.ngxUiLoaderService.stop();
+        }
+       
       });
   }
   applyFilter(filterValue: string) {
@@ -273,7 +277,7 @@ if (this.targetLoc == 'Office'){
   }
 
   loadData(status: number) {
-
+    this.ngxUiLoaderService.start();
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
       if ((document.querySelector('.fa-trash') as HTMLElement) != null) {
@@ -290,9 +294,9 @@ if (this.targetLoc == 'Office'){
     }
     this.requisitionService.getRequisitionMaster(status)
       .subscribe(response => {
-      
+
         this.flag = status;
-       
+
         if (this.targetLoc == "Office") {
 
           let OfficeSite = response.data.filter(x => x.originSite == "Office");
@@ -301,13 +305,14 @@ if (this.targetLoc == 'Office'){
           this.dataSource.data = OfficeSite.concat(VesselSite);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
+          this.ngxUiLoaderService.stop();
         }
         (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
+        
       });
   }
 
   clear() {
-    
     this.RequisitionForm.reset();
     this.RequisitionForm.controls.requisitionId.setValue(0);
     this.RequisitionForm.controls.originSite.setValue('');
@@ -389,22 +394,22 @@ if (this.targetLoc == 'Office'){
     this.requisitionService.getServiceTypefull(status).subscribe(res => {
 
       if (res.status === true) {
-        
+
         const dataWithExpansion = res.data.map((item) => {
           // Ensure each item in jobList has the isExpanded property
           item.jobList = item.jobList.map(job => ({ ...job, isExpanded: false }));
           return { ...item, isExpanded: false };
         });
         this.serviceTypeDataSource = dataWithExpansion
-       
+
       }
     })
   }
 
   downloadNotepad() {
-    
+
     const id = this.selection.selected.filter(x => x.approvedReq == "Approved");
-      
+
     for (let i = 0; i < id.length; i++) {
 
       this.ReqData = this.dataSource.data.filter(x => x.requisitionId == id[i].requisitionId && x.approvedReq == "Approved");
@@ -448,30 +453,30 @@ if (this.targetLoc == 'Office'){
         stepData += `
              #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
       });
-   
-      
 
-      if( this.serviceTypeDataSource.length !== 0 || this.serviceTypeDataSource.length !== null ){
 
-     let dataservice  = this.serviceTypeDataSource.filter(x=>x.pmReqId == id[i].requisitionId);
 
-        const jobToAdd = dataservice.map(item =>  ({
-          serviceName:item.serviceName,
-          jobList:item.jobList
-        })  
-          );  
-  
-          let jobNumber = 1;
-          jobToAdd.forEach((item, index) => {
-           
-            // Add jobList details to the stepData
-            item.jobList.forEach((job, jobIndex) => {
-              stepData += `,
+      if (this.serviceTypeDataSource.length !== 0 || this.serviceTypeDataSource.length !== null) {
+
+        let dataservice = this.serviceTypeDataSource.filter(x => x.pmReqId == id[i].requisitionId);
+
+        const jobToAdd = dataservice.map(item => ({
+          serviceName: item.serviceName,
+          jobList: item.jobList
+        })
+        );
+
+        let jobNumber = 1;
+        jobToAdd.forEach((item, index) => {
+
+          // Add jobList details to the stepData
+          item.jobList.forEach((job, jobIndex) => {
+            stepData += `,
              #${jobNumber + 1}=Service_for_ordering_mr('${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','','')`;
-             jobNumber++;
-            });
+            jobNumber++;
           });
-         }
+        });
+      }
 
 
       stepData += `
