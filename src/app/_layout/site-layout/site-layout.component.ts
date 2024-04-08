@@ -95,7 +95,7 @@ export class SiteLayoutComponent implements OnInit {
       newpassword: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/), Validators.minLength(8), Validators.maxLength(20)]],
       confirmpassword: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/), Validators.minLength(8), Validators.maxLength(20)]]
     })
-    this.loadRights();
+    // this.loadRights();
     this.loadModules();
     this.loadName();
     this.loadDesignation();
@@ -277,20 +277,20 @@ export class SiteLayoutComponent implements OnInit {
   //     });
   // }
 
-  loadRights() {
-    this.userManagementService.checkAccessRightByUrlList(this.masterMenus.join(',')).subscribe((response) => {
-      if (response.status) {
-        this.rights = response.data;
-        if (this.rights.find(x => x.viewRight) === undefined) {
-          this.masterView = false;
-        } else {
-          this.masterView = true;
-        }
-      }
-    }, (error) => {
-      console.log(error);
-    })
-  }
+  // loadRights() {
+  //   this.userManagementService.checkAccessRightByUrlList(this.masterMenus.join(',')).subscribe((response) => {
+  //     if (response.status) {
+  //       this.rights = response.data;
+  //       if (this.rights.find(x => x.viewRight) === undefined) {
+  //         this.masterView = false;
+  //       } else {
+  //         this.masterView = true;
+  //       }
+  //     }
+  //   }, (error) => {
+  //     console.log(error);
+  //   })
+  // }
 
 
   loadModules() {

@@ -232,8 +232,8 @@
               <select class="form-control form-small form-select" formControlName="vesselId"
                 [(ngModel)]="selectedVesselId" required (change)="LoadProjectnameAndcode()" id="vesselDisable">
                 <option value="0" selected disabled>Select Vessel</option>
-                <option *ngFor="let item of  Vessels" id="abc" value="{{item.vesselId}}"> 
-                  {{item.vesselName | titlecase}}
+                <option *ngFor="let item of  Vessels" id="abc" value="{{item?.vesselId}}"> 
+                  {{item?.vesselName | titlecase}}
 
                 </option>
               </select>

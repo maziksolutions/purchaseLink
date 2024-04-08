@@ -953,7 +953,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   }
   displayJobListsColumn(): boolean {
     // Check if any row is expanded
-    return this.serviceTypeDataSource.data.some(row => row.isExpanded);
+    return this.serviceTypeDataSource.data?.some(row => row.isExpanded);
   }
 
   getReqData() {
@@ -3443,6 +3443,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
   // }
   ItemsClick(){
+    this.loadItemsData(0);
     this.GetunitList();
     this.fillattachmenttype();
   }
