@@ -45,7 +45,7 @@
 
               <ul class="nav collapse" id="purchase-link" routerLinkActive="in"
                 [ngClass]="{'show': routeUrl=='Requisition'}">
-                <li routerLinkActive="active" class="nav-item">
+                <li routerLinkActive="active" class="nav-item" *ngIf="targetLoc == 'Office'">
                   <a class="nav-link" aria-expanded="false">
                     <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Purchase Tracking</span>
                     </div>
@@ -62,7 +62,7 @@
                 </li>
 
 
-                <li routerLinkActive="active" class="nav-item">
+                <li routerLinkActive="active" class="nav-item" *ngIf="targetLoc == 'Office'">
                   <a class="nav-link" aria-expanded="false">
                     <div class="d-flex align-items-center">
                       <span class="nav-link-text ps-1">RFQ</span>
@@ -71,22 +71,22 @@
                 </li>
 
 
-                <li class="nav-item"><a class="nav-link" aria-expanded="false">
+                <li class="nav-item"><a class="nav-link" aria-expanded="false" *ngIf="targetLoc == 'Office'">
                     <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Purchase Order</span>
                     </div>
                   </a>
                 </li>
-                <li class="nav-item"><a class="nav-link" aria-expanded="false">
+                <li class="nav-item"><a class="nav-link" aria-expanded="false" *ngIf="targetLoc == 'Office'">
                     <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Dispatch</span>
                     </div>
                   </a>
                 </li>
-                <li class="nav-item"><a class="nav-link" aria-expanded="false">
+                <li class="nav-item"><a class="nav-link" aria-expanded="false" *ngIf="targetLoc == 'Office'">
                     <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Material Receipt</span>
                     </div>
                   </a>
                 </li>
-                <li class="nav-item"><a class="nav-link" aria-expanded="false">
+                <li class="nav-item"><a class="nav-link" aria-expanded="false" *ngIf="targetLoc == 'Office'">
                     <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Invoice</span>
                     </div>
                   </a>
@@ -95,7 +95,7 @@
             </li>
 
 
-            <li routerLinkActive="in" class="nav-item">
+            <li routerLinkActive="in" class="nav-item" *ngIf="targetLoc == 'Office'">
               <!-- label-->
               <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
                 <div class="col-auto navbar-vertical-label">Purchase Master
@@ -183,7 +183,7 @@
               </ul>
             </li>
 
-            <li routerLinkActive="in" class="nav-item">
+            <li routerLinkActive="in" class="nav-item" *ngIf="targetLoc == 'Office'">
               <!-- label-->
               <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
                 <div class="col-auto navbar-vertical-label">Vendor Management
@@ -208,7 +208,7 @@
               </ul>
             </li>
 
-            <li routerLinkActive="in" class="nav-item">
+            <li routerLinkActive="in" class="nav-item" *ngIf="targetLoc == 'Office'">
               <!-- label-->
               <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
                 <div class="col-auto navbar-vertical-label">Accounts Master
@@ -254,7 +254,7 @@
                 </li>
               </ul>
             </li>
-            <li routerLinkActive="in" class="nav-item">
+            <li routerLinkActive="in" class="nav-item" *ngIf="targetLoc == 'Office'">
               <!-- label-->
               <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
                 <div class="col-auto navbar-vertical-label">WorkFlow Master
