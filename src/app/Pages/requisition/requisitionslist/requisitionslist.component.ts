@@ -117,10 +117,7 @@ export class RequisitionslistComponent implements OnInit {
 
     this.loadScript('assets/js/SideNavi.js');
 
-    this.Loadgroup();
-    this.LoadComponent();
-    this.LoadStore();
-    this.LoadSpare();
+
     this.loadItem();
     this.loadServiceType();
   }
@@ -303,6 +300,7 @@ this.selection.clear();
           let VesselSite = response.data.filter(x => x.originSite == "Vessel" && x.approvedReq == "Approved");
 
           this.dataSource.data = OfficeSite.concat(VesselSite);
+          console.log(this.dataSource.data)
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
           this.ngxUiLoaderService.stop();
@@ -333,54 +331,33 @@ this.selection.clear();
       this.exportAsXLSX(JSON.parse(JSON.stringify(this.dataSource.data)));
   }
   exportAsXLSX(data: any[]): void {
+
+    data = data.map(item => ({
+      VesselName:item.vesselName,
+      RequisitionNo:item.documentHeader,
+      Status:item.approvedReq,
+      Priority:item.description,
+      Description: item.orderReferenceNames,
+      Origin:item.originSite,
+      Departments : item.departmentName,
+      Type : item.projectName + item.projectCode,
+      DelvierySite:item.deliverySiteNames,
+      Category : item.orderTypes,
+ 
+    }))
+ 
     data.forEach((item) => {
       delete item.requisitionId,
         delete item.recDate, delete item.isDeleted, delete item.modifiedBy, delete item.modifiedDate, delete item.createdBy,
         delete item.vesselId, delete item.orderTypeId, delete item.orderReference, delete item.orderReferenceType, delete item.departmentId,
         delete item.priorityId, delete item.projectNameCodeId, delete item.remarks, delete item.genericComment, delete item.internalComment,
-        delete item.approvedReq, delete item.shipRecordId, delete item.officeRecordId, delete item.vessel,
-
-        item.pmOrderType = item.pmOrderType.orderTypes;
-      item.pmPreference = item.description;
-      item.pmProjectNameCode = item.pmProjectNameCode.projectName + item.pmProjectNameCode.projectCode;
-      item.departments = item.departments.departmentName;
-
+        delete item.approvedReq, delete item.shipRecordId, delete item.officeRecordId, delete item.vessel
 
     })
     this.exportExcelService.exportAsExcelFile(data, 'Requisition', 'Requisition');
   }
 
-  Loadgroup() {
-    this.pmsgroupService.GetPMSGroupdata(0)
-      .subscribe(response => {
 
-        this.GetGroupAccCode = response.data;
-
-      })
-  }
-  LoadComponent() {
-    this.pmsgroupService.GetComponent(0)
-      .subscribe(response => {
-
-        this.GetCompoAccCode = response.data;
-
-      })
-  }
-  LoadStore() {
-    this.pmsgroupService.getStore(0)
-      .subscribe(response => {
-        this.GetStoreAccCode = response.data;
-
-      })
-  }
-  LoadSpare() {
-    this.shipmasterService.GetShipSpareList(0)
-      .subscribe(response => {
-
-        this.GetSpareAccCode = response.data;
-
-      })
-  }
   loadItem() {
     this.requisitionService.getDisplayItems(0)
       .subscribe(response => {
@@ -413,18 +390,22 @@ this.selection.clear();
     for (let i = 0; i < id.length; i++) {
 
       this.ReqData = this.dataSource.data.filter(x => x.requisitionId == id[i].requisitionId && x.approvedReq == "Approved");
-      let shipcompId = this.ReqData[0].orderReference.split(',')[0];
+      
       if (this.ReqData[0].orderReferenceType == "Group") {
-        this.accountcode = this.GetGroupAccCode.filter(x => x.pmsGroupId == shipcompId)[0];
+       
+        this.accountcode = this.ReqData[0].accountCode
       }
       if (this.ReqData[0].orderReferenceType == "Component") {
-        this.accountcode = this.GetCompoAccCode.filter(x => x.componentId == shipcompId)[0];
+   
+        this.accountcode = this.ReqData[0].accountCode
       }
       if (this.ReqData[0].orderReferenceType == "Store") {
-        this.accountcode = this.GetStoreAccCode.filter(x => x.storeId == shipcompId)[0];
+     
+        this.accountcode = this.ReqData[0].accountCode
       }
       if (this.ReqData[0].orderReferenceType == "Spare") {
-        this.accountcode = this.GetSpareAccCode.filter(x => x.spareId == shipcompId)[0];
+        
+        this.accountcode = this.ReqData[0].accountCode
       }
 
       let Dates = this.datePipe.transform(this.ReqData[0].recDate, 'yyyyMMdd');
@@ -447,7 +428,7 @@ this.selection.clear();
 
       stepData += `
   
-             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].description}','${Dates}','','','${this.ReqData[0].departmentName}','','${this.accountcode.accountCode == this.accountcode.accountCode ? this.accountcode.accountCode : null}','','','','','')`;
+             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].description}','${Dates}','','','${this.ReqData[0].departmentName}','','${this.accountcode == this.accountcode ? this.accountcode : null}','','','','','')`;
 
       uniqueItems.forEach((item, index) => {
         stepData += `
