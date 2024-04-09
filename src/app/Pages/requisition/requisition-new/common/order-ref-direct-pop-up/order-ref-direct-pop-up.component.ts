@@ -76,7 +76,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     public requisitionService: RequisitionService, public dialog: MatDialog, private cdr: ChangeDetectorRef, private zone: NgZone) { }
 
   ngOnInit(): void {
-    debugger
+    
     this.modalTitle = this.data.modalTitle;
     this.orderType = this.data.orderType;
     this.ComponentType = this.data.componentType;
@@ -92,34 +92,53 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     this.vesselId = parseInt(this.data.vesselId)
 
     if (this.spareItemDataSource.data && this.selectedCartItems) {
-      debugger
+      
       this.spareItemDataSource.data.forEach(spare => {
         // Check if the spare item's ID exists in the selectedSpares array
         const isSelected = this.selectedCartItems.some(selectedSpare => selectedSpare.spareId === spare.shipSpareId);
         // If the spare item is selected, mark it as selected
         if (isSelected) {
-          debugger
+          
           this.spareItemSelection.select(spare);
         }
       });
     } else if (this.storeItemDataSource.data && this.selectedCartItems) {
-      debugger
+      
       this.storeItemDataSource.data.forEach(store => {
         // Check if the spare item's ID exists in the selectedSpares array
         const isSelected = this.selectedCartItems.some(selectedSpare => selectedSpare.storeId === store.shipStoreId);
         // If the spare item is selected, mark it as selected
         if (isSelected) {
-          debugger
+          
           this.storeItemSelection.select(store);
         }
       });
     }
 
     if (this.ComponentType === 'Component') {
-      this.requisitionService.getTemplateTree().subscribe(res => {
-        this.dataSourceTree = res;
-        this.bindData(this.dataSourceTree);
-      })
+
+      // this.requisitionService.getTemplateTree().subscribe(res => {
+      //   this.dataSourceTree = res;
+
+      //   console.log(this.dataSourceTree)
+      //   this.bindData(this.dataSourceTree);
+      // })
+      // Assuming `requisitionService.getTemplateTree()` returns an Observable
+      const subscription = this.requisitionService.getTemplateTree().subscribe({
+          next: (res) => {
+              this.dataSourceTree = res;
+              this.bindData(this.dataSourceTree);
+              // Unsubscribe to prevent memory leaks
+              subscription.unsubscribe();
+          },
+          error: (error) => {
+              // Handle errors appropriately
+              console.error('Error fetching template tree:', error);
+              // Optionally, handle UI to inform the user about the error
+          }
+      });
+
+
     }
 
     // if (this.dataSourceTree)
@@ -139,7 +158,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     this.loadGroupsComponent()
 
     this.paginator.page.subscribe((pageEvent) => {
-      debugger
+      
       // Update page size and load data for the new page
       this.searchForm.patchValue({
         pageNumber: pageEvent.pageIndex + 1,
@@ -276,7 +295,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
 
   //#region  this is for StoreItems Table Chekcbox handling code  
   onCheckboxStoreItemChange(event: MatCheckboxChange, checked: boolean, item: any): void {
-    debugger
+    
     if (this.storeItemSelection.selected.length === 0) {
       this.matchingAccountCodes = [];
       this.apiCalled = false;
@@ -285,7 +304,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     if (accountCode !== null && accountCode !== undefined) {
       if (checked && !this.apiCalled) {
         this.requisitionService.checkAccountCode(accountCode, this.orderTypeId).subscribe(async res => {
-          debugger
+          
           if (res.status === true) {
             if (res.accounts.length > 0) {
               await this.matchingAccountCodes.push(res.accounts)
@@ -316,7 +335,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
         })
       }
       else {
-        debugger
+        
         const isInMatchingList = this.matchingAccountCodes[0].includes(accountCode.toString());
         if (isInMatchingList) {
           if (checked) {
@@ -365,7 +384,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   //#endregion
 
   saveComponent() {
-    debugger
+    
     this.displayValue = '';
     this.saveValue = '';
     switch (this.ComponentType) {
@@ -419,7 +438,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       case 'Spare':
         const SelectedSpareItems = this.spareItemDataSource.data.filter(row => this.spareItemSelection.isSelected(row));
         if (SelectedSpareItems.length > 0) {
-          debugger
+          
           this.dataSource.data = SelectedSpareItems;
           console.log(SelectedSpareItems)
           const uniqueSpareItems = [...new Set(SelectedSpareItems.map(item =>
@@ -509,7 +528,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   );
 
   handleCheckboxChange(event: Event, node: ComponentFlatNode) {
-    debugger
+    
     if (this.selectedComponentIds.length === 0 && this.selectedComponentName.length === 0) {
       this.matchingAccountCodes = [];
       this.apiCalled = false;
@@ -523,7 +542,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
     if (!isNaN(accountCodeAsNumber) && accountCodeAsNumber != null) {
       if (node.selected && !this.apiCalled && this.selectedComponentIds.length === 0) {
         this.requisitionService.checkAccountCode(accountCodeToCheck, this.orderTypeId).subscribe(res => {
-          debugger
+          
           if (res.status === true) {
             this.apiCalled = true
             if (res.accounts.length > 0) {
@@ -542,7 +561,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           }
         })
       } else {
-        debugger
+        
         if (this.matchingAccountCodes[0] === undefined) {
           checkbox.checked = false;
           if (node.selected) {
@@ -565,7 +584,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
       }
     }
     else {
-      debugger
+      
       if (this.matchingAccountCodes.length > 0) {
         if (isNaN(accountCodeAsNumber)) {
           checkbox.checked = false;
@@ -589,7 +608,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
           }
         }
       } else {
-        debugger
+        
         this.handleSelectedComponent(node, node.selected ?? false)
       }
     }
@@ -656,7 +675,7 @@ export class OrderRefDirectPopUpComponent implements OnInit {
   );
 
   handleGroupCheckboxChange(event: Event, node: GroupFlatNode) {
-    debugger
+    
     if (this.selectedGroupIds.length === 0 && this.selectedGroupName.length === 0) {
       this.matchingAccountCodes = [];
       this.apiCalled = false;
