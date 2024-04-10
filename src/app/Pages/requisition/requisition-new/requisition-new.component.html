@@ -208,7 +208,7 @@
                     data-bs-original-title="Export Excel" aria-label="" [class.disabled]="!isRequisitionApproved"><i
                       class="fas fa-file-excel text-success"></i></a> -->
 
-            <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" *ngIf="approvestatus == 'Approved'"
+            <a class="px-2 m-r-5" type="button" data-bs-toggle="tooltip" *ngIf="approvestatus == 'Approved' && targetLoc == 'Office'" 
               data-bs-placement="top" matTooltip="RTO" (click)="downloadNotepad()" data-bs-original-title="List"
               aria-label=""><i class="fas fa-file-alt"></i></a>
           </div>

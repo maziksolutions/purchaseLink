@@ -73,7 +73,7 @@
             (click)="generateExcel()" data-bs-original-title="Export Excel" aria-label="">
             <i class="fas fa-file-excel text-success"></i></a>
 
-          <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="RTO"
+          <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="RTO" *ngIf="targetLoc == 'Office'"
             (click)="downloadNotepad()" data-bs-original-title="List" aria-label=""><i class="fas fa-file-alt"></i></a>
 
         </div>
