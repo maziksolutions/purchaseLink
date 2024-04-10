@@ -525,8 +525,8 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     const job = this.fb.group({
       jobId: [0],
       jobDescription: ['', Validators.required],
-      qty: ['', Validators.required],
-      unit: ['', Validators.required],
+      qty: ['0', Validators.required],
+      unit: ['0', Validators.required],
       remarks: ['', Validators.required],
       attachment: ['']
     });
