@@ -512,13 +512,21 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     })
   }
 
+  CloseServiceModal(){
+    this.serviceTypeForm.reset();
+    this.serviceTypeForm.controls.serviceReqId.setValue('0');
+    (this.serviceTypeForm.controls.jobList as FormArray).clear();
+    $('#add-service').modal('hide')
+
+  }
+
   addJob() {
 
     const job = this.fb.group({
       jobId: [0],
       jobDescription: ['', Validators.required],
-      qty: [0, Validators.required],
-      unit: [0, Validators.required],
+      qty: ['', Validators.required],
+      unit: ['', Validators.required],
       remarks: ['', Validators.required],
       attachment: ['']
     });

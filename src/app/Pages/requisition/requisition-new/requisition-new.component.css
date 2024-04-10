@@ -29,10 +29,10 @@
    max-width: 250px !important;
  }
 
- .ng-invalid {
+ /* .ng-invalid {
    border-color: #d8e2ef;
 
- }
+ } */
 
  .mat-column-index {
    flex: 0 0 60px;

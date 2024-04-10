@@ -1243,7 +1243,7 @@
             <div class="modal-content border-0">
               <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
                 <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base"
-                  data-bs-dismiss="modal" aria-label="Close"></button>
+                  data-bs-dismiss="" aria-label="" (click)="CloseServiceModal()"></button>
               </div>
               <div class="modal-header">
                 <h5 class="modal-title" id="">Add Services</h5>
@@ -1257,7 +1257,7 @@
                       Name</label>
                     <div class="col-sm-10">
                       <input type="text" class="form-control form-small" formControlName="serviceName"
-                        placeholder="Service Name">
+                        placeholder="Service Name" required>
                     </div>
                   </div>
                   <div class="row g-3 mb-3">
@@ -1265,14 +1265,14 @@
                       Description</label>
                     <div class="col-sm-10">
                       <input type="text" class="form-control form-small" formControlName="serviceDesc"
-                        placeholder="Service Description">
+                        placeholder="Service Description" required>
                     </div>
                   </div>
                   <div class="row g-3 mb-3">
                     <label class="col-sm-2 col-form-label py-0 font-small-3" for="remarks">Remarks</label>
                     <div class="col-sm-10">
                       <input type="text" class="form-control form-small" formControlName="remarks"
-                        placeholder="Remarks">
+                        placeholder="Remarks" required>
                     </div>
                   </div>
                   <hr>
@@ -1285,19 +1285,19 @@
                       <input type="hidden" formControlName="jobId">
                       <div class="col-lg mb-3">
                         <h6 class="text-900 mb-2">Job Description</h6>
-                        <input type="text" class="form-control form-small" formControlName="jobDescription">
+                        <input type="text" class="form-control form-small" formControlName="jobDescription" required>
                       </div>
                       <div class="col-lg mb-3">
                         <h6 class="text-900 mb-2">Qty</h6>
-                        <input type="text" class="form-control form-small" formControlName="qty">
+                        <input type="text" class="form-control form-small" formControlName="qty" required>
                       </div>
                       <div class="col-lg mb-3">
                         <h6 class="text-900 mb-2">Unit</h6>
-                        <input type="text" class="form-control form-small" formControlName="unit">
+                        <input type="text" class="form-control form-small" formControlName="unit" required>
                       </div>
                       <div class="col-lg mb-3">
                         <h6 class="text-900 mb-2">Remarks</h6>
-                        <input type="text" class="form-control form-small" formControlName="remarks">
+                        <input type="text" class="form-control form-small" formControlName="remarks" required>
                       </div>
                       <!-- <div class="col-lg mb-3">
                         <h6 class="text-900 mb-2">Attachment</h6>
@@ -1309,7 +1309,7 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="submit" class="btn btn-primary me-1" aria-label="">Ok</button>
+                  <button type="submit" class="btn btn-primary me-1"  [disabled]="serviceTypeForm.invalid || !serviceTypeForm.dirty" aria-label="">Ok</button>
                   <button type="button" class="btn btn-danger me-1" aria-label="">Cancel</button>
                 </div>
               </form>
