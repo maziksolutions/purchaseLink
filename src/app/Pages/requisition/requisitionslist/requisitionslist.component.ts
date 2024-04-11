@@ -25,13 +25,14 @@ import { RouteService } from 'src/app/services/route.service';
 import { concat } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
-
+declare let Swal, PerfectScrollbar: any; declare let $: any;
 @Component({
   selector: 'app-requisitionslist',
   templateUrl: './requisitionslist.component.html',
   styleUrls: ['./requisitionslist.component.css']
 })
 export class RequisitionslistComponent implements OnInit {
+  @ViewChild('StatusVessel') statusVesselSelect: ElementRef;
   RequisitionForm: FormGroup; flag; pkey: number = 0;
   selectedIndex: any;
   dataSource = new MatTableDataSource<any>();
@@ -221,11 +222,18 @@ export class RequisitionslistComponent implements OnInit {
       .subscribe(response => {
         this.ngxUiLoaderService.stop();
         this.flag = status;
+        
+        const selectedValue = this.statusVesselSelect.nativeElement.value;
 
         if (this.targetLoc == 'Vessel') {
-          this.dataSource.data = response.data.filter(x => x.originSite == 'Vessel');
-          console.log(this.dataSource.data)
-
+          if(selectedValue == 0){
+            this.dataSource.data = response.data.filter(x => x.originSite == 'Vessel' && x.isDeleted == false);
+          }
+          if(selectedValue == 1){
+            this.dataSource.data = response.data.filter(x => x.originSite == 'Vessel' && x.isDeleted == true);
+          }
+         
+         
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
           this.ngxUiLoaderService.stop();
@@ -274,6 +282,7 @@ export class RequisitionslistComponent implements OnInit {
   }
 
   loadData(status: number) {
+    
 this.selection.clear();
     if (status == 1) {
       this.deletetooltip = 'UnArchive';
@@ -300,7 +309,6 @@ this.selection.clear();
           let VesselSite = response.data.filter(x => x.originSite == "Vessel" && x.approvedReq == "Approved");
 
           this.dataSource.data = OfficeSite.concat(VesselSite);
-          console.log(this.dataSource.data)
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
           this.ngxUiLoaderService.stop();
@@ -476,4 +484,53 @@ this.selection.clear();
       this.swal.error('Please Select Approved Requisition. ')
     }
   }
+
+
+
+  DeleteData() {
+    var message = ""
+    var title = "";
+
+    if (this.flag == 1) {
+      message = "Un-archived successfully.";
+      title = "you want to un-archive data."
+    }
+    else {
+      message = "Archived successfully.";
+      title = "you want to archive data."
+
+    }
+    
+    const numSelected = this.selection.selected;
+    if (numSelected.length > 0) {
+
+      Swal.fire({
+        title: 'Are you sure?',
+        text: title,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+      }).then((result) => {
+        if (result.value) {
+          this.requisitionService.archiveRequisitionMaster(numSelected).subscribe(result => {
+            this.selection.clear();
+            this.swal.success(message);
+            if (this.targetLoc == 'Office') {
+            this.loadData(this.flag);
+            }
+            if (this.targetLoc == 'Vessel') {
+              this.filterVessel()
+            }
+
+          })
+
+        }
+      })
+
+    } else {
+      this.swal.info('Select at least one row')
+    }
+  }
+
 }

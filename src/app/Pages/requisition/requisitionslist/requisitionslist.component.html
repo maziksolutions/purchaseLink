@@ -45,6 +45,21 @@
 
       <div [ngClass]="{'col-lg-10': targetLoc === 'Vessel', 'col-lg-8': targetLoc === 'Office'}">
         <div class="form-inline float-end mb-2">
+
+          <select class="form-control form-small form-select" #docStatus *ngIf="targetLoc === 'Office'"
+          (change)="loadData($any($event.target).value)">
+          <option selected="" value="0">Active Data</option>
+          <option value="1">Archive Data</option>
+      </select>
+
+      <select class="form-control form-small form-select" #StatusVessel *ngIf="targetLoc === 'Vessel'"
+          (change)="filterVessel()">
+          <option selected="" value="0">Active Data</option>
+          <option value="1">Archive Data</option>
+      </select>
+
+
+
           <!-- <a class="form-small text-primary px-1 m-r-5" type="button" data-bs-toggle="tooltip"
                   data-bs-placement="top" title="" data-bs-original-title="Modify Column" aria-label=""><i
                     class="fas fa-columns"></i></a>
@@ -64,6 +79,10 @@
           <a class="accordion-btn collapsed px-2 m-r-1" type="button" matTooltip="Add Requisition" data-bs-toggle=""
             (click)="clear()" data-bs-target="" aria-expanded="true" aria-controls=""><i
               class="fas fa-plus text-primary"></i></a>
+
+              <a class="px-2 m-r-1" type="button" (click)="DeleteData()" data-bs-toggle="tooltip"
+              data-bs-placement="top" matTooltip="{{deletetooltip}}"
+              aria-label=""><i class="fas fa-trash text-danger"></i></a>
 
           <!-- <a class="px-2 m-r-1 font-medium-5" type="button" data-bs-toggle="tooltip" data-bs-placement="top"
                   title="" data-bs-original-title="Export PDF" aria-label=""><i
