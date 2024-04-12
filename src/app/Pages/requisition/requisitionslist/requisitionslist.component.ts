@@ -351,7 +351,14 @@ this.selection.clear();
   selectVesselFilter(id) {
     this.requisitionService.filterRequisitionMasterwithvessels(id)
       .subscribe(response => {
-        this.dataSource.data = response.data
+
+        if (this.targetLoc == "Office") {
+
+          let OfficeSite = response.data.filter(x => x.originSite == "Office");
+          let VesselSite = response.data.filter(x => x.originSite == "Vessel" && x.approvedReq == "Approved");
+
+          this.dataSource.data = OfficeSite.concat(VesselSite);
+        }
       });
   }
 
