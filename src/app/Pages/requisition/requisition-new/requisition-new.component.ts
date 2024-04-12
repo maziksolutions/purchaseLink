@@ -2228,7 +2228,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         let DocumentHeadValue = this.requisitiondata.filter(x => x.approvedReq == 'Approved' && x.originSite == 'Office').map(x => x.documentHeader);
 
         if (DocumentHeadValue.length == 0) {
-          this.documentHeader = '001'
+          this.documentHeader = '601'
         }
 
         let largeNumbers: number[] = DocumentHeadValue.map((item) => {
@@ -2238,10 +2238,16 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
         if (DocumentHeadValue.length != 0) {
           const GetMaxNumber = largeNumbers.reduce((a, b) => Math.max(a, b));
-          let incrementedValue = GetMaxNumber + 1;
-          this.documentHeader = incrementedValue.toString().padStart(3, '0');
-        }
+          if(GetMaxNumber<601)
+            {
+              this.documentHeader = '601'
+            }
+            else{
+              let incrementedValue = GetMaxNumber + 1;
+              this.documentHeader = incrementedValue.toString().padStart(3, '0');
+            }        
 
+        }
         this.finalHeader = 'REQ – ' + this.headsite + ' – ' + 'OFF' + ' – ' + this.headabb + ' – ' + this.currentyear + ' – ' + this.documentHeader;
       }
 
@@ -2251,7 +2257,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
         let DocumentHeadValue = this.requisitiondata.filter(x => x.approvedReq == 'Approved' && x.originSite == 'Vessel').map(x => x.documentHeader);
         if (DocumentHeadValue.length == 0) {
-          this.documentHeader = '001'
+          this.documentHeader = '601'
         }
 
         let largeNumbers: number[] = DocumentHeadValue.map((item) => {
@@ -2261,8 +2267,15 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
         if (DocumentHeadValue.length != 0) {
           const GetMaxNumber = largeNumbers.reduce((a, b) => Math.max(a, b));
-          let incrementedValue = GetMaxNumber + 1;
-          this.documentHeader = incrementedValue.toString().padStart(3, '0');
+          if(GetMaxNumber<601)
+            {
+              this.documentHeader = '601'
+            }
+            else{
+              let incrementedValue = GetMaxNumber + 1;
+              this.documentHeader = incrementedValue.toString().padStart(3, '0');
+            }        
+
         }
 
         this.headCode = this.Vessels.filter(x => x.vesselId === parseInt(this.selectedVesselId)).map(x => x.vesselCode);
@@ -2383,19 +2396,19 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
 
     let stepData = `ISO-10303-21;
-     HEADER;
-     FILE_DESCRIPTION(('Requisition data transfer in ${fileDes}');
-     FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData.vessel.vesselCode}${year + '' + documentHeader}.RTO','${Dates}');
-     ENDSEC;
-     DATA;`;
+HEADER;
+FILE_DESCRIPTION(('Requisition data transfer in ${fileDes}');
+FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData.vessel.vesselCode}${year + '' + documentHeader}.RTO','${Dates}');
+ENDSEC;
+DATA;`;
 
     stepData += `
    
-              #1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','${this.ReqData.pmPreference.description}','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount.accountCode == this.codeAccount.accountCode ? this.codeAccount.accountCode : null}','','','','','')`;
+#1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','0','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount.accountCode == null ? '' : this.codeAccount.accountCode }','','','','','')`;
 
     uniqueItems.forEach((item, index) => {
       stepData += `
-            #${index + 2}=Items_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
+#${index + 2}=Items_for_ordering_mr('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.makerReference == null ? '' : item.makerReference}','','','','','');`;
     });
 
     if (this.serviceTypeDataSource.length !== 0 || this.serviceTypeDataSource.length !== null) {
@@ -2412,18 +2425,18 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
         // Add jobList details to the stepData
         item.jobList.forEach((job, jobIndex) => {
           stepData += `,
-              #${jobNumber + 1}=Service_for_ordering_mr('${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','','')`;
+#${jobNumber + 1}=Service_for_ordering_mr('${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','','')`;
           jobNumber++;
         });
       });
     }
     stepData += `
-        ENDSEC;`;
+ENDSEC;`;
 
     // Convert the content to a Blob
     const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
 
-    let filesaveName = this.ReqData.vessel.vesselCode + year + documentHeader + '.RTO';
+    let filesaveName = this.ReqData.vessel.vesselCode + year + documentHeader;
     // Use FileSaver.js to save the file
     saveAs(blob, filesaveName + '.RTO');
 

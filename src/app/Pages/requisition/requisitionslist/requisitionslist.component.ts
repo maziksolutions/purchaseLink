@@ -24,6 +24,7 @@ import { filter } from 'rxjs/operators';
 import { RouteService } from 'src/app/services/route.service';
 import { concat } from 'rxjs';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { N } from '@angular/cdk/keycodes';
 
 declare let Swal, PerfectScrollbar: any; declare let $: any;
 @Component({
@@ -428,19 +429,19 @@ this.selection.clear();
 
 
       let stepData = `ISO-10303-21;
-    HEADER;
-    FILE_DESCRIPTION(('Requisition data transfer in ${fileDes}');
-    FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData[0].vesselCode}${year + '' + documentHeader}.RTO','${Dates}');
-    ENDSEC;
-    DATA;`;
+HEADER;
+FILE_DESCRIPTION(('Requisition data transfer in ${fileDes}');
+FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData[0].vesselCode}${year + '' + documentHeader}.RTO','${Dates}');
+ENDSEC;
+DATA;`;
 
       stepData += `
   
-             #1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','${this.ReqData[0].description}','${Dates}','','','${this.ReqData[0].departmentName}','','${this.accountcode == this.accountcode ? this.accountcode : null}','','','','','')`;
+#1=Requisition_ship_to_PO_step_1('${this.ReqData[0].vesselCode}','${year + '/' + documentHeader}','${this.ReqData[0].orderReferenceNames}','0','${Dates}','','','${this.ReqData[0].departmentName}','','${this.accountcode == null ? '' : this.accountcode}','','','','','')`;
 
       uniqueItems.forEach((item, index) => {
         stepData += `
-             #${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.makerReference}','','','','','');`;
+#${index + 2}=Items_for_ordering_mr('${this.ReqData[0].vesselCode}','${year + '/' + documentHeader}','${index + 1}','${item.partNo}','${item.itemName}','${item.dwg}','','','${item.maker}','','','${item.rob}','${item.unit}','${item.reqQty}','','','${item.model}','exactOrderRef','','','','','${item.makerReference == null ? '' : item.makerReference}','','','','','');`;
       });
 
 
@@ -461,7 +462,7 @@ this.selection.clear();
           // Add jobList details to the stepData
           item.jobList.forEach((job, jobIndex) => {
             stepData += `,
-             #${jobNumber + 1}=Service_for_ordering_mr('${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','','')`;
+#${jobNumber + 1}=Service_for_ordering_mr('${job.jobDescription}','${job.qty}','','','${job.unit}','','','${job.remarks}','','','','','','','')`;
             jobNumber++;
           });
         });
@@ -469,7 +470,7 @@ this.selection.clear();
 
 
       stepData += `
-       ENDSEC;`;
+ENDSEC;`;
 
       // Convert the content to a Blob
       const blob = new Blob([stepData], { type: 'text/plain;charset=utf-8' });
