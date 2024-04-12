@@ -242,6 +242,7 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
   pageSize = 100;
   totalItems = 0;
   data: any[] = [];
+  fileDes: any;
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private sideNavService: SideNavService, private cdr: ChangeDetectorRef,
     private router: Router, private purchaseService: PurchaseMasterService, private swal: SwalToastService, private zone: NgZone, private pmsService: PmsgroupService,
@@ -450,10 +451,10 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     //   }
     // });
 
-    this.Loadgroup();
-    this.LoadComponent();
-    this.LoadStore();
-    this.LoadSpare();
+    // this.Loadgroup();
+    // this.LoadComponent();
+    // this.LoadStore();
+    // this.LoadSpare();
 
     this.displayedColumns = this.ItemsColumns.filter((column, index) => this.visibleColumns[index]);
   }
@@ -2332,40 +2333,41 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
 
   }
-  Loadgroup() {
-    this.pmsService.GetPMSGroupdata(0)
-      .subscribe(response => {
+  // Loadgroup() {
+  //   this.pmsService.GetPMSGroupdata(0)
+  //     .subscribe(response => {
 
-        this.GetGroupAccCode = response.data;
+  //       this.GetGroupAccCode = response.data;
 
-      })
-  }
-  LoadComponent() {
-    this.pmsService.GetComponent(0)
-      .subscribe(response => {
+  //     })
+  // }
+  // LoadComponent() {
+  //   this.pmsService.GetComponent(0)
+  //     .subscribe(response => {
 
-        this.GetCompoAccCode = response.data;
+  //       this.GetCompoAccCode = response.data;
 
-      })
-  }
-  LoadStore() {
-    this.pmsService.getStore(0)
-      .subscribe(response => {
+  //     })
+  // }
+  // LoadStore() {
+  //   this.pmsService.getStore(0)
+  //     .subscribe(response => {
 
-        this.GetStoreAccCode = response.data;
+  //       this.GetStoreAccCode = response.data;
 
-      })
-  }
-  LoadSpare() {
-    this.shipmasterService.GetShipSpareList(0)
-      .subscribe(response => {
+  //     })
+  // }
+  // LoadSpare() {
+  //   this.shipmasterService.GetShipSpareList(0)
+  //     .subscribe(response => {
 
-        this.GetSpareAccCode = response.data;
+  //       this.GetSpareAccCode = response.data;
 
-      })
-  }
+  //     })
+  // }
   downloadNotepad() {
     // this.ReqData =  this.requisitionFullData.filter(x=>x.documentHeader == this.temporaryNumber);
+    debugger
     this.ReqData = this.requisitionFullData;
 
     if (this.ReqData == undefined) {
@@ -2373,16 +2375,24 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
     }
     let shipcompId = this.ReqData.orderReference.split(',')[0];
     if (this.ReqData.orderReferenceType == "Group") {
-      this.codeAccount = this.GetGroupAccCode?.filter(x => x.pmsGroupId == shipcompId)[0];
+      this.codeAccount = this.ReqData.accountCode
+      this.fileDes = "StarIPS"
+      // this.codeAccount = this.GetGroupAccCode?.filter(x => x.pmsGroupId == shipcompId)[0];
     }
     if (this.ReqData.orderReferenceType == "Component") {
-      this.codeAccount = this.GetCompoAccCode?.filter(x => x.componentId == shipcompId)[0];
+      this.codeAccount = this.ReqData.accountCode
+      this.fileDes = "TmMASTER"
+      // this.codeAccount = this.GetCompoAccCode?.filter(x => x.componentId == shipcompId)[0];
     }
     if (this.ReqData.orderReferenceType == "Store") {
-      this.codeAccount = this.GetStoreAccCode?.filter(x => x.shipStoreId == shipcompId)[0];
+      this.codeAccount = this.ReqData.accountCode
+      this.fileDes = "StarIPS"
+      // this.codeAccount = this.GetStoreAccCode?.filter(x => x.shipStoreId == shipcompId)[0];
     }
     if (this.ReqData.orderReferenceType == "Spare") {
-      this.codeAccount = this.GetSpareAccCode?.filter(x => x.spareId == shipcompId)[0];
+      this.codeAccount = this.ReqData.accountCode
+      this.fileDes = "TmMASTER"
+      // this.codeAccount = this.GetSpareAccCode?.filter(x => x.spareId == shipcompId)[0];
     }
     let Dates = this.datePipe.transform(this.ReqData.recDate, 'yyyyMMdd');
     let year = this.datePipe.transform(this.ReqData.recDate, 'yy');
@@ -2392,19 +2402,19 @@ export class RequisitionNewComponent implements OnInit, OnDestroy {
 
     const uniqueItems = this.itemdata.filter(x => x.pmReqId == this.ReqData.requisitionId);
 
-    let fileDes = this.ReqData.pmOrderType.defaultOrderType == "Spare" ? "TmMASTER" : "StarIPS";
+    // let fileDes = this.ReqData.pmOrderType.defaultOrderType == "Spare" ? "TmMASTER" : "StarIPS";
 
 
     let stepData = `ISO-10303-21;
 HEADER;
-FILE_DESCRIPTION(('Requisition data transfer in ${fileDes}');
+FILE_DESCRIPTION(('Requisition data transfer in ${this.fileDes}');
 FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData.vessel.vesselCode}${year + '' + documentHeader}.RTO','${Dates}');
 ENDSEC;
 DATA;`;
 
     stepData += `
    
-#1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','0','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount.accountCode == null ? '' : this.codeAccount.accountCode }','','','','','')`;
+#1=Requisition_ship_to_PO_step_1('${this.ReqData.vessel.vesselCode}','${year + '/' + documentHeader}','${this.ReqData.orderReferenceNames.toString()}','0','${Dates}','','','${this.ReqData.departments.departmentName}','','${this.codeAccount == null ? '' : this.codeAccount }','','','','','')`;
 
     uniqueItems.forEach((item, index) => {
       stepData += `
