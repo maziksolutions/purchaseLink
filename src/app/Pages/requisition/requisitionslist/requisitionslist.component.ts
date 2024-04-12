@@ -45,7 +45,7 @@ export class RequisitionslistComponent implements OnInit {
   deletetooltip: any;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  Vessels: any;
+  Vessels: any;searchForm:FormGroup;
   selectedVesselId: number = 0;
   selectedVesselGroupId: number = 0;
   targetLoc: string;
@@ -62,6 +62,9 @@ export class RequisitionslistComponent implements OnInit {
   fullVesselList: any;
   serviceTypeDataSource: any;
   currentRoute: string;
+  filterDatavessel: any[];
+ VesselGroupId: any;
+  fileDes: string;
 
   constructor(private sideNavService: SideNavService, private route: Router, private authStatusService: AuthStatusService, private routeService: RouteService,
     private userManagementService: UserManagementService, private vesselService: VesselManagementService, private elRef: ElementRef,
@@ -74,7 +77,7 @@ export class RequisitionslistComponent implements OnInit {
     })
   }
 
-  get fm() { return this.RequisitionForm.controls };
+
 
   // navigateToNewReq() {
 
@@ -110,11 +113,19 @@ export class RequisitionslistComponent implements OnInit {
       internalComment: ['', [Validators.required]],
 
     });
+
+    this.searchForm = this.fb.group({
+      vesselId: ['0'],
+      fleetId: [''],
+     
+    });
+
     if (this.targetLoc == 'Vessel') {
       this.VesselId = environment.vesselId;
     }
-    this.loadUserFleetData();
     this.LoadVessel();
+    this.loadUserFleetData();
+   
     
 
     this.loadScript('assets/js/SideNavi.js');
@@ -126,7 +137,27 @@ export class RequisitionslistComponent implements OnInit {
 
   ngAfterViewInit(): void {
     this.checkDropdownItems();
+    if (this.targetLoc == 'Vessel') {
+      this.VesselId = environment.vesselId;
+      this.searchForm.controls.vesselId.setValue(environment.vesselId);
+      this.searchForm.controls.vesselId.disable();
+      this.searchForm.controls.fleetId.setValue(this.VesselGroupId);
+      this.filterVessel();
+    }
+    else {
+      if (localStorage.getItem('searchVessels')) {
+        this.searchForm.controls.vesselId.patchValue(JSON.parse(localStorage.getItem('searchVessels') as string));
+        this.VesselId = localStorage.getItem('searchVessels');
+        this.loadData(0);
+      }
+      else {
+        this.loadData(0);
+      }
+    }
+
   }
+  get sfm() { return this.searchForm.controls };
+  get fm() { return this.RequisitionForm.controls };
   checkDropdownItems() {
 
     const dropdownItems = this.elRef.nativeElement.querySelectorAll('.dropdown-item');
@@ -150,23 +181,30 @@ export class RequisitionslistComponent implements OnInit {
   loadUserFleetData() {
     this.userManagementService.loadUserFleet(0, this.authStatusService.userId())
       .subscribe(response => {
-
         this.myFleet = response.data;
+        if(this.VesselGroupId>0){
+          this.sfm.fleetId.setValue(this.VesselGroupId);
+                this.filteredVessels(this.VesselGroupId);
+        }
+        else{
+          var defaultFleetId = response.data.filter(x => x.fleetName == 'Default Vessels')[0]['userFleetId'];
+          this.filteredVessels(defaultFleetId);
+        }
+      
       });
   }
   filteredVessels(id) {
 
-    this.VesselId = null;
-    var vesselList = this.myFleet.filter(x => x.userFleetId == id)[0]["vessels"];
 
+   this.VesselGroupId = id;
+    this.sfm.fleetId.setValue(id);
+     this.VesselId = null;
+    var vesselList = this.myFleet.filter(x => x.userFleetId == id)[0]["vessels"];
     if (vesselList != null || vesselList != undefined) {
       this.Vessels = this.fullVesselList.filter(x => vesselList.split(",").includes(x.vesselId.toString()));
-      // this.searchForm.controls.vesselId.setValue('');
+      this.searchForm.controls.vesselId.setValue('');
     }
-
-    // this.sfm.fleetId.setValue(id);       
-    // this.page = 1; this.currentPage = 0;   
-    // this.loadShipComponentList(this.sfm.componentId.value, this.searchForm.controls.type.value);
+    this.filterVessel();
   }
 
 
@@ -212,9 +250,9 @@ export class RequisitionslistComponent implements OnInit {
           }
         }
         else {
-          this.Vessels = response.data;
+           this.Vessels = response.data;
           this.fullVesselList = response.data;
-          this.loadData(0);
+           this.loadData(0);
         }
       })
   }
@@ -240,16 +278,7 @@ export class RequisitionslistComponent implements OnInit {
           this.ngxUiLoaderService.stop();
           (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
         }
-        if (this.targetLoc == 'Office') {
-          let OfficeSite = response.data.filter(x => x.originSite == "Office");
-          let VesselSite = response.data.filter(x => x.originSite == "Vessel" && x.approvedReq == "Approved");
-
-          this.dataSource.data = OfficeSite.concat(VesselSite);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
-          this.ngxUiLoaderService.stop();
-        }
-       
+ 
       });
   }
   applyFilter(filterValue: string) {
@@ -316,6 +345,13 @@ this.selection.clear();
         }
         (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
         
+      });
+  }
+
+  selectVesselFilter(id) {
+    this.requisitionService.filterRequisitionMasterwithvessels(id)
+      .subscribe(response => {
+        this.dataSource.data = response.data
       });
   }
 
@@ -403,18 +439,22 @@ this.selection.clear();
       if (this.ReqData[0].orderReferenceType == "Group") {
        
         this.accountcode = this.ReqData[0].accountCode
+        this.fileDes = "StarIPS"
       }
       if (this.ReqData[0].orderReferenceType == "Component") {
    
         this.accountcode = this.ReqData[0].accountCode
+        this.fileDes = "TmMASTER"
       }
       if (this.ReqData[0].orderReferenceType == "Store") {
      
         this.accountcode = this.ReqData[0].accountCode
+        this.fileDes = "StarIPS"
       }
       if (this.ReqData[0].orderReferenceType == "Spare") {
         
         this.accountcode = this.ReqData[0].accountCode
+        this.fileDes = "TmMASTER"
       }
 
       let Dates = this.datePipe.transform(this.ReqData[0].recDate, 'yyyyMMdd');
@@ -425,12 +465,9 @@ this.selection.clear();
 
       const uniqueItems = this.itemdata.filter(x => x.pmReqId == id[i].requisitionId);
 
-      let fileDes = this.ReqData[0].defaultOrderType == "Spare" ? "TmMASTER" : "StarIPS";
-
-
       let stepData = `ISO-10303-21;
 HEADER;
-FILE_DESCRIPTION(('Requisition data transfer in ${fileDes}');
+FILE_DESCRIPTION(('Requisition data transfer in ${this.fileDes}');
 FILENAME('C:\\inetpub\\PmsAship\\ExportedFile\\Rto\\'${this.ReqData[0].vesselCode}${year + '' + documentHeader}.RTO','${Dates}');
 ENDSEC;
 DATA;`;

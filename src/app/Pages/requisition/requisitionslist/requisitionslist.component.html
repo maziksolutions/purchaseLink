@@ -20,10 +20,14 @@
 
 <div class="card mb-3">
   <div class="card-body">
+    <form [formGroup]="searchForm">
     <div class="row">
+      
+        
       <div class="col-lg-2" *ngIf="targetLoc === 'Office'">
         <div class="mb-2">
-          <select class="form-control form-small form-select mb-d3" [(ngModel)]="selectedVesselGroupId"
+          
+          <select class="form-control form-small form-select mb-d3"  formControlName="fleetId" [(ngModel)]="selectedVesselGroupId"
             (change)="filteredVessels($any($event.target).value)">
             <option value="0" selected disabled>Select Vessel Group</option>
             <option *ngFor="let item of myFleet" value="{{item.userFleetId}}">
@@ -34,7 +38,8 @@
       </div>
       <div class="col-lg-2">
         <div class="mb-2">
-          <select class="form-control form-small form-select" [(ngModel)]="selectedVesselId" (change)="filterVessel()">
+          <select class="form-control form-small form-select" [(ngModel)]="selectedVesselId" (change)="selectVesselFilter(selectedVesselId)"  formControlName="vesselId"
+          >
             <option value="0" selected disabled>Select Vessel</option>
             <option *ngFor="let item of  Vessels" value="{{item.vesselId}}">
               {{item.vesselName | titlecase}}
@@ -42,7 +47,7 @@
           </select>
         </div>
       </div>
-
+    
       <div [ngClass]="{'col-lg-10': targetLoc === 'Vessel', 'col-lg-8': targetLoc === 'Office'}">
         <div class="form-inline float-end mb-2">
 
@@ -89,16 +94,16 @@
                     class="fas fa-file-pdf text-danger"></i></a> -->
 
           <a class="" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="Excel"
-            (click)="generateExcel()" data-bs-original-title="Export Excel" aria-label="">
+            (click)="generateExcel()" aria-label="">
             <i class="fas fa-file-excel text-success"></i></a>
 
           <a class="px-2 m-r-1" type="button" data-bs-toggle="tooltip" data-bs-placement="top" matTooltip="RTO" *ngIf="targetLoc == 'Office'"
-            (click)="downloadNotepad()" data-bs-original-title="List" aria-label=""><i class="fas fa-file-alt"></i></a>
+            (click)="downloadNotepad()" aria-label=""><i class="fas fa-file-alt"></i></a>
 
         </div>
       </div>
     </div>
-
+  </form>
     <div class="table-responsive">
       <mat-table #table [dataSource]="dataSource" matSort
         class="table table-hover table-striped table-sm small table-bordered">
