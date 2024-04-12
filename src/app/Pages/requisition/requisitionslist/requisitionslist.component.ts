@@ -278,7 +278,16 @@ export class RequisitionslistComponent implements OnInit {
           this.ngxUiLoaderService.stop();
           (document.getElementById('collapse1') as HTMLElement).classList.remove("show");
         }
- 
+        if (this.targetLoc == 'Office') {
+          let OfficeSite = response.data.filter(x => x.originSite == "Office");
+          let VesselSite = response.data.filter(x => x.originSite == "Vessel" && (x.approvedReq == "Approved" || x.documentHeader.includes('REQ')));
+
+          this.dataSource.data = OfficeSite.concat(VesselSite);
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+          this.ngxUiLoaderService.stop();
+        }
+       
       });
   }
   applyFilter(filterValue: string) {
@@ -336,7 +345,7 @@ this.selection.clear();
         if (this.targetLoc == "Office") {
 
           let OfficeSite = response.data.filter(x => x.originSite == "Office");
-          let VesselSite = response.data.filter(x => x.originSite == "Vessel" && x.approvedReq == "Approved");
+          let VesselSite =  response.data.filter(x => x.originSite == "Vessel" && (x.approvedReq == "Approved" || x.documentHeader.includes('REQ')));
 
           this.dataSource.data = OfficeSite.concat(VesselSite);
           this.dataSource.sort = this.sort;
